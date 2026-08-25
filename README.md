@@ -1,32 +1,94 @@
-# React + TypeScript + Vite
+# RockySoulUp - Frontend React
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Plataforma gamificada de sustentabilidade desenvolvida com React, Vite, TypeScript e TailwindCSS. O projeto transforma acoes sustentaveis em pontos, niveis, selos e recompensas reais.
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Home** - Hero com video, cards "Como Funciona", grid de 7 acoes sustentaveis com contadores animados
+- **Dashboard** - Stats, registro de missoes, barra de progresso com niveis, selos desbloqueaveis, graficos canvas, ranking, 8 recompensas com filtros por categoria
+- **Verificar** - Selecao de acao com cards, upload de foto com preview, captura de GPS, pontuacao
+- **Chatbot** - Assistente virtual com 17 categorias de intencao, state machine, registro de acoes e resgate de recompensas por conversa
+- **Sobre** - Descricao do projeto, features, stack tecnologica
+- **FAQ** - Accordion animado com 6 perguntas frequentes
+- **Integrantes** - Equipe com fotos, RMs e links GitHub/LinkedIn
+- **Contato** - Formulario com React Hook Form e validacao TypeScript
 
-## React Compiler
+## Tecnologias
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React** - Interface e componentizacao
+- **Vite** - Build e performance
+- **TypeScript** - Tipagem estatica
+- **TailwindCSS** - Estilizacao utilitaria
+- **React Router DOM** - Navegacao SPA
+- **React Hook Form** - Validacao de formularios
 
-## Expanding the Oxlint configuration
+## Estrutura do Projeto
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+src/
+├── components/        # Componentes reutilizaveis
+│   ├── Sidebar.tsx    # Navegacao lateral fixa
+│   ├── Footer.tsx     # Rodape do site
+│   ├── Chat.tsx       # Chatbot completo com NLP
+│   ├── Toast.tsx      # Sistema de notificacoes
+│   ├── LoginModal.tsx # Modal de cadastro
+│   └── HistoryChart.tsx # Grafico canvas
+├── pages/             # Paginas da aplicacao
+│   ├── Home.tsx
+│   ├── Dashboard.tsx
+│   ├── Verificar.tsx
+│   ├── Sobre.tsx
+│   ├── Faq.tsx
+│   ├── Integrantes.tsx
+│   └── Contato.tsx
+├── context/
+│   └── DataContext.tsx # Gerenciamento de estado centralizado
+├── hooks/
+│   ├── useLocalStorage.ts  # Persistencia no localStorage
+│   └── useAnimations.ts    # Scroll-reveal e counter
+├── types/
+│   └── index.ts        # Interfaces TypeScript
+├── data/
+│   └── constants.ts    # Missoes, selos, niveis, recompensas
+├── App.tsx             # Rotas e layout principal
+├── main.tsx            # Ponto de entrada
+└── index.css           # Tailwind + animacoes
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Como Executar
+
+```bash
+# Instale as dependencias
+npm install
+
+# Inicie o servidor de desenvolvimento
+npm run dev
+
+# Gere a build de producao
+npm run build
+```
+
+## Responsividade
+
+- **Mobile** - ate 480px
+- **Tablet** - 768px
+- **Desktop** - 992px+
+
+## Dados Persistidos
+
+Todas as informacoes do usuario sao salvas no `localStorage`:
+- Pontos totais e diarios
+- Missoes completadas
+- Historico de acoes
+- Selos desbloqueados
+- Resgates realizados
+- Dados do usuario (nome/email)
+
+## Integrantes
+
+- Igor Rodrigues de Santana (RM570651)
+- Diego Gomes Goncalves de Lima (RM570335)
+- Miguel Silva (RM572019)
+- Rafael Santos Mendonca Costa (RM572368)
+
+**Turma 1TDSPG - FIAP 2026**
