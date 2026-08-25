@@ -27,18 +27,17 @@ export default function Home() {
 
   return (
     <>
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center justify-center">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0a3d0a] via-[#1a5c1a] to-[#0f4f0f]">
           <img src="/imagens/floresta.jpg" alt="" className="w-full h-full object-cover opacity-40" />
         </div>
-        <video autoPlay muted loop className="absolute inset-0 w-full h-full object-cover opacity-30">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+        <div className="flex flex-col relative z-10 text-center px-6 max-w-2xl items-center justify-center">
+          <video autoPlay muted loop className=" mb-7 w-[300px] h-[300px] object-cover">
           <source src="/videos/eco-animacao.webm" type="video/webm" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
-
-        <div className="relative z-10 text-center px-6 max-w-2xl">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4">
-            Transforme <span className="text-[#6ee76e]">acoes sustentaveis</span> em impacto real
+            Transforme <span className="text-[#6ee76e]">ações sustentaveis</span> em impacto real
           </h1>
           <p className="text-lg text-white/80 mb-8">
             Ganhe pontos, suba de nivel e ganhe recompensas por cada acao ecologica que voce realiza.
