@@ -38,7 +38,7 @@ export default function Contato() {
               <input
                 id="contato-nome"
                 type="text"
-                {...register('nome', { required: 'Nome e obrigatorio' })}
+                {...register('nome', { required: 'Nome é obrigatório' })}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60"
                 placeholder="Seu nome completo"
               />
@@ -51,8 +51,8 @@ export default function Contato() {
                 id="contato-email"
                 type="email"
                 {...register('email', {
-                  required: 'Email e obrigatorio',
-                  pattern: { value: /^\S+@\S+$/i, message: 'Email invalido' }
+                  required: 'Email é obrigatório',
+                  pattern: { value: /^\S+@\S+$/i, message: 'Email inválido' }
                 })}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60"
                 placeholder="seu@email.com"
@@ -64,7 +64,7 @@ export default function Contato() {
               <label htmlFor="contato-mensagem" className="block text-sm font-medium text-gray-700 mb-1">Mensagem</label>
               <textarea
                 id="contato-mensagem"
-                {...register('mensagem', { required: 'Mensagem e obrigatoria' })}
+                {...register('mensagem', { required: 'Mensagem é obrigatória' })}
                 rows={5}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors resize-none bg-white/60"
                 placeholder="Escreva sua mensagem aqui..."

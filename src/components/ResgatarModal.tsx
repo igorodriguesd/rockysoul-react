@@ -81,7 +81,7 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
                 <span className="font-semibold text-gray-800">{data.pontos} pontos</span>
               </div>
               <div className="border-t border-gray-200 pt-2 flex justify-between text-sm">
-                <span className="text-gray-500">Saldo apos resgate</span>
+                <span className="text-gray-500">Saldo após resgate</span>
                 <span className={`font-semibold ${podeResgatar ? 'text-[#22c55e]' : 'text-red-500'}`}>
                   {data.pontos - recompensa.pontos} pontos
                 </span>
@@ -90,7 +90,7 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
 
             {!podeResgatar && (
               <p className="text-sm text-red-500 text-center mb-4">
-                Voce precisa de mais {recompensa.pontos - data.pontos} pontos para resgatar esta recompensa.
+                Você precisa de mais {recompensa.pontos - data.pontos} pontos para resgatar esta recompensa.
               </p>
             )}
 

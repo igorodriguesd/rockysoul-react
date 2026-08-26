@@ -36,7 +36,7 @@ export default function VerificarModal({ aberto, onFechar, missao }: Props) {
         setGpsStatus('ok');
       },
       () => {
-        setLocalizacao('Permissao negada');
+        setLocalizacao('Permissão negada');
         setGpsStatus('erro');
       }
     );
@@ -71,7 +71,7 @@ export default function VerificarModal({ aberto, onFechar, missao }: Props) {
         {sucesso ? (
           <div className="text-center py-4">
             <img src="/icons/sucesso.svg" alt="Sucesso" className="w-16 h-16 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-gray-800 mb-1">Acao Verificada</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-1">Ação Verificada</h2>
             <p className="text-sm text-gray-500 mb-3">
               <strong>{missao.nome}</strong> registrada com sucesso.
             </p>
@@ -118,7 +118,7 @@ export default function VerificarModal({ aberto, onFechar, missao }: Props) {
               </div>
 
               <div>
-                <p className="text-sm font-medium text-gray-700 mb-2">Localizacao (opcional)</p>
+                <p className="text-sm font-medium text-gray-700 mb-2">Localização (opcional)</p>
                 <div className="flex gap-2">
                   <input
                     type="text"
@@ -143,7 +143,7 @@ export default function VerificarModal({ aberto, onFechar, missao }: Props) {
                 onClick={confirmar}
                 className="w-full py-3 bg-[#22c55e] text-white font-bold rounded-xl hover:bg-[#16a34a] transition-colors"
               >
-                Confirmar Acao
+                Confirmar Ação
               </button>
             </div>
           </>

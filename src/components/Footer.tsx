@@ -6,7 +6,7 @@ export default function Footer() {
           <img src="/imagens/logo.png" alt="Logo" className="w-5 h-5" />
           <span className="font-bold text-white/90 text-sm">Rocky SoulUp</span>
         </div>
-        <p className="text-sm text-white/60">Transformando acoes em impacto</p>
+        <p className="text-sm text-white/60">Transformando ações em impacto</p>
         <p className="text-xs text-white/40">&copy; 2026 RockySoulUp</p>
       </div>
     </footer>

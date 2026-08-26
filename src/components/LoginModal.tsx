@@ -34,7 +34,7 @@ export default function LoginModal({ aberto, onFechar }: Props) {
             <img src="/icons/comunidade.svg" alt="" className="w-7 h-7" />
           </div>
           <h2 className="text-xl font-bold text-gray-800">Bem-vindo</h2>
-          <p className="text-sm text-gray-500 mt-1">Digite seu nome para comecar</p>
+          <p className="text-sm text-gray-500 mt-1">Digite seu nome para começar</p>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

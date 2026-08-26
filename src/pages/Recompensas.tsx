@@ -24,7 +24,7 @@ export default function Recompensas() {
         <p className="text-white/70">Use seus pontos para resgatar recompensas reais</p>
         <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-white/40">
           <img src="/icons/trofeu.svg" alt="" className="w-4 h-4" />
-          <span className="text-sm font-semibold text-gray-800">{data.pontos} pontos disponiveis</span>
+          <span className="text-sm font-semibold text-gray-800">{data.pontos} pontos disponíveis</span>
         </div>
       </div>
 
@@ -89,7 +89,7 @@ export default function Recompensas() {
 
       {data.resgates.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold text-white mb-4 drop-shadow">Historico de Resgates</h2>
+          <h2 className="text-xl font-bold text-white mb-4 drop-shadow">Histórico de Resgates</h2>
           <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-white/40 divide-y divide-gray-100">
             {data.resgates.map((rg, i) => (
               <div key={i} className="flex items-center justify-between px-5 py-3">
