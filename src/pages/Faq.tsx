@@ -8,7 +8,7 @@ export default function Faq() {
   return (
     <div className="max-w-[700px] mx-auto px-6 py-12">
       <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Perguntas Frequentes</h1>
-      <p className="text-center text-white/70 mb-10">Tire suas duvidas sobre o RockySoulUp</p>
+      <p className="text-center text-white/70 mb-10">Tire suas dúvidas sobre o RockySoulUp</p>
 
       <div className="flex flex-col gap-3">
         {PERGUNTAS_FAQ.map((item, i) => (

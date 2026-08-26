@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 
 const features = [
-  { icone: '/icons/folha.svg', titulo: 'Sustentabilidade', descricao: 'Pratique acoes ecologicas no dia a dia e veja seu impacto crescer.' },
-  { icone: '/icons/trofeu.svg', titulo: 'Gamificacao', descricao: 'Ganhe pontos, suba de nivel e desbloqueie selos e recompensas.' },
-  { icone: '/icons/robo.svg', titulo: 'Avatar Inteligente', descricao: 'Um assistente virtual que te ajuda a manter o ritmo sustentavel.' },
-  { icone: '/icons/comunidade.svg', titulo: 'Comunidade', descricao: 'Compete no ranking e inspire outros usuarios a agir pelo planeta.' },
+  { icone: '/icons/folha.svg', titulo: 'Sustentabilidade', descricao: 'Pratique ações ecológicas no dia a dia e veja seu impacto crescer.' },
+  { icone: '/icons/trofeu.svg', titulo: 'Gamificação', descricao: 'Ganhe pontos, suba de nível e desbloqueie selos e recompensas.' },
+  { icone: '/icons/robo.svg', titulo: 'Avatar Inteligente', descricao: 'Um assistente virtual que te ajuda a manter o ritmo sustentável.' },
+  { icone: '/icons/comunidade.svg', titulo: 'Comunidade', descricao: 'Compete no ranking e inspire outros usuários a agir pelo planeta.' },
 ];
 
 const techs = [
@@ -27,10 +27,10 @@ export default function Sobre() {
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-8 text-center mb-12"> 
           <h1 className="text-2xl font-bold text-gray-800 mb-3">Sobre o RockySoulUp</h1>
           <p className="text-gray-600 leading-relaxed mb-3 max-w-2xl mx-auto">
-            O RockySoulUp combina gamificacao e inteligencia artificial para transformar acoes sustentaveis em uma experiencia envolvente e recompensadora. A plataforma incentiva os usuarios a adotarem habitos ecologicos diarios, registrando suas acoes e convertendo-as em pontos, niveis e recompensas reais.
+            O RockySoulUp combina gamificação e inteligência artificial para transformar ações sustentáveis em uma experiência envolvente e recompensadora. A plataforma incentiva os usuários a adotarem hábitos ecológicos diários, registrando suas ações e convertendo-as em pontos, níveis e recompensas reais.
           </p>
           <p className="text-gray-600 leading-relaxed max-w-2xl mx-auto">
-            Um avatar inteligente acompanha cada usuario, oferecendo dicas personalizadas, motivacao e suporte. Atraves do chatbot integrado, os usuarios podem registrar acoes, consultar seu progresso e resgatar recompensas diretamente pelo conversa.
+            Um avatar inteligente acompanha cada usuário, oferecendo dicas personalizadas, motivação e suporte. Através do chatbot integrado, os usuários podem registrar ações, consultar seu progresso e resgatar recompensas diretamente pela conversa.
           </p>
         </div>
 

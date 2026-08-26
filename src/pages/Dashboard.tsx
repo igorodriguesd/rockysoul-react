@@ -32,7 +32,7 @@ const MISSAO_ICONE_MAP: Record<string, string> = {
 const NIVEL_ICONE: Record<string, string> = {
   Semente: '/icons/semente.svg',
   Broto: '/icons/broto.svg',
-  Arvore: '/icons/arvore.svg',
+  'Árvore': '/icons/arvore.svg',
   Expert: '/icons/trofeu.svg',
 };
 
@@ -41,9 +41,9 @@ const NIVEIS_MIN = [0, 100, 300, 1000];
 function getGreeting(nivel: string): string {
   switch (nivel) {
     case 'Semente': return 'Continue plantando sementes!';
-    case 'Broto': return 'Voce esta crescendo!';
-    case 'Arvore': return 'Que impacto incrivel!';
-    case 'Expert': return 'Voce e uma lenda!';
+    case 'Broto': return 'Você está crescendo!';
+    case 'Árvore': return 'Que impacto incrível!';
+    case 'Expert': return 'Você é uma lenda!';
     default: return 'Bem-vindo!';
   }
 }
@@ -57,7 +57,7 @@ function getProgressPercent(pontos: number): number {
 
 function getNextLevel(pontos: number): { nome: string; falta: number } {
   if (pontos < 100) return { nome: 'Broto', falta: 100 - pontos };
-  if (pontos < 300) return { nome: 'Arvore', falta: 300 - pontos };
+  if (pontos < 300) return { nome: 'Árvore', falta: 300 - pontos };
   if (pontos < 1000) return { nome: 'Expert', falta: 1000 - pontos };
   return { nome: 'Expert', falta: 0 };
 }
@@ -99,7 +99,7 @@ export default function Dashboard() {
 
   const ranking: RankingUser[] = [
     ...USUARIOS_BASE.map(u => ({ nome: u.nome, pontos: u.pontos })),
-    { nome: data.nome || 'Voce', pontos: data.pontos },
+    { nome: data.nome || 'Você', pontos: data.pontos },
   ].sort((a, b) => b.pontos - a.pontos);
 
   const recentHistory = data.historico.slice(0, 4);
@@ -117,14 +117,14 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0faf0]">
+    <div className="min-h-screen">
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
         {/* Block 1: Greeting */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-5">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold text-gray-800 tracking-tight">
-              Olá, {data.nome || 'USUARIO'} !
+              Olá, {data.nome || 'USUÁRIO'} !
             </h1>
             <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#22c55e]/10 text-[#16a34a]">
               <img src={NIVEL_ICONE[nivel] || '/icons/semente.svg'} className="w-3.5 h-3.5" alt="" />
@@ -140,7 +140,7 @@ export default function Dashboard() {
             {[
               { label: 'Pontos Totais', value: data.pontos },
               { label: 'Pontos Hoje', value: data.pontosHoje },
-              { label: 'Missoes', value: data.missoesCompletas },
+              { label: 'Missões', value: data.missoesCompletas },
               { label: 'Selos', value: `${selosDesbloqueados.length}/${SELOS.length}` },
             ].map(stat => (
               <div key={stat.label} className="flex flex-col items-center px-3">
@@ -153,7 +153,7 @@ export default function Dashboard() {
 
         {/* Block 3: Mission Grid */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-5">
-          <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Registre Sua Acao</h3>
+          <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Registre Sua Ação</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {MISSOES.map(missao => (
               <button
@@ -201,7 +201,7 @@ export default function Dashboard() {
               </div>
             </div>
             <p className="text-xs text-gray-500 mt-3">
-              {data.pontos} pontos{nextLevel.falta > 0 ? ` · Faltam ${nextLevel.falta} pts para ${nextLevel.nome}` : ' · Nivel maximo!'}
+              {data.pontos} pontos{nextLevel.falta > 0 ? ` · Faltam ${nextLevel.falta} pts para ${nextLevel.nome}` : ' · Nível máximo!'}
             </p>
             <div className="flex gap-3 mt-4">
               {SELOS.map(selo => {
@@ -229,7 +229,7 @@ export default function Dashboard() {
               </div>
               <div className="flex flex-col items-center">
                 <span className="text-2xl font-bold text-[#22c55e]">{arvoresEquiv}</span>
-                <span className="text-[10px] text-gray-400 text-center mt-1">arvores equiv.</span>
+                <span className="text-[10px] text-gray-400 text-center mt-1">árvores equiv.</span>
               </div>
               <div className="flex flex-col items-center">
                 <span className="text-2xl font-bold text-[#22c55e]">{diasSeguidos}</span>
@@ -246,7 +246,7 @@ export default function Dashboard() {
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-5">
             <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Atividade Recente</h3>
             {recentHistory.length === 0 ? (
-              <p className="text-sm text-gray-400">Nenhuma acao registrada ainda.</p>
+              <p className="text-sm text-gray-400">Nenhuma ação registrada ainda.</p>
             ) : (
               <div className="space-y-2">
                 {recentHistory.map((entry: HistoricoEntrada, i: number) => {
@@ -275,7 +275,7 @@ export default function Dashboard() {
             <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Ranking</h3>
             <div className="space-y-2">
               {ranking.slice(0, 5).map((user, i) => {
-                const isYou = user.nome === (data.nome || 'Voce');
+                const isYou = user.nome === (data.nome || 'Você');
                 const posColor = i === 0 ? '#eab308' : i === 1 ? '#9ca3af' : i === 2 ? '#d97706' : '#9ca3af';
                 return (
                   <div

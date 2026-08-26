@@ -64,7 +64,7 @@ export default function Chat() {
     if (aberto && !initRef.current) {
       initRef.current = true;
       setTimeout(() => {
-        setMensagens([{ texto: 'Ola! Eu sou o RockySoul, seu assistente de sustentabilidade. Como posso te ajudar?', remetente: 'bot' }]);
+        setMensagens([{ texto: 'Olá! Eu sou o RockySoul, seu assistente de sustentabilidade. Como posso te ajudar?', remetente: 'bot' }]);
       }, 350);
     }
   }, [aberto]);
@@ -87,12 +87,12 @@ export default function Chat() {
     if (estado === 'aguardandoNome') {
       const nome = texto.split(' ')[0].replace(/[^a-zA-ZÀ-ÿ]/g, '');
       if (nome.length < 2) {
-        responder('Por favor, digite um nome valido com pelo menos 2 letras.');
+        responder('Por favor, digite um nome válido com pelo menos 2 letras.');
         return;
       }
       setNome(nome);
       estadoRef.current = 'normal';
-      responder(`Prazer em conhecer voce, ${nome}! Bem-vindo ao RockySoulUp! Seu nivel atual e **${getNivel()}** e voce tem **${data.pontos} pontos**. Como posso te ajudar?`);
+      responder(`Prazer em conhecer você, ${nome}! Bem-vindo ao RockySoulUp! Seu nível atual é **${getNivel()}** e você tem **${data.pontos} pontos**. Como posso te ajudar?`);
       return;
     }
 
@@ -102,9 +102,9 @@ export default function Chat() {
         const missao = MISSOES[num - 1];
         adicionarPontos(missao.pontos, missao.nome);
         estadoRef.current = 'normal';
-        responder(`Acao registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} pontos\n\nSeu novo saldo: **${data.pontos + missao.pontos} pontos** | Nivel: **${getNivel()}**`);
+        responder(`Ação registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} pontos\n\nSeu novo saldo: **${data.pontos + missao.pontos} pontos** | Nível: **${getNivel()}**`);
       } else {
-        responder(`Numero invalido. Por favor, digite um numero de 1 a ${MISSOES.length}.`);
+        responder(`Número inválido. Por favor, digite um número de 1 a ${MISSOES.length}.`);
       }
       return;
     }
@@ -120,10 +120,10 @@ export default function Chat() {
           responder(`Recompensa resgatada com sucesso!\n\n**${recompensa.nome}**\n-${recompensa.pontos} pontos\n\nSeu novo saldo: **${data.pontos - recompensa.pontos} pontos**`);
         } else {
           estadoRef.current = 'normal';
-          responder(`Voce nao tem pontos suficientes para esta recompensa.\n\nPrecisa de **${recompensa.pontos} pontos**, mas tem apenas **${data.pontos} pontos**.`);
+          responder(`Você não tem pontos suficientes para esta recompensa.\n\nPrecisa de **${recompensa.pontos} pontos**, mas tem apenas **${data.pontos} pontos**.`);
         }
       } else {
-        responder(`Numero invalido. Por favor, digite um numero de 1 a ${RECOMPENSAS_CHAT.length}.`);
+        responder(`Número inválido. Por favor, digite um número de 1 a ${RECOMPENSAS_CHAT.length}.`);
       }
       return;
     }
@@ -134,10 +134,10 @@ export default function Chat() {
       case 'saudacoes': {
         const nome = data.nome;
         if (nome) {
-          responder(`Ola, ${nome}! Bem-vindo de volta ao RockySoulUp! Voce tem **${data.pontos} pontos** e esta no nivel **${getNivel()}**. Como posso te ajudar hoje?`);
+          responder(`Olá, ${nome}! Bem-vindo de volta ao RockySoulUp! Você tem **${data.pontos} pontos** e está no nível **${getNivel()}**. Como posso te ajudar hoje?`);
         } else {
           estadoRef.current = 'aguardandoNome';
-          responder('Ola! Eu sou o RockySoul, seu assistente de sustentabilidade! Qual e o seu nome?');
+          responder('Olá! Eu sou o RockySoul, seu assistente de sustentabilidade! Qual é o seu nome?');
         }
         break;
       }
@@ -145,19 +145,19 @@ export default function Chat() {
       case 'ajuda': {
         responder(
           '**Como posso te ajudar:**\n\n' +
-          '- **Registrar acao** - Para registrar uma acao sustentavel e ganhar pontos\n' +
+          '- **Registrar ação** - Para registrar uma ação sustentável e ganhar pontos\n' +
           '- **Meus pontos** - Para ver seu saldo atual\n' +
-          '- **Meu nivel** - Para ver seu nivel de evolucao\n' +
+          '- **Meu nível** - Para ver seu nível de evolução\n' +
           '- **Recompensas** - Para ver e resgatar recompensas\n' +
-          '- **Sugestao** - Para receber dicas de acoes sustentaveis\n' +
+          '- **Sugestão** - Para receber dicas de ações sustentáveis\n' +
           '- **Curiosidade** - Para aprender fatos interessantes\n\n' +
-          'Tambem posso entender comandos como "reciclei", "usei bicicleta", "economizei agua" e muito mais!'
+          'Também posso entender comandos como "reciclei", "usei bicicleta", "economizei água" e muito mais!'
         );
         break;
       }
 
       case 'pontos': {
-        responder('**Seu saldo de pontos:**\n\n**' + data.pontos + ' pontos**\nTotal de missoes completas: ' + data.missoesCompletas + '\nPontos hoje: ' + data.pontosHoje);
+        responder('**Seu saldo de pontos:**\n\n**' + data.pontos + ' pontos**\nTotal de missões completas: ' + data.missoesCompletas + '\nPontos hoje: ' + data.pontosHoje);
         break;
       }
 
@@ -165,14 +165,14 @@ export default function Chat() {
         const nivel = getNivel();
         const proximoNivel =
           nivel === 'Semente' ? 'Broto (100 pontos)' :
-          nivel === 'Broto' ? 'Arvore (300 pontos)' :
-          nivel === 'Arvore' ? 'Expert (1000 pontos)' :
-          'Nivel maximo atingido!';
+          nivel === 'Broto' ? 'Árvore (300 pontos)' :
+          nivel === 'Árvore' ? 'Expert (1000 pontos)' :
+          'Nível máximo atingido!';
         responder(
-          '**Seu nivel atual:** ' + nivel + '\n\n' +
+          '**Seu nível atual:** ' + nivel + '\n\n' +
           '**' + data.pontos + ' pontos acumulados**\n\n' +
-          'Proximo nivel: **' + proximoNivel + '**\n\n' +
-          'Continue realizando acoes sustentaveis para evoluir!'
+          'Próximo nível: **' + proximoNivel + '**\n\n' +
+          'Continue realizando ações sustentáveis para evoluir!'
         );
         break;
       }
@@ -183,10 +183,10 @@ export default function Chat() {
         );
         if (missoesNaoFeitas.length > 0) {
           const lista = missoesNaoFeitas.map((m, i) => `${i + 1}. ${m.nome} (+${m.pontos} pontos)`).join('\n');
-          responder('**Sugestoes de acoes sustentaveis que voce ainda nao realizou:**\n\n' + lista + '\n\nDigite "registrar" para comecar!');
+          responder('**Sugestões de ações sustentáveis que você ainda não realizou:**\n\n' + lista + '\n\nDigite "registrar" para começar!');
         } else {
           const missao = randomItem(MISSOES);
-          responder('Parabens! Voce ja experimentou todas as acoes! Que tal repetir uma?\n\nSugestao: **' + missao.nome + '** (+' + missao.pontos + ' pontos)');
+          responder('Parabéns! Você já experimentou todas as ações! Que tal repetir uma?\n\nSugestão: **' + missao.nome + '** (+' + missao.pontos + ' pontos)');
         }
         break;
       }
@@ -194,18 +194,18 @@ export default function Chat() {
       case 'curiosidade': {
         const curiosidade = CURIOSIDADES[indiceCuriosidade % CURIOSIDADES.length];
         setIndiceCuriosidade(prev => prev + 1);
-        responder('**Curiosidade Sustentavel:**\n\n' + curiosidade + '\n\nQuer saber mais? Digite "curiosidade" novamente!');
+        responder('**Curiosidade Sustentável:**\n\n' + curiosidade + '\n\nQuer saber mais? Digite "curiosidade" novamente!');
         break;
       }
 
       case 'motivacao': {
         const nivel = getNivel();
         const frases = [
-          'Voce esta no nivel **' + nivel + '** com **' + data.pontos + ' pontos**! Continue assim!',
-          'Cada acao sustentavel faz diferenca! Voce ja completou **' + data.missoesCompletas + ' missoes**!',
+          'Você está no nível **' + nivel + '** com **' + data.pontos + ' pontos**! Continue assim!',
+          'Cada ação sustentável faz diferença! Você já completou **' + data.missoesCompletas + ' missões**!',
           'O planeta agradece cada gesto seu! Continue evoluindo!',
-          'Nivel **' + nivel + '**! Voce e um exemplo de sustentabilidade!',
-          'Com **' + data.pontos + ' pontos**, voce esta fazendo a diferenca! Nao pare!',
+          'Nível **' + nivel + '**! Você é um exemplo de sustentabilidade!',
+          'Com **' + data.pontos + ' pontos**, você está fazendo a diferença! Não pare!',
         ];
         responder(randomItem(frases));
         break;
@@ -214,16 +214,16 @@ export default function Chat() {
       case 'sobre': {
         responder(
           '**RockySoulUp**\n\n' +
-          'O RockySoulUp e uma plataforma de gamificacao sustentavel que transforma acoes ecologicas em pontos, niveis e recompensas!\n\n' +
+          'O RockySoulUp é uma plataforma de gamificação sustentável que transforma ações ecológicas em pontos, níveis e recompensas!\n\n' +
           '**Nosso objetivo:**\n' +
-          '- Incentivar praticas sustentaveis no dia a dia\n' +
+          '- Incentivar práticas sustentáveis no dia a dia\n' +
           '- Recompensar quem cuida do planeta\n' +
           '- Criar uma comunidade de pessoas comprometidas com o meio ambiente\n\n' +
           '**Como funciona:**\n' +
-          '- Registre acoes sustentaveis e ganhe pontos\n' +
+          '- Registre ações sustentáveis e ganhe pontos\n' +
           '- Evolua de Semente a Expert\n' +
           '- Desbloqueie selos e resgate recompensas\n\n' +
-          'Junte-se a nos e faca a diferenca!'
+          'Junte-se a nós e faça a diferença!'
         );
         break;
       }
@@ -231,76 +231,76 @@ export default function Chat() {
       case 'registrar': {
         estadoRef.current = 'aguardandoAcao';
         const lista = MISSOES.map((m, i) => `${i + 1}. ${m.nome} (+${m.pontos} pontos)`).join('\n');
-        responder('**Escolha uma acao sustentavel para registrar:**\n\n' + lista + '\n\nDigite o numero da acao que voce realizou:');
+        responder('**Escolha uma ação sustentável para registrar:**\n\n' + lista + '\n\nDigite o número da ação que você realizou:');
         break;
       }
 
       case 'recompensa': {
         estadoRef.current = 'aguardandoResgate';
         const lista = RECOMPENSAS_CHAT.map((r, i) => `${i + 1}. ${r.nome} - ${r.pontos} pontos`).join('\n');
-        responder('**Recompensas disponiveis:**\n\n' + lista + '\n\nSeu saldo: **' + data.pontos + ' pontos**\n\nDigite o numero da recompensa que deseja resgatar:');
+        responder('**Recompensas disponíveis:**\n\n' + lista + '\n\nSeu saldo: **' + data.pontos + ' pontos**\n\nDigite o número da recompensa que deseja resgatar:');
         break;
       }
 
       case 'reciclagem': {
         adicionarPontos(30, 'Reciclagem');
-        responder('**Acao registrada: Reciclagem!**\n\n+30 pontos\nSeu novo saldo: **' + (data.pontos + 30) + ' pontos** | Nivel: **' + getNivel() + '**');
+        responder('**Ação registrada: Reciclagem!**\n\n+30 pontos\nSeu novo saldo: **' + (data.pontos + 30) + ' pontos** | Nível: **' + getNivel() + '**');
         break;
       }
 
       case 'transporte': {
-        adicionarPontos(50, 'Transporte Sustentavel');
-        responder('**Acao registrada: Transporte Sustentavel!**\n\n+50 pontos\nSeu novo saldo: **' + (data.pontos + 50) + ' pontos** | Nivel: **' + getNivel() + '**');
+        adicionarPontos(50, 'Transporte Sustentável');
+        responder('**Ação registrada: Transporte Sustentável!**\n\n+50 pontos\nSeu novo saldo: **' + (data.pontos + 50) + ' pontos** | Nível: **' + getNivel() + '**');
         break;
       }
 
       case 'energia': {
         adicionarPontos(20, 'Economia de Energia');
-        responder('**Acao registrada: Economia de Energia!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nivel: **' + getNivel() + '**');
+        responder('**Ação registrada: Economia de Energia!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nível: **' + getNivel() + '**');
         break;
       }
 
       case 'agua': {
-        adicionarPontos(20, 'Economia de Agua');
-        responder('**Acao registrada: Economia de Agua!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nivel: **' + getNivel() + '**');
+        adicionarPontos(20, 'Economia de Água');
+        responder('**Ação registrada: Economia de Água!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nível: **' + getNivel() + '**');
         break;
       }
 
       case 'bicicleta': {
         adicionarPontos(40, 'Bicicleta');
-        responder('**Acao registrada: Bicicleta!**\n\n+40 pontos\nSeu novo saldo: **' + (data.pontos + 40) + ' pontos** | Nivel: **' + getNivel() + '**');
+        responder('**Ação registrada: Bicicleta!**\n\n+40 pontos\nSeu novo saldo: **' + (data.pontos + 40) + ' pontos** | Nível: **' + getNivel() + '**');
         break;
       }
 
       case 'arvore': {
         adicionarPontos(100, 'Plantio');
-        responder('**Acao registrada: Plantio!**\n\n+100 pontos\nSeu novo saldo: **' + (data.pontos + 100) + ' pontos** | Nivel: **' + getNivel() + '**');
+        responder('**Ação registrada: Plantio!**\n\n+100 pontos\nSeu novo saldo: **' + (data.pontos + 100) + ' pontos** | Nível: **' + getNivel() + '**');
         break;
       }
 
       case 'banho': {
-        adicionarPontos(20, 'Banho Rapido');
-        responder('**Acao registrada: Banho Rapido!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nivel: **' + getNivel() + '**');
+        adicionarPontos(20, 'Banho Rápido');
+        responder('**Ação registrada: Banho Rápido!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nível: **' + getNivel() + '**');
         break;
       }
 
       case 'despedida': {
         const nome = data.nome;
-        responder('Tchau' + (nome ? ', ' + nome : '') + '! Foi otimo conversar com voce! Continue cuidando do planeta!');
+        responder('Tchau' + (nome ? ', ' + nome : '') + '! Foi ótimo conversar com você! Continue cuidando do planeta!');
         break;
       }
 
       default: {
         const nome = data.nome;
         responder(
-          'Hmm, nao tenho certeza se entendi!\n\n' +
-          (nome ? 'Ola, ' + nome + '! ' : '') + 'Aqui estao algumas coisas que posso fazer:\n\n' +
-          '- Digite **"registrar"** para registrar uma acao sustentavel\n' +
+          'Hmm, não tenho certeza se entendi!\n\n' +
+          (nome ? 'Olá, ' + nome + '! ' : '') + 'Aqui estão algumas coisas que posso fazer:\n\n' +
+          '- Digite **"registrar"** para registrar uma ação sustentável\n' +
           '- Digite **"pontos"** para ver seu saldo\n' +
-          '- Digite **"nivel"** para ver seu nivel\n' +
+          '- Digite **"nivel"** para ver seu nível\n' +
           '- Digite **"recompensa"** para resgatar recompensas\n' +
-          '- Digite **"ajuda"** para ver todas as opcoes\n' +
-          '- Ou digite algo como **"reciclei"**, **"usei bicicleta"**, **"economizei agua"**!'
+          '- Digite **"ajuda"** para ver todas as opções\n' +
+          '- Ou digite algo como **"reciclei"**, **"usei bicicleta"**, **"economizei água"**!'
         );
         break;
       }
