@@ -5,6 +5,23 @@
   to { transform: translateX(0); opacity: 1; }
 }
 
+.bg-app {
+  background-image: url('/imagens/floresta.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  position: relative;
+}
+
+.bg-app::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 0;
+  pointer-events: none;
+}
+
 .scroll-reveal {
   opacity: 0;
   transform: translateY(30px);

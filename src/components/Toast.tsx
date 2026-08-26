@@ -29,13 +29,14 @@ export function ToastContainer() {
   }, [addToast]);
 
   return (
-    <div className="fixed top-5 right-5 z-[9999] flex flex-col gap-3">
+    <div className="fixed top-20 right-4 z-[9999] flex flex-col gap-3">
       {toasts.map(t => (
         <div
           key={t.id}
-          className="bg-[#1a9e1a] text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium animate-[slideIn_0.3s_ease] max-w-xs"
+          className="bg-white/90 backdrop-blur-md text-gray-800 px-5 py-3 rounded-xl shadow-lg text-sm font-medium border border-[#22c55e]/30 animate-[slideIn_0.3s_ease] max-w-xs flex items-center gap-2"
         >
-          ✅ {t.mensagem}
+          <img src="/icons/check.svg" alt="" className="w-4 h-4 shrink-0" />
+          {t.mensagem}
         </div>
       ))}
     </div>

@@ -64,7 +64,7 @@ export default function Chat() {
     if (aberto && !initRef.current) {
       initRef.current = true;
       setTimeout(() => {
-        setMensagens([{ texto: 'Ola! Eu sou o RockySoul, seu assistente de sustentabilidade! 🌿 Como posso te ajudar?', remetente: 'bot' }]);
+        setMensagens([{ texto: 'Ola! Eu sou o RockySoul, seu assistente de sustentabilidade. Como posso te ajudar?', remetente: 'bot' }]);
       }, 350);
     }
   }, [aberto]);
@@ -92,7 +92,7 @@ export default function Chat() {
       }
       setNome(nome);
       estadoRef.current = 'normal';
-      responder(`Prazer em conhecer voce, ${nome}! 🌱 Bem-vindo ao RockySoulUp! Seu nivel atual e **${getNivel()}** e voce tem **${data.pontos} pontos**. Como posso te ajudar?`);
+      responder(`Prazer em conhecer voce, ${nome}! Bem-vindo ao RockySoulUp! Seu nivel atual e **${getNivel()}** e voce tem **${data.pontos} pontos**. Como posso te ajudar?`);
       return;
     }
 
@@ -102,7 +102,7 @@ export default function Chat() {
         const missao = MISSOES[num - 1];
         adicionarPontos(missao.pontos, missao.nome);
         estadoRef.current = 'normal';
-        responder(`Acao registrada com sucesso! ✅\n\n🌿 **${missao.nome}**\n⭐ +${missao.pontos} pontos\n\nSeu novo saldo: **${data.pontos + missao.pontos} pontos** | Nivel: **${getNivel()}**`);
+        responder(`Acao registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} pontos\n\nSeu novo saldo: **${data.pontos + missao.pontos} pontos** | Nivel: **${getNivel()}**`);
       } else {
         responder(`Numero invalido. Por favor, digite um numero de 1 a ${MISSOES.length}.`);
       }
@@ -117,10 +117,10 @@ export default function Chat() {
           subtrairPontos(recompensa.pontos);
           addResgate({ nome: recompensa.nome, pontos: recompensa.pontos, data: new Date().toLocaleString('pt-BR') });
           estadoRef.current = 'normal';
-          responder(`Recompensa resgatada com sucesso! 🎉\n\n${recompensa.emoji} **${recompensa.nome}**\n⭐ -${recompensa.pontos} pontos\n\nSeu novo saldo: **${data.pontos - recompensa.pontos} pontos**`);
+          responder(`Recompensa resgatada com sucesso!\n\n**${recompensa.nome}**\n-${recompensa.pontos} pontos\n\nSeu novo saldo: **${data.pontos - recompensa.pontos} pontos**`);
         } else {
           estadoRef.current = 'normal';
-          responder(`Voce nao tem pontos suficientes para esta recompensa. ❌\n\nPrecisa de **${recompensa.pontos} pontos**, mas tem apenas **${data.pontos} pontos**.`);
+          responder(`Voce nao tem pontos suficientes para esta recompensa.\n\nPrecisa de **${recompensa.pontos} pontos**, mas tem apenas **${data.pontos} pontos**.`);
         }
       } else {
         responder(`Numero invalido. Por favor, digite um numero de 1 a ${RECOMPENSAS_CHAT.length}.`);
@@ -134,30 +134,30 @@ export default function Chat() {
       case 'saudacoes': {
         const nome = data.nome;
         if (nome) {
-          responder(`Ola, ${nome}! 😊 Bem-vindo de volta ao RockySoulUp! Voce tem **${data.pontos} pontos** e esta no nivel **${getNivel()}**. Como posso te ajudar hoje?`);
+          responder(`Ola, ${nome}! Bem-vindo de volta ao RockySoulUp! Voce tem **${data.pontos} pontos** e esta no nivel **${getNivel()}**. Como posso te ajudar hoje?`);
         } else {
           estadoRef.current = 'aguardandoNome';
-          responder('Ola! 😊 Eu sou o RockySoul, seu assistente de sustentabilidade! Qual e o seu nome?');
+          responder('Ola! Eu sou o RockySoul, seu assistente de sustentabilidade! Qual e o seu nome?');
         }
         break;
       }
 
       case 'ajuda': {
         responder(
-          '📋 **Como posso te ajudar:**\n\n' +
-          '• **Registrar acao** - Para registrar uma acao sustentavel e ganhar pontos\n' +
-          '• **Meus pontos** - Para ver seu saldo atual\n' +
-          '• **Meu nivel** - Para ver seu nivel de evolucao\n' +
-          '• **Recompensas** - Para ver e resgatar recompensas\n' +
-          '• **Sugestao** - Para receber dicas de acoes sustentaveis\n' +
-          '• **Curiosidade** - Para aprender fatos interessantes\n\n' +
-          'Tambem posso entender comandos como "reciclei", "usei bicicleta", "economizei agua" e muito mais! 🌿'
+          '**Como posso te ajudar:**\n\n' +
+          '- **Registrar acao** - Para registrar uma acao sustentavel e ganhar pontos\n' +
+          '- **Meus pontos** - Para ver seu saldo atual\n' +
+          '- **Meu nivel** - Para ver seu nivel de evolucao\n' +
+          '- **Recompensas** - Para ver e resgatar recompensas\n' +
+          '- **Sugestao** - Para receber dicas de acoes sustentaveis\n' +
+          '- **Curiosidade** - Para aprender fatos interessantes\n\n' +
+          'Tambem posso entender comandos como "reciclei", "usei bicicleta", "economizei agua" e muito mais!'
         );
         break;
       }
 
       case 'pontos': {
-        responder(`📊 **Seu saldo de pontos:**\n\n⭐ **${data.pontos} pontos**\n📝 Total de missoes completas: ${data.missoesCompletas}\n📅 Pontos hoje: ${data.pontosHoje}`);
+        responder('**Seu saldo de pontos:**\n\n**' + data.pontos + ' pontos**\nTotal de missoes completas: ' + data.missoesCompletas + '\nPontos hoje: ' + data.pontosHoje);
         break;
       }
 
@@ -167,12 +167,12 @@ export default function Chat() {
           nivel === 'Semente' ? 'Broto (100 pontos)' :
           nivel === 'Broto' ? 'Arvore (300 pontos)' :
           nivel === 'Arvore' ? 'Expert (1000 pontos)' :
-          'Nivel maximo atingido! 🏆';
+          'Nivel maximo atingido!';
         responder(
-          `🏅 **Seu nivel atual:** ${nivel}\n\n` +
-          `⭐ **${data.pontos} pontos acumulados**\n\n` +
-          `🎯 Proximo nivel: **${proximoNivel}**\n\n` +
-          `Continue realizando acoes sustentaveis para evoluir!`
+          '**Seu nivel atual:** ' + nivel + '\n\n' +
+          '**' + data.pontos + ' pontos acumulados**\n\n' +
+          'Proximo nivel: **' + proximoNivel + '**\n\n' +
+          'Continue realizando acoes sustentaveis para evoluir!'
         );
         break;
       }
@@ -183,10 +183,10 @@ export default function Chat() {
         );
         if (missoesNaoFeitas.length > 0) {
           const lista = missoesNaoFeitas.map((m, i) => `${i + 1}. ${m.nome} (+${m.pontos} pontos)`).join('\n');
-          responder(`💡 **Sugestoes de acoes sustentaveis que voce ainda nao realizou:**\n\n${lista}\n\nDigite "registrar" para comecar!`);
+          responder('**Sugestoes de acoes sustentaveis que voce ainda nao realizou:**\n\n' + lista + '\n\nDigite "registrar" para comecar!');
         } else {
           const missao = randomItem(MISSOES);
-          responder(`✨ Parabens! Voce ja experimentou todas as acoes! Que tal repetir uma?\n\n🏅 Sugestao: **${missao.nome}** (+${missao.pontos} pontos)`);
+          responder('Parabens! Voce ja experimentou todas as acoes! Que tal repetir uma?\n\nSugestao: **' + missao.nome + '** (+' + missao.pontos + ' pontos)');
         }
         break;
       }
@@ -194,18 +194,18 @@ export default function Chat() {
       case 'curiosidade': {
         const curiosidade = CURIOSIDADES[indiceCuriosidade % CURIOSIDADES.length];
         setIndiceCuriosidade(prev => prev + 1);
-        responder(`🧠 **Curiosidade Sustentavel:**\n\n${curiosidade}\n\nQuer saber mais? Digite "curiosidade" novamente!`);
+        responder('**Curiosidade Sustentavel:**\n\n' + curiosidade + '\n\nQuer saber mais? Digite "curiosidade" novamente!');
         break;
       }
 
       case 'motivacao': {
         const nivel = getNivel();
         const frases = [
-          `💪 Voce esta no nivel **${nivel}** com **${data.pontos} pontos**! Continue assim!`,
-          `🌍 Cada acao sustentavel faz diferenca! Voce ja completou **${data.missoesCompletas} missoes**!`,
-          `🌱 O planeta agradece cada gesto seu! Continue evoluindo!`,
-          `🏆 Nivel **${nivel}**! Voce e um exemplo de sustentabilidade!`,
-          `⚡ Com **${data.pontos} pontos**, voce esta fazendo a diferenca! Nao pare!`,
+          'Voce esta no nivel **' + nivel + '** com **' + data.pontos + ' pontos**! Continue assim!',
+          'Cada acao sustentavel faz diferenca! Voce ja completou **' + data.missoesCompletas + ' missoes**!',
+          'O planeta agradece cada gesto seu! Continue evoluindo!',
+          'Nivel **' + nivel + '**! Voce e um exemplo de sustentabilidade!',
+          'Com **' + data.pontos + ' pontos**, voce esta fazendo a diferenca! Nao pare!',
         ];
         responder(randomItem(frases));
         break;
@@ -213,17 +213,17 @@ export default function Chat() {
 
       case 'sobre': {
         responder(
-          '🌿 **RockySoulUp**\n\n' +
+          '**RockySoulUp**\n\n' +
           'O RockySoulUp e uma plataforma de gamificacao sustentavel que transforma acoes ecologicas em pontos, niveis e recompensas!\n\n' +
-          '🎯 **Nosso objetivo:**\n' +
-          '• Incentivar praticas sustentaveis no dia a dia\n' +
-          '• Recompensar quem cuida do planeta\n' +
-          '• Criar uma comunidade de pessoas comprometidas com o meio ambiente\n\n' +
-          '🏆 **Como funciona:**\n' +
-          '• Registre acoes sustentaveis e ganhe pontos\n' +
-          '• Evolua de Semente a Expert\n' +
-          '• Desbloqueie selos e resgate recompensas\n\n' +
-          '🌱 Junte-se a nós e faca a diferenca!'
+          '**Nosso objetivo:**\n' +
+          '- Incentivar praticas sustentaveis no dia a dia\n' +
+          '- Recompensar quem cuida do planeta\n' +
+          '- Criar uma comunidade de pessoas comprometidas com o meio ambiente\n\n' +
+          '**Como funciona:**\n' +
+          '- Registre acoes sustentaveis e ganhe pontos\n' +
+          '- Evolua de Semente a Expert\n' +
+          '- Desbloqueie selos e resgate recompensas\n\n' +
+          'Junte-se a nos e faca a diferenca!'
         );
         break;
       }
@@ -231,76 +231,76 @@ export default function Chat() {
       case 'registrar': {
         estadoRef.current = 'aguardandoAcao';
         const lista = MISSOES.map((m, i) => `${i + 1}. ${m.nome} (+${m.pontos} pontos)`).join('\n');
-        responder(`📝 **Escolha uma acao sustentavel para registrar:**\n\n${lista}\n\nDigite o numero da acao que voce realizou:`);
+        responder('**Escolha uma acao sustentavel para registrar:**\n\n' + lista + '\n\nDigite o numero da acao que voce realizou:');
         break;
       }
 
       case 'recompensa': {
         estadoRef.current = 'aguardandoResgate';
-        const lista = RECOMPENSAS_CHAT.map((r, i) => `${i + 1}. ${r.emoji} ${r.nome} - ${r.pontos} pontos`).join('\n');
-        responder(`🎁 **Recompensas disponiveis:**\n\n${lista}\n\n💡 Seu saldo: **${data.pontos} pontos**\n\nDigite o numero da recompensa que deseja resgatar:`);
+        const lista = RECOMPENSAS_CHAT.map((r, i) => `${i + 1}. ${r.nome} - ${r.pontos} pontos`).join('\n');
+        responder('**Recompensas disponiveis:**\n\n' + lista + '\n\nSeu saldo: **' + data.pontos + ' pontos**\n\nDigite o numero da recompensa que deseja resgatar:');
         break;
       }
 
       case 'reciclagem': {
         adicionarPontos(30, 'Reciclagem');
-        responder(`♻️ **Acao registrada: Reciclagem!**\n\n⭐ +30 pontos\nSeu novo saldo: **${data.pontos + 30} pontos** | Nivel: **${getNivel()}**`);
+        responder('**Acao registrada: Reciclagem!**\n\n+30 pontos\nSeu novo saldo: **' + (data.pontos + 30) + ' pontos** | Nivel: **' + getNivel() + '**');
         break;
       }
 
       case 'transporte': {
         adicionarPontos(50, 'Transporte Sustentavel');
-        responder(`🚌 **Acao registrada: Transporte Sustentavel!**\n\n⭐ +50 pontos\nSeu novo saldo: **${data.pontos + 50} pontos** | Nivel: **${getNivel()}**`);
+        responder('**Acao registrada: Transporte Sustentavel!**\n\n+50 pontos\nSeu novo saldo: **' + (data.pontos + 50) + ' pontos** | Nivel: **' + getNivel() + '**');
         break;
       }
 
       case 'energia': {
         adicionarPontos(20, 'Economia de Energia');
-        responder(`💡 **Acao registrada: Economia de Energia!**\n\n⭐ +20 pontos\nSeu novo saldo: **${data.pontos + 20} pontos** | Nivel: **${getNivel()}**`);
+        responder('**Acao registrada: Economia de Energia!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nivel: **' + getNivel() + '**');
         break;
       }
 
       case 'agua': {
         adicionarPontos(20, 'Economia de Agua');
-        responder(`💧 **Acao registrada: Economia de Agua!**\n\n⭐ +20 pontos\nSeu novo saldo: **${data.pontos + 20} pontos** | Nivel: **${getNivel()}**`);
+        responder('**Acao registrada: Economia de Agua!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nivel: **' + getNivel() + '**');
         break;
       }
 
       case 'bicicleta': {
         adicionarPontos(40, 'Bicicleta');
-        responder(`🚲 **Acao registrada: Bicicleta!**\n\n⭐ +40 pontos\nSeu novo saldo: **${data.pontos + 40} pontos** | Nivel: **${getNivel()}**`);
+        responder('**Acao registrada: Bicicleta!**\n\n+40 pontos\nSeu novo saldo: **' + (data.pontos + 40) + ' pontos** | Nivel: **' + getNivel() + '**');
         break;
       }
 
       case 'arvore': {
         adicionarPontos(100, 'Plantio');
-        responder(`🌳 **Acao registrada: Plantio!**\n\n⭐ +100 pontos\nSeu novo saldo: **${data.pontos + 100} pontos** | Nivel: **${getNivel()}**`);
+        responder('**Acao registrada: Plantio!**\n\n+100 pontos\nSeu novo saldo: **' + (data.pontos + 100) + ' pontos** | Nivel: **' + getNivel() + '**');
         break;
       }
 
       case 'banho': {
         adicionarPontos(20, 'Banho Rapido');
-        responder(`🚿 **Acao registrada: Banho Rapido!**\n\n⭐ +20 pontos\nSeu novo saldo: **${data.pontos + 20} pontos** | Nivel: **${getNivel()}**`);
+        responder('**Acao registrada: Banho Rapido!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nivel: **' + getNivel() + '**');
         break;
       }
 
       case 'despedida': {
         const nome = data.nome;
-        responder(`Tchau${nome ? ', ' + nome : ''}! 👋 Foi otimo conversar com voce! Continue cuidando do planeta! 🌿`);
+        responder('Tchau' + (nome ? ', ' + nome : '') + '! Foi otimo conversar com voce! Continue cuidando do planeta!');
         break;
       }
 
       default: {
         const nome = data.nome;
         responder(
-          `🤔 Hmm, nao tenho certeza se entendi!\n\n` +
-          `${nome ? `Ola, ${nome}! ` : ''}Aqui estao algumas coisas que posso fazer:\n\n` +
-          '• Digite **"registrar"** para registrar uma acao sustentavel\n' +
-          '• Digite **"pontos"** para ver seu saldo\n' +
-          '• Digite **"nivel"** para ver seu nivel\n' +
-          '• Digite **"recompensa"** para resgatar recompensas\n' +
-          '• Digite **"ajuda"** para ver todas as opcoes\n' +
-          '• Ou digite algo como **"reciclei"**, **"usei bicicleta"**, **"economizei agua"**!'
+          'Hmm, nao tenho certeza se entendi!\n\n' +
+          (nome ? 'Ola, ' + nome + '! ' : '') + 'Aqui estao algumas coisas que posso fazer:\n\n' +
+          '- Digite **"registrar"** para registrar uma acao sustentavel\n' +
+          '- Digite **"pontos"** para ver seu saldo\n' +
+          '- Digite **"nivel"** para ver seu nivel\n' +
+          '- Digite **"recompensa"** para resgatar recompensas\n' +
+          '- Digite **"ajuda"** para ver todas as opcoes\n' +
+          '- Ou digite algo como **"reciclei"**, **"usei bicicleta"**, **"economizei agua"**!'
         );
         break;
       }
@@ -320,20 +320,20 @@ export default function Chat() {
       {!aberto && (
         <button
           onClick={() => setAberto(true)}
-          className="fixed bottom-6 right-6 z-50 w-[60px] h-[60px] rounded-full bg-gradient-to-r from-[#1a9e1a] to-[#0f6e2e] shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center text-white cursor-pointer"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#22c55e] shadow-lg hover:shadow-xl hover:bg-[#16a34a] transition-all flex items-center justify-center text-white cursor-pointer"
           aria-label="Abrir chat"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
           </svg>
         </button>
       )}
 
       {aberto && (
-        <div className="fixed bottom-6 right-6 z-50 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] h-[440px] max-h-[80vh]">
-          <div className="bg-gradient-to-r from-[#1a9e1a] to-[#0f6e2e] text-white p-4 flex items-center gap-3 shrink-0">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-xl font-bold shrink-0">
-              🌿
+        <div className="fixed bottom-6 right-6 z-50 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] h-[440px] max-h-[80vh] border border-white/40">
+          <div className="bg-[#22c55e] text-white p-4 flex items-center gap-3 shrink-0">
+            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+              <img src="/imagens/logo.png" alt="" className="w-6 h-6" />
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-bold text-lg leading-tight">RockySoulUp</h3>
@@ -344,9 +344,7 @@ export default function Chat() {
               className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
               aria-label="Fechar chat"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
           </div>
 
@@ -359,7 +357,7 @@ export default function Chat() {
                 <div
                   className={`px-4 py-2 max-w-[80%] text-sm leading-relaxed whitespace-pre-line ${
                     msg.remetente === 'user'
-                      ? 'bg-gradient-to-r from-[#1a9e1a] to-[#0f6e2e] text-white rounded-2xl rounded-tr-sm'
+                      ? 'bg-[#22c55e] text-white rounded-2xl rounded-tr-sm'
                       : 'bg-[#f0faf0] text-gray-800 rounded-2xl rounded-tl-sm'
                   }`}
                 >
@@ -382,11 +380,11 @@ export default function Chat() {
             />
             <button
               type="submit"
-              className="px-4 py-3 text-[#1a9e1a] hover:text-[#0f6e2e] transition-colors cursor-pointer"
+              className="px-4 py-3 text-[#22c55e] hover:text-[#16a34a] transition-colors cursor-pointer"
               aria-label="Enviar mensagem"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
             </button>
           </form>
