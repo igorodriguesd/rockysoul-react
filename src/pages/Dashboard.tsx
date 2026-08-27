@@ -1,64 +1,89 @@
 import { useEffect, useState } from 'react';
 import { useData } from '../context/DataContext';
-import { MISSOES, SELOS, RECOMPENSAS, USUARIOS_BASE, PASSADO } from '../data/constants';
-import HistoryChart from '../components/HistoryChart';
-import { showToast } from '../components/Toast';
+import { MISSOES, SELOS, USUARIOS_BASE } from '../data/constants';
+import VerificarModal from '../components/VerificarModal';
+import type { HistoricoEntrada } from '../types';
 
 interface RankingUser {
   nome: string;
   pontos: number;
 }
 
-const CATEGORIAS = ['Todos', 'Energia', 'Transporte', 'Natureza', 'Cupons'] as const;
-
-const MISAO_ICONES: Record<string, string> = {
-  reciclagem: '♻️',
-  transporte: '🚌',
-  energia: '⚡',
-  agua: '💧',
-  bicicleta: '🚲',
-  plantio: '🌳',
-  banho: '🚿',
+const CO2_MAP: Record<string, number> = {
+  reciclagem: 2.5,
+  transporte: 3.0,
+  energia: 1.5,
+  agua: 0.8,
+  bicicleta: 4.0,
+  plantio: 8.0,
+  banho: 0.5,
 };
 
-const SELO_ICONES: Record<string, string> = {
-  semente: '🌱',
-  broto: '🌿',
-  arvore: '🌳',
-  expert: '🏆',
+const MISSAO_ICONE_MAP: Record<string, string> = {
+  reciclagem: '/icons/reciclagem.svg',
+  transporte: '/icons/transporte.svg',
+  energia: '/icons/energia.svg',
+  agua: '/icons/agua.svg',
+  bicicleta: '/icons/bicicleta.svg',
+  plantio: '/icons/arvore.svg',
+  banho: '/icons/banho.svg',
 };
 
-function getNivelIndex(pontos: number): number {
-  if (pontos >= 1000) return 3;
-  if (pontos >= 300) return 2;
-  if ( pontos >= 100) return 1;
-  return 0;
+const NIVEL_ICONE: Record<string, string> = {
+  Semente: '/icons/semente.svg',
+  Broto: '/icons/broto.svg',
+  'Árvore': '/icons/arvore.svg',
+  Expert: '/icons/trofeu.svg',
+};
+
+const NIVEIS_MIN = [0, 100, 300, 1000];
+
+function getGreeting(nivel: string): string {
+  switch (nivel) {
+    case 'Semente': return 'Continue plantando sementes!';
+    case 'Broto': return 'Você está crescendo!';
+    case 'Árvore': return 'Que impacto incrível!';
+    case 'Expert': return 'Você é uma lenda!';
+    default: return 'Bem-vindo!';
+  }
 }
 
-function getProgressoPercent(pontos: number): number {
+function getProgressPercent(pontos: number): number {
   if (pontos >= 1000) return 100;
   if (pontos >= 300) return 30 + ((pontos - 300) / 700) * 70;
   if (pontos >= 100) return 10 + ((pontos - 100) / 200) * 20;
   return (pontos / 100) * 10;
 }
 
-function getGreeting(nivel: string): string {
-  switch (nivel) {
-    case 'Semente': return 'Continue plantando sementes!';
-    case 'Broto': return 'Voce esta crescendo!';
-    case 'Arvore': return 'Que impacto incrivel!';
-    case 'Expert': return 'Voce e uma lenda!';
-    default: return 'Bem-vindo!';
+function getNextLevel(pontos: number): { nome: string; falta: number } {
+  if (pontos < 100) return { nome: 'Broto', falta: 100 - pontos };
+  if (pontos < 300) return { nome: 'Árvore', falta: 300 - pontos };
+  if (pontos < 1000) return { nome: 'Expert', falta: 1000 - pontos };
+  return { nome: 'Expert', falta: 0 };
+}
+
+function timeAgo(data: string): string {
+  try {
+    const date = new Date(data);
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+    if (diff < 60) return 'agora';
+    if (diff < 3600) return `${Math.floor(diff / 60)}min`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
+    return `${Math.floor(diff / 86400)}d`;
+  } catch {
+    return '';
   }
 }
 
-function formatDate(dateStr: string): string {
-  return dateStr;
+function getMissaoIdByName(name: string): string | null {
+  const found = MISSOES.find(m => m.nome === name);
+  return found ? found.id : null;
 }
 
 export default function Dashboard() {
-  const { data, adicionarPontos, subtrairPontos, addResgate, getNivel, getSelosDesbloqueados } = useData();
-  const [categoriaFiltro, setCategoriaFiltro] = useState<string>('Todos');
+  const { data, getNivel, getSelosDesbloqueados } = useData();
+  const [missaoSelecionada, setMissaoSelecionada] = useState<(typeof MISSOES)[0] | null>(null);
 
   useEffect(() => {
     document.title = 'RockySoulUp - Dashboard';
@@ -66,365 +91,225 @@ export default function Dashboard() {
 
   const nivel = getNivel();
   const selosDesbloqueados = getSelosDesbloqueados();
-  const nivelIndex = getNivelIndex(data.pontos);
-  const progresso = getProgressoPercent(data.pontos);
-  const maxRanking = Math.max(...USUARIOS_BASE.map(u => u.pontos), data.pontos, 1);
+  const progresso = getProgressPercent(data.pontos);
+  const nextLevel = getNextLevel(data.pontos);
+  const nivelIndex = NIVEIS_MIN.findIndex((min, i) =>
+    i === NIVEIS_MIN.length - 1 ? data.pontos >= min : data.pontos >= min && data.pontos < NIVEIS_MIN[i + 1]
+  );
 
   const ranking: RankingUser[] = [
     ...USUARIOS_BASE.map(u => ({ nome: u.nome, pontos: u.pontos })),
-    { nome: data.nome || 'Voce', pontos: data.pontos },
+    { nome: data.nome || 'Você', pontos: data.pontos },
   ].sort((a, b) => b.pontos - a.pontos);
 
-  const historicoUltimo8 = data.historico.slice(0, 8);
+  const recentHistory = data.historico.slice(0, 4);
 
-  const labels7dias = PASSADO.map((_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (PASSADO.length - i));
-    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
-  });
-  labels7dias.push(new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }));
+  const totalCO2 = data.historico.reduce((acc, entry) => {
+    const missaoId = getMissaoIdByName(entry.nome);
+    return acc + (missaoId ? CO2_MAP[missaoId] || 0 : 0);
+  }, 0);
 
-  const dadosDiarios = [...PASSADO, data.pontosHoje || 0];
-  const dadosAcumulados = dadosDiarios.reduce<number[]>((acc, val) => {
-    const last = acc.length > 0 ? acc[acc.length - 1] : 0;
-    acc.push(last + val);
-    return acc;
-  }, []);
+  const arvoresEquiv = totalCO2 > 0 ? (totalCO2 / 22).toFixed(1) : '0';
+  const diasSeguidos = data.historico.length;
 
-  const recompensasFiltradas = categoriaFiltro === 'Todos'
-    ? RECOMPENSAS
-    : RECOMPENSAS.filter(r => r.categoria === categoriaFiltro);
-
-  function handleMissao(missao: typeof MISSOES[0]) {
-    adicionarPontos(missao.pontos, missao.nome);
-    showToast(`+${missao.pontos} pontos - ${missao.nome}`);
-  }
-
-  function handleResgatar(recompensa: typeof RECOMPENSAS[0]) {
-    if (data.pontos < recompensa.pontos) {
-      showToast(`Pontos insuficientes! Precisa de ${recompensa.pontos} pontos`);
-      return;
-    }
-    subtrairPontos(recompensa.pontos);
-    addResgate({
-      nome: recompensa.nome,
-      pontos: recompensa.pontos,
-      data: new Date().toLocaleString('pt-BR'),
-    });
-    showToast(`${recompensa.nome} resgatado por ${recompensa.pontos} pontos!`);
+  function handleMissao(missao: (typeof MISSOES)[0]) {
+    setMissaoSelecionada(missao);
   }
 
   return (
-    <div className="min-h-screen bg-[#f0faf0]">
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+    <div className="min-h-screen">
+      <div className="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
-        {/* Stat Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white rounded-2xl shadow-md p-5 flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#e6f5e6] rounded-xl flex items-center justify-center text-2xl">
-              ⭐
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Pontos Totais</p>
-              <p className="text-2xl font-bold text-[#1a9e1a]">{data.pontos}</p>
-            </div>
+        {/* Block 1: Greeting */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-5">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-gray-800 tracking-tight">
+              Olá, {data.nome || 'USUÁRIO'} !
+            </h1>
+            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#22c55e]/10 text-[#16a34a]">
+              <img src={NIVEL_ICONE[nivel] || '/icons/semente.svg'} className="w-3.5 h-3.5" alt="" />
+              {nivel}
+            </span>
           </div>
-          <div className="bg-white rounded-2xl shadow-md p-5 flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#e6f5e6] rounded-xl flex items-center justify-center text-2xl">
-              📊
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Pontos Hoje</p>
-              <p className="text-2xl font-bold text-[#1a9e1a]">{data.pontosHoje}</p>
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl shadow-md p-5 flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#e6f5e6] rounded-xl flex items-center justify-center text-2xl">
-              🎯
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Missoes Completas</p>
-              <p className="text-2xl font-bold text-[#1a9e1a]">{data.missoesCompletas}</p>
-            </div>
-          </div>
-          <div className="bg-white rounded-2xl shadow-md p-5 flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#e6f5e6] rounded-xl flex items-center justify-center text-2xl">
-              🏅
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Selos</p>
-              <p className="text-2xl font-bold text-[#1a9e1a]">{selosDesbloqueados.length} / {SELOS.length}</p>
-            </div>
+          <p className="text-sm text-gray-500 mt-1">{getGreeting(nivel)}</p>
+        </div>
+
+        {/* Block 2: 4 Stat Cards */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-5">
+          <div className="grid grid-cols-4 divide-x divide-gray-100">
+            {[
+              { label: 'Pontos Totais', value: data.pontos },
+              { label: 'Pontos Hoje', value: data.pontosHoje },
+              { label: 'Missões', value: data.missoesCompletas },
+              { label: 'Selos', value: `${selosDesbloqueados.length}/${SELOS.length}` },
+            ].map(stat => (
+              <div key={stat.label} className="flex flex-col items-center px-3">
+                <span className="text-2xl font-bold text-[#22c55e]">{stat.value}</span>
+                <span className="text-xs text-gray-400 mt-0.5">{stat.label}</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Avatar Message */}
-        <div className="bg-white rounded-2xl shadow-md p-6 flex items-center gap-5">
-          <div className="w-16 h-16 bg-gradient-to-br from-[#1a9e1a] to-[#4cc94c] rounded-full flex items-center justify-center text-3xl text-white font-bold shadow-lg">
-            {(data.nome || 'U')[0].toUpperCase()}
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-gray-800">
-              {data.nome ? `Ola, ${data.nome}!` : 'Bem-vindo ao RockySoulUp!'}
-            </h2>
-            <p className="text-[#1a9e1a] font-medium">{getGreeting(nivel)}</p>
-            <p className="text-sm text-gray-500 mt-1">Nivel: <span className="font-semibold text-[#1a9e1a]">{nivel}</span></p>
-          </div>
-        </div>
-
-        {/* Mission Registration Grid */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Registrar Missao</h3>
+        {/* Block 3: Mission Grid */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-5">
+          <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Registre Sua Ação</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {MISSOES.map(missao => (
               <button
                 key={missao.id}
                 onClick={() => handleMissao(missao)}
-                className="flex flex-col items-center gap-2 p-4 bg-[#f0faf0] border border-[#cce6cc] rounded-xl hover:bg-[#e0f5e0] hover:shadow-md transition-all duration-200 cursor-pointer group"
+                className="flex items-center gap-3 p-3 rounded-2xl border border-gray-100 hover:border-[#22c55e]/30 hover:bg-[#22c55e]/5 transition-all duration-150 cursor-pointer group"
               >
-                <span className="text-3xl group-hover:scale-110 transition-transform">
-                  {MISAO_ICONES[missao.id] || '🌱'}
-                </span>
-                <span className="text-sm font-medium text-gray-700 text-center">{missao.nome}</span>
-                <span className="text-xs text-[#1a9e1a] font-semibold bg-[#cce6cc] px-2 py-0.5 rounded-full">
-                  +{missao.pontos} pts
-                </span>
+                <img src={MISSAO_ICONE_MAP[missao.id]} className="w-6 h-6 shrink-0" alt="" />
+                <div className="flex flex-col items-start min-w-0">
+                  <span className="text-sm font-medium text-gray-700 truncate w-full">{missao.nome}</span>
+                  <span className="text-xs font-semibold text-[#22c55e]">+{missao.pontos}</span>
+                </div>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Level Progress Bar */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-3">Nivel</h3>
-          <div className="flex items-center gap-2 mb-2">
-            {SELOS.map((selo, i) => (
-              <span key={selo.id} className={`text-sm font-medium ${i <= nivelIndex ? 'text-[#1a9e1a]' : 'text-gray-400'}`}>
-                {SELO_ICONES[selo.id]} {selo.nome}
-              </span>
-            ))}
-          </div>
-          <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-700 ease-out"
-              style={{
-                width: `${Math.min(progresso, 100)}%`,
-                background: 'linear-gradient(90deg, #4cc94c, #1a9e1a, #0d7a0d)',
-              }}
-            />
-          </div>
-          <p className="text-sm text-gray-500 mt-2">{data.pontos} pontos</p>
-        </div>
+        {/* Block 4: Progress + Impact */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-        {/* Badges Section */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Selos</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {SELOS.map(selo => {
-              const desbloqueado = data.pontos >= selo.minPontos;
-              return (
+          {/* Progress */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-5">
+            <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Progresso</h3>
+            <div className="relative">
+              <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  key={selo.id}
-                  className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all ${
-                    desbloqueado
-                      ? 'bg-[#f0faf0] border-[#cce6cc] shadow-sm'
-                      : 'bg-gray-50 border-gray-200 opacity-40'
-                  }`}
-                >
-                  <span className="text-4xl">{SELO_ICONES[selo.id]}</span>
-                  <span className={`text-sm font-bold ${desbloqueado ? 'text-[#1a9e1a]' : 'text-gray-400'}`}>
-                    {selo.nome}
-                  </span>
-                  <span className="text-xs text-gray-500 text-center">{selo.descricao}</span>
-                  {desbloqueado ? (
-                    <span className="text-xs text-[#1a9e1a] font-semibold bg-[#cce6cc] px-2 py-0.5 rounded-full">
-                      Desbloqueado
-                    </span>
-                  ) : (
-                    <span className="text-xs text-gray-400">Faltam {selo.minPontos - data.pontos} pts</span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* History Section */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Historico</h3>
-          {historicoUltimo8.length === 0 ? (
-            <p className="text-gray-400 text-sm">Nenhuma acao registrada ainda.</p>
-          ) : (
-            <div className="space-y-2">
-              {historicoUltimo8.map((entry, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-3 bg-[#f0faf0] border border-[#cce6cc] rounded-xl"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-[#cce6cc] rounded-full flex items-center justify-center text-sm font-bold text-[#1a9e1a]">
-                      {i + 1}
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">{entry.nome}</span>
+                  className="h-full rounded-full transition-all duration-700 ease-out"
+                  style={{
+                    width: `${Math.min(progresso, 100)}%`,
+                    background: 'linear-gradient(90deg, #22c55e, #16a34a)',
+                  }}
+                />
+              </div>
+              <div className="flex justify-between mt-1.5">
+                {NIVEIS_MIN.map((min, i) => (
+                  <div key={i} className="flex flex-col items-center" style={{ marginLeft: i === 0 ? 0 : undefined }}>
+                    <div
+                      className={`w-2.5 h-2.5 rounded-full -mt-4 border-2 border-white ${
+                        data.pontos >= min ? 'bg-[#22c55e]' : 'bg-gray-300'
+                      }`}
+                    />
+                    <span className="text-[10px] text-gray-400 mt-1">{SELOS[i]?.nome}</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-[#1a9e1a]">+{entry.pontos} pts</span>
-                    <span className="text-xs text-gray-400">{formatDate(entry.data)}</span>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          )}
-        </div>
-
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-2xl shadow-md p-6">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Evolucao Diaria</h3>
-            <HistoryChart
-              labels={labels7dias}
-              series={[{ nome: 'Pontos', dados: dadosDiarios, cor: '#1a9e1a' }]}
-            />
-          </div>
-          <div className="bg-white rounded-2xl shadow-md p-6">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Acumulado</h3>
-            <HistoryChart
-              labels={labels7dias}
-              series={[{ nome: 'Acumulado', dados: dadosAcumulados, cor: '#0d7a0d' }]}
-            />
-          </div>
-        </div>
-
-        {/* Ranking */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Ranking</h3>
-          <div className="space-y-3">
-            {ranking.map((user, i) => {
-              const isYou = user.nome === (data.nome || 'Voce');
-              const barWidth = maxRanking > 0 ? (user.pontos / maxRanking) * 100 : 0;
-              return (
-                <div key={user.nome} className="flex items-center gap-3">
-                  <span className={`w-6 text-center font-bold text-sm ${i === 0 ? 'text-yellow-500' : i === 1 ? 'text-gray-400' : i === 2 ? 'text-amber-600' : 'text-gray-400'}`}>
-                    {i + 1}°
-                  </span>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className={`text-sm font-medium ${isYou ? 'text-[#1a9e1a] font-bold' : 'text-gray-700'}`}>
-                        {isYou ? `🌟 ${user.nome}` : user.nome}
-                      </span>
-                      <span className="text-sm font-semibold text-gray-500">{user.pontos} pts</span>
-                    </div>
-                    <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full transition-all duration-500"
-                        style={{
-                          width: `${barWidth}%`,
-                          background: isYou
-                            ? 'linear-gradient(90deg, #4cc94c, #1a9e1a)'
-                            : '#cce6cc',
-                        }}
-                      />
-                    </div>
+            <p className="text-xs text-gray-500 mt-3">
+              {data.pontos} pontos{nextLevel.falta > 0 ? ` · Faltam ${nextLevel.falta} pts para ${nextLevel.nome}` : ' · Nível máximo!'}
+            </p>
+            <div className="flex gap-3 mt-4">
+              {SELOS.map(selo => {
+                const unlocked = data.pontos >= selo.minPontos;
+                return (
+                  <div key={selo.id} className={`flex flex-col items-center gap-1 ${unlocked ? '' : 'opacity-30 grayscale'}`}>
+                    <img src={selo.icone} className="w-8 h-8" alt={selo.nome} />
+                    <span className="text-[10px] text-gray-500">{selo.nome}</span>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Impact */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-5">
+            <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3 flex items-center gap-2">
+              <img src="/icons/folha.svg" className="w-4 h-4" alt="" />
+              Impacto Ambiental
+            </h3>
+            <div className="grid grid-cols-3 gap-4 mt-4">
+              <div className="flex flex-col items-center">
+                <span className="text-2xl font-bold text-[#22c55e]">{totalCO2.toFixed(1)}</span>
+                <span className="text-[10px] text-gray-400 text-center mt-1">kg CO2 evitado</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-2xl font-bold text-[#22c55e]">{arvoresEquiv}</span>
+                <span className="text-[10px] text-gray-400 text-center mt-1">árvores equiv.</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-2xl font-bold text-[#22c55e]">{diasSeguidos}</span>
+                <span className="text-[10px] text-gray-400 text-center mt-1">dias seguidos</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Rewards Section */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Recompensas</h3>
+        {/* Block 5: Activity + Ranking */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-          {/* Category Filter Pills */}
-          <div className="flex flex-wrap gap-2 mb-5">
-            {CATEGORIAS.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setCategoriaFiltro(cat)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-                  categoriaFiltro === cat
-                    ? 'bg-[#1a9e1a] text-white shadow-md'
-                    : 'bg-[#f0faf0] text-gray-600 border border-[#cce6cc] hover:bg-[#e0f5e0]'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          {/* Recent Activity */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-5">
+            <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Atividade Recente</h3>
+            {recentHistory.length === 0 ? (
+              <p className="text-sm text-gray-400">Nenhuma ação registrada ainda.</p>
+            ) : (
+              <div className="space-y-2">
+                {recentHistory.map((entry: HistoricoEntrada, i: number) => {
+                  const missaoId = getMissaoIdByName(entry.nome);
+                  return (
+                    <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-50 transition-colors">
+                      {missaoId ? (
+                        <img src={MISSAO_ICONE_MAP[missaoId]} className="w-5 h-5 shrink-0" alt="" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full bg-gray-200 shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm text-gray-700 truncate block">{entry.nome}</span>
+                      </div>
+                      <span className="text-sm font-semibold text-[#22c55e] shrink-0">+{entry.pontos}</span>
+                      <span className="text-[10px] text-gray-400 shrink-0 w-8 text-right">{timeAgo(entry.data)}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
-          {/* Rewards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {recompensasFiltradas.map(recompensa => {
-              const podeResgatar = data.pontos >= recompensa.pontos;
-              return (
-                <div
-                  key={recompensa.id}
-                  className="relative bg-[#f0faf0] border border-[#cce6cc] rounded-xl p-4 flex flex-col gap-3 hover:shadow-md transition-all"
-                >
-                  {recompensa.badge && (
-                    <span className={`absolute top-2 right-2 text-xs font-bold px-2 py-0.5 rounded-full ${
-                      recompensa.badge === 'Novo' ? 'bg-blue-100 text-blue-600' : 'bg-yellow-100 text-yellow-600'
-                    }`}>
-                      {recompensa.badge}
-                    </span>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">
-                      {RECOMPENSAS.find(r => r.id === recompensa.id) === RECOMPENSAS[0] ? '🔋' :
-                       recompensa.categoria === 'Transporte' ? '🚌' :
-                       recompensa.categoria === 'Natureza' ? '🌿' :
-                       recompensa.categoria === 'Cupons' ? '🛒' : '⚡'}
-                    </span>
-                    <span className="text-sm font-bold text-gray-800">{recompensa.nome}</span>
-                  </div>
-                  <p className="text-xs text-gray-500">{recompensa.descricao}</p>
-                  <span className="text-sm font-bold text-[#1a9e1a]">{recompensa.pontos} pontos</span>
-                  <button
-                    onClick={() => handleResgatar(recompensa)}
-                    disabled={!podeResgatar}
-                    className={`w-full py-2 rounded-xl text-sm font-semibold transition-all ${
-                      podeResgatar
-                        ? 'bg-[#1a9e1a] text-white hover:bg-[#158515] cursor-pointer'
-                        : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+          {/* Mini Ranking */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-5">
+            <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">Ranking</h3>
+            <div className="space-y-2">
+              {ranking.slice(0, 5).map((user, i) => {
+                const isYou = user.nome === (data.nome || 'Você');
+                const posColor = i === 0 ? '#eab308' : i === 1 ? '#9ca3af' : i === 2 ? '#d97706' : '#9ca3af';
+                return (
+                  <div
+                    key={user.nome}
+                    className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
+                      isYou ? 'bg-[#22c55e]/8 border border-[#22c55e]/20' : ''
                     }`}
                   >
-                    Resgatar
-                  </button>
-                </div>
-              );
-            })}
+                    <span className="w-5 text-center text-sm font-bold" style={{ color: posColor }}>
+                      {i + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <span className={`text-sm truncate block ${isYou ? 'font-semibold text-[#16a34a]' : 'text-gray-700'}`}>
+                        {user.nome}
+                      </span>
+                    </div>
+                    <span className={`text-sm font-semibold shrink-0 ${isYou ? 'text-[#16a34a]' : 'text-gray-500'}`}>
+                      {user.pontos}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
-
-        {/* Redemption History */}
-        <div className="bg-white rounded-2xl shadow-md p-6">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Resgates</h3>
-          {data.resgates.length === 0 ? (
-            <p className="text-gray-400 text-sm">Nenhum resgate realizado ainda.</p>
-          ) : (
-            <div className="space-y-2">
-              {data.resgates.map((resgate, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-3 bg-[#f0faf0] border border-[#cce6cc] rounded-xl"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-[#cce6cc] rounded-full flex items-center justify-center text-sm font-bold text-[#1a9e1a]">
-                      🎁
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">{resgate.nome}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-red-500">-{resgate.pontos} pts</span>
-                    <span className="text-xs text-gray-400">{resgate.data}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
       </div>
+
+      {missaoSelecionada && (
+        <VerificarModal
+          aberto={true}
+          onFechar={() => setMissaoSelecionada(null)}
+          missao={missaoSelecionada}
+        />
+      )}
     </div>
   );
 }

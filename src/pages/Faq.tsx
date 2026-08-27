@@ -7,19 +7,19 @@ export default function Faq() {
 
   return (
     <div className="max-w-[700px] mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">Perguntas Frequentes</h1>
-      <p className="text-center text-gray-500 mb-10">Tire suas duvidas sobre o RockySoulUp</p>
+      <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Perguntas Frequentes</h1>
+      <p className="text-center text-white/70 mb-10">Tire suas dúvidas sobre o RockySoulUp</p>
 
       <div className="flex flex-col gap-3">
         {PERGUNTAS_FAQ.map((item, i) => (
-          <div key={i} className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div key={i} className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden border border-white/40">
             <button
               onClick={() => setAberto(aberto === i ? null : i)}
               className="w-full flex items-center justify-between px-6 py-4 text-left"
             >
               <span className="font-semibold text-gray-800 text-sm pr-4">{item.pergunta}</span>
               <svg
-                width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1a9e1a" strokeWidth="2"
+                width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"
                 className={`shrink-0 transition-transform duration-300 ${aberto === i ? 'rotate-180' : ''}`}
               >
                 <path d="m6 9 6 6 6-6" />

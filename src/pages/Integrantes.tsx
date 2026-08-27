@@ -6,20 +6,20 @@ export default function Integrantes() {
 
   return (
     <div className="max-w-[1100px] mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">Integrantes</h1>
-      <p className="text-center text-gray-500 mb-2">Conheca a equipe por tras do RockySoulUp</p>
-      <p className="text-center text-sm text-[#1a9e1a] font-medium mb-10">Turma 1TDSPG — FIAP 2026</p>
+      <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Integrantes</h1>
+      <p className="text-center text-white/70 mb-2">Conheça a equipe por trás do RockySoulUp</p>
+      <p className="text-center text-sm text-[#4ade80] font-medium mb-10">Turma 1TDSPG — FIAP 2026</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {INTEGRANTES.map(m => (
-          <div key={m.rm} className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+          <div key={m.rm} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-6 text-center hover:shadow-md transition-all border border-white/40 hover:scale-[1.02]">
             <img
               src={m.foto}
               alt={m.nome}
-              className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-[#cce6cc]"
+              className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-[#22c55e]/20"
             />
             <h3 className="font-bold text-gray-800 text-sm">{m.nome}</h3>
-            <p className="text-xs text-[#1a9e1a] font-medium mt-1 mb-4">{m.rm}</p>
+            <p className="text-xs text-[#22c55e] font-medium mt-1 mb-4">{m.rm}</p>
             <div className="flex justify-center gap-4">
               <a href={m.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-700 transition-colors" title="GitHub">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">

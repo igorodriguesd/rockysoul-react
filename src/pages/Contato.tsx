@@ -21,17 +21,13 @@ export default function Contato() {
 
   return (
     <div className="max-w-[600px] mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">Contato</h1>
-      <p className="text-center text-gray-500 mb-10">Entre em contato com a equipe RockySoulUp</p>
+      <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Contato</h1>
+      <p className="text-center text-white/70 mb-10">Entre em contato com a equipe RockySoulUp</p>
 
-      <div className="bg-white rounded-2xl shadow-md p-8">
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 border border-white/40">
         {enviado ? (
           <div className="text-center py-8">
-            <div className="w-16 h-16 mx-auto mb-4 bg-[#f0faf0] rounded-full flex items-center justify-center">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1a9e1a" strokeWidth="2">
-                <path d="M20 6L9 17l-5-5" />
-              </svg>
-            </div>
+            <img src="/icons/sucesso.svg" alt="Enviado" className="w-16 h-16 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-gray-800 mb-1">Mensagem enviada!</h3>
             <p className="text-gray-500">Obrigado pelo contato. Responderemos em breve.</p>
           </div>
@@ -42,8 +38,8 @@ export default function Contato() {
               <input
                 id="contato-nome"
                 type="text"
-                {...register('nome', { required: 'Nome e obrigatorio' })}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#1a9e1a] focus:ring-1 focus:ring-[#1a9e1a] transition-colors"
+                {...register('nome', { required: 'Nome é obrigatório' })}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60"
                 placeholder="Seu nome completo"
               />
               {errors.nome && <p className="text-red-500 text-xs mt-1">{errors.nome.message}</p>}
@@ -55,10 +51,10 @@ export default function Contato() {
                 id="contato-email"
                 type="email"
                 {...register('email', {
-                  required: 'Email e obrigatorio',
-                  pattern: { value: /^\S+@\S+$/i, message: 'Email invalido' }
+                  required: 'Email é obrigatório',
+                  pattern: { value: /^\S+@\S+$/i, message: 'Email inválido' }
                 })}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#1a9e1a] focus:ring-1 focus:ring-[#1a9e1a] transition-colors"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60"
                 placeholder="seu@email.com"
               />
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
@@ -68,9 +64,9 @@ export default function Contato() {
               <label htmlFor="contato-mensagem" className="block text-sm font-medium text-gray-700 mb-1">Mensagem</label>
               <textarea
                 id="contato-mensagem"
-                {...register('mensagem', { required: 'Mensagem e obrigatoria' })}
+                {...register('mensagem', { required: 'Mensagem é obrigatória' })}
                 rows={5}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#1a9e1a] focus:ring-1 focus:ring-[#1a9e1a] transition-colors resize-none"
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors resize-none bg-white/60"
                 placeholder="Escreva sua mensagem aqui..."
               />
               {errors.mensagem && <p className="text-red-500 text-xs mt-1">{errors.mensagem.message}</p>}
@@ -78,7 +74,7 @@ export default function Contato() {
 
             <button
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-[#1a9e1a] to-[#0f6e2e] text-white font-semibold rounded-xl hover:opacity-90 transition-opacity"
+              className="w-full py-3 bg-[#22c55e] text-white font-semibold rounded-xl hover:bg-[#16a34a] transition-colors"
             >
               Enviar Mensagem
             </button>
