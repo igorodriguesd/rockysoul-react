@@ -26,25 +26,53 @@ export default function Home() {
 
   return (
     <>
-      <section className="min-h-[70vh] flex items-center justify-center -mt-24">
-        <div className="text-center px-6 max-w-2xl">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4 drop-shadow-lg">
+      <section className="min-h-[70vh] flex flex-col items-center justify-center -mt-16 pt-10 pb-20">
+        <div className="text-center px-6 max-w-2xl flex flex-col items-center">
+          
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4 drop-shadow-lg">
             Transforme <span className="text-[#4ade80]">ações sustentáveis</span> em impacto real
           </h1>
-          <p className="text-lg text-white/80 mb-8 drop-shadow">
+          
+          <p className="text-base md:text-lg text-white/80 mb-8 drop-shadow">
             Ganhe pontos, suba de nível e ganhe recompensas por cada ação ecológica que você realiza.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-12 w-full max-w-md">
             <button
               onClick={handleComecar}
-              className="px-8 py-3.5 bg-[#22c55e] text-white font-bold rounded-xl hover:bg-[#16a34a] transition-colors text-center shadow-lg"
+              className="px-6 py-2.5 bg-[#22c55e] text-white font-bold rounded-xl hover:bg-[#16a34a] transition-colors text-center shadow-lg w-full sm:w-auto"
             >
               Começar Agora
             </button>
-            <Link to="/sobre" className="px-8 py-3.5 border-2 border-white/60 text-white font-semibold rounded-xl hover:bg-white/10 transition-colors text-center backdrop-blur-sm">
+            <Link 
+              to="/sobre" 
+              className="px-6 py-2.5 border-2 border-white/60 text-white font-semibold rounded-xl hover:bg-white/10 transition-colors text-center backdrop-blur-sm w-full sm:w-auto"
+            >
               Saiba Mais
             </Link>
           </div>
+
+          <div className="w-full max-w-lg mt-4 flex justify-center">
+            <style>
+              {`
+                @keyframes float {
+                  0% { transform: translateY(0px); }
+                  50% { transform: translateY(-15px); }
+                  100% { transform: translateY(0px); }
+                }
+                .floating-island {
+                  animation: float 6s ease-in-out infinite;
+                  filter: drop-shadow(0 25px 25px rgb(0 0 0 / 0.3));
+                }
+              `}
+            </style>
+            <img 
+              src="public\imagens\Ilha.png" 
+              alt="Ilha Flutuante com Cachoeira" 
+              className="floating-island max-w-full h-auto object-contain"
+            />
+          </div>
+
         </div>
       </section>
 
