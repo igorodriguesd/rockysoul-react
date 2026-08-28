@@ -16,7 +16,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <DataProvider>
-        <div className="bg-app min-h-screen flex flex-col">
+        {/* AQUI: Trocamos o 'bg-app' pelas classes do degradê */}
+        <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#0f3c22] from-0% via-[#68b37c] via-[55%] to-[#f4f9f5] to-100%">
           <Header />
           <main className="flex-1 pt-24 pb-8 px-4 relative z-10">
             <div className="max-w-[1100px] mx-auto">
