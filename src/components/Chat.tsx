@@ -292,43 +292,43 @@ export default function Chat() {
 
       case 'reciclagem': {
         adicionarPontos(30, 'Reciclagem');
-        responder('**Ação registrada: Reciclagem!**\n\n+30 pontos\nSeu novo saldo: **' + (data.pontos + 30) + ' pontos** | Nível: **' + getNivel() + '**');
+        responder('**Ação registrada: Reciclagem!**\n\n+30 pontos');
         break;
       }
 
       case 'transporte': {
         adicionarPontos(50, 'Transporte Sustentável');
-        responder('**Ação registrada: Transporte Sustentável!**\n\n+50 pontos\nSeu novo saldo: **' + (data.pontos + 50) + ' pontos** | Nível: **' + getNivel() + '**');
+        responder('**Ação registrada: Transporte Sustentável!**\n\n+50 pontos');
         break;
       }
 
       case 'energia': {
         adicionarPontos(20, 'Economia de Energia');
-        responder('**Ação registrada: Economia de Energia!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nível: **' + getNivel() + '**');
+        responder('**Ação registrada: Economia de Energia!**\n\n+20 pontos');
         break;
       }
 
       case 'agua': {
         adicionarPontos(20, 'Economia de Água');
-        responder('**Ação registrada: Economia de Água!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nível: **' + getNivel() + '**');
+        responder('**Ação registrada: Economia de Água!**\n\n+20 pontos');
         break;
       }
 
       case 'bicicleta': {
         adicionarPontos(40, 'Bicicleta');
-        responder('**Ação registrada: Bicicleta!**\n\n+40 pontos\nSeu novo saldo: **' + (data.pontos + 40) + ' pontos** | Nível: **' + getNivel() + '**');
+        responder('**Ação registrada: Bicicleta!**\n\n+40 pontos');
         break;
       }
 
       case 'arvore': {
         adicionarPontos(100, 'Plantio');
-        responder('**Ação registrada: Plantio!**\n\n+100 pontos\nSeu novo saldo: **' + (data.pontos + 100) + ' pontos** | Nível: **' + getNivel() + '**');
+        responder('**Ação registrada: Plantio!**\n\n+100 pontos');
         break;
       }
 
       case 'banho': {
         adicionarPontos(20, 'Banho Rápido');
-        responder('**Ação registrada: Banho Rápido!**\n\n+20 pontos\nSeu novo saldo: **' + (data.pontos + 20) + ' pontos** | Nível: **' + getNivel() + '**');
+        responder('**Ação registrada: Banho Rápido!**\n\n+20 pontos');
         break;
       }
 
