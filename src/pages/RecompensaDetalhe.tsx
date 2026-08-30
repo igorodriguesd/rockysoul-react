@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { RECOMPENSAS } from '../data/constants';
 import ResgatarModal from '../components/ResgatarModal';
+import GlassCard from '../components/GlassCard';
 
 export default function RecompensaDetalhe() {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +20,7 @@ export default function RecompensaDetalhe() {
   if (!recompensa) {
     return (
       <div className="max-w-[600px] mx-auto px-6 py-20 text-center">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-8">
+        <GlassCard className="p-8">
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Recompensa não encontrada</h1>
           <p className="text-sm text-gray-500 mb-6">O item que você procura não existe ou foi removido.</p>
           <Link
@@ -28,7 +29,7 @@ export default function RecompensaDetalhe() {
           >
             Voltar para Recompensas
           </Link>
-        </div>
+        </GlassCard>
       </div>
     );
   }
@@ -45,7 +46,7 @@ export default function RecompensaDetalhe() {
         Voltar para Recompensas
       </Link>
 
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-6 sm:p-8">
+      <GlassCard className="p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center mb-5">
           <div className="w-16 h-16 rounded-2xl bg-[#22c55e]/10 flex items-center justify-center shrink-0">
             <img src={recompensa.icone} alt="" className="w-9 h-9" />
@@ -87,7 +88,7 @@ export default function RecompensaDetalhe() {
         >
           {podeResgatar ? 'Resgatar recompensa' : `Faltam ${recompensa.pontos - data.pontos} pts para resgatar`}
         </button>
-      </div>
+      </GlassCard>
 
       {resgatarAberto && (
         <ResgatarModal

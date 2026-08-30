@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import GlassCard from '../components/GlassCard';
 
 interface ContatoForm {
   nome: string;
@@ -24,7 +25,7 @@ export default function Contato() {
       <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Contato</h1>
       <p className="text-center text-white/70 mb-10">Entre em contato com a equipe RockySoulUp</p>
 
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm p-8 border border-white/40">
+      <GlassCard className="p-8">
         {enviado ? (
           <div className="text-center py-8">
             <img src="/icons/sucesso.svg" alt="Enviado" className="w-16 h-16 mx-auto mb-4" />
@@ -39,7 +40,7 @@ export default function Contato() {
                 id="contato-nome"
                 type="text"
                 {...register('nome', { required: 'Nome é obrigatório' })}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60"
+                className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${errors.nome ? 'border-red-400' : 'border-gray-200'}`}
                 placeholder="Seu nome completo"
               />
               {errors.nome && <p className="text-red-500 text-xs mt-1">{errors.nome.message}</p>}
@@ -54,7 +55,7 @@ export default function Contato() {
                   required: 'Email é obrigatório',
                   pattern: { value: /^\S+@\S+$/i, message: 'Email inválido' }
                 })}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60"
+                className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${errors.email ? 'border-red-400' : 'border-gray-200'}`}
                 placeholder="seu@email.com"
               />
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
@@ -66,7 +67,7 @@ export default function Contato() {
                 id="contato-mensagem"
                 {...register('mensagem', { required: 'Mensagem é obrigatória' })}
                 rows={5}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors resize-none bg-white/60"
+                className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors resize-none bg-white/60 ${errors.mensagem ? 'border-red-400' : 'border-gray-200'}`}
                 placeholder="Escreva sua mensagem aqui..."
               />
               {errors.mensagem && <p className="text-red-500 text-xs mt-1">{errors.mensagem.message}</p>}
@@ -80,7 +81,7 @@ export default function Contato() {
             </button>
           </form>
         )}
-      </div>
+      </GlassCard>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { MISSOES, RECOMPENSAS, SELOS } from '../data/constants';
+import GlassCard from '../components/GlassCard';
 
 const PASSOS = [
   { icon: '/icons/reciclagem.svg', titulo: 'Registre sua ação', texto: 'Escolha uma das ações sustentáveis no Dashboard e informe o que você realizou hoje.' },
@@ -31,7 +31,7 @@ export default function Solucao() {
       </div>
 
       {/* O problema */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-6 mb-6">
+      <GlassCard className="p-6 mb-6">
         <div className="flex items-center gap-2 mb-3">
           <img src="/icons/alvo.svg" alt="" className="w-5 h-5" />
           <h2 className="text-lg font-bold text-gray-800">O problema</h2>
@@ -42,13 +42,13 @@ export default function Solucao() {
           transformar práticas sustentáveis do dia a dia em uma jornada gamificada: cada ação vira pontos,
           cada ponto vira nível, selo, recompensa e — principalmente — impacto mensurável no planeta.
         </p>
-      </div>
+      </GlassCard>
 
       {/* Como funciona */}
       <h2 className="text-2xl font-bold text-white mb-4 drop-shadow">Como funciona</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
         {PASSOS.map((passo, i) => (
-          <div key={passo.titulo} className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-5 flex flex-col gap-3">
+          <GlassCard key={passo.titulo} className="p-5 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <img src={passo.icon} alt="" className="w-8 h-8" />
               <span className="w-7 h-7 rounded-full bg-[#22c55e]/10 text-[#16a34a] flex items-center justify-center text-sm font-bold">
@@ -57,12 +57,12 @@ export default function Solucao() {
             </div>
             <h3 className="font-bold text-gray-800 text-sm">{passo.titulo}</h3>
             <p className="text-xs text-gray-500 leading-relaxed">{passo.texto}</p>
-          </div>
+          </GlassCard>
         ))}
       </div>
 
       {/* Ações sustentáveis */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-6 mb-6">
+      <GlassCard className="p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-gray-800">Ações sustentáveis</h2>
           <span className="text-xs text-gray-400">{MISSOES.length} ações disponíveis</span>
@@ -78,11 +78,11 @@ export default function Solucao() {
             </div>
           ))}
         </div>
-      </div>
+      </GlassCard>
 
       {/* Níveis + Diferenciais */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-6">
+        <GlassCard className="p-6">
           <h2 className="text-lg font-bold text-gray-800 mb-4">Níveis e selos</h2>
           <div className="flex items-center justify-between">
             {SELOS.map((selo, i) => (
@@ -94,9 +94,9 @@ export default function Solucao() {
               </div>
             ))}
           </div>
-        </div>
+        </GlassCard>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/40 p-6">
+        <GlassCard className="p-6">
           <h2 className="text-lg font-bold text-gray-800 mb-4">Diferenciais</h2>
           <ul className="space-y-2.5">
             {DIFERENCIAIS.map(item => (
@@ -106,23 +106,7 @@ export default function Solucao() {
               </li>
             ))}
           </ul>
-        </div>
-      </div>
-
-      {/* CTA */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <Link
-          to="/dashboard"
-          className="w-full sm:w-auto px-6 py-3 bg-[#22c55e] text-white font-semibold rounded-xl hover:bg-[#16a34a] transition-colors text-center"
-        >
-          Começar no Dashboard
-        </Link>
-        <Link
-          to="/recompensas"
-          className="w-full sm:w-auto px-6 py-3 bg-white/80 text-gray-700 font-semibold rounded-xl hover:bg-white border border-white/40 transition-colors text-center"
-        >
-          Ver recompensas
-        </Link>
+        </GlassCard>
       </div>
     </div>
   );
