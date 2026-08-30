@@ -1,36 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@300;400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+.font-brand {
+  font-family: 'Roboto Slab', serif;
+}
+
+.font-serif-display {
+  font-family: 'DM Serif Display', serif;
+}
+
+h1,
+h2 {
+  font-family: 'DM Serif Display', serif;
+  font-weight: 400;
+}
+
+.home-bg {
+  background: linear-gradient(180deg, #0c3a22 0%, #1b6740 30%, #2a8a55 62%, #349d62 85%, #2f9158 100%);
+}
 
 @keyframes slideIn {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
 
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(280px) rotate(540deg); opacity: 0; }
+}
+
 .bg-app {
-  background-image: url('/imagens/floresta.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background: linear-gradient(180deg, #0c3a22 0%, #1b6740 30%, #2a8a55 62%, #349d62 85%, #2f9158 100%);
   position: relative;
 }
 
-.bg-app::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 0;
-  pointer-events: none;
+.floating-island {
+  animation: float 6s ease-in-out infinite;
+  filter: drop-shadow(0 30px 30px rgba(0, 0, 0, 0.4));
 }
 
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  top: 0;
+  animation: confettiFall 1.2s ease-in forwards;
 }
 
-.scroll-reveal-visible {
-  opacity: 1;
-  transform: translateY(0);
+@keyframes floatCardFigma {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50% { transform: translateY(-6px) rotate(-1deg); }
+}
+
+@keyframes floatSlowFigma {
+  0%, 100% { transform: translateY(0px) rotate(2deg); }
+  50% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
+}
+
+.animate-float-slow {
+  animation: floatSlowFigma 8s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-card {
+  animation: floatCardFigma 7s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-hero {
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-side {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.glass-strong {
+  background: linear-gradient(160deg, rgba(7, 31, 18, 0.70), rgba(15, 60, 34, 0.60));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-island,
+  .confetti-piece,
+  .animate-float-slow,
+  .animate-float-card,
+  .animate-pulse-glow {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 html {
@@ -39,6 +132,6 @@ html {
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
 }

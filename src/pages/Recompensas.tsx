@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { RECOMPENSAS } from '../data/constants';
 import ResgatarModal from '../components/ResgatarModal';
@@ -19,7 +20,8 @@ export default function Recompensas() {
 
   return (
     <>
-      <div className="text-center mb-8">
+      <div className="max-w-[1100px] mx-auto px-6 py-12">
+        <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-white mb-2 drop-shadow">Recompensas</h1>
         <p className="text-white/70">Use seus pontos para resgatar recompensas reais</p>
         <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-white/40">
@@ -58,13 +60,13 @@ export default function Recompensas() {
                   {r.badge}
                 </span>
               )}
-              <div className="flex items-start gap-3 mb-3">
+              <Link to={`/recompensas/${r.id}`} className="flex items-start gap-3 mb-3 group">
                 <img src={r.icone} alt="" className="w-9 h-9 shrink-0" />
                 <div className="min-w-0">
-                  <h3 className="font-bold text-gray-800 text-sm">{r.nome}</h3>
+                  <h3 className="font-bold text-gray-800 text-sm group-hover:text-[#22c55e] transition-colors">{r.nome}</h3>
                   <p className="text-xs text-gray-500 mt-0.5">{r.descricao}</p>
                 </div>
-              </div>
+              </Link>
               <div className="mt-auto">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-sm font-bold text-[#22c55e]">{r.pontos} pontos</span>
@@ -111,6 +113,7 @@ export default function Recompensas() {
           recompensa={recompensaSelecionada}
         />
       )}
+      </div>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useData } from '../context/DataContext';
 import { showToast } from './Toast';
 import type { Recompensa } from '../types';
@@ -13,6 +13,20 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
   const { data, subtrairPontos, addResgate } = useData();
   const [sucesso, setSucesso] = useState(false);
   const [pontosRestantes, setPontosRestantes] = useState(0);
+
+  const fechar = useCallback(() => {
+    setSucesso(false);
+    onFechar();
+  }, [onFechar]);
+
+  useEffect(() => {
+    if (!aberto) return;
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') fechar();
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [aberto, fechar]);
 
   if (!aberto) return null;
 
@@ -32,18 +46,16 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
     showToast(`Resgate: ${recompensa.nome}`);
   }
 
-  function fechar() {
-    setSucesso(false);
-    onFechar();
-  }
-
   return (
     <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={fechar}>
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={sucesso ? 'Resgate confirmado' : `Resgatar ${recompensa.nome}`}
         className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-[400px] p-6 relative border border-white/40"
         onClick={e => e.stopPropagation()}
       >
-        <button onClick={fechar} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 z-10">
+        <button onClick={fechar} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 z-10" aria-label="Fechar">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
         </button>
 

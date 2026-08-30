@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useData } from '../context/DataContext';
+import { useChat } from '../context/ChatContext';
 import { MISSOES, RECOMPENSAS_CHAT, CURIOSIDADES } from '../data/constants';
 import type { ChatMessage } from '../types';
 
@@ -45,16 +46,26 @@ function randomItem<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+const SUGESTOES_RAPIDAS: { label: string; comando: string }[] = [
+  { label: 'Registrar ação', comando: 'registrar' },
+  { label: 'Meus pontos', comando: 'pontos' },
+  { label: 'Meu nível', comando: 'nivel' },
+  { label: 'Dica', comando: 'dica' },
+  { label: 'Recompensas', comando: 'recompensa' },
+];
+
 export default function Chat() {
-  const [aberto, setAberto] = useState(false);
   const [mensagens, setMensagens] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [indiceCuriosidade, setIndiceCuriosidade] = useState(0);
+  const [mostrarTeaser, setMostrarTeaser] = useState(false);
+  const [aguardandoEntrada, setAguardandoEntrada] = useState(false);
   const estadoRef = useRef<BotState>('normal');
   const initRef = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data, adicionarPontos, subtrairPontos, addResgate, getNivel, setNome } = useData();
+  const { aberto, abrirChat, fecharChat } = useChat();
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -63,11 +74,41 @@ export default function Chat() {
   useEffect(() => {
     if (aberto && !initRef.current) {
       initRef.current = true;
+      setMostrarTeaser(false);
       setTimeout(() => {
-        setMensagens([{ texto: 'Olá! Eu sou o RockySoul, seu assistente de sustentabilidade. Como posso te ajudar?', remetente: 'bot' }]);
+        setMensagens([{ texto: 'Olá! Eu sou o RockySoul, seu assistente de sustentabilidade.\n\nVocê pode **registrar ações**, ver seus **pontos e nível**, pedir **dicas** e **resgatar recompensas**.\n\nUse os atalhos abaixo ou digite o que quiser!', remetente: 'bot' }]);
       }, 350);
     }
   }, [aberto]);
+
+  useEffect(() => {
+    if (aberto) return;
+
+    let jaViu = false;
+    try {
+      jaViu = sessionStorage.getItem('rocky_chat_teaser') === '1';
+    } catch {
+      jaViu = false;
+    }
+    if (jaViu) return;
+
+    const t = setTimeout(() => setMostrarTeaser(true), 2500);
+    return () => clearTimeout(t);
+  }, [aberto]);
+
+  function marcarTeaserVisto() {
+    setMostrarTeaser(false);
+    try {
+      sessionStorage.setItem('rocky_chat_teaser', '1');
+    } catch {
+      setMostrarTeaser(false);
+    }
+  }
+
+  function abrirComTeaser() {
+    marcarTeaserVisto();
+    abrirChat();
+  }
 
   function adicionarMensagem(texto: string, remetente: 'user' | 'bot') {
     setMensagens(prev => [...prev, { texto, remetente }]);
@@ -92,6 +133,7 @@ export default function Chat() {
       }
       setNome(nome);
       estadoRef.current = 'normal';
+      setAguardandoEntrada(false);
       responder(`Prazer em conhecer você, ${nome}! Bem-vindo ao RockySoulUp! Seu nível atual é **${getNivel()}** e você tem **${data.pontos} pontos**. Como posso te ajudar?`);
       return;
     }
@@ -102,6 +144,7 @@ export default function Chat() {
         const missao = MISSOES[num - 1];
         adicionarPontos(missao.pontos, missao.nome);
         estadoRef.current = 'normal';
+        setAguardandoEntrada(false);
         responder(`Ação registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} pontos\n\nSeu novo saldo: **${data.pontos + missao.pontos} pontos** | Nível: **${getNivel()}**`);
       } else {
         responder(`Número inválido. Por favor, digite um número de 1 a ${MISSOES.length}.`);
@@ -117,9 +160,11 @@ export default function Chat() {
           subtrairPontos(recompensa.pontos);
           addResgate({ nome: recompensa.nome, pontos: recompensa.pontos, data: new Date().toLocaleString('pt-BR') });
           estadoRef.current = 'normal';
+          setAguardandoEntrada(false);
           responder(`Recompensa resgatada com sucesso!\n\n**${recompensa.nome}**\n-${recompensa.pontos} pontos\n\nSeu novo saldo: **${data.pontos - recompensa.pontos} pontos**`);
         } else {
           estadoRef.current = 'normal';
+          setAguardandoEntrada(false);
           responder(`Você não tem pontos suficientes para esta recompensa.\n\nPrecisa de **${recompensa.pontos} pontos**, mas tem apenas **${data.pontos} pontos**.`);
         }
       } else {
@@ -137,6 +182,7 @@ export default function Chat() {
           responder(`Olá, ${nome}! Bem-vindo de volta ao RockySoulUp! Você tem **${data.pontos} pontos** e está no nível **${getNivel()}**. Como posso te ajudar hoje?`);
         } else {
           estadoRef.current = 'aguardandoNome';
+          setAguardandoEntrada(true);
           responder('Olá! Eu sou o RockySoul, seu assistente de sustentabilidade! Qual é o seu nome?');
         }
         break;
@@ -230,6 +276,7 @@ export default function Chat() {
 
       case 'registrar': {
         estadoRef.current = 'aguardandoAcao';
+        setAguardandoEntrada(true);
         const lista = MISSOES.map((m, i) => `${i + 1}. ${m.nome} (+${m.pontos} pontos)`).join('\n');
         responder('**Escolha uma ação sustentável para registrar:**\n\n' + lista + '\n\nDigite o número da ação que você realizou:');
         break;
@@ -237,6 +284,7 @@ export default function Chat() {
 
       case 'recompensa': {
         estadoRef.current = 'aguardandoResgate';
+        setAguardandoEntrada(true);
         const lista = RECOMPENSAS_CHAT.map((r, i) => `${i + 1}. ${r.nome} - ${r.pontos} pontos`).join('\n');
         responder('**Recompensas disponíveis:**\n\n' + lista + '\n\nSeu saldo: **' + data.pontos + ' pontos**\n\nDigite o número da recompensa que deseja resgatar:');
         break;
@@ -315,32 +363,70 @@ export default function Chat() {
     ProcessarMensagem(texto);
   }
 
+  function handleAcaoRapida(comando: string) {
+    setInput('');
+    ProcessarMensagem(comando);
+  }
+
   return (
     <>
       {!aberto && (
-        <button
-          onClick={() => setAberto(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#22c55e] shadow-lg hover:shadow-xl hover:bg-[#16a34a] transition-all flex items-center justify-center text-white cursor-pointer"
-          aria-label="Abrir chat"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
-        </button>
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+          {mostrarTeaser && (
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={abrirComTeaser}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirComTeaser(); } }}
+              className="relative max-w-[260px] bg-white/95 backdrop-blur-xl rounded-2xl rounded-br-sm shadow-2xl border border-[#22c55e]/20 p-4 text-left cursor-pointer"
+            >
+              <button
+                onClick={(e) => { e.stopPropagation(); marcarTeaserVisto(); }}
+                className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="Dispensar dica"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+              <div className="flex items-start gap-3">
+                <img src="/imagens/logo.png" alt="" className="h-9 w-auto opacity-90 shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-[#16a34a]">RockySoul</p>
+                  <p className="text-sm text-gray-700 mt-0.5 leading-snug">
+                    Oi! Sou seu assistente de sustentabilidade. Digite "dica" ou "registrar" pra começar.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="relative">
+            <span className="absolute inset-0 rounded-full bg-[#22c55e] animate-ping opacity-20" aria-hidden="true" />
+            <button
+              onClick={abrirChat}
+              className="relative flex items-center gap-2.5 rounded-full bg-[#22c55e] shadow-xl hover:bg-[#16a34a] hover:shadow-2xl transition-all px-4 py-3.5 text-white cursor-pointer"
+              aria-label="Abrir chat"
+            >
+              <svg className="shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              <span className="text-sm font-semibold whitespace-nowrap">Fale com o RockySoul</span>
+            </button>
+          </div>
+        </div>
       )}
 
       {aberto && (
         <div className="fixed bottom-6 right-6 z-50 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] h-[440px] max-h-[80vh] border border-white/40">
           <div className="bg-[#22c55e] text-white p-4 flex items-center gap-3 shrink-0">
             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-              <img src="/imagens/logo.png" alt="" className="w-6 h-6" />
+              <img src="/imagens/logo.png" alt="" className="h-6 w-auto opacity-90" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-lg leading-tight">RockySoulUp</h3>
+              <h3 className="font-serif-display text-lg leading-tight">RockySoulUp</h3>
               <p className="text-white/80 text-xs">Assistente de Sustentabilidade</p>
             </div>
             <button
-              onClick={() => setAberto(false)}
+              onClick={fecharChat}
               className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
               aria-label="Fechar chat"
             >
@@ -369,6 +455,20 @@ export default function Chat() {
             ))}
             <div ref={messagesEndRef} />
           </div>
+
+          {!aguardandoEntrada && (
+            <div className="flex flex-wrap gap-1.5 px-3 pt-2 bg-gray-50 shrink-0">
+              {SUGESTOES_RAPIDAS.map(s => (
+                <button
+                  key={s.comando}
+                  onClick={() => handleAcaoRapida(s.comando)}
+                  className="text-xs font-medium text-[#16a34a] bg-[#22c55e]/10 hover:bg-[#22c55e]/20 rounded-full px-3 py-1.5 transition-colors cursor-pointer"
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="flex border-t border-gray-200 bg-white shrink-0">
             <input

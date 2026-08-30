@@ -1,9 +1,12 @@
 import { createContext, useContext, useCallback, type ReactNode } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import type { UserData, HistoricoEntrada, Resgate } from '../types';
-import { SELOS, NIVEIS } from '../data/constants';
+import type { UserData, HistoricoEntrada, Resgate, Missao } from '../types';
+import { SELOS, NIVEIS, MISSOES } from '../data/constants';
+import { showToast } from '../components/Toast';
 
 const STORAGE_KEY = 'rocky_user_data';
+
+const BONUS_DESAFIO = 30;
 
 const defaultData: UserData = {
   nome: '',
@@ -11,11 +14,29 @@ const defaultData: UserData = {
   pontos: 0,
   missoesCompletas: 0,
   pontosHoje: 0,
-  dataHoje: new Date().toDateString(),
+  dataHoje: '',
+  ultimoDia: '',
+  streak: 0,
+  ultimoDesafio: '',
   historico: [],
   selosDesbloqueados: [],
   resgates: [],
 };
+
+function hojeStr(): string {
+  return new Date().toDateString();
+}
+
+function ontemStr(): string {
+  return new Date(Date.now() - 86400000).toDateString();
+}
+
+function getDesafioDoDia(): Missao {
+  const hoje = new Date();
+  const inicioAno = new Date(hoje.getFullYear(), 0, 0);
+  const diaDoAno = Math.floor((hoje.getTime() - inicioAno.getTime()) / 86400000);
+  return MISSOES[diaDoAno % MISSOES.length];
+}
 
 interface DataContextType {
   data: UserData;
@@ -27,6 +48,9 @@ interface DataContextType {
   getNivel: () => string;
   getSelosDesbloqueados: () => string[];
   resetar: () => void;
+  desafioDoDia: Missao;
+  desafioBonusDisponivel: boolean;
+  resgatarBonusDesafio: () => void;
 }
 
 const DataContext = createContext<DataContextType | null>(null);
@@ -44,8 +68,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const adicionarPontos = useCallback((pontos: number, nomeMissao: string) => {
     setData(prev => {
-      const hoje = new Date().toDateString();
-      const dataAtualizada = prev.dataHoje === hoje ? prev : { ...prev, dataHoje: hoje, pontosHoje: 0 };
+      const hoje = hojeStr();
+      const ehNovoDia = prev.dataHoje !== hoje;
+      const streak = ehNovoDia
+        ? (prev.ultimoDia === ontemStr() ? prev.streak + 1 : 1)
+        : prev.streak;
+      const ultimoDia = ehNovoDia ? hoje : prev.ultimoDia;
+
+      const dataAtualizada = ehNovoDia
+        ? { ...prev, dataHoje: hoje, pontosHoje: 0, ultimoDia, streak }
+        : prev;
 
       const entrada: HistoricoEntrada = {
         nome: nomeMissao,
@@ -102,10 +134,41 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setData(defaultData);
   }, [setData]);
 
+  const desafioDoDia = getDesafioDoDia();
+  const desafioBonusDisponivel = data.ultimoDesafio !== hojeStr();
+
+  const resgatarBonusDesafio = useCallback(() => {
+    setData(prev => {
+      if (prev.ultimoDesafio === hojeStr()) return prev;
+
+      const entrada: HistoricoEntrada = {
+        nome: `Bônus do Desafio do Dia (+${BONUS_DESAFIO})`,
+        pontos: BONUS_DESAFIO,
+        data: new Date().toLocaleString('pt-BR'),
+      };
+
+      const novosPontos = prev.pontos + BONUS_DESAFIO;
+      const novosSelos = SELOS
+        .filter(s => novosPontos >= s.minPontos && !prev.selosDesbloqueados.includes(s.id))
+        .map(s => s.id);
+
+      return {
+        ...prev,
+        pontos: novosPontos,
+        pontosHoje: prev.pontosHoje + BONUS_DESAFIO,
+        ultimoDesafio: hojeStr(),
+        historico: [entrada, ...prev.historico].slice(0, 50),
+        selosDesbloqueados: [...prev.selosDesbloqueados, ...novosSelos],
+      };
+    });
+    showToast(`+${BONUS_DESAFIO} pontos - Bônus do Desafio do Dia`);
+  }, [setData]);
+
   return (
     <DataContext.Provider value={{
       data, setNome, setEmail, adicionarPontos, subtrairPontos,
       addResgate, getNivel, getSelosDesbloqueados, resetar,
+      desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio,
     }}>
       {children}
     </DataContext.Provider>

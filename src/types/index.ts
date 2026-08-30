@@ -26,7 +26,6 @@ export interface Recompensa {
   pontos: number;
   categoria: 'Energia' | 'Transporte' | 'Natureza' | 'Cupons';
   icone: string;
-  seloRequerido?: string;
   badge?: 'Novo' | 'Top 1';
 }
 
@@ -45,7 +44,6 @@ export interface Resgate {
 export interface UsuarioSimulado {
   nome: string;
   pontos: number;
-  historico: number[];
 }
 
 export interface ChatMessage {
@@ -60,6 +58,9 @@ export interface UserData {
   missoesCompletas: number;
   pontosHoje: number;
   dataHoje: string;
+  ultimoDia: string;
+  streak: number;
+  ultimoDesafio: string;
   historico: HistoricoEntrada[];
   selosDesbloqueados: string[];
   resgates: Resgate[];

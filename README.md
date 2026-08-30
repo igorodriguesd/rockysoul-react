@@ -1,58 +1,68 @@
 # RockySoulUp - Frontend React
 
-Plataforma gamificada de sustentabilidade desenvolvida com React, Vite, TypeScript e TailwindCSS. O projeto transforma acoes sustentaveis em pontos, niveis, selos e recompensas reais.
+Plataforma gamificada de sustentabilidade que transforma ações sustentáveis em pontos, níveis, selos e recompensas reais. Desenvolvida com **React + Vite + TypeScript + TailwindCSS** como aplicação SPA (Single Page Application).
 
-## Funcionalidades
+## Descrição
 
-- **Home** - Hero com video, cards "Como Funciona", grid de 7 acoes sustentaveis com contadores animados
-- **Dashboard** - Stats, registro de missoes, barra de progresso com niveis, selos desbloqueaveis, graficos canvas, ranking, 8 recompensas com filtros por categoria
-- **Verificar** - Selecao de acao com cards, upload de foto com preview, captura de GPS, pontuacao
-- **Chatbot** - Assistente virtual com 17 categorias de intencao, state machine, registro de acoes e resgate de recompensas por conversa
-- **Sobre** - Descricao do projeto, features, stack tecnologica
-- **FAQ** - Accordion animado com 6 perguntas frequentes
-- **Integrantes** - Equipe com fotos, RMs e links GitHub/LinkedIn
-- **Contato** - Formulario com React Hook Form e validacao TypeScript
+A RockySoulUp incentiva hábitos sustentáveis por meio da gamificação: o usuário registra ações do dia a dia (reciclar, usar transporte público, economizar energia/água, andar de bicicleta, plantar árvores), envia uma foto como comprovação, acumula pontos, evolui de nível (Semente → Broto → Árvore → Expert), desbloqueia selos, aparece no ranking global e troca pontos por recompensas reais.
 
-## Tecnologias
+## Tecnologias Utilizadas
 
-- **React** - Interface e componentizacao
+- **React 19** - Interface e componentização
 - **Vite** - Build e performance
-- **TypeScript** - Tipagem estatica
-- **TailwindCSS** - Estilizacao utilitaria
-- **React Router DOM** - Navegacao SPA
-- **React Hook Form** - Validacao de formularios
+- **TypeScript** - Tipagem estática obrigatória
+- **TailwindCSS** - Estilização utilitária de toda a interface
+- **React Router DOM** - Navegação SPA com rotas estáticas e dinâmicas
+- **React Hook Form** - Validação de formulários com TypeScript
 
-## Estrutura do Projeto
+## Páginas e Rotas
+
+| Rota | Página | Tipo |
+| --- | --- | --- |
+| `/` | Home | Estática |
+| `/dashboard` | Dashboard | Estática |
+| `/solucao` | Solução do Projeto | Estática |
+| `/recompensas` | Recompensas | Estática |
+| `/recompensas/:id` | Detalhe da Recompensa | **Dinâmica (useParams)** |
+| `/sobre` | Sobre | Estática |
+| `/faq` | FAQ | Estática |
+| `/integrantes` | Equipe | Estática |
+| `/contato` | Contato | Estática |
+
+## Estrutura de Pastas
 
 ```
-src/
-├── components/        # Componentes reutilizaveis
-│   ├── Sidebar.tsx    # Navegacao lateral fixa
-│   ├── Footer.tsx     # Rodape do site
-│   ├── Chat.tsx       # Chatbot completo com NLP
-│   ├── Toast.tsx      # Sistema de notificacoes
-│   ├── LoginModal.tsx # Modal de cadastro
-│   └── HistoryChart.tsx # Grafico canvas
-├── pages/             # Paginas da aplicacao
-│   ├── Home.tsx
-│   ├── Dashboard.tsx
-│   ├── Verificar.tsx
-│   ├── Sobre.tsx
-│   ├── Faq.tsx
-│   ├── Integrantes.tsx
-│   └── Contato.tsx
-├── context/
-│   └── DataContext.tsx # Gerenciamento de estado centralizado
-├── hooks/
-│   ├── useLocalStorage.ts  # Persistencia no localStorage
-│   └── useAnimations.ts    # Scroll-reveal e counter
-├── types/
-│   └── index.ts        # Interfaces TypeScript
-├── data/
-│   └── constants.ts    # Missoes, selos, niveis, recompensas
-├── App.tsx             # Rotas e layout principal
-├── main.tsx            # Ponto de entrada
-└── index.css           # Tailwind + animacoes
+rockysoul-react/
+├── public/
+│   ├── icons/          # Icones SVG da aplicacao
+│   └── imagens/        # Imagens do site (logo, ilha, integrantes)
+├── src/
+│   ├── components/     # Componentes reutilizaveis (Header, Footer, modais, Chat, Toast)
+│   │   ├── Header.tsx          # Navegacao principal
+│   │   ├── Footer.tsx          # Rodape do site
+│   │   ├── Chat.tsx            # Assistente virtual
+│   │   ├── Toast.tsx           # Sistema de notificacoes
+│   │   ├── LoginModal.tsx      # Cadastro com React Hook Form
+│   │   ├── VerificarModal.tsx  # Verificacao de acao por foto/GPS
+│   │   └── ResgatarModal.tsx   # Confirmacao de resgate
+│   ├── pages/          # Paginas da aplicacao (componentes React)
+│   │   ├── Home.tsx
+│   │   ├── Dashboard.tsx
+│   │   ├── Solucao.tsx
+│   │   ├── Recompensas.tsx
+│   │   ├── RecompensaDetalhe.tsx  # Rota dinamica com useParams
+│   │   ├── Sobre.tsx
+│   │   ├── Faq.tsx
+│   │   ├── Integrantes.tsx
+│   │   └── Contato.tsx
+│   ├── context/        # Estado global (DataContext, ChatContext)
+│   ├── hooks/          # Hooks personalizados (useLocalStorage)
+│   ├── data/           # Dados e constantes (missoes, selos, niveis, recompensas)
+│   ├── types/          # Interfaces TypeScript
+│   ├── App.tsx         # Rotas e layout principal
+│   ├── main.tsx        # Ponto de entrada
+│   └── index.css       # Tailwind + animacoes globais
+└── ...
 ```
 
 ## Como Executar
@@ -66,6 +76,9 @@ npm run dev
 
 # Gere a build de producao
 npm run build
+
+# Rode o linter
+npm run lint
 ```
 
 ## Responsividade
@@ -74,9 +87,13 @@ npm run build
 - **Tablet** - 768px
 - **Desktop** - 992px+
 
+## Imagens e Ícones do Projeto
+
+O projeto utiliza icons SVG proprietarios em `/public/icons` (reciclagem, transporte, energia, agua, bicicleta, arvore, banho, semente, broto, trofeu, folha, check e mais) e imagens em `/public/imagens` (logo da RockySoulUp, ilha flutuante da Home e fotos dos integrantes).
+
 ## Dados Persistidos
 
-Todas as informacoes do usuario sao salvas no `localStorage`:
+Todas as informacoes do usuario sao salvas no `localStorage`, via hook `useLocalStorage`:
 - Pontos totais e diarios
 - Missoes completadas
 - Historico de acoes
@@ -84,11 +101,18 @@ Todas as informacoes do usuario sao salvas no `localStorage`:
 - Resgates realizados
 - Dados do usuario (nome/email)
 
+## Repositório
+
+- **GitHub:** https://github.com/igorodriguesd/rockysoul-react
+- **Vídeo de apresentação (YouTube):** _link a definir_
+
 ## Integrantes
 
-- Igor Rodrigues de Santana (RM570651)
-- Diego Gomes Goncalves de Lima (RM570335)
-- Miguel Silva (RM572019)
-- Rafael Santos Mendonca Costa (RM572368)
+| Nome | RM | Turma | GitHub | LinkedIn |
+| --- | --- | --- | --- | --- |
+| Igor Rodrigues de Santana | RM570651 | 1TDSPG | [igorodriguesd](https://github.com/igorodriguesd) | [LinkedIn](https://linkedin.com/in/igor-rodrigues-135aa72b2) |
+| Diego Gomes Goncalves de Lima | RM570335 | 1TDSPG | [diegogomeslima](https://github.com/diegogomeslima) | [LinkedIn](https://linkedin.com/in/diego-gomes-76156a205) |
+| Miguel Silva | RM572019 | 1TDSPG | [miguelsilv](https://github.com/miguelsilv) | [LinkedIn](https://linkedin.com/in/miguel-silva-72364a200) |
+| Rafael Santos Mendonca Costa | RM572368 | 1TDSPG | [rafaelsantosmc](https://github.com/rafaelsantosmc) | [LinkedIn](https://linkedin.com/in/rafael-santos-mendonca-costa-086007247) |
 
 **Turma 1TDSPG - FIAP 2026**

@@ -36,13 +36,11 @@ export const RECOMPENSAS: Recompensa[] = [
 ];
 
 export const USUARIOS_BASE: UsuarioSimulado[] = [
-  { nome: 'Ana Silva', pontos: 0, historico: [35, 50, 20, 45, 30, 55, 40] },
-  { nome: 'Carlos Souza', pontos: 0, historico: [20, 40, 55, 30, 25, 50, 35] },
-  { nome: 'Maria Oliveira', pontos: 0, historico: [60, 30, 45, 50, 40, 25, 55] },
-  { nome: 'Pedro Santos', pontos: 0, historico: [25, 35, 30, 40, 55, 45, 20] },
+  { nome: 'Ana Silva', pontos: 520 },
+  { nome: 'Carlos Souza', pontos: 380 },
+  { nome: 'Maria Oliveira', pontos: 610 },
+  { nome: 'Pedro Santos', pontos: 290 },
 ];
-
-export const PASSADO: number[] = [30, 50, 20, 45, 35, 55];
 
 export const CURIOSIDADES: string[] = [
   'Reciclar uma latinha de alumínio economiza energia suficiente para ligar uma TV por 3 horas!',
@@ -68,13 +66,13 @@ export const INTEGRANTES = [
   { nome: 'Rafael Santos Mendonça Costa', rm: 'RM572368', foto: '/imagens/rafael.jpg', github: 'https://github.com/rafaelsantosmc', linkedin: 'https://linkedin.com/in/rafael-santos-mendonca-costa-086007247' },
 ];
 
-export const RECOMPENSAS_CHAT: { emoji: string; nome: string; pontos: number }[] = [
-  { emoji: '🔋', nome: 'Desconto Energia', pontos: 200 },
-  { emoji: '🚌', nome: 'Passe de Transporte', pontos: 350 },
-  { emoji: '🌱', nome: 'Muda de Árvore', pontos: 500 },
-  { emoji: '🛒', nome: 'Cupom Reciclagem', pontos: 150 },
-  { emoji: '🌿', nome: 'Kit Sustentável', pontos: 250 },
-  { emoji: '💧', nome: 'Desconto Água', pontos: 180 },
-  { emoji: '🚲', nome: 'Cupom Bicicleta', pontos: 400 },
-  { emoji: '🌳', nome: 'Adoção de Árvore', pontos: 800 },
+export const RECOMPENSAS_CHAT: { icone: string; nome: string; pontos: number }[] = [
+  { icone: '/icons/bateria.svg', nome: 'Desconto Energia', pontos: 200 },
+  { icone: '/icons/transporte.svg', nome: 'Passe de Transporte', pontos: 350 },
+  { icone: '/icons/muda.svg', nome: 'Muda de Árvore', pontos: 500 },
+  { icone: '/icons/carrinho.svg', nome: 'Cupom Reciclagem', pontos: 150 },
+  { icone: '/icons/folha.svg', nome: 'Kit Sustentável', pontos: 250 },
+  { icone: '/icons/agua.svg', nome: 'Desconto Água', pontos: 180 },
+  { icone: '/icons/bicicleta.svg', nome: 'Cupom Bicicleta', pontos: 400 },
+  { icone: '/icons/arvore.svg', nome: 'Adoção de Árvore', pontos: 800 },
 ];

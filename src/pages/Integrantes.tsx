@@ -8,7 +8,7 @@ export default function Integrantes() {
     <div className="max-w-[1100px] mx-auto px-6 py-12">
       <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Integrantes</h1>
       <p className="text-center text-white/70 mb-2">Conheça a equipe por trás do RockySoulUp</p>
-      <p className="text-center text-sm text-[#4ade80] font-medium mb-10">Turma 1TDSPG — FIAP 2026</p>
+      <p className="text-center text-sm text-[#4ade80] font-medium mb-10">Turma 1TDSPK — FIAP 2026</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {INTEGRANTES.map(m => (
