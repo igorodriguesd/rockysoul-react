@@ -1,22 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@300;400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
-.font-brand {
-  font-family: 'Roboto Slab', serif;
+@theme {
+  --font-brand: 'Roboto Slab', serif;
+  --font-serif-display: 'DM Serif Display', serif;
+
+  --animate-float-slow: float-slow 8s ease-in-out infinite;
+  --animate-float-card: float-card 7s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
 }
 
-.font-serif-display {
-  font-family: 'DM Serif Display', serif;
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-h1,
-h2 {
-  font-family: 'DM Serif Display', serif;
-  font-weight: 400;
-}
+  body {
+    margin: 0;
+    font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
 
-.home-bg {
-  background: linear-gradient(180deg, #0c3a22 0%, #1b6740 30%, #2a8a55 62%, #349d62 85%, #2f9158 100%);
+  h1,
+  h2 {
+    font-family: var(--font-serif-display);
+    font-weight: 400;
+  }
 }
 
 @keyframes slideIn {
@@ -30,38 +39,14 @@ h2 {
   100% { transform: translateY(0px); }
 }
 
-@keyframes confettiFall {
-  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(280px) rotate(540deg); opacity: 0; }
-}
-
-.bg-app {
-  background: linear-gradient(180deg, #0c3a22 0%, #1b6740 30%, #2a8a55 62%, #349d62 85%, #2f9158 100%);
-  position: relative;
-}
-
-.floating-island {
-  animation: float 6s ease-in-out infinite;
-  filter: drop-shadow(0 30px 30px rgba(0, 0, 0, 0.4));
-}
-
-.confetti-piece {
-  position: absolute;
-  width: 8px;
-  height: 14px;
-  border-radius: 2px;
-  top: 0;
-  animation: confettiFall 1.2s ease-in forwards;
-}
-
-@keyframes floatCardFigma {
-  0%, 100% { transform: translateY(0px) rotate(-2deg); }
-  50% { transform: translateY(-6px) rotate(-1deg); }
-}
-
-@keyframes floatSlowFigma {
+@keyframes float-slow {
   0%, 100% { transform: translateY(0px) rotate(2deg); }
   50% { transform: translateY(-8px) rotate(-1deg); }
+}
+
+@keyframes float-card {
+  0%, 100% { transform: translateY(0px) rotate(-2deg); }
+  50% { transform: translateY(-6px) rotate(-1deg); }
 }
 
 @keyframes pulseGlow {
@@ -69,48 +54,53 @@ h2 {
   50% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); }
 }
 
-.animate-float-slow {
-  animation: floatSlowFigma 8s ease-in-out infinite;
+@keyframes confettiFall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(280px) rotate(540deg); opacity: 0; }
 }
 
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+@utility bg-app {
+  background: linear-gradient(180deg, #0c3a22 0%, #1b6740 30%, #2a8a55 62%, #349d62 85%, #2f9158 100%);
+  position: relative;
 }
 
-.animate-float-card {
-  animation: floatCardFigma 7s ease-in-out infinite;
+@utility home-bg {
+  background: linear-gradient(180deg, #0c3a22 0%, #1b6740 30%, #2a8a55 62%, #349d62 85%, #2f9158 100%);
 }
 
-.animate-pulse-glow {
-  animation: pulseGlow 2.5s ease-in-out infinite;
-}
-
-.glass {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.glass-hero {
+@utility glass-hero {
   background: rgba(255, 255, 255, 0.10);
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.glass-side {
+@utility glass-side {
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.10);
 }
 
-.glass-strong {
+@utility glass-strong {
   background: linear-gradient(160deg, rgba(7, 31, 18, 0.70), rgba(15, 60, 34, 0.60));
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+@utility floating-island {
+  animation: float 6s ease-in-out infinite;
+  filter: drop-shadow(0 30px 30px rgba(0, 0, 0, 0.4));
+}
+
+@utility confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  top: 0;
+  animation: confettiFall 1.2s ease-in forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -124,14 +114,4 @@ h2 {
   html {
     scroll-behavior: auto;
   }
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  -webkit-font-smoothing: antialiased;
 }
