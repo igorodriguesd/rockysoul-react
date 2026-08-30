@@ -100,7 +100,7 @@ export default function Header() {
                   {data.nome?.trim()?.[0]?.toUpperCase() || 'U'}
                 </span>
                 <span className="hidden sm:flex flex-col items-start leading-tight">
-                  <span className="text-white text-xs font-semibold max-w-[90px] truncate">{data.nome.split(' ')[0]}</span>
+                  <span className="text-white text-xs font-semibold max-w-[90px] truncate">{data.nome?.trim()?.split(' ')?.[0] || 'Usuário'}</span>
                   <span className="text-[#4ade80] text-[10px] font-medium">{data.pontos} pts</span>
                 </span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform ${usuarioAberto ? 'rotate-180' : ''}`}>
