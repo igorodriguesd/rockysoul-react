@@ -145,7 +145,7 @@ export default function Chat() {
         adicionarPontos(missao.pontos, missao.nome);
         estadoRef.current = 'normal';
         setAguardandoEntrada(false);
-        responder(`Ação registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} pontos\n\nSeu novo saldo: **${data.pontos + missao.pontos} pontos** | Nível: **${getNivel()}**`);
+        responder(`Ação registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} pontos`);
       } else {
         responder(`Número inválido. Por favor, digite um número de 1 a ${MISSOES.length}.`);
       }
@@ -161,7 +161,7 @@ export default function Chat() {
           addResgate({ nome: recompensa.nome, pontos: recompensa.pontos, data: new Date().toLocaleString('pt-BR') });
           estadoRef.current = 'normal';
           setAguardandoEntrada(false);
-          responder(`Recompensa resgatada com sucesso!\n\n**${recompensa.nome}**\n-${recompensa.pontos} pontos\n\nSeu novo saldo: **${data.pontos - recompensa.pontos} pontos**`);
+          responder(`Recompensa resgatada com sucesso!\n\n**${recompensa.nome}**\n-${recompensa.pontos} pontos`);
         } else {
           estadoRef.current = 'normal';
           setAguardandoEntrada(false);
