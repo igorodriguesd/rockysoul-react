@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import LoginModal from './LoginModal';
 
@@ -19,17 +19,12 @@ export default function Header() {
   const [usuarioAberto, setUsuarioAberto] = useState(false);
   const [loginAberto, setLoginAberto] = useState(false);
   const { data, getNivel, resetar } = useData();
-  const location = useLocation();
   const navigate = useNavigate();
   const avatarRef = useRef<HTMLDivElement>(null);
 
   const usuarioLogado = Boolean(data.nome.trim());
 
   const nivel = getNivel();
-
-  const linksParaMostrar = location.pathname === '/'
-    ? links.filter(link => ['/', '/dashboard', '/solucao', '/recompensas', '/sobre'].includes(link.to))
-    : links;
 
   useEffect(() => {
     if (!usuarioAberto) return;
@@ -73,7 +68,7 @@ export default function Header() {
 
         <div className="flex items-center gap-6">
           <nav className="hidden md:flex items-center gap-4">
-            {linksParaMostrar.map(link => (
+            {links.map(link => (
               <NavLink
                 key={link.to}
                 to={link.to}
@@ -197,7 +192,7 @@ export default function Header() {
       {menuAberto && (
         <div className="fixed top-20 right-6 z-[100] md:hidden w-48 bg-white/90 backdrop-blur-xl shadow-lg rounded-2xl p-3">
           <nav className="flex flex-col gap-1">
-            {linksParaMostrar.map(link => (
+            {links.map(link => (
               <NavLink
                 key={link.to}
                 to={link.to}
