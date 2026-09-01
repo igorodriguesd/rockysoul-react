@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useData } from '../context/DataContext';
+import { VALIDATION_RULES, normalizeName, normalizeEmail } from '../utils/validation';
 
 interface Props {
   aberto: boolean;
@@ -19,6 +20,7 @@ export default function LoginModal({ aberto, onFechar }: Props) {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<LoginForm>();
 
   useEffect(() => {
@@ -32,10 +34,15 @@ export default function LoginModal({ aberto, onFechar }: Props) {
 
   if (!aberto) return null;
 
-  function onSubmit(data: LoginForm) {
-    setNome(data.nome.trim());
-    if (data.email.trim()) setEmail(data.email.trim().toLowerCase());
+  function handleClose() {
+    reset();
     onFechar();
+  }
+
+  function onSubmit(data: LoginForm) {
+    setNome(normalizeName(data.nome));
+    if (data.email.trim()) setEmail(normalizeEmail(data.email));
+    handleClose();
   }
 
   return (
@@ -47,7 +54,7 @@ export default function LoginModal({ aberto, onFechar }: Props) {
         className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-[380px] p-6 relative border border-white/40"
         onClick={e => e.stopPropagation()}
       >
-        <button onClick={onFechar} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600" aria-label="Fechar">
+        <button onClick={handleClose} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600" aria-label="Fechar">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
         </button>
 
@@ -66,28 +73,26 @@ export default function LoginModal({ aberto, onFechar }: Props) {
               id="login-nome"
               type="text"
               autoFocus
-              {...register('nome', { required: 'Informe seu nome' })}
-              placeholder="Seu nome"
+              {...register('nome', VALIDATION_RULES.nome)}
+              placeholder="Seu nome (mínimo 3 caracteres)"
               className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${
                 errors.nome ? 'border-red-400' : 'border-gray-200'
               }`}
             />
-            {errors.nome && <p className="text-red-500 text-xs mt-1">{errors.nome.message}</p>}
+            {errors.nome && <p className="text-red-500 text-xs mt-1">⚠️ {errors.nome.message}</p>}
           </div>
           <div>
-            <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1">Email (opcional)</label>
             <input
               id="login-email"
               type="email"
-              {...register('email', {
-                pattern: { value: /^\S+@\S+\.\S+$/i, message: 'Email inválido' },
-              })}
+              {...register('email', VALIDATION_RULES.emailOpcional)}
               placeholder="seu@email.com"
               className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${
                 errors.email ? 'border-red-400' : 'border-gray-200'
               }`}
             />
-            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+            {errors.email && <p className="text-red-500 text-xs mt-1">⚠️ {errors.email.message}</p>}
           </div>
           <button
             type="submit"
