@@ -66,15 +66,14 @@ function getProgressPercent(pontos: number): number {
 function getNextLevel(pontos: number): { nome: string; falta: number } {
   if (pontos < 100) return { nome: 'Broto', falta: 100 - pontos };
   if (pontos < 300) return { nome: 'Árvore', falta: 300 - pontos };
-  if (pontos < 600) return { nome: 'Expert', falta: 600 - pontos };
-  if (pontos < 1000) return { nome: 'Máximo', falta: 1000 - pontos };
+  if (pontos < 1000) return { nome: 'Expert', falta: 1000 - pontos };
   return { nome: 'Expert', falta: 0 };
 }
 
 function nivelPorPontos(pontos: number): string {
   if (pontos >= 1000) return 'Expert';
-  if (pontos >= 600) return 'Árvore';
-  if (pontos >= 300) return 'Broto';
+  if (pontos >= 300) return 'Árvore';
+  if (pontos >= 100) return 'Broto';
   return 'Semente';
 }
 

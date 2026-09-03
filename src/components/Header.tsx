@@ -95,11 +95,11 @@ export default function Header() {
                 aria-expanded={usuarioAberto}
                 aria-label="Menu do usuário"
               >
-                <span className="w-8 h-8 rounded-full bg-linear-to-br from-[#22c55e] to-[#16a34a] flex items-center justify-center text-white text-xs font-bold shadow-md">
-                  {data.nome[0].toUpperCase()}
+                <span className="w-8 h-8 rounded-full bg-gradient-to-br from-[#22c55e] to-[#16a34a] flex items-center justify-center text-white text-xs font-bold shadow-md">
+                  {data.nome?.trim()?.[0]?.toUpperCase() || 'U'}
                 </span>
                 <span className="hidden sm:flex flex-col items-start leading-tight">
-                  <span className="text-white text-xs font-semibold max-w-22.5 truncate">{data.nome.split(' ')[0]}</span>
+                  <span className="text-white text-xs font-semibold max-w-[90px] truncate">{data.nome?.trim()?.split(' ')?.[0] || 'Usuário'}</span>
                   <span className="text-[#4ade80] text-[10px] font-medium">{data.pontos} pts</span>
                 </span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform ${usuarioAberto ? 'rotate-180' : ''}`}>
@@ -123,8 +123,8 @@ export default function Header() {
             {usuarioAberto && (
               <div className="absolute right-0 top-full mt-3 w-64 rounded-2xl bg-white/95 backdrop-blur-xl shadow-2xl border border-white/40 p-3 z-120">
                 <div className="flex items-center gap-3 px-2 py-2 border-b border-gray-100 mb-2">
-                  <span className="w-11 h-11 rounded-full bg-linear-to-br from-[#22c55e] to-[#16a34a] flex items-center justify-center text-white text-sm font-bold shadow-md shrink-0">
-                    {data.nome[0].toUpperCase()}
+                  <span className="w-11 h-11 rounded-full bg-gradient-to-br from-[#22c55e] to-[#16a34a] flex items-center justify-center text-white text-sm font-bold shadow-md shrink-0">
+                    {data.nome?.trim()?.[0]?.toUpperCase() || 'U'}
                   </span>
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-gray-800 truncate">{data.nome}</p>
