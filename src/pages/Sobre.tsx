@@ -17,8 +17,8 @@ export default function Sobre() {
 
   return (
     <>
-      <div className="max-w-[1100px] mx-auto px-6 py-12">
-        <GlassCard className="p-8 text-center mb-12"> 
+      <div className="max-w-275 mx-auto px-6 py-12">
+        <GlassCard className="p-8 text-center mb-12">
           <h1 className="text-2xl font-bold text-gray-800 mb-3">Sobre o RockySoulUp</h1>
           <p className="text-gray-600 leading-relaxed mb-3 max-w-2xl mx-auto">
             O RockySoulUp é um projeto desenvolvido por estudantes da FIAP para o Challenge da turma 1TDSPK, com o propósito de unir tecnologia e sustentabilidade em uma única plataforma.

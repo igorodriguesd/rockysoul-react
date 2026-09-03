@@ -39,19 +39,19 @@ export default function LoginModal({ aberto, onFechar }: Props) {
     onFechar();
   }
 
-  function onSubmit(data: LoginForm) {
+  function onSubmit(data: LoginForm){
     setNome(normalizeName(data.nome));
     if (data.email.trim()) setEmail(normalizeEmail(data.email));
     handleClose();
   }
 
   return (
-    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onFechar}>
+    <div className="fixed inset-0 z-9998 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onFechar}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Entrar no RockySoulUp"
-        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-[380px] p-6 relative border border-white/40"
+        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-95 p-6 relative border border-white/40"
         onClick={e => e.stopPropagation()}
       >
         <button onClick={handleClose} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600" aria-label="Fechar">
@@ -75,9 +75,8 @@ export default function LoginModal({ aberto, onFechar }: Props) {
               autoFocus
               {...register('nome', VALIDATION_RULES.nome)}
               placeholder="Seu nome (mínimo 3 caracteres)"
-              className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${
-                errors.nome ? 'border-red-400' : 'border-gray-200'
-              }`}
+              className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${errors.nome ? 'border-red-400' : 'border-gray-200'
+                }`}
             />
             {errors.nome && <p className="text-red-500 text-xs mt-1">⚠️ {errors.nome.message}</p>}
           </div>
@@ -88,9 +87,8 @@ export default function LoginModal({ aberto, onFechar }: Props) {
               type="email"
               {...register('email', VALIDATION_RULES.emailOpcional)}
               placeholder="seu@email.com"
-              className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${
-                errors.email ? 'border-red-400' : 'border-gray-200'
-              }`}
+              className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${errors.email ? 'border-red-400' : 'border-gray-200'
+                }`}
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">⚠️ {errors.email.message}</p>}
           </div>

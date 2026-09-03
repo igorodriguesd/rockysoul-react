@@ -47,12 +47,12 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={fechar}>
+    <div className="fixed inset-0 z-9998 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={fechar}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label={sucesso ? 'Resgate confirmado' : `Resgatar ${recompensa.nome}`}
-        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-[400px] p-6 relative border border-white/40"
+        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-100 p-6 relative border border-white/40"
         onClick={e => e.stopPropagation()}
       >
         <button onClick={fechar} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 z-10" aria-label="Fechar">
