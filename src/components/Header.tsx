@@ -6,8 +6,8 @@ import LoginModal from './LoginModal';
 const links = [
   { to: '/', label: 'Home' },
   { to: '/dashboard', label: 'Dashboard' },
-  { to: '/solucao', label: 'Solução' },
   { to: '/recompensas', label: 'Recompensas' },
+  { to: '/solucao', label: 'Solução' },
   { to: '/sobre', label: 'Sobre' },
   { to: '/faq', label: 'FAQ' },
   { to: '/integrantes', label: 'Equipe' },
