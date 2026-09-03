@@ -55,11 +55,13 @@ export default function Recompensas() {
                 key={r.id}
                 className="glass-strong rounded-2xl p-5 flex flex-col hover:scale-[1.01] transition-all"
               >
-                {r.badge && (
-                  <span className="self-start px-2 py-0.5 bg-[#22c55e]/15 text-[#4ade80] text-[10px] font-semibold rounded-full mb-3">
-                    {r.badge}
-                  </span>
-                )}
+                <div className="h-6 mb-3 flex items-start">
+                  {r.badge && (
+                    <span className="self-start px-2 py-0.5 bg-[#22c55e]/15 text-[#4ade80] text-[10px] font-semibold rounded-full">
+                      {r.badge}
+                    </span>
+                  )}
+                </div>
                 <Link to={`/recompensas/${r.id}`} className="flex items-start gap-3 mb-3 group">
                   <img src={r.icone} alt="" className="w-9 h-9 shrink-0" />
                   <div className="min-w-0">
