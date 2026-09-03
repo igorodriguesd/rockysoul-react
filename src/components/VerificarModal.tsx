@@ -103,7 +103,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
         role="dialog"
         aria-modal="true"
         aria-label={sucesso ? 'Ação verificada' : missao.nome}
-        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-440px p-6 relative border border-white/40 max-h-[90vh] overflow-y-auto"
+        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-[620px] p-4 sm:p-5 relative border border-white/40 max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <button onClick={fechar} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 z-10" aria-label="Fechar">
@@ -111,7 +111,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
         </button>
 
         {sucesso ? (
-          <div className="text-center py-4 overflow-hidden">
+          <div className="text-center py-3 overflow-hidden">
             <div className="relative">
               {confetti.map((c, i) => (
                 <span
@@ -126,34 +126,34 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                   aria-hidden="true"
                 />
               ))}
-              <img src="/icons/sucesso.svg" alt="Sucesso" className="w-16 h-16 mx-auto mb-4" />
+              <img src="/icons/sucesso.svg" alt="Sucesso" className="w-14 h-14 mx-auto mb-3" />
             </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-1">Ação Verificada</h2>
+            <h2 className="text-lg font-bold text-gray-800 mb-1">Ação Verificada</h2>
             <p className="text-sm text-gray-500 mb-3">
               <strong>{missao.nome}</strong> registrada com sucesso.
             </p>
-            <p className="text-3xl font-bold text-[#22c55e] mb-6">+{pontosGanhos} pontos</p>
-            <button onClick={fechar} className="w-full py-3 bg-[#22c55e] text-white font-semibold rounded-xl hover:bg-[#16a34a] transition-colors">
+            <p className="text-2xl font-bold text-[#22c55e] mb-5">+{pontosGanhos} pontos</p>
+            <button onClick={fechar} className="w-full py-2.5 bg-[#22c55e] text-white font-semibold rounded-xl hover:bg-[#16a34a] transition-colors">
               Concluir
             </button>
           </div>
         ) : (
           <>
-            <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-center gap-3 mb-4">
               <img src={missao.icone} alt="" className="w-8 h-8" />
               <div>
-                <h2 className="text-lg font-bold text-gray-800">{missao.nome}</h2>
-                <p className="text-xs text-[#22c55e] font-semibold">+{missao.pontos} pontos</p>
+                <h2 className="text-base sm:text-lg font-bold text-gray-800">{missao.nome}</h2>
+                <p className="text-[11px] text-[#22c55e] font-semibold">+{missao.pontos} pontos</p>
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div>
                 <p className="text-sm font-medium text-gray-700 mb-2">Envie uma foto como comprovante *</p>
                 <input ref={fileRef} type="file" accept="image/*" onChange={handleFoto} className="hidden" aria-label="Enviar foto" />
                 {foto ? (
                   <div className="relative">
-                    <img src={foto} alt="Preview" className="w-full max-h-200px object-cover rounded-xl" />
+                    <img src={foto} alt="Preview" className="w-full max-h-[210px] object-cover rounded-xl" />
                     <button
                       type="button"
                       onClick={() => { setFoto(null); setFotoErro(true); fileRef.current!.value = ''; }}
@@ -167,11 +167,10 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                   <button
                     type="button"
                     onClick={() => fileRef.current?.click()}
-                    className={`w-full border-2 border-dashed rounded-xl py-8 transition-colors flex flex-col items-center gap-2 ${
-                      fotoErro
-                        ? 'border-red-300 text-red-400 hover:border-red-400 hover:text-red-500'
-                        : 'border-gray-300 text-gray-400 hover:border-[#22c55e] hover:text-[#22c55e]'
-                    }`}
+                    className={`w-full border-2 border-dashed rounded-xl py-8 transition-colors flex flex-col items-center gap-2 ${fotoErro
+                      ? 'border-red-300 text-red-400 hover:border-red-400 hover:text-red-500'
+                      : 'border-gray-300 text-gray-400 hover:border-[#22c55e] hover:text-[#22c55e]'
+                      }`}
                   >
                     <img src="/icons/camera.svg" alt="" className="w-7 h-7 opacity-50" />
                     <span className="text-sm">Clique para enviar foto</span>
@@ -207,7 +206,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
               <button
                 ref={confirmarButtonRef}
                 onClick={confirmar}
-                className="w-full py-3 bg-[#22c55e] text-white font-bold rounded-xl hover:bg-[#16a34a] transition-colors"
+                className="w-full py-2.75 bg-[#22c55e] text-white font-bold rounded-xl hover:bg-[#16a34a] transition-colors"
               >
                 Confirmar Ação
               </button>
