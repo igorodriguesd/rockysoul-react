@@ -82,7 +82,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const entrada: HistoricoEntrada = {
         nome: nomeMissao,
         pontos,
-        data: new Date().toLocaleString('pt-BR'),
+        data: new Date().toISOString(),
       };
 
       const novosPontos = dataAtualizada.pontos + pontos;
@@ -144,7 +144,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const entrada: HistoricoEntrada = {
         nome: `Bônus do Desafio do Dia (+${BONUS_DESAFIO})`,
         pontos: BONUS_DESAFIO,
-        data: new Date().toLocaleString('pt-BR'),
+        data: new Date().toISOString(),
       };
 
       const novosPontos = prev.pontos + BONUS_DESAFIO;
