@@ -95,7 +95,7 @@ export default function Header() {
                 aria-expanded={usuarioAberto}
                 aria-label="Menu do usuário"
               >
-                <span className="w-8 h-8 rounded-full bg-gradient-to-br from-[#22c55e] to-[#16a34a] flex items-center justify-center text-white text-xs font-bold shadow-md">
+                <span className="w-8 h-8 rounded-full bg-linear-to-br from-[#22c55e] to-[#16a34a] flex items-center justify-center text-white text-xs font-bold shadow-md">
                   {data.nome?.trim()?.[0]?.toUpperCase() || 'U'}
                 </span>
                 <span className="hidden sm:flex flex-col items-start leading-tight">
@@ -123,7 +123,7 @@ export default function Header() {
             {usuarioAberto && (
               <div className="absolute right-0 top-full mt-3 w-64 rounded-2xl bg-white/95 backdrop-blur-xl shadow-2xl border border-white/40 p-3 z-120">
                 <div className="flex items-center gap-3 px-2 py-2 border-b border-gray-100 mb-2">
-                  <span className="w-11 h-11 rounded-full bg-gradient-to-br from-[#22c55e] to-[#16a34a] flex items-center justify-center text-white text-sm font-bold shadow-md shrink-0">
+                  <span className="w-11 h-11 rounded-full bg-linear-to-br from-[#22c55e] to-[#16a34a] flex items-center justify-center text-white text-sm font-bold shadow-md shrink-0">
                     {data.nome?.trim()?.[0]?.toUpperCase() || 'U'}
                   </span>
                   <div className="min-w-0">
