@@ -98,12 +98,12 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
   }
 
   return (
-    <div className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={fechar}>
+    <div className="fixed inset-0 z-9998 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={fechar}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label={sucesso ? 'Ação verificada' : missao.nome}
-        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-[440px] p-6 relative border border-white/40 max-h-[90vh] overflow-y-auto"
+        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-440px p-6 relative border border-white/40 max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <button onClick={fechar} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 z-10" aria-label="Fechar">
@@ -153,7 +153,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                 <input ref={fileRef} type="file" accept="image/*" onChange={handleFoto} className="hidden" aria-label="Enviar foto" />
                 {foto ? (
                   <div className="relative">
-                    <img src={foto} alt="Preview" className="w-full max-h-[200px] object-cover rounded-xl" />
+                    <img src={foto} alt="Preview" className="w-full max-h-200px object-cover rounded-xl" />
                     <button
                       type="button"
                       onClick={() => { setFoto(null); setFotoErro(true); fileRef.current!.value = ''; }}
