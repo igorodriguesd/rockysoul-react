@@ -95,7 +95,7 @@ export default function Home() {
         <div className="relative z-10 pt-2 w-full max-w-[1900px] mx-auto flex items-center justify-between gap-0 px-6">
 
           {/* LEFT SIDEBAR — hidden on mobile */}
-          <aside className="hidden xl:flex flex-col items-end gap-7 w-[290px] flex-shrink-0 self-stretch justify-center">
+          <aside className="hidden xl:flex flex-col items-end gap-7 w-72.5 shrink-0 self-stretch justify-center">
             <div className="animate-float-slow">
               <div className="glass-side rounded-2xl px-6 py-5 flex items-center gap-3.5 opacity-85">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center animate-pulse-glow" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}>
@@ -131,7 +131,7 @@ export default function Home() {
 
           {/* ───── HERO CARD ───── */}
           <div
-            className="glass-hero rounded-3xl flex flex-col lg:flex-row items-center gap-10 lg:gap-0 relative overflow-hidden flex-1 min-w-0 max-w-[1040px]"
+            className="glass-hero rounded-3xl flex flex-col lg:flex-row items-center gap-10 lg:gap-0 relative overflow-hidden flex-1 min-w-0 max-w-260"
             style={{ padding: '56px 80px', minHeight: 500 }}
           >
             <div
@@ -190,7 +190,7 @@ export default function Home() {
             </div>
 
             {/* RIGHT: Floating island */}
-            <div className="flex-shrink-0 flex items-center justify-center relative" style={{ width: 400, height: 470 }}>
+            <div className="shrink-0 flex items-center justify-center relative" style={{ width: 400, height: 470 }}>
               <div className="floating-island absolute inset-0">
                 <img
                   src="/imagens/Ilha.png"
@@ -202,7 +202,7 @@ export default function Home() {
           </div>
 
           {/* RIGHT SIDEBAR — hidden on mobile */}
-          <aside className="hidden xl:flex flex-col items-start gap-7 w-[290px] flex-shrink-0 self-stretch justify-center">
+          <aside className="hidden xl:flex flex-col items-start gap-7 w-72.5 shrink-0 self-stretch justify-center">
             <div className="animate-float-slow" style={{ animationDelay: '2s' }}>
               <div className="glass-side rounded-2xl px-6 py-5 flex items-center gap-3.5 opacity-85">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #86efac, #4ade80)' }}>
