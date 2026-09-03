@@ -110,9 +110,9 @@ Todas as informacoes do usuario sao salvas no `localStorage`, via hook `useLocal
 
 | Nome | RM | Turma | GitHub | LinkedIn |
 | --- | --- | --- | --- | --- |
-| Igor Rodrigues de Santana | RM570651 | 1TDSPG | [igorodriguesd](https://github.com/igorodriguesd) | [LinkedIn](https://linkedin.com/in/igor-rodrigues-135aa72b2) |
-| Diego Gomes Goncalves de Lima | RM570335 | 1TDSPG | [diegogomeslima](https://github.com/diegogomeslima) | [LinkedIn](https://linkedin.com/in/diego-gomes-76156a205) |
-| Miguel Silva | RM572019 | 1TDSPG | [miguelsilv](https://github.com/miguelsilv) | [LinkedIn](https://linkedin.com/in/miguel-silva-72364a200) |
-| Rafael Santos Mendonca Costa | RM572368 | 1TDSPG | [rafaelsantosmc](https://github.com/rafaelsantosmc) | [LinkedIn](https://linkedin.com/in/rafael-santos-mendonca-costa-086007247) |
+| Igor Rodrigues de Santana | RM570651 | 1TDSPK | [igorodriguesd](https://github.com/igorodriguesd) | [LinkedIn](https://linkedin.com/in/igor-rodrigues-135aa72b2) |
+| Diego Gomes Goncalves de Lima | RM570335 | 1TDSPK | [dgxls](https://github.com/dgxls) | [LinkedIn](https://www.linkedin.com/in/diego-gomes-65339b408/) |
+| Miguel Silva | RM572019 | 1TDSPK | [miguelsilva71](https://github.com/miguelsilva71) | [LinkedIn](https://www.linkedin.com/in/miguel-silva-0a20073a9/) |
+| Rafael Santos Mendonca Costa | RM572368 | 1TDSPK | [RafaelSantos56](https://github.com/RafaelSantos56) | [LinkedIn](https://www.linkedin.com/in/rafael-santos-b09bba237/) |
 
-**Turma 1TDSPG - FIAP 2026**
+**Turma 1TDSPK - FIAP 2026**

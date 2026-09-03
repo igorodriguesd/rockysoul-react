@@ -337,7 +337,7 @@ export default function Dashboard() {
                 border: '1px solid rgba(74,222,128,0.2)',
               }}
             >
-              <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-10" style={{ background: 'radial-gradient(#4ade80, transparent)' }} />
+              <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(#4ade80, transparent)' }} />
               <div className="flex items-center gap-2 mb-3">
                 <BoltIcon />
                 <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Desafio do Dia</span>
@@ -382,12 +382,12 @@ export default function Dashboard() {
           </div>
 
           {/* Registrar ação */}
-          <div className="glass-strong rounded-2xl p-5">
+          <div className="glass-strong rounded-2xl p-5 flex-1 flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white font-semibold">Registrar Ação</h2>
               <span className="text-white/50 text-[13px]">{feitasHoje.size}/{MISSOES.length} hoje</span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 auto-rows-min flex-1 content-start">
               {MISSOES.map(missao => {
                 const cor = MISSAO_COR_MAP[missao.id] || '#4ade80';
                 const checked = feitasHoje.has(missao.nome);

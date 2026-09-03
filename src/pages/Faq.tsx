@@ -12,21 +12,21 @@ export default function Faq() {
 
       <div className="flex flex-col gap-3">
         {PERGUNTAS_FAQ.map((item, i) => (
-          <div key={i} className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm overflow-hidden border border-white/40">
+          <div key={i} className="glass-strong rounded-xl overflow-hidden">
             <button
               onClick={() => setAberto(aberto === i ? null : i)}
-              className="w-full flex items-center justify-between px-6 py-4 text-left"
+              className="w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer"
             >
-              <span className="font-semibold text-gray-800 text-sm pr-4">{item.pergunta}</span>
+              <span className="font-semibold text-white text-sm pr-4">{item.pergunta}</span>
               <svg
-                width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2"
+                width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2"
                 className={`shrink-0 transition-transform duration-300 ${aberto === i ? 'rotate-180' : ''}`}
               >
                 <path d="m6 9 6 6 6-6" />
               </svg>
             </button>
             <div className={`overflow-hidden transition-all duration-300 ${aberto === i ? 'max-h-60' : 'max-h-0'}`}>
-              <p className="px-6 pb-4 text-sm text-gray-500 leading-relaxed">
+              <p className="px-6 pb-4 text-sm text-white/55 leading-relaxed">
                 {item.resposta}
               </p>
             </div>

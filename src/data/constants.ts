@@ -61,9 +61,9 @@ export const PERGUNTAS_FAQ: { pergunta: string; resposta: string }[] = [
 
 export const INTEGRANTES = [
   { nome: 'Igor Rodrigues de Santana', rm: 'RM570651', foto: '/imagens/igor.jpg', github: 'https://github.com/igorodriguesd', linkedin: 'https://linkedin.com/in/igor-rodrigues-135aa72b2' },
-  { nome: 'Diego Gomes Goncalves de Lima', rm: 'RM570335', foto: '/imagens/diego.jpg', github: 'https://github.com/diegogomeslima', linkedin: 'https://linkedin.com/in/diego-gomes-76156a205' },
-  { nome: 'Miguel Silva', rm: 'RM572019', foto: '/imagens/miguel.jpg', github: 'https://github.com/miguelsilv', linkedin: 'https://linkedin.com/in/miguel-silva-72364a200' },
-  { nome: 'Rafael Santos Mendonça Costa', rm: 'RM572368', foto: '/imagens/rafael.jpg', github: 'https://github.com/rafaelsantosmc', linkedin: 'https://linkedin.com/in/rafael-santos-mendonca-costa-086007247' },
+  { nome: 'Diego Gomes Goncalves de Lima', rm: 'RM570335', foto: '/imagens/diego.jpg', github: 'https://github.com/dgxls', linkedin: 'https://www.linkedin.com/in/diego-gomes-65339b408/' },
+  { nome: 'Miguel Silva', rm: 'RM572019', foto: '/imagens/miguel.jpg', github: 'https://github.com/miguelsilva71', linkedin: 'https://www.linkedin.com/in/miguel-silva-0a20073a9/' },
+  { nome: 'Rafael Santos Mendonça Costa', rm: 'RM572368', foto: '/imagens/rafael.jpg', github: 'https://github.com/rafaelSantos56', linkedin: 'https://www.linkedin.com/in/rafael-santos-b09bba237/' },
 ];
 
 export const RECOMPENSAS_CHAT: { icone: string; nome: string; pontos: number }[] = [

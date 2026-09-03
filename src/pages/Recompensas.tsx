@@ -24,9 +24,9 @@ export default function Recompensas() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2 drop-shadow">Recompensas</h1>
           <p className="text-white/70">Use seus pontos para resgatar recompensas reais</p>
-          <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-white/40">
+          <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-full border border-[#4ade80]/25" style={{ background: 'rgba(74,222,128,0.08)' }}>
             <img src="/icons/trofeu.svg" alt="" className="w-4 h-4" />
-            <span className="text-sm font-semibold text-gray-800">{data.pontos} pontos disponíveis</span>
+            <span className="text-sm font-semibold text-white/85">{data.pontos} pontos disponíveis</span>
           </div>
         </div>
 
@@ -35,10 +35,11 @@ export default function Recompensas() {
             <button
               key={cat}
               onClick={() => setFiltro(cat)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${filtro === cat
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all cursor-pointer ${filtro === cat
                   ? 'bg-[#22c55e] text-white shadow-sm'
-                  : 'bg-white/60 text-gray-600 hover:bg-white/80 border border-white/40'
+                  : 'text-white/55 hover:text-white/85 border border-white/12'
                 }`}
+              style={filtro === cat ? undefined : { background: 'rgba(255,255,255,0.06)' }}
             >
               {cat}
             </button>
@@ -52,33 +53,31 @@ export default function Recompensas() {
             return (
               <div
                 key={r.id}
-                className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-white/40 p-5 flex flex-col hover:shadow-md hover:scale-[1.01] transition-all"
+                className="glass-strong rounded-2xl p-5 flex flex-col hover:scale-[1.01] transition-all"
               >
-                <div className="h-6 mb-3 flex items-start">
-                  {r.badge && (
-                    <span className="self-start px-2 py-0.5 bg-[#22c55e]/10 text-[#16a34a] text-[10px] font-semibold rounded-full">
-                      {r.badge}
-                    </span>
-                  )}
-                </div>
+                {r.badge && (
+                  <span className="self-start px-2 py-0.5 bg-[#22c55e]/15 text-[#4ade80] text-[10px] font-semibold rounded-full mb-3">
+                    {r.badge}
+                  </span>
+                )}
                 <Link to={`/recompensas/${r.id}`} className="flex items-start gap-3 mb-3 group">
                   <img src={r.icone} alt="" className="w-9 h-9 shrink-0" />
                   <div className="min-w-0">
-                    <h3 className="font-bold text-gray-800 text-sm group-hover:text-[#22c55e] transition-colors">{r.nome}</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">{r.descricao}</p>
+                    <h3 className="font-bold text-white text-sm group-hover:text-[#4ade80] transition-colors">{r.nome}</h3>
+                    <p className="text-xs text-white/45 mt-0.5">{r.descricao}</p>
                   </div>
                 </Link>
                 <div className="mt-auto">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-bold text-[#22c55e]">{r.pontos} pontos</span>
-                    <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{r.categoria}</span>
+                    <span className="text-sm font-bold text-[#4ade80]">{r.pontos} pontos</span>
+                    <span className="text-[10px] text-white/45 bg-white/10 px-2 py-0.5 rounded-full">{r.categoria}</span>
                   </div>
                   <button
                     onClick={() => setRecompensaSelecionada(r)}
                     disabled={!podeResgatar}
                     className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all ${podeResgatar
-                        ? 'bg-[#22c55e] text-white hover:bg-[#16a34a]'
-                        : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        ? 'bg-[#22c55e] text-white hover:bg-[#16a34a] cursor-pointer'
+                        : 'bg-white/8 text-white/35 cursor-not-allowed'
                       }`}
                   >
                     {jaResgatou ? 'Resgatado' : podeResgatar ? 'Resgatar' : 'Pontos insuficientes'}
@@ -92,14 +91,14 @@ export default function Recompensas() {
         {data.resgates.length > 0 && (
           <div>
             <h2 className="text-xl font-bold text-white mb-4 drop-shadow">Histórico de Resgates</h2>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-sm border border-white/40 divide-y divide-gray-100">
+            <div className="glass-strong rounded-2xl divide-y divide-white/8">
               {data.resgates.map((rg, i) => (
                 <div key={i} className="flex items-center justify-between px-5 py-3">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-800 truncate">{rg.nome}</p>
-                    <p className="text-[10px] text-gray-400">{rg.data}</p>
+                    <p className="text-sm font-medium text-white/85 truncate">{rg.nome}</p>
+                    <p className="text-[10px] text-white/40">{rg.data}</p>
                   </div>
-                  <span className="text-sm font-semibold text-red-500 shrink-0">-{rg.pontos} pts</span>
+                  <span className="text-sm font-semibold text-red-400 shrink-0">-{rg.pontos} pts</span>
                 </div>
               ))}
             </div>

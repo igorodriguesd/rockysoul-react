@@ -34,9 +34,9 @@ export default function Solucao() {
       <GlassCard className="p-6 mb-6">
         <div className="flex items-center gap-2 mb-3">
           <img src="/icons/alvo.svg" alt="" className="w-5 h-5" />
-          <h2 className="text-lg font-bold text-gray-800">O problema</h2>
+          <h2 className="text-lg font-bold text-white">O problema</h2>
         </div>
-        <p className="text-sm text-gray-600 leading-relaxed">
+        <p className="text-sm text-white/60 leading-relaxed">
           Muitas pessoas querem adotar hábitos mais sustentáveis, mas não enxergam o impacto concreto de suas
           pequenas ações. Falta estímulo, acompanhamento e reconhecimento. A RockySoulUp resolve isso ao
           transformar práticas sustentáveis do dia a dia em uma jornada gamificada: cada ação vira pontos,
@@ -51,12 +51,12 @@ export default function Solucao() {
           <GlassCard key={passo.titulo} className="p-5 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <img src={passo.icon} alt="" className="w-8 h-8" />
-              <span className="w-7 h-7 rounded-full bg-[#22c55e]/10 text-[#16a34a] flex items-center justify-center text-sm font-bold">
+              <span className="w-7 h-7 rounded-full bg-[#22c55e]/15 text-[#4ade80] flex items-center justify-center text-sm font-bold">
                 {i + 1}
               </span>
             </div>
-            <h3 className="font-bold text-gray-800 text-sm">{passo.titulo}</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">{passo.texto}</p>
+            <h3 className="font-bold text-white text-sm">{passo.titulo}</h3>
+            <p className="text-xs text-white/50 leading-relaxed">{passo.texto}</p>
           </GlassCard>
         ))}
       </div>
@@ -64,16 +64,16 @@ export default function Solucao() {
       {/* Ações sustentáveis */}
       <GlassCard className="p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-gray-800">Ações sustentáveis</h2>
-          <span className="text-xs text-gray-400">{MISSOES.length} ações disponíveis</span>
+          <h2 className="text-lg font-bold text-white">Ações sustentáveis</h2>
+          <span className="text-xs text-white/40">{MISSOES.length} ações disponíveis</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {MISSOES.map(missao => (
-            <div key={missao.id} className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-white/60">
+            <div key={missao.id} className="flex items-center gap-3 p-3 rounded-xl border border-white/10" style={{ background: 'rgba(255,255,255,0.05)' }}>
               <img src={missao.icone} alt="" className="w-6 h-6 shrink-0" />
               <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-700 truncate">{missao.nome}</p>
-                <p className="text-xs font-semibold text-[#22c55e]">+{missao.pontos} pts</p>
+                <p className="text-sm font-medium text-white/80 truncate">{missao.nome}</p>
+                <p className="text-xs font-semibold text-[#4ade80]">+{missao.pontos} pts</p>
               </div>
             </div>
           ))}
@@ -83,13 +83,13 @@ export default function Solucao() {
       {/* Níveis + Diferenciais */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
         <GlassCard className="p-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">Níveis e selos</h2>
+          <h2 className="text-lg font-bold text-white mb-4">Níveis e selos</h2>
           <div className="flex items-center justify-between">
             {SELOS.map((selo, i) => (
               <div key={selo.id} className="flex flex-col items-center gap-1.5 flex-1">
                 <img src={selo.icone} alt="" className="w-9 h-9" />
-                <span className="text-[10px] text-gray-500 text-center leading-tight">{selo.nome}</span>
-                <span className="text-[9px] text-[#22c55e] font-semibold">{selo.minPontos} pts</span>
+                <span className="text-[10px] text-white/50 text-center leading-tight">{selo.nome}</span>
+                <span className="text-[9px] text-[#4ade80] font-semibold">{selo.minPontos} pts</span>
                 {i < SELOS.length - 1 && <div className="hidden" aria-hidden="true" />}
               </div>
             ))}
@@ -97,12 +97,12 @@ export default function Solucao() {
         </GlassCard>
 
         <GlassCard className="p-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-4">Diferenciais</h2>
+          <h2 className="text-lg font-bold text-white mb-4">Diferenciais</h2>
           <ul className="space-y-2.5">
             {DIFERENCIAIS.map(item => (
               <li key={item} className="flex items-start gap-2.5">
                 <img src="/icons/check.svg" alt="" className="w-4 h-4 mt-0.5 shrink-0" />
-                <span className="text-sm text-gray-600">{item}</span>
+                <span className="text-sm text-white/60">{item}</span>
               </li>
             ))}
           </ul>
