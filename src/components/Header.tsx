@@ -6,8 +6,8 @@ import LoginModal from './LoginModal';
 const links = [
   { to: '/', label: 'Home' },
   { to: '/dashboard', label: 'Dashboard' },
-  { to: '/solucao', label: 'Solução' },
   { to: '/recompensas', label: 'Recompensas' },
+  { to: '/solucao', label: 'Solução' },
   { to: '/sobre', label: 'Sobre' },
   { to: '/faq', label: 'FAQ' },
   { to: '/integrantes', label: 'Equipe' },
@@ -54,7 +54,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-[100] px-8 py-5 flex items-center justify-between">
+      <header className="fixed top-4 left-1/2 -translate-x-1/2 z-100 w-[calc(100%-2rem)] max-w-275 px-5 sm:px-6 lg:px-8 py-4 flex items-center justify-between rounded-3xl bg-[#0c3a22]/30 backdrop-blur-xl border border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.18)] box-border">
         {/* Logo sozinho na esquerda */}
         <NavLink to="/" className="flex items-center gap-2 shrink-0">
           <img src="/imagens/logo.png" alt="RockySoulUp" className="h-7 w-auto opacity-90" />
@@ -75,10 +75,9 @@ export default function Header() {
                 end={link.to === '/'}
                 onClick={() => setUsuarioAberto(false)}
                 className={({ isActive }) =>
-                  `px-1 py-1.5 text-sm font-semibold transition-all drop-shadow-md ${
-                    isActive
-                      ? 'text-[#4ade80] border-b-2 border-[#4ade80]'
-                      : 'text-white hover:text-[#4ade80]'
+                  `px-1 py-1.5 text-sm font-semibold transition-all drop-shadow-md ${isActive
+                    ? 'text-[#4ade80] border-b-2 border-[#4ade80]'
+                    : 'text-white hover:text-[#4ade80]'
                   }`
                 }
               >
@@ -122,7 +121,7 @@ export default function Header() {
             )}
 
             {usuarioAberto && (
-              <div className="absolute right-0 top-full mt-3 w-64 rounded-2xl bg-white/95 backdrop-blur-xl shadow-2xl border border-white/40 p-3 z-[120]">
+              <div className="absolute right-0 top-full mt-3 w-64 rounded-2xl bg-white/95 backdrop-blur-xl shadow-2xl border border-white/40 p-3 z-120">
                 <div className="flex items-center gap-3 px-2 py-2 border-b border-gray-100 mb-2">
                   <span className="w-11 h-11 rounded-full bg-gradient-to-br from-[#22c55e] to-[#16a34a] flex items-center justify-center text-white text-sm font-bold shadow-md shrink-0">
                     {data.nome?.trim()?.[0]?.toUpperCase() || 'U'}
@@ -190,7 +189,7 @@ export default function Header() {
       </header>
 
       {menuAberto && (
-        <div className="fixed top-20 right-6 z-[100] md:hidden w-48 bg-white/90 backdrop-blur-xl shadow-lg rounded-2xl p-3">
+        <div className="fixed top-20 right-6 z-100 md:hidden w-48 bg-white/90 backdrop-blur-xl shadow-lg rounded-2xl p-3">
           <nav className="flex flex-col gap-1">
             {links.map(link => (
               <NavLink
@@ -199,10 +198,9 @@ export default function Header() {
                 end={link.to === '/'}
                 onClick={() => { setMenuAberto(false); setUsuarioAberto(false); }}
                 className={({ isActive }) =>
-                  `px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                    isActive
-                      ? 'text-[#22c55e] bg-[#22c55e]/10'
-                      : 'text-gray-800 hover:bg-gray-100'
+                  `px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive
+                    ? 'text-[#22c55e] bg-[#22c55e]/10'
+                    : 'text-gray-800 hover:bg-gray-100'
                   }`
                 }
               >
@@ -214,7 +212,7 @@ export default function Header() {
       )}
 
       {menuAberto && (
-        <div className="fixed inset-0 z-[99] md:hidden" onClick={() => setMenuAberto(false)} />
+        <div className="fixed inset-0 z-99 md:hidden" onClick={() => setMenuAberto(false)} />
       )}
 
       <LoginModal aberto={loginAberto} onFechar={handleLoginFechar} />

@@ -19,7 +19,7 @@ export default function RecompensaDetalhe() {
 
   if (!recompensa) {
     return (
-      <div className="max-w-[600px] mx-auto px-6 py-20 text-center">
+      <div className="max-w-150 mx-auto px-6 py-20 text-center">
         <GlassCard className="p-8">
           <h1 className="text-2xl font-bold text-gray-800 mb-2">Recompensa não encontrada</h1>
           <p className="text-sm text-gray-500 mb-6">O item que você procura não existe ou foi removido.</p>
@@ -35,7 +35,7 @@ export default function RecompensaDetalhe() {
   }
 
   return (
-    <div className="max-w-[700px] mx-auto px-6 py-12">
+    <div className="max-w-175 mx-auto px-6 py-12">
       <Link
         to="/recompensas"
         className="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm font-medium mb-6 transition-colors"
@@ -80,11 +80,10 @@ export default function RecompensaDetalhe() {
         <button
           onClick={() => setResgatarAberto(true)}
           disabled={!podeResgatar}
-          className={`w-full py-3 rounded-xl text-sm font-semibold transition-all ${
-            podeResgatar
+          className={`w-full py-3 rounded-xl text-sm font-semibold transition-all ${podeResgatar
               ? 'bg-[#22c55e] text-white hover:bg-[#16a34a]'
               : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-          }`}
+            }`}
         >
           {podeResgatar ? 'Resgatar recompensa' : `Faltam ${recompensa.pontos - data.pontos} pts para resgatar`}
         </button>

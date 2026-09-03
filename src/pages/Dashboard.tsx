@@ -187,7 +187,7 @@ export default function Dashboard() {
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 py-4 lg:py-6 flex flex-col lg:flex-row gap-4">
 
         {/* ── LEFT: Profile + Progress ── */}
-        <aside className="hidden lg:flex flex-col lg:w-[300px] flex-shrink-0 gap-4">
+        <aside className="hidden lg:flex flex-col lg:w-75 shrink-0 gap-4">
 
           {/* Profile card */}
           <div
@@ -204,7 +204,7 @@ export default function Dashboard() {
               style={{ background: 'radial-gradient(circle, #4ade80, transparent)', transform: 'translate(30%,-30%)' }}
             />
 
-            <div className="relative w-[120px] h-[120px]">
+            <div className="relative w-30 h-30">
               <svg width="120" height="120" viewBox="0 0 120 120" className="-rotate-90 absolute inset-0">
                 <circle cx="60" cy="60" r={arcR} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="6" />
                 <circle
@@ -275,10 +275,10 @@ export default function Dashboard() {
                 return (
                   <div key={l.id} className="flex items-center gap-3 relative">
                     {i < arr.length - 1 && (
-                      <div className="absolute left-[14px] top-7 w-px h-4" style={{ background: unlocked ? 'rgba(74,222,128,0.4)' : 'rgba(255,255,255,0.06)' }} />
+                      <div className="absolute left-3.5 top-7 w-px h-4" style={{ background: unlocked ? 'rgba(74,222,128,0.4)' : 'rgba(255,255,255,0.06)' }} />
                     )}
                     <div
-                      className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all"
+                      className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all"
                       style={{
                         background: active ? 'linear-gradient(135deg,#4ade80,#22c55e)' : unlocked ? 'rgba(74,222,128,0.12)' : 'rgba(255,255,255,0.04)',
                         border: active ? 'none' : unlocked ? '1px solid rgba(74,222,128,0.3)' : '1px solid rgba(255,255,255,0.06)',
@@ -356,7 +356,7 @@ export default function Dashboard() {
                 <button
                   onClick={handleAcaoDesafio}
                   disabled={desafioFeito}
-                  className="rounded-full font-semibold text-sm px-5 py-2 transition-all active:scale-95 flex-shrink-0 flex items-center gap-1.5 cursor-pointer"
+                  className="rounded-full font-semibold text-sm px-5 py-2 transition-all active:scale-95 shrink-0 flex items-center gap-1.5 cursor-pointer"
                   style={{
                     background: desafioFeito ? 'rgba(74,222,128,0.15)' : 'linear-gradient(135deg,#4ade80,#22c55e)',
                     color: desafioFeito ? '#4ade80' : '#0f3c22',
@@ -434,7 +434,7 @@ export default function Dashboard() {
         </div>
 
         {/* ── RIGHT: Ranking + Feed + Selos ── */}
-        <aside className="hidden xl:flex flex-col xl:w-[300px] flex-shrink-0 gap-4">
+        <aside className="hidden xl:flex flex-col xl:w-75 shrink-0 gap-4">
 
           {/* Ranking */}
           <div className="glass-strong rounded-2xl p-4">
@@ -448,7 +448,7 @@ export default function Dashboard() {
                     className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 transition-all hover:bg-white/5"
                   >
                     <span
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0"
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
                       style={{
                         background: i === 0 ? 'linear-gradient(135deg,#fbbf24,#f59e0b)' : i === 1 ? 'rgba(203,213,225,0.2)' : i === 2 ? 'rgba(180,120,60,0.25)' : 'rgba(255,255,255,0.05)',
                         color: i < 3 ? 'white' : 'rgba(255,255,255,0.3)',
@@ -457,7 +457,7 @@ export default function Dashboard() {
                       {i + 1}
                     </span>
                     <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-[#0f3c22] flex-shrink-0"
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-[#0f3c22] shrink-0"
                       style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)', opacity: i === 0 ? 1 : 0.7 }}
                     >
                       {u.nome[0].toUpperCase()}
@@ -472,10 +472,10 @@ export default function Dashboard() {
               })}
 
               <div className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 mt-1" style={{ background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.12)' }}>
-                <span className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold text-white/30 flex-shrink-0" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                <span className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold text-white/30 shrink-0" style={{ background: 'rgba(255,255,255,0.05)' }}>
                   {ranking.findIndex(u => u.nome === nomeExibido) >= 0 ? ranking.findIndex(u => u.nome === nomeExibido) + 1 : ranking.length}
                 </span>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-[#0f3c22] flex-shrink-0" style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)' }}>
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-[#0f3c22] shrink-0" style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)' }}>
                   {inicial}
                 </div>
                 <div className="flex-1">
@@ -510,7 +510,7 @@ export default function Dashboard() {
                   const missaoId = getMissaoIdByName(entry.nome);
                   return (
                     <div key={i} className="flex items-start gap-2.5 py-2.5 border-b border-white/5 last:border-0">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.1)' }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.1)' }}>
                         {missaoId ? (
                           <img src={MISSAO_ICONE_MAP[missaoId]} className="w-4 h-4" alt="" />
                         ) : (
@@ -521,7 +521,7 @@ export default function Dashboard() {
                         <p className="text-white/80 text-sm font-medium leading-snug truncate">{entry.nome}</p>
                         <p className="text-white/40 text-[11px] mt-0.5">{timeAgo(entry.data)}</p>
                       </div>
-                      {entry.pontos > 0 && <span className="text-green-400 text-xs font-bold flex-shrink-0 mt-1">+{entry.pontos}</span>}
+                      {entry.pontos > 0 && <span className="text-green-400 text-xs font-bold shrink-0 mt-1">+{entry.pontos}</span>}
                     </div>
                   );
                 })}
@@ -531,7 +531,7 @@ export default function Dashboard() {
 
           {/* Selos */}
           <div className="glass-strong rounded-2xl p-4">
-<div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-3">
               <p className="text-white/55 text-[11px] uppercase tracking-widest">Selos</p>
               <span className="text-white/45 text-[11px]">{selosDesbloqueados.length}/{SELOS.length}</span>
             </div>

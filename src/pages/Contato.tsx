@@ -25,17 +25,17 @@ export default function Contato() {
       email: normalizeEmail(data.email),
       mensagem: normalizeMessage(data.mensagem),
     };
-    
+
     // Aqui você poderia enviar os dados para um servidor
     console.log('Mensagem enviada:', dadosNormalizados);
-    
+
     setEnviado(true);
     reset();
     setTimeout(() => setEnviado(false), 4000);
   };
 
   return (
-    <div className="max-w-[600px] mx-auto px-6 py-12">
+    <div className="max-w-150 mx-auto px-6 py-12">
       <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Contato</h1>
       <p className="text-center text-white/70 mb-10">Entre em contato com a equipe RockySoulUp</p>
 
@@ -56,9 +56,8 @@ export default function Contato() {
                 id="contato-nome"
                 type="text"
                 {...register('nome', VALIDATION_RULES.nome)}
-                className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${
-                  errors.nome ? 'border-red-400' : 'border-gray-200'
-                }`}
+                className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${errors.nome ? 'border-red-400' : 'border-gray-200'
+                  }`}
                 placeholder="Seu nome completo (mínimo 3 caracteres)"
               />
               {errors.nome && (
@@ -77,9 +76,8 @@ export default function Contato() {
                 id="contato-email"
                 type="email"
                 {...register('email', VALIDATION_RULES.email)}
-                className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${
-                  errors.email ? 'border-red-400' : 'border-gray-200'
-                }`}
+                className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${errors.email ? 'border-red-400' : 'border-gray-200'
+                  }`}
                 placeholder="seu@email.com"
               />
               {errors.email && (
@@ -98,9 +96,8 @@ export default function Contato() {
                 id="contato-mensagem"
                 {...register('mensagem', VALIDATION_RULES.mensagem)}
                 rows={5}
-                className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors resize-none bg-white/60 ${
-                  errors.mensagem ? 'border-red-400' : 'border-gray-200'
-                }`}
+                className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors resize-none bg-white/60 ${errors.mensagem ? 'border-red-400' : 'border-gray-200'
+                  }`}
                 placeholder="Escreva sua mensagem aqui..."
               />
               {errors.mensagem && (
@@ -114,11 +111,10 @@ export default function Contato() {
             <button
               type="submit"
               disabled={!isValid}
-              className={`w-full py-3 font-semibold rounded-xl transition-colors ${
-                isValid
+              className={`w-full py-3 font-semibold rounded-xl transition-colors ${isValid
                   ? 'bg-[#22c55e] text-white hover:bg-[#16a34a]'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
+                }`}
             >
               Enviar Mensagem
             </button>

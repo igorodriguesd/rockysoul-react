@@ -24,7 +24,7 @@ export default function Solucao() {
   }, []);
 
   return (
-    <div className="max-w-[1100px] mx-auto px-6 py-12">
+    <div className="max-w-275 mx-auto px-6 py-12">
       <div className="text-center mb-10">
         <h1 className="text-3xl font-bold text-white mb-2 drop-shadow">Solução do Projeto</h1>
         <p className="text-white/70">Como a RockySoulUp transforma hábitos sustentáveis em impacto real</p>

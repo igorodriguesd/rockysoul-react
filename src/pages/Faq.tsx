@@ -6,7 +6,7 @@ export default function Faq() {
   const [aberto, setAberto] = useState<number | null>(null);
 
   return (
-    <div className="max-w-[700px] mx-auto px-6 py-12">
+    <div className="max-w-175 mx-auto px-6 py-12">
       <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Perguntas Frequentes</h1>
       <p className="text-center text-white/70 mb-10">Tire suas dúvidas sobre o RockySoulUp</p>
 

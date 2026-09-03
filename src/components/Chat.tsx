@@ -211,9 +211,9 @@ export default function Chat() {
         const nivel = getNivel();
         const proximoNivel =
           nivel === 'Semente' ? 'Broto (100 pontos)' :
-          nivel === 'Broto' ? 'Árvore (300 pontos)' :
-          nivel === 'Árvore' ? 'Expert (1000 pontos)' :
-          'Nível máximo atingido!';
+            nivel === 'Broto' ? 'Árvore (300 pontos)' :
+              nivel === 'Árvore' ? 'Expert (1000 pontos)' :
+                'Nível máximo atingido!';
         responder(
           '**Seu nível atual:** ' + nivel + '\n\n' +
           '**' + data.pontos + ' pontos acumulados**\n\n' +
@@ -378,7 +378,7 @@ export default function Chat() {
               tabIndex={0}
               onClick={abrirComTeaser}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirComTeaser(); } }}
-              className="relative max-w-[260px] bg-white/95 backdrop-blur-xl rounded-2xl rounded-br-sm shadow-2xl border border-[#22c55e]/20 p-4 text-left cursor-pointer"
+              className="relative max-w-65 bg-white/95 backdrop-blur-xl rounded-2xl rounded-br-sm shadow-2xl border border-[#22c55e]/20 p-4 text-left cursor-pointer"
             >
               <button
                 onClick={(e) => { e.stopPropagation(); marcarTeaserVisto(); }}
@@ -416,7 +416,7 @@ export default function Chat() {
       )}
 
       {aberto && (
-        <div className="fixed bottom-6 right-6 z-50 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] h-[440px] max-h-[80vh] border border-white/40">
+        <div className="fixed bottom-6 right-6 z-50 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] h-110 max-h-[80vh] border border-white/40">
           <div className="bg-[#22c55e] text-white p-4 flex items-center gap-3 shrink-0">
             <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
               <img src="/imagens/logo.png" alt="" className="h-6 w-auto opacity-90" />
@@ -441,11 +441,10 @@ export default function Chat() {
                 className={`flex ${msg.remetente === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`px-4 py-2 max-w-[80%] text-sm leading-relaxed whitespace-pre-line ${
-                    msg.remetente === 'user'
+                  className={`px-4 py-2 max-w-[80%] text-sm leading-relaxed whitespace-pre-line ${msg.remetente === 'user'
                       ? 'bg-[#22c55e] text-white rounded-2xl rounded-tr-sm'
                       : 'bg-[#f0faf0] text-gray-800 rounded-2xl rounded-tl-sm'
-                  }`}
+                    }`}
                 >
                   {msg.texto.split('**').map((part, idx) =>
                     idx % 2 === 1 ? <strong key={idx}>{part}</strong> : part
