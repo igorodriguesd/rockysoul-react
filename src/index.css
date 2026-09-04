@@ -1,4 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@300;400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&display=swap');
+@font-face {
+  font-family: 'DM Serif Display';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/dm-serif-display-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'DM Serif Display';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/dm-serif-display-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Nunito';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('./fonts/nunito-variable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Roboto Slab';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./fonts/roboto-slab-variable.woff2') format('woff2');
+}
+
 @import "tailwindcss";
 
 @theme {
@@ -18,13 +49,14 @@
   body {
     margin: 0;
     font-family: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-weight: 500; /* Letras do texto geral mais encorpadas (Medium) */
     -webkit-font-smoothing: antialiased;
   }
 
   h1,
   h2 {
     font-family: var(--font-serif-display);
-    font-weight: 400;
+    font-weight: 700; /* Títulos mais gordinhos (Bold) */
   }
 }
 
