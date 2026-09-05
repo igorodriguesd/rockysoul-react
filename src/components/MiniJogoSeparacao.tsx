@@ -6,7 +6,7 @@ interface ItemLixo {
   id: string;
   nome: string;
   categoria: Categoria;
-  emoji: string;
+  cor: string;
 }
 
 interface Feedback {
@@ -22,22 +22,22 @@ const LIXEIRAS: { categoria: Categoria; nome: string; cor: string; dica: string 
 ];
 
 const ITENS: ItemLixo[] = [
-  { id: 'pet', nome: 'Garrafa PET', categoria: 'reciclavel', emoji: '🧴' },
-  { id: 'copo-plastico', nome: 'Copo plástico', categoria: 'reciclavel', emoji: '🥤' },
-  { id: 'papelao', nome: 'Caixa de papelão', categoria: 'reciclavel', emoji: '📦' },
-  { id: 'jornal', nome: 'Jornal', categoria: 'reciclavel', emoji: '📰' },
-  { id: 'sacola', nome: 'Sacola plástica', categoria: 'reciclavel', emoji: '🛍️' },
-  { id: 'casca-banana', nome: 'Casca de banana', categoria: 'organico', emoji: '🍌' },
-  { id: 'sobras', nome: 'Sobras de comida', categoria: 'organico', emoji: '🍽️' },
-  { id: 'borra-cafe', nome: 'Borra de café', categoria: 'organico', emoji: '☕' },
-  { id: 'casca-ovo', nome: 'Casca de ovo', categoria: 'organico', emoji: '🥚' },
-  { id: 'garrafa-vidro', nome: 'Garrafa de vidro', categoria: 'vidro', emoji: '🍾' },
-  { id: 'pote-vidro', nome: 'Pote de vidro', categoria: 'vidro', emoji: '🫙' },
-  { id: 'copo-vidro', nome: 'Copo de vidro', categoria: 'vidro', emoji: '🥛' },
-  { id: 'lata', nome: 'Lata de alumínio', categoria: 'metal', emoji: '🥫' },
-  { id: 'pregos', nome: 'Pregos e parafusos', categoria: 'metal', emoji: '🔩' },
-  { id: 'talher', nome: 'Talheres de metal', categoria: 'metal', emoji: '🍴' },
-  { id: 'tampa', nome: 'Tampa metálica', categoria: 'metal', emoji: '🥧' },
+  { id: 'pet', nome: 'Garrafa PET', categoria: 'reciclavel', cor: '#4ade80' },
+  { id: 'copo-plastico', nome: 'Copo plástico', categoria: 'reciclavel', cor: '#34d399' },
+  { id: 'papelao', nome: 'Caixa de papelão', categoria: 'reciclavel', cor: '#86efac' },
+  { id: 'jornal', nome: 'Jornal', categoria: 'reciclavel', cor: '#a3e635' },
+  { id: 'sacola', nome: 'Sacola plástica', categoria: 'reciclavel', cor: '#6ee7b7' },
+  { id: 'casca-banana', nome: 'Casca de banana', categoria: 'organico', cor: '#fbbf24' },
+  { id: 'sobras', nome: 'Sobras de comida', categoria: 'organico', cor: '#f59e0b' },
+  { id: 'borra-cafe', nome: 'Borra de café', categoria: 'organico', cor: '#d97706' },
+  { id: 'casca-ovo', nome: 'Casca de ovo', categoria: 'organico', cor: '#fde68a' },
+  { id: 'garrafa-vidro', nome: 'Garrafa de vidro', categoria: 'vidro', cor: '#38bdf8' },
+  { id: 'pote-vidro', nome: 'Pote de vidro', categoria: 'vidro', cor: '#60a5fa' },
+  { id: 'copo-vidro', nome: 'Copo de vidro', categoria: 'vidro', cor: '#7dd3fc' },
+  { id: 'lata', nome: 'Lata de alumínio', categoria: 'metal', cor: '#cbd5e1' },
+  { id: 'pregos', nome: 'Pregos e parafusos', categoria: 'metal', cor: '#94a3b8' },
+  { id: 'talher', nome: 'Talheres de metal', categoria: 'metal', cor: '#e2e8f0' },
+  { id: 'tampa', nome: 'Tampa metálica', categoria: 'metal', cor: '#a8a29e' },
 ];
 
 const FASES = [
@@ -47,6 +47,45 @@ const FASES = [
 ];
 
 const RECORDE_KEY = 'rocky_minijogo_recorde';
+
+// -- Icones SVG (sem emojis) ------------------------------------------------
+
+const ICONE_CATEGORIA: Record<Categoria, string[]> = {
+  reciclavel: ['M7 3.5h6l4 4V19a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 5 19V5a1.5 1.5 0 0 1 1.5-1.5Z', 'M13.5 3.5v4h4'],
+  organico: ['M5 19C5 11 11 5 19.5 4.5 19 13 13 19 5 19Z', 'M5 19l7.5-7.5'],
+  vidro: ['M10 3h4v2.5L12 7v11l2.5 3h-5L12 18V7l-2-1.5V3Z'],
+  metal: ['M13 2 5 14h5l-1 8 8-12h-5l1-8Z'],
+};
+
+const ICONE_LIXEIRA = ['M4 7h16', 'M9 7V4h6v3', 'M6 7l1.5 14h9L18 7', 'M10 11v6M14 11v6'];
+const ICONE_CORACAO = ['M6.5 4C3.7 4 1.5 6.2 1.5 9c0 5 5.5 9.5 10.5 12 5-2.5 10.5-7 10.5-12 0-2.8-2.2-5-5-5-1.8 0-3 1-4 2-1-1-2.2-2-4-2Z'];
+const ICONE_RELOGIO = ['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z', 'M12 7v5l3.5 2'];
+const ICONE_CHECK = ['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z', 'm8.5 12 2.5 2.5 4.5-5'];
+const ICONE_ESTRELA = ['M12 3l2.7 5.5 6 .9-4.3 4.2 1 6-5.4-2.8-5.4 2.8 1-6L3.3 9.4l6-.9Z'];
+const ICONE_TROFEU = ['M8 3h8v5a4 4 0 0 1-8 0V3Z', 'M8 5H5.5v1.5A2.5 2.5 0 0 0 8 9M16 5h2.5v1.5A2.5 2.5 0 0 1 16 9', 'M12 12v3', 'M8 20h8', 'M9 17h6'];
+const ICONE_MEDALHA = ['M12 4c-3 0-5.5 2.5-5.5 5.5S9 15 12 15s5.5-2.5 5.5-5.5S15 4 12 4Z', 'M8.5 4.5 6.5 2M15.5 4.5 17.5 2', 'M9.5 14.5 7.5 22l4.5-2.5L16.5 22l-2-7.5'];
+const ICONE_SEMENTE = ['M12 21v-6', 'M12 15c-4 0-6-3-6-7 4 0 6 3 6 7Z', 'M12 15c4 0 6-3 6-7-4 0-6 3-6 7Z'];
+
+function Icone({ paths, className }: { paths: string[]; className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {paths.map((d, i) => (
+        <path key={i} d={d} />
+      ))}
+    </svg>
+  );
+}
+
+// ----------------------------------------------------------------------------
 
 function embaralhar<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -62,11 +101,11 @@ function gerarItens(fase: number): ItemLixo[] {
   return embaralhar(ITENS).slice(0, qtd);
 }
 
-function medalha(pontos: number): { emoji: string; nome: string } {
-  if (pontos >= 300) return { emoji: '🏆', nome: 'Mestre da Reciclagem' };
-  if (pontos >= 150) return { emoji: '🥈', nome: 'Reciclador' };
-  if (pontos >= 60) return { emoji: '🥉', nome: 'Aprendiz' };
-  return { emoji: '🌱', nome: 'Começando' };
+function medalha(pontos: number): { nome: string; cor: string; icone: string[] } {
+  if (pontos >= 300) return { nome: 'Mestre da Reciclagem', cor: '#ffc928', icone: ICONE_TROFEU };
+  if (pontos >= 150) return { nome: 'Reciclador', cor: '#e2e8f0', icone: ICONE_MEDALHA };
+  if (pontos >= 60) return { nome: 'Aprendiz', cor: '#cd9a5b', icone: ICONE_MEDALHA };
+  return { nome: 'Começando', cor: '#4ade80', icone: ICONE_SEMENTE };
 }
 
 interface MiniJogoSeparacaoProps {
@@ -201,6 +240,7 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
     setTimeout(() => setFluxo(f => f.filter(x => x.id !== id)), 1200);
   }
 
+  const medalhaInfo = medalha(pontuacao);
   const tempoPct = ((tempo / (FASES[fase - 1]?.tempo ?? 30)) * 100);
   const melhor = recordes[0] ?? 0;
 
@@ -209,14 +249,18 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
       <div className="glass-strong rounded-2xl p-4 w-full relative overflow-hidden">
         <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(#4ade80, transparent)' }} />
         <div className="relative flex items-center gap-3 flex-wrap sm:flex-nowrap">
-          <div className="text-3xl select-none">🗑️</div>
+          <div className="text-3xl select-none text-green-300 shrink-0">
+            <Icone paths={ICONE_LIXEIRA} className="w-8 h-8" />
+          </div>
           <div className="flex-1 min-w-0">
             <p className="text-white font-semibold">Separe o Lixo</p>
             <p className="text-white/40 text-[11px]">3 fases · 3 vidas · arraste para a lixeira certa</p>
           </div>
           <div className="hidden md:flex items-center gap-1.5">
             {LIXEIRAS.map(b => (
-              <span key={b.categoria} className="text-xl select-none" style={{ filter: `drop-shadow(0 0 6px ${b.cor}55)` }}>🗑️</span>
+              <span key={b.categoria} style={{ color: b.cor, filter: `drop-shadow(0 0 6px ${b.cor}55)` }} className="shrink-0">
+                <Icone paths={ICONE_LIXEIRA} className="w-5 h-5" />
+              </span>
             ))}
           </div>
           <div className="text-right shrink-0">
@@ -264,7 +308,9 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {LIXEIRAS.map(b => (
               <div key={b.categoria} className="rounded-xl p-3 text-center" style={{ background: `${b.cor}14`, border: `1px solid ${b.cor}38` }}>
-                <div className="text-2xl">🗑️</div>
+                <div className="text-2xl flex justify-center" style={{ color: b.cor }}>
+                  <Icone paths={ICONE_LIXEIRA} className="w-7 h-7" />
+                </div>
                 <p className="text-xs font-semibold mt-1" style={{ color: `${b.cor}dd` }}>{b.nome}</p>
               </div>
             ))}
@@ -294,8 +340,23 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
               <div className="h-full rounded-full transition-all duration-300"
                 style={{ width: `${tempoPct}%`, background: tempo <= 5 ? '#f87171' : '#4ade80' }} />
             </div>
-            <span className={`text-sm font-bold ${tempo <= 5 ? 'text-red-400' : 'text-white/70'}`}>⏱ {tempo}s</span>
-            <span className="text-sm">{'❤️'.repeat(Math.max(0, vidas))}<span className="opacity-20">{'❤️'.repeat(Math.max(0, 3 - vidas))}</span></span>
+            <span className={`text-sm font-bold inline-flex items-center gap-1 ${tempo <= 5 ? 'text-red-400' : 'text-white/70'}`}>
+              <Icone paths={ICONE_RELOGIO} className="w-4 h-4" />{tempo}s
+            </span>
+            <span className="text-sm inline-flex items-center gap-0.5">
+              <span className="text-red-400 inline-flex">
+                {Array.from({ length: Math.max(0, vidas) }).map((_, i) => (
+                  <Icone key={i} paths={ICONE_CORACAO} className="w-4 h-4" />
+                ))}
+              </span>
+              {vidas < 3 && (
+                <span className="opacity-25 text-white/60 inline-flex">
+                  {Array.from({ length: 3 - Math.max(0, vidas) }).map((_, i) => (
+                    <Icone key={i} paths={ICONE_CORACAO} className="w-4 h-4" />
+                  ))}
+                </span>
+              )}
+            </span>
             <span className={`ml-auto text-sm font-bold ${combo >= 3 ? 'text-sun animate-pulse' : 'text-white/70'}`}>
               combo ×{combo}
             </span>
@@ -304,7 +365,9 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
           {/* Itens */}
           <div className="flex flex-wrap gap-2 min-h-[56px] mb-3 items-center justify-center p-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)' }}>
             {restantes.length === 0 ? (
-              <p className="text-green-300 text-sm font-medium">Fase concluída! 🎉</p>
+              <p className="text-green-300 text-sm font-medium inline-flex items-center gap-1.5">
+                <Icone paths={ICONE_CHECK} className="w-4 h-4" />Fase concluída!
+              </p>
             ) : (
               restantes.map(item => (
                 <div
@@ -315,7 +378,9 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
                   className={`select-none rounded-xl px-3 py-2 flex items-center gap-2 cursor-grab active:cursor-grabbing shadow-lg transition-all hover:scale-105 ${selecionado === item.id ? 'ring-2 ring-green-300' : ''}`}
                   style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(74,222,128,0.25)' }}
                 >
-                  <span className="text-xl">{item.emoji}</span>
+                  <span className="w-7 h-7 rounded-full grid place-items-center shrink-0" style={{ background: `${item.cor}22`, border: `1px solid ${item.cor}55`, color: item.cor }}>
+                    <Icone paths={ICONE_CATEGORIA[item.categoria]} className="w-4 h-4" />
+                  </span>
                   <span className="text-white/85 text-xs font-medium">{item.nome}</span>
                 </div>
               ))
@@ -349,7 +414,9 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
                   boxShadow: feedback?.tipo === 'erro' && feedback.item?.categoria === bin.categoria ? `0 0 0 2px ${bin.cor}` : undefined,
                 }}
               >
-                <div className="text-3xl">🗑️</div>
+                <div className="text-3xl flex justify-center" style={{ color: bin.cor }}>
+                  <Icone paths={ICONE_LIXEIRA} className="w-8 h-8" />
+                </div>
                 <p className="text-white/80 text-xs font-semibold mt-1" style={{ color: `${bin.cor}dd` }}>{bin.nome}</p>
               </div>
             ))}
@@ -357,10 +424,13 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
 
           {/* Feedback */}
           {feedback && (
-            <div className={`mt-3 text-sm font-semibold text-center rounded-xl p-2.5 ${feedback.tipo === 'certo' ? 'text-green-300' : 'text-red-400'}`}
+            <div className={`mt-3 text-sm font-semibold text-center rounded-xl p-2.5 inline-flex items-center gap-1.5 w-full justify-center ${feedback.tipo === 'certo' ? 'text-green-300' : 'text-red-400'}`}
               style={{ background: feedback.tipo === 'certo' ? 'rgba(74,222,128,0.08)' : 'rgba(248,113,113,0.08)' }}>
               {feedback.tipo === 'certo' ? (
-                <>Certo! <span className="text-green-200">{feedback.item?.nome}</span> vai aí mesmo 🌱</>
+                <>
+                  <Icone paths={ICONE_CHECK} className="w-4 h-4" />
+                  <span>Certo! <span className="text-green-200">{feedback.item?.nome}</span> vai aí mesmo</span>
+                </>
               ) : (
                 <>{feedback.item?.nome} <span className="text-white/70">na verdade vai no</span> <b>{LIXEIRAS.find(l => l.categoria === feedback.item?.categoria)?.nome}</b> — agora você aprendeu!</>
               )}
@@ -381,11 +451,17 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
 
       {estado === 'fim' && (
         <div className="text-center py-2">
-          <div className="text-5xl mb-2 pop-in">{medalha(pontuacao).emoji}</div>
-          <p className="text-white font-bold font-serif-display text-xl">{medalha(pontuacao).nome}</p>
+          <div className="mb-2 pop-in flex justify-center" style={{ color: medalhaInfo.cor }}>
+            <Icone paths={medalhaInfo.icone} className="w-16 h-16" />
+          </div>
+          <p className="text-white font-bold font-serif-display text-xl">{medalhaInfo.nome}</p>
           <p className="text-white/50 text-sm mt-0.5">{acertos} acertos · {erros} erros · combo máx ×{maxCombo}</p>
           <p className="text-green-300 font-serif-display text-3xl mt-2">{pontuacao} pts</p>
-          {pontuacao === melhor && pontuacao > 0 && <p className="text-sun text-xs font-bold mt-1">🏅 NOVO RECORDE!</p>}
+          {pontuacao === melhor && pontuacao > 0 && (
+            <p className="text-sun text-xs font-bold mt-1 inline-flex items-center gap-1">
+              <Icone paths={ICONE_ESTRELA} className="w-4 h-4" />NOVO RECORDE!
+            </p>
+          )}
           <div className="flex flex-wrap justify-center gap-1.5 mt-4">
             {recordes.length > 0 && (
               <div className="rounded-xl px-3 py-1.5" style={{ background: 'rgba(255,255,255,0.05)' }}>
