@@ -1,27 +1,17 @@
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
 import { useData } from '../context/DataContext';
-import { VALIDATION_RULES, normalizeName, normalizeEmail } from '../utils/validation';
+import { validateName, validateEmail, normalizeName, normalizeEmail } from '../utils/validation';
 
 interface Props {
   aberto: boolean;
   onFechar: () => void;
 }
 
-interface LoginForm {
-  nome: string;
-  email: string;
-}
-
 export default function LoginModal({ aberto, onFechar }: Props) {
   const { setNome, setEmail } = useData();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<LoginForm>();
+  const [nome, setNomeInput] = useState('');
+  const [email, setEmailInput] = useState('');
+  const [erros, setErros] = useState<{ nome?: string; email?: string }>({});
 
   useEffect(() => {
     if (!aberto) return;
@@ -35,13 +25,25 @@ export default function LoginModal({ aberto, onFechar }: Props) {
   if (!aberto) return null;
 
   function handleClose() {
-    reset();
+    setNomeInput('');
+    setEmailInput('');
+    setErros({});
     onFechar();
   }
 
-  function onSubmit(data: LoginForm){
-    setNome(normalizeName(data.nome));
-    if (data.email.trim()) setEmail(normalizeEmail(data.email));
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    const nomeErro = validateName(nome);
+    const emailErro = validateEmail(email, false);
+
+    if (nomeErro || emailErro) {
+      setErros({ nome: nomeErro ?? undefined, email: emailErro ?? undefined });
+      return;
+    }
+
+    setNome(normalizeName(nome));
+    if (email.trim()) setEmail(normalizeEmail(email));
     handleClose();
   }
 
@@ -66,31 +68,33 @@ export default function LoginModal({ aberto, onFechar }: Props) {
           <p className="text-sm text-gray-500 mt-1">Digite seus dados para começar</p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <div>
             <label htmlFor="login-nome" className="block text-sm font-medium text-gray-700 mb-1">Nome *</label>
             <input
               id="login-nome"
               type="text"
               autoFocus
-              {...register('nome', VALIDATION_RULES.nome)}
+              value={nome}
+              onChange={e => setNomeInput(e.target.value)}
               placeholder="Seu nome (mínimo 3 caracteres)"
-              className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${errors.nome ? 'border-red-400' : 'border-gray-200'
+              className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${erros.nome ? 'border-red-400' : 'border-gray-200'
                 }`}
             />
-            {errors.nome && <p className="text-red-500 text-xs mt-1">⚠️ {errors.nome.message}</p>}
+            {erros.nome && <p className="text-red-500 text-xs mt-1">⚠️ {erros.nome}</p>}
           </div>
           <div>
             <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1">Email (opcional)</label>
             <input
               id="login-email"
               type="email"
-              {...register('email', VALIDATION_RULES.emailOpcional)}
+              value={email}
+              onChange={e => setEmailInput(e.target.value)}
               placeholder="seu@email.com"
-              className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${errors.email ? 'border-red-400' : 'border-gray-200'
+              className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${erros.email ? 'border-red-400' : 'border-gray-200'
                 }`}
             />
-            {errors.email && <p className="text-red-500 text-xs mt-1">⚠️ {errors.email.message}</p>}
+            {erros.email && <p className="text-red-500 text-xs mt-1">⚠️ {erros.email}</p>}
           </div>
           <button
             type="submit"
