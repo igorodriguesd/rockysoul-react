@@ -150,7 +150,6 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
       try {
         localStorage.setItem(declaracaoKey(missao.id), hojeStr());
       } catch {
-        /* ignore */
       }
       adicionarPontos(missao.pontos, missao.nome);
       setPontosGanhos(missao.pontos);
@@ -175,7 +174,6 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
       return;
     }
 
-    // foto / foto-gps
     if (!foto) {
       setFotoErro(true);
       showToast('Envie uma foto para confirmar a ação');

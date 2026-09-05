@@ -48,8 +48,6 @@ const FASES = [
 
 const RECORDE_KEY = 'rocky_minijogo_recorde';
 
-// -- Icones SVG (sem emojis) ------------------------------------------------
-
 const ICONE_CATEGORIA: Record<Categoria, string[]> = {
   reciclavel: ['M7 3.5h6l4 4V19a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 5 19V5a1.5 1.5 0 0 1 1.5-1.5Z', 'M13.5 3.5v4h4'],
   organico: ['M5 19C5 11 11 5 19.5 4.5 19 13 13 19 5 19Z', 'M5 19l7.5-7.5'],
@@ -103,8 +101,6 @@ function Icone({ paths, className }: { paths: string[]; className?: string }) {
     </svg>
   );
 }
-
-// ----------------------------------------------------------------------------
 
 function embaralhar<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -197,7 +193,6 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
       try {
         localStorage.setItem(RECORDE_KEY, novo.join(','));
       } catch {
-        /* ignore */
       }
       return novo;
     });

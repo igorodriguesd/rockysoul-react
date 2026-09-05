@@ -1,10 +1,3 @@
-/**
- * Validações reutilizáveis para formulários
- */
-
-/**
- * Valida nome de usuário
- */
 export function validateName(name: string): string | null {
   if (!name || !name.trim()) return 'Nome é obrigatório';
   if (name.trim().length < 3) return 'Nome deve ter no mínimo 3 caracteres';
@@ -13,9 +6,6 @@ export function validateName(name: string): string | null {
   return null;
 }
 
-/**
- * Valida email
- */
 export function validateEmail(email: string, isRequired = true): string | null {
   if (!email && !isRequired) return null;
   if (!email && isRequired) return 'Email é obrigatório';
@@ -24,9 +14,6 @@ export function validateEmail(email: string, isRequired = true): string | null {
   return null;
 }
 
-/**
- * Valida mensagem
- */
 export function validateMessage(message: string): string | null {
   if (!message || !message.trim()) return 'Mensagem é obrigatória';
   if (message.trim().length < 10) return 'Mensagem deve ter no mínimo 10 caracteres';
@@ -34,9 +21,6 @@ export function validateMessage(message: string): string | null {
   return null;
 }
 
-/**
- * Limpa e normaliza nome
- */
 export function normalizeName(name: string): string {
   return name
     .trim()
@@ -44,16 +28,10 @@ export function normalizeName(name: string): string {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-/**
- * Limpa e normaliza email
- */
 export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
-/**
- * Limpa e normaliza mensagem
- */
 export function normalizeMessage(message: string): string {
   return message
     .trim()

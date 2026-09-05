@@ -286,8 +286,6 @@ export function Home() {
   );
 }
 
-/* ─── Small UI icons ─── */
-
 function ChatIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
