@@ -24,7 +24,7 @@ O coração do projeto é a combinação de **gamificação** com um **avatar/as
 - **Pontos** — cada ação sustentável gera pontos que alimentam o avatar e o perfil do usuário.
 - **Níveis de evolução** — Semente → Broto → Árvore → Expert, com progresso visual em anel de progresso e barra de XP.
 - **Selos desbloqueáveis** — conquistas automáticas ao acumular pontos.
-- **Mini-jogo "Separe o Lixo"** — gamificação extra por meio de um jogo de separação de recicláveis (3 fases, vidas, combos e recordes).
+- **Mini-jogo "Separe o Lixo"** — gamificação extra por meio de um jogo de separação de recicláveis (3 fases, vidas, combos e recordes), em modo treino: a pontuação não vira recompensa, serve para praticar e se divertir.
 - **Desafio do Dia** — missão diária com bônus por streak (dias seguidos).
 - **Ranking global** — posição do usuário entre os participantes.
 - **Recompensas reais** — troca de pontos por cupons, descontos e brindes.
@@ -165,7 +165,7 @@ Acesse `http://localhost:5173` no navegador (porta padrão do Vite).
 1. Na **Home**, clique em **"Começar Agora"** e informe seu nome/email.
 2. No **Dashboard**, registre uma ação sustentável (reciclar, economizar energia/água, usar transporte etc.), envie a foto como comprovação e acumule **pontos**.
 3. Complete o **Desafio do Dia** para ganhar bônus e mantenha o **streak** (dias seguidos).
-4. Jogue o **Mini-jogo "Separe o Lixo"** para converter a pontuação em pontos extras.
+4. Treine no **Mini-jogo "Separe o Lixo"** para praticar a separação de recicláveis e bater seus recordes (modo treino, sem valer recompensa).
 5. Evolua nos **níveis** (Semente → Broto → Árvore → Expert), desbloqueie **selos** e veja sua posição no **ranking**.
 6. Troque seus pontos por **recompensas reais** na página Recompensas.
 7. Converse com o **avatar RockySoul** (canto inferior direito) — ele registra ações, mostra saldo e resgata recompensas por voz/texto.

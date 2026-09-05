@@ -138,10 +138,8 @@ function capitalize(s: string): string {
 }
 
 export function Dashboard() {
-  const { data, getNivel, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio, adicionarPontos } = useData();
+  const { data, getNivel, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio } = useData();
   const [missaoSelecionada, setMissaoSelecionada] = useState<(typeof MISSOES)[0] | null>(null);
-  const [jogadoHoje, setJogadoHoje] = useState<boolean>(() => localStorage.getItem('rocky_minijogo_hoje') === hojeStr());
-  const [acoesLimitadas, setAcoesLimitadas] = useState(true);
 
   useEffect(() => {
     document.title = 'RockySoulUp - Dashboard';
@@ -174,7 +172,6 @@ export function Dashboard() {
     data.historico.filter(h => h.data?.slice(0, 10) === hojeStr()).map(h => h.nome)
   );
   const desafioFeito = feitasHoje.has(desafioDoDia.nome);
-  const missoesExibidas = acoesLimitadas ? MISSOES.slice(0, 5) : MISSOES;
 
   const nomeExibido = data.nome.trim() || 'USUÁRIO';
   const inicial = data.nome.trim() ? data.nome[0].toUpperCase() : 'I';
@@ -192,13 +189,6 @@ export function Dashboard() {
     if (missaoId === desafioDoDia.id && desafioBonusDisponivel) {
       resgatarBonusDesafio();
     }
-  }
-
-  function handleMiniJogoPontos(pontos: number) {
-    if (jogadoHoje) return;
-    setJogadoHoje(true);
-    localStorage.setItem('rocky_minijogo_hoje', hojeStr());
-    adicionarPontos(pontos, 'Mini-jogo de Reciclagem');
   }
 
   const impacto = [
@@ -400,7 +390,7 @@ export function Dashboard() {
               <span className="text-white/50 text-[13px]">{feitasHoje.size}/{MISSOES.length} hoje</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 auto-rows-min flex-1 content-start">
-              {missoesExibidas.map(missao => {
+              {MISSOES.map(missao => {
                 const cor = MISSAO_COR_MAP[missao.id] || '#4ade80';
                 const checked = feitasHoje.has(missao.nome);
                 return (
@@ -430,26 +420,10 @@ export function Dashboard() {
                   </button>
                 );
               })}
-              <button
-                onClick={() => setAcoesLimitadas(l => !l)}
-                className="rounded-xl p-3.5 flex flex-col gap-2 items-center justify-center text-left transition-all active:scale-95 cursor-pointer border border-dashed border-white/15 hover:border-green-300/40 min-h-[118px]"
-                style={{ background: 'rgba(255,255,255,0.03)' }}
-              >
-                <span
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold"
-                  style={{ background: 'rgba(74,222,128,0.12)', color: acoesLimitadas ? '#4ade80' : 'rgba(255,255,255,0.8)' }}
-                >
-                  {acoesLimitadas ? '+' : '−'}
-                </span>
-                <div className="text-center">
-                  <p className="text-white/80 text-sm font-medium">{acoesLimitadas ? 'Mais ações' : 'Recolher'}</p>
-                  <p className="text-white/40 text-[11px]">{acoesLimitadas ? `+${MISSOES.length - 5} outras` : `${MISSOES.length} ações`}</p>
-                </div>
-              </button>
             </div>
           </div>
 
-          <MiniJogoSeparacao onPontos={handleMiniJogoPontos} jaJogado={jogadoHoje} compacto />
+          <MiniJogoSeparacao compacto />
 
           {/* Impacto mobile */}
           <div className="lg:hidden card-tertiary rounded-2xl p-4 grid grid-cols-3 gap-3">

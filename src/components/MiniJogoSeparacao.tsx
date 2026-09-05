@@ -124,12 +124,10 @@ function medalha(pontos: number): { nome: string; cor: string; icone: string[] }
 }
 
 interface MiniJogoSeparacaoProps {
-  onPontos: (pontos: number) => void;
-  jaJogado: boolean;
   compacto?: boolean;
 }
 
-export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false }: MiniJogoSeparacaoProps) {
+export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparacaoProps) {
   const [expandido, setExpandido] = useState(false);
   const [estado, setEstado] = useState<'menu' | 'jogando' | 'fim'>('menu');
   const [fase, setFase] = useState(1);
@@ -203,7 +201,6 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
     finalizouRef.current = true;
     setEstado('fim');
     salvarRecorde(pontuacao);
-    if (pontuacao > 0) onPontos(pontuacao);
   }
 
   function passarFase() {
@@ -285,13 +282,10 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
             onClick={() => { setExpandido(true); iniciar(); }}
             className="rounded-full px-5 py-2 text-sm font-bold transition-all active:scale-95 cursor-pointer"
             style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)', color: '#0f3c22' }}
-          >
+>
             Jogar
           </button>
         </div>
-        {jaJogado && (
-          <p className="relative text-white/35 text-[11px] text-center mt-2">Você já ganhou Pontos ECOA hoje no mini-jogo. Amanhã volta a valer!</p>
-        )}
       </div>
     );
   }
@@ -333,14 +327,14 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
             <li>· 3 fases com dificuldade crescente</li>
             <li>· 3 vidas · acertos em sequência dobram os pontos (combo)</li>
             <li>· Errou? mostramos a lixeira certa — você aprende</li>
-            <li>· Pontuação vira Pontos ECOA (uma vez por dia)</li>
+            <li>· Modo treino: a pontuação não vira recompensa, é só para praticar</li>
           </ul>
           <button
             onClick={iniciar}
             className="w-full rounded-full py-2.5 font-bold transition-all active:scale-95 cursor-pointer"
             style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)', color: '#0f3c22' }}
           >
-            {jaJogado ? 'Jogar (XP já resgatado hoje)' : 'Começar'}
+            Começar
           </button>
         </div>
       )}
@@ -487,9 +481,9 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
                 </div>
               </div>
             )}
-            <div className="rounded-xl px-3 py-1.5" style={{ background: 'rgba(74,222,128,0.08)' }}>
-              <p className="text-white/40 text-[10px] uppercase tracking-widest">Pontos ECOA</p>
-              <p className="text-green-300 text-sm font-bold mt-0.5">+{pontuacao}{jaJogado ? ' (amanhã valem)' : ''}</p>
+            <div className="rounded-xl px-3 py-1.5" style={{ background: 'rgba(255,255,255,0.05)' }}>
+              <p className="text-white/40 text-[10px] uppercase tracking-widest">Modo treino</p>
+              <p className="text-green-300 text-sm font-bold mt-0.5">Não soma recompensa</p>
             </div>
           </div>
           <div className="mt-4 flex items-center justify-center gap-2">
@@ -510,10 +504,6 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
             )}
           </div>
         </div>
-      )}
-
-      {estado === 'menu' && jaJogado && (
-        <p className="text-white/35 text-[11px] text-center mt-2">Você já ganhou Pontos ECOA hoje no mini-jogo. Amanhã volta a valer!</p>
       )}
     </div>
   );
