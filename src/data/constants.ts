@@ -1,13 +1,18 @@
 import type { Missao, Selo, Nivel, Recompensa, UsuarioSimulado } from '../types';
 
 export const MISSOES: Missao[] = [
-  { id: 'reciclagem', nome: 'Reciclagem', pontos: 30, icone: '/icons/reciclagem.svg' },
-  { id: 'transporte', nome: 'Transporte Sustentável', pontos: 50, icone: '/icons/transporte.svg' },
-  { id: 'energia', nome: 'Economia de Energia', pontos: 20, icone: '/icons/energia.svg' },
-  { id: 'agua', nome: 'Economia de Água', pontos: 20, icone: '/icons/agua.svg' },
-  { id: 'bicicleta', nome: 'Bicicleta', pontos: 40, icone: '/icons/bicicleta.svg' },
-  { id: 'plantio', nome: 'Plantio', pontos: 100, icone: '/icons/arvore.svg' },
-  { id: 'banho', nome: 'Banho Rápido', pontos: 20, icone: '/icons/banho.svg' },
+  { id: 'reciclagem', nome: 'Reciclagem', pontos: 30, icone: '/icons/reciclagem.svg', comprovacao: 'foto' },
+  { id: 'transporte', nome: 'Transporte Sustentável', pontos: 50, icone: '/icons/transporte.svg', comprovacao: 'foto-gps' },
+  { id: 'energia', nome: 'Economia de Energia', pontos: 20, icone: '/icons/energia.svg', comprovacao: 'foto' },
+  { id: 'agua', nome: 'Economia de Água', pontos: 20, icone: '/icons/agua.svg', comprovacao: 'foto' },
+  { id: 'bicicleta', nome: 'Bicicleta', pontos: 40, icone: '/icons/bicicleta.svg', comprovacao: 'foto-gps' },
+  { id: 'plantio', nome: 'Plantio', pontos: 100, icone: '/icons/arvore.svg', comprovacao: 'foto-gps' },
+  { id: 'banho', nome: 'Banho Rápido', pontos: 20, icone: '/icons/banho.svg', comprovacao: 'timer', tempoTimer: 300 },
+  { id: 'compostagem', nome: 'Compostagem', pontos: 30, icone: '/icons/muda.svg', comprovacao: 'foto' },
+  { id: 'consumo', nome: 'Consumo Consciente', pontos: 20, icone: '/icons/carrinho.svg', comprovacao: 'foto' },
+  { id: 'garrafa', nome: 'Garrafa Reutilizável', pontos: 15, icone: '/icons/agua.svg', comprovacao: 'declaracao' },
+  { id: 'educar', nome: 'Compartilhar Dicas', pontos: 15, icone: '/icons/comunidade.svg', comprovacao: 'declaracao' },
+  { id: 'sacola', nome: 'Sacola Reutilizável', pontos: 10, icone: '/icons/folha.svg', comprovacao: 'declaracao' },
 ];
 
 export const SELOS: Selo[] = [

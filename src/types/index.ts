@@ -1,8 +1,12 @@
+export type Comprovacao = 'foto' | 'foto-gps' | 'timer' | 'declaracao';
+
 export interface Missao {
   id: string;
   nome: string;
   pontos: number;
   icone: string;
+  comprovacao: Comprovacao;
+  tempoTimer?: number;
 }
 
 export interface Selo {
