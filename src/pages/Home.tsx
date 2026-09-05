@@ -23,7 +23,7 @@ function dicaDoDia() {
   return DICAS_CURTAS[new Date().getDate() % DICAS_CURTAS.length];
 }
 
-export default function Home() {
+export function Home() {
   useEffect(() => { document.title = 'RockySoulUp - Home'; }, []);
 
   const { data, getNivel, desafioDoDia } = useData();

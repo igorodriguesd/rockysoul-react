@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { INTEGRANTES } from '../data/constants';
-import GlassCard from '../components/GlassCard';
 
-export default function Integrantes() {
+export function Integrantes() {
   useEffect(() => { document.title = 'Integrantes - RockySoulUp'; }, []);
 
   return (
@@ -13,7 +12,7 @@ export default function Integrantes() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {INTEGRANTES.map(m => (
-          <GlassCard key={m.rm} className="p-6 text-center hover:shadow-md transition-all hover:scale-[1.02]">
+          <div key={m.rm} className="card-secondary rounded-2xl p-6 text-center hover:shadow-md transition-all hover:scale-[1.02] flex flex-col">
             <img
               src={m.foto}
               alt={m.nome}
@@ -33,7 +32,7 @@ export default function Integrantes() {
                 </svg>
               </a>
             </div>
-          </GlassCard>
+          </div>
         ))}
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { PERGUNTAS_FAQ } from '../data/constants';
 
-export default function Faq() {
+export function Faq() {
   useEffect(() => { document.title = 'FAQ - RockySoulUp'; }, []);
   const [aberto, setAberto] = useState<number | null>(null);
 
@@ -12,7 +12,7 @@ export default function Faq() {
 
       <div className="flex flex-col gap-3">
         {PERGUNTAS_FAQ.map((item, i) => (
-          <div key={i} className="glass-strong rounded-xl overflow-hidden">
+          <div key={i} className="card-secondary rounded-xl overflow-hidden">
             <button
               onClick={() => setAberto(aberto === i ? null : i)}
               className="w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer"

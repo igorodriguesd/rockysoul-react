@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { MISSOES, RECOMPENSAS, SELOS } from '../data/constants';
-import GlassCard from '../components/GlassCard';
 
 const PASSOS = [
   { icon: '/icons/reciclagem.svg', titulo: 'Registre sua ação', texto: 'Escolha uma das ações sustentáveis no Dashboard e informe o que você realizou hoje.' },
@@ -18,7 +17,7 @@ const DIFERENCIAIS = [
   'Interface totalmente responsiva',
 ];
 
-export default function Solucao() {
+export function Solucao() {
   useEffect(() => {
     document.title = 'Solução do Projeto - RockySoulUp';
   }, []);
@@ -31,7 +30,7 @@ export default function Solucao() {
       </div>
 
       {/* O problema */}
-      <GlassCard className="p-6 mb-6">
+      <div className="card-primary rounded-2xl p-6 mb-6">
         <div className="flex items-center gap-2 mb-3">
           <img src="/icons/alvo.svg" alt="" className="w-5 h-5" />
           <h2 className="text-lg font-bold text-white">O problema</h2>
@@ -42,13 +41,13 @@ export default function Solucao() {
           transformar práticas sustentáveis do dia a dia em uma jornada gamificada: cada ação vira pontos,
           cada ponto vira nível, selo, recompensa e — principalmente — impacto mensurável no planeta.
         </p>
-      </GlassCard>
+      </div>
 
       {/* Como funciona */}
       <h2 className="text-2xl font-bold text-white mb-4 drop-shadow">Como funciona</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
         {PASSOS.map((passo, i) => (
-          <GlassCard key={passo.titulo} className="p-5 flex flex-col gap-3">
+          <div key={passo.titulo} className="card-secondary rounded-2xl p-5 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <img src={passo.icon} alt="" className="w-8 h-8" />
               <span className="w-7 h-7 rounded-full bg-[#22c55e]/15 text-[#4ade80] flex items-center justify-center text-sm font-bold">
@@ -57,12 +56,12 @@ export default function Solucao() {
             </div>
             <h3 className="font-bold text-white text-sm">{passo.titulo}</h3>
             <p className="text-xs text-white/50 leading-relaxed">{passo.texto}</p>
-          </GlassCard>
+          </div>
         ))}
       </div>
 
       {/* Ações sustentáveis */}
-      <GlassCard className="p-6 mb-6">
+      <div className="card-secondary rounded-2xl p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-white">Ações sustentáveis</h2>
           <span className="text-xs text-white/40">{MISSOES.length} ações disponíveis</span>
@@ -78,11 +77,11 @@ export default function Solucao() {
             </div>
           ))}
         </div>
-      </GlassCard>
+      </div>
 
       {/* Níveis + Diferenciais */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        <GlassCard className="p-6">
+        <div className="card-secondary rounded-2xl p-6">
           <h2 className="text-lg font-bold text-white mb-4">Níveis e selos</h2>
           <div className="flex items-center justify-between">
             {SELOS.map((selo, i) => (
@@ -94,9 +93,9 @@ export default function Solucao() {
               </div>
             ))}
           </div>
-        </GlassCard>
+        </div>
 
-        <GlassCard className="p-6">
+        <div className="card-secondary rounded-2xl p-6">
           <h2 className="text-lg font-bold text-white mb-4">Diferenciais</h2>
           <ul className="space-y-2.5">
             {DIFERENCIAIS.map(item => (
@@ -106,7 +105,7 @@ export default function Solucao() {
               </li>
             ))}
           </ul>
-        </GlassCard>
+        </div>
       </div>
     </div>
   );

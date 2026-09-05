@@ -7,7 +7,7 @@ import type { Recompensa } from '../types';
 
 const CATEGORIAS = ['Todas', 'Energia', 'Transporte', 'Natureza', 'Cupons'] as const;
 
-export default function Recompensas() {
+export function Recompensas() {
   useEffect(() => { document.title = 'Recompensas - RockySoulUp'; }, []);
 
   const { data } = useData();
@@ -53,7 +53,7 @@ export default function Recompensas() {
             return (
               <div
                 key={r.id}
-                className="glass-strong rounded-2xl p-5 flex flex-col hover:scale-[1.01] transition-all"
+                className="card-secondary rounded-2xl p-5 flex flex-col hover:scale-[1.01] transition-all"
               >
                 <div className="h-6 mb-3 flex items-start">
                   {r.badge && (
@@ -93,7 +93,7 @@ export default function Recompensas() {
         {data.resgates.length > 0 && (
           <div>
             <h2 className="text-xl font-bold text-white mb-4 drop-shadow">Histórico de Resgates</h2>
-            <div className="glass-strong rounded-2xl divide-y divide-white/8">
+            <div className="card-tertiary rounded-2xl divide-y divide-white/8">
               {data.resgates.map((rg, i) => (
                 <div key={i} className="flex items-center justify-between px-5 py-3">
                   <div className="min-w-0">
