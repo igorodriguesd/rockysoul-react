@@ -178,6 +178,8 @@ Acesse `http://localhost:5173` no navegador (porta padrão do Vite).
 - **Tablet** — 768px
 - **Desktop** — 992px+
 
+No TailwindCSS, os tokens de breakpoint (`sm`=480px, `md`=768px, `lg`=992px, `xl`=1280px) foram alinhados a esse spec em `src/index.css`, garantindo que o layout não quebre em nenhuma das larguras avaliadas.
+
 ---
 
 ## Imagens e Ícones do Projeto

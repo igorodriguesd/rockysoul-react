@@ -1,6 +1,13 @@
 @import "tailwindcss";
 
 @theme {
+  /* Alinhados ao spec do professor: Mobile <=480, Tablet 768, Desktop 992+ */
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
   --font-brand: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   --font-serif-display: Georgia, 'Times New Roman', serif;
 

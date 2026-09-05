@@ -54,20 +54,20 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-4 left-1/2 -translate-x-1/2 z-100 w-[calc(100%-2rem)] max-w-275 px-5 sm:px-6 lg:px-8 py-4 flex items-center justify-between rounded-3xl bg-[#0c3a22]/30 backdrop-blur-xl border border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.18)] box-border">
+      <header className="fixed top-4 left-1/2 -translate-x-1/2 z-100 w-[calc(100%-2rem)] max-w-275 px-5 sm:px-6 py-4 flex items-center justify-between rounded-3xl bg-[#0c3a22]/30 backdrop-blur-xl border border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.18)] box-border">
         {/* Logo sozinho na esquerda */}
         <NavLink to="/" className="flex items-center gap-2 shrink-0">
           <img src="/imagens/logo.png" alt="RockySoulUp" className="h-7 w-auto opacity-90" />
           <span
             className="font-brand font-bold text-white tracking-tight drop-shadow-md"
-            style={{ fontSize: 22 }}
+            style={{ fontSize: 20 }}
           >
             RockySoulUp
           </span>
         </NavLink>
 
-        <div className="flex items-center gap-6">
-          <nav className="hidden lg:flex items-center gap-4">
+        <div className="flex items-center gap-5">
+          <nav className="hidden lg:flex items-center gap-3">
             {links.map(link => (
               <NavLink
                 key={link.to}
@@ -98,7 +98,7 @@ export default function Header() {
                 <span className="w-8 h-8 rounded-full bg-linear-to-br from-[#22c55e] to-[#16a34a] flex items-center justify-center text-white text-xs font-bold shadow-md">
                   {data.nome?.trim()?.[0]?.toUpperCase() || 'U'}
                 </span>
-                <span className="hidden sm:flex flex-col items-start leading-tight">
+                <span className="hidden xl:flex flex-col items-start leading-tight">
                   <span className="text-white text-xs font-semibold max-w-90px truncate">{data.nome?.trim()?.split(' ')?.[0] || 'Usuário'}</span>
                   <span className="text-[#4ade80] text-[10px] font-medium">{data.pontos} pts</span>
                 </span>
