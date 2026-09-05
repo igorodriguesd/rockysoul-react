@@ -57,6 +57,25 @@ const ICONE_CATEGORIA: Record<Categoria, string[]> = {
   metal: ['M13 2 5 14h5l-1 8 8-12h-5l1-8Z'],
 };
 
+const ICONE_ITEM: Record<string, string[]> = {
+  pet: ['M11 3h2v2.2l1.2 1.3v9l1.6 3a2 2 0 0 1-1.8 2.5h-4a2 2 0 0 1-1.8-2.5l1.6-3v-9L11 5.2V3Z', 'M9.5 12h5'],
+  'copo-plastico': ['M8 4h8l-.5 3h-7L8 4Z', 'M8 7l1 13h6l1-13', 'M9.5 11h5'],
+  'papelao': ['M4 7l8-3 8 3-8 3-8-3Z', 'M4 7v10l8 3 8-3V7', 'M12 10v10'],
+  'jornal': ['M6 3h12v18H6V3Z', 'M9 6.5h6', 'M9 10h6', 'M9 13.5h6', 'M9 17h3'],
+  'sacola': ['M5.5 8h13l-1 13h-11L5.5 8Z', 'M9 8V6a3 3 0 0 1 6 0v2', 'M8.5 12.5h7'],
+  'casca-banana': ['M7.5 5c5 .8 8.3 4 8.6 8.8l.4 6-1-.2c-4.8-.9-8-4-8.6-8.8L7.5 5Z', 'M8 18.5l1.6-2.3'],
+  'sobras': ['M5 12a7 7 0 0 0 14 0H5Z', 'M12 5v7'],
+  'borra-cafe': ['M6 9h10v6a4 4 0 0 1-4 4h-2a4 4 0 0 1-4-4V9Z', 'M15 11h1.2a2.8 2.8 0 0 1 0 5.6H15', 'M9 4.5l1 1.5M13 4.5l1 1.5'],
+  'casca-ovo': ['M12 3c3.5 3.4 5 6.6 5 9.5A5 5 0 0 1 7 12.5c0-2.9 1.5-6.1 5-9.5Z', 'M12 3v5', 'M10 6l4 2.5'],
+  'garrafa-vidro': ['M11 3h2v2l1.5 1.6V15l2 4.5H7.5l2-4.5V6.6L11 5V3Z', 'M8.5 17.5h7', 'M10 10h4'],
+  'pote-vidro': ['M7 5h10', 'M9 5V3.5A1.5 1.5 0 0 1 10.5 2h3A1.5 1.5 0 0 1 15 3.5V5l1 1.5v8.5l-1 6a2 2 0 0 1-2 1.5h-2a2 2 0 0 1-2-1.5l-1-6V6.5L9 5Z', 'M10 12h4'],
+  'copo-vidro': ['M7 4h10l-1 13a3 3 0 0 1-3 2.7h-2A3 3 0 0 1 8 17L7 4Z', 'M8.5 10h7', 'M9.5 15.5h5'],
+  'lata': ['M8 4h8l-1 16h-6L8 4Z', 'M8.5 5h7', 'M9.5 10.5h5', 'M9.5 14.5h5'],
+  'pregos': ['M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z', 'M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1'],
+  'talher': ['M9 3v5.5a2.5 2.5 0 0 0 2 2.4V21h2V10.9a2.5 2.5 0 0 0 2-2.4V3h-2v5h-2V3H9Z', 'M16 3v18h2V3h-2Z'],
+  'tampa': ['M5 10h14l-1 10H6L5 10Z', 'M8 10V7h8v3', 'M9 13.5h6', 'M9 16.5h6'],
+};
+
 const ICONE_LIXEIRA = ['M4 7h16', 'M9 7V4h6v3', 'M6 7l1.5 14h9L18 7', 'M10 11v6M14 11v6'];
 const ICONE_CORACAO = ['M6.5 4C3.7 4 1.5 6.2 1.5 9c0 5 5.5 9.5 10.5 12 5-2.5 10.5-7 10.5-12 0-2.8-2.2-5-5-5-1.8 0-3 1-4 2-1-1-2.2-2-4-2Z'];
 const ICONE_RELOGIO = ['M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z', 'M12 7v5l3.5 2'];
@@ -379,7 +398,7 @@ export default function MiniJogoSeparacao({ onPontos, jaJogado, compacto = false
                   style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(74,222,128,0.25)' }}
                 >
                   <span className="w-7 h-7 rounded-full grid place-items-center shrink-0" style={{ background: `${item.cor}22`, border: `1px solid ${item.cor}55`, color: item.cor }}>
-                    <Icone paths={ICONE_CATEGORIA[item.categoria]} className="w-4 h-4" />
+                    <Icone paths={ICONE_ITEM[item.id] ?? ICONE_CATEGORIA[item.categoria]} className="w-4 h-4" />
                   </span>
                   <span className="text-white/85 text-xs font-medium">{item.nome}</span>
                 </div>
