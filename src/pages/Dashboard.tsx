@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useData } from '../context/DataContext';
 import { MISSOES, SELOS, USUARIOS_BASE, CURIOSIDADES } from '../data/constants';
 import VerificarModal from '../components/VerificarModal';
+import MiniJogoSeparacao from '../components/MiniJogoSeparacao';
 import type { HistoricoEntrada } from '../types';
 
 interface RankingUser {
@@ -17,6 +18,11 @@ const CO2_MAP: Record<string, number> = {
   bicicleta: 4.0,
   plantio: 8.0,
   banho: 0.5,
+  compostagem: 2.0,
+  consumo: 1.2,
+  garrafa: 0.6,
+  educar: 0.4,
+  sacola: 0.5,
 };
 
 const MISSAO_ICONE_MAP: Record<string, string> = {
@@ -27,16 +33,26 @@ const MISSAO_ICONE_MAP: Record<string, string> = {
   bicicleta: '/icons/bicicleta.svg',
   plantio: '/icons/arvore.svg',
   banho: '/icons/banho.svg',
+  compostagem: '/icons/muda.svg',
+  consumo: '/icons/carrinho.svg',
+  garrafa: '/icons/agua.svg',
+  educar: '/icons/comunidade.svg',
+  sacola: '/icons/folha.svg',
 };
 
 const MISSAO_COR_MAP: Record<string, string> = {
-  reciclagem: '#86efac',
-  transporte: '#4ade80',
-  energia: '#fde68a',
-  agua: '#93c5fd',
+  reciclagem: '#4ade80',
+  transporte: '#7dd3fc',
+  energia: '#a3e635',
+  agua: '#7dd3fc',
   bicicleta: '#4ade80',
-  plantio: '#bbf7d0',
-  banho: '#93c5fd',
+  plantio: '#86efac',
+  banho: '#7dd3fc',
+  compostagem: '#a3e635',
+  consumo: '#c4b5fd',
+  garrafa: '#7dd3fc',
+  educar: '#c4b5fd',
+  sacola: '#86efac',
 };
 
 const NIVEL_ICONE: Record<string, string> = {
@@ -121,16 +137,17 @@ function capitalize(s: string): string {
   return s.charAt(0).toLowerCase() + s.slice(1);
 }
 
-export default function Dashboard() {
-  const { data, getNivel, getSelosDesbloqueados, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio } = useData();
+export function Dashboard() {
+  const { data, getNivel, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio, adicionarPontos } = useData();
   const [missaoSelecionada, setMissaoSelecionada] = useState<(typeof MISSOES)[0] | null>(null);
+  const [jogadoHoje, setJogadoHoje] = useState<boolean>(() => localStorage.getItem('rocky_minijogo_hoje') === hojeStr());
+  const [acoesLimitadas, setAcoesLimitadas] = useState(true);
 
   useEffect(() => {
     document.title = 'RockySoulUp - Dashboard';
   }, []);
 
   const nivel = getNivel();
-  const selosDesbloqueados = getSelosDesbloqueados();
   const progresso = getProgressPercent(data.pontos);
   const nextLevel = getNextLevel(data.pontos);
   const arcR = 52;
@@ -157,6 +174,7 @@ export default function Dashboard() {
     data.historico.filter(h => h.data?.slice(0, 10) === hojeStr()).map(h => h.nome)
   );
   const desafioFeito = feitasHoje.has(desafioDoDia.nome);
+  const missoesExibidas = acoesLimitadas ? MISSOES.slice(0, 5) : MISSOES;
 
   const nomeExibido = data.nome.trim() || 'USUÁRIO';
   const inicial = data.nome.trim() ? data.nome[0].toUpperCase() : 'I';
@@ -176,6 +194,13 @@ export default function Dashboard() {
     }
   }
 
+  function handleMiniJogoPontos(pontos: number) {
+    if (jogadoHoje) return;
+    setJogadoHoje(true);
+    localStorage.setItem('rocky_minijogo_hoje', hojeStr());
+    adicionarPontos(pontos, 'Mini-jogo de Reciclagem');
+  }
+
   const impacto = [
     { icon: '/icons/folha.svg', label: 'kg CO₂ evitado', value: totalCO2.toFixed(1) },
     { icon: '/icons/arvore.svg', label: 'Árvores equiv.', value: arvoresEquiv },
@@ -190,15 +215,7 @@ export default function Dashboard() {
         <aside className="hidden lg:flex flex-col lg:w-75 shrink-0 gap-4">
 
           {/* Profile card */}
-          <div
-            className="rounded-2xl p-5 flex flex-col items-center text-center gap-3 relative overflow-hidden"
-            style={{
-              background: 'linear-gradient(160deg, rgba(7,31,18,0.70), rgba(15,60,34,0.60))',
-              backdropFilter: 'blur(14px)',
-              WebkitBackdropFilter: 'blur(14px)',
-              border: '1px solid rgba(74,222,128,0.25)',
-            }}
-          >
+          <div className="card-secondary rounded-2xl p-5 flex flex-col items-center text-center gap-3 relative overflow-hidden">
             <div
               className="absolute top-0 right-0 w-24 h-24 rounded-full opacity-[0.08]"
               style={{ background: 'radial-gradient(circle, #4ade80, transparent)', transform: 'translate(30%,-30%)' }}
@@ -237,13 +254,13 @@ export default function Dashboard() {
 
             <div className="w-full grid grid-cols-2 gap-2 mt-1">
               {[
-                { label: 'Total', value: data.pontos, suffix: 'pts' },
-                { label: 'Hoje', value: data.pontosHoje, suffix: 'pts' },
-                { label: 'Missões', value: data.missoesCompletas, suffix: '' },
-                { label: 'Streak', value: diasSeguidos, suffix: 'd' },
+                { label: 'Total', value: data.pontos, suffix: 'pts', cor: '#fff' },
+                { label: 'Hoje', value: data.pontosHoje, suffix: 'pts', cor: '#fff' },
+                { label: 'Missões', value: data.missoesCompletas, suffix: '', cor: '#fff' },
+                { label: 'Streak', value: diasSeguidos, suffix: 'd', cor: '#ffc928' },
               ].map(s => (
                 <div key={s.label} className="rounded-xl p-2 text-center" style={{ background: 'rgba(255,255,255,0.08)' }}>
-                  <p className="text-white font-bold text-lg font-serif-display">
+                  <p className="font-bold text-lg font-serif-display" style={{ color: s.cor }}>
                     {s.value}<span className="text-[11px] opacity-60 ml-0.5">{s.suffix}</span>
                   </p>
                   <p className="text-white/50 text-[11px]">{s.label}</p>
@@ -266,7 +283,7 @@ export default function Dashboard() {
           </div>
 
           {/* Trilha de Evolução */}
-          <div className="glass-strong rounded-2xl p-4">
+          <div className="card-tertiary rounded-2xl p-4">
             <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Trilha de Evolução</p>
             <div className="flex flex-col gap-2">
               {SELOS.map((l, i, arr) => {
@@ -300,7 +317,7 @@ export default function Dashboard() {
           </div>
 
           {/* Impacto ambiental */}
-          <div className="glass-strong rounded-2xl p-4 hidden lg:block">
+          <div className="card-tertiary rounded-2xl p-4 hidden lg:block">
             <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Impacto Ambiental</p>
             <div className="flex flex-col gap-2.5">
               {impacto.map(m => (
@@ -317,7 +334,7 @@ export default function Dashboard() {
         </aside>
 
         {/* ── CENTER: Main content ── */}
-        <div className="flex-1 min-w-0 flex flex-col gap-5">
+        <div className="flex-1 min-w-0 flex flex-col gap-6">
 
           {/* Greeting */}
           <div>
@@ -328,20 +345,14 @@ export default function Dashboard() {
           </div>
 
           {/* Desafio + Dica */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
-            <div
-              className="md:col-span-3 rounded-2xl p-5 relative overflow-hidden"
-              style={{
-                background: 'linear-gradient(125deg, rgba(15,60,34,0.9), rgba(34,197,94,0.18))',
-                border: '1px solid rgba(74,222,128,0.2)',
-              }}
-            >
+            <div className="lg:col-span-3 card-primary rounded-2xl p-5 relative overflow-hidden">
               <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(#4ade80, transparent)' }} />
               <div className="flex items-center gap-2 mb-3">
                 <BoltIcon />
                 <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Desafio do Dia</span>
-                <span className="ml-auto text-green-400/60 text-xs">
+                <span className="ml-auto text-[#ffc928]/80 text-xs">
                   {desafioBonusDisponivel ? `+${desafioDoDia.pontos} pts · bônus extra` : 'bônus já resgatado'}
                 </span>
               </div>
@@ -356,11 +367,12 @@ export default function Dashboard() {
                 <button
                   onClick={handleAcaoDesafio}
                   disabled={desafioFeito}
-                  className="rounded-full font-semibold text-sm px-5 py-2 transition-all active:scale-95 shrink-0 flex items-center gap-1.5 cursor-pointer"
+                  className={`rounded-full font-semibold text-sm px-6 py-2.5 transition-all active:scale-95 shrink-0 flex items-center gap-1.5 cursor-pointer ${desafioFeito ? '' : 'animate-pulse-glow'}`}
                   style={{
                     background: desafioFeito ? 'rgba(74,222,128,0.15)' : 'linear-gradient(135deg,#4ade80,#22c55e)',
                     color: desafioFeito ? '#4ade80' : '#0f3c22',
                     border: desafioFeito ? '1px solid rgba(74,222,128,0.3)' : 'none',
+                    boxShadow: desafioFeito ? 'none' : '0 8px 24px rgba(34,197,94,0.35)',
                   }}
                 >
                   {desafioFeito && <img src="/icons/check.svg" className="w-3.5 h-3.5" alt="" />}
@@ -369,33 +381,33 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="md:col-span-2 glass-strong rounded-2xl p-5 flex flex-col gap-3">
+            <div className="lg:col-span-1 card-tertiary rounded-2xl p-4 flex flex-col gap-2 min-w-0">
               <div className="flex items-center gap-2">
-                <img src="/icons/folha.svg" className="w-4 h-4" alt="" />
-                <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Dica do Dia</span>
+                <img src="/icons/folha.svg" className="w-4 h-4 opacity-60" alt="" />
+                <span className="text-white/40 text-[11px] font-bold uppercase tracking-widest">Dica do Dia</span>
               </div>
-              <p className="text-white/75 text-[15px] leading-relaxed flex-1 font-serif-display italic">
+              <p className="text-white/60 text-sm leading-snug flex-1 font-serif-display italic">
                 "{dicaDoDia}"
               </p>
-              <span className="text-green-400/60 text-[11px] font-medium">Verificado pela IA</span>
+              <span className="text-green-400/50 text-[11px] font-medium">Verificado pela IA</span>
             </div>
           </div>
 
           {/* Registrar ação */}
-          <div className="glass-strong rounded-2xl p-5 flex-1 flex flex-col">
+          <div className="card-secondary rounded-2xl p-5 flex-1 flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white font-semibold">Registrar Ação</h2>
               <span className="text-white/50 text-[13px]">{feitasHoje.size}/{MISSOES.length} hoje</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 auto-rows-min flex-1 content-start">
-              {MISSOES.map(missao => {
+              {missoesExibidas.map(missao => {
                 const cor = MISSAO_COR_MAP[missao.id] || '#4ade80';
                 const checked = feitasHoje.has(missao.nome);
                 return (
                   <button
                     key={missao.id}
                     onClick={() => handleMissao(missao)}
-                    className="rounded-xl p-3.5 flex flex-col gap-2 text-left transition-all group active:scale-95 relative overflow-hidden cursor-pointer"
+                    className="rounded-xl p-3.5 h-full flex flex-col gap-2 text-left transition-all group active:scale-95 relative overflow-hidden cursor-pointer"
                     style={{
                       background: checked ? `rgba(${hexToRgb(cor)},0.08)` : 'rgba(255,255,255,0.06)',
                       border: checked ? `1px solid rgba(${hexToRgb(cor)},0.25)` : '1px solid rgba(255,255,255,0.12)',
@@ -411,18 +423,36 @@ export default function Dashboard() {
                       className="w-9 h-9 group-hover:scale-110 transition-transform"
                       alt=""
                     />
-                    <div>
+                    <div className="mt-auto">
                       <p className="text-white/90 text-sm font-medium leading-snug">{missao.nome}</p>
                       <p className="font-semibold text-sm mt-0.5" style={{ color: cor }}>+{missao.pontos} pts</p>
                     </div>
                   </button>
                 );
               })}
+              <button
+                onClick={() => setAcoesLimitadas(l => !l)}
+                className="rounded-xl p-3.5 flex flex-col gap-2 items-center justify-center text-left transition-all active:scale-95 cursor-pointer border border-dashed border-white/15 hover:border-green-300/40 min-h-[118px]"
+                style={{ background: 'rgba(255,255,255,0.03)' }}
+              >
+                <span
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold"
+                  style={{ background: 'rgba(74,222,128,0.12)', color: acoesLimitadas ? '#4ade80' : 'rgba(255,255,255,0.8)' }}
+                >
+                  {acoesLimitadas ? '+' : '−'}
+                </span>
+                <div className="text-center">
+                  <p className="text-white/80 text-sm font-medium">{acoesLimitadas ? 'Mais ações' : 'Recolher'}</p>
+                  <p className="text-white/40 text-[11px]">{acoesLimitadas ? `+${MISSOES.length - 5} outras` : `${MISSOES.length} ações`}</p>
+                </div>
+              </button>
             </div>
           </div>
 
+          <MiniJogoSeparacao onPontos={handleMiniJogoPontos} jaJogado={jogadoHoje} compacto />
+
           {/* Impacto mobile */}
-          <div className="lg:hidden glass-strong rounded-2xl p-4 grid grid-cols-3 gap-3">
+          <div className="lg:hidden card-tertiary rounded-2xl p-4 grid grid-cols-3 gap-3">
             {impacto.map(m => (
               <div key={m.label} className="text-center rounded-xl p-3" style={{ background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.08)' }}>
                 <img src={m.icon} className="w-5 h-5 mx-auto" alt="" />
@@ -434,23 +464,23 @@ export default function Dashboard() {
         </div>
 
         {/* ── RIGHT: Ranking + Feed + Selos ── */}
-        <aside className="hidden xl:flex flex-col xl:w-75 shrink-0 gap-4">
+        <aside className="hidden xl:flex flex-col xl:w-75 shrink-0 gap-4 xl:mt-[76px]">
 
           {/* Ranking */}
-          <div className="glass-strong rounded-2xl p-4">
+          <div className="card-tertiary rounded-2xl p-4">
             <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Ranking Global</p>
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col gap-1">
               {ranking.slice(0, 4).map((u, i) => {
                 const nivelUser = NIVEL_ICONE[nivelPorPontos(u.pontos)] || '/icons/semente.svg';
                 return (
                   <div
                     key={u.nome + i}
-                    className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 transition-all hover:bg-white/5"
+                    className="flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 transition-all hover:bg-white/5"
                   >
                     <span
                       className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
                       style={{
-                        background: i === 0 ? 'linear-gradient(135deg,#fbbf24,#f59e0b)' : i === 1 ? 'rgba(203,213,225,0.2)' : i === 2 ? 'rgba(180,120,60,0.25)' : 'rgba(255,255,255,0.05)',
+                        background: i === 0 ? 'linear-gradient(135deg,#ffc928,#f59e0b)' : i === 1 ? 'rgba(203,213,225,0.2)' : i === 2 ? 'rgba(180,120,60,0.25)' : 'rgba(255,255,255,0.05)',
                         color: i < 3 ? 'white' : 'rgba(255,255,255,0.3)',
                       }}
                     >
@@ -471,7 +501,7 @@ export default function Dashboard() {
                 );
               })}
 
-              <div className="flex items-center gap-2.5 rounded-xl px-2.5 py-2 mt-1" style={{ background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.12)' }}>
+              <div className="flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 mt-1" style={{ background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.12)' }}>
                 <span className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold text-white/30 shrink-0" style={{ background: 'rgba(255,255,255,0.05)' }}>
                   {ranking.findIndex(u => u.nome === nomeExibido) >= 0 ? ranking.findIndex(u => u.nome === nomeExibido) + 1 : ranking.length}
                 </span>
@@ -490,7 +520,7 @@ export default function Dashboard() {
           </div>
 
           {/* Atividade recente */}
-          <div className="glass-strong rounded-2xl p-4 flex-1">
+          <div className="card-tertiary rounded-2xl p-4 flex-1">
             <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Atividade Recente</p>
             {recentHistory.length === 0 ? (
               <div className="text-center py-5">
@@ -509,7 +539,7 @@ export default function Dashboard() {
                 {recentHistory.map((entry: HistoricoEntrada, i: number) => {
                   const missaoId = getMissaoIdByName(entry.nome);
                   return (
-                    <div key={i} className="flex items-start gap-2.5 py-2.5 border-b border-white/5 last:border-0">
+                    <div key={i} className="flex items-start gap-2.5 py-3 border-b border-white/5 last:border-0">
                       <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.1)' }}>
                         {missaoId ? (
                           <img src={MISSAO_ICONE_MAP[missaoId]} className="w-4 h-4" alt="" />
@@ -528,34 +558,6 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-
-          {/* Selos */}
-          <div className="glass-strong rounded-2xl p-4">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-white/55 text-[11px] uppercase tracking-widest">Selos</p>
-              <span className="text-white/45 text-[11px]">{selosDesbloqueados.length}/{SELOS.length}</span>
-            </div>
-            <div className="grid grid-cols-4 gap-2">
-              {SELOS.map(selo => {
-                const unlocked = data.pontos >= selo.minPontos;
-                const ativo = selosDesbloqueados.includes(selo.id);
-                return (
-                  <div
-                    key={selo.id}
-                    className="aspect-square rounded-xl flex items-center justify-center"
-                    style={{
-                      background: ativo ? 'rgba(74,222,128,0.1)' : 'rgba(255,255,255,0.03)',
-                      border: ativo ? '1px solid rgba(74,222,128,0.25)' : '1px dashed rgba(255,255,255,0.08)',
-                      filter: unlocked ? 'none' : 'grayscale(1)',
-                      opacity: unlocked ? 1 : 0.3,
-                    }}
-                  >
-                    <img src={selo.icone} className="w-6 h-6" alt="" />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
         </aside>
       </div>
 
@@ -573,7 +575,7 @@ export default function Dashboard() {
 
 function BoltIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="#fbbf24">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="#ffc928">
       <path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5L13 2z" />
     </svg>
   );
