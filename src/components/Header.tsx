@@ -55,7 +55,6 @@ export default function Header() {
   return (
     <>
       <header className="fixed top-4 left-1/2 -translate-x-1/2 z-100 w-[calc(100%-2rem)] max-w-275 px-5 sm:px-6 py-4 flex items-center justify-between rounded-3xl bg-[#0c3a22]/30 backdrop-blur-xl border border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.18)] box-border">
-        {/* Logo sozinho na esquerda */}
         <NavLink to="/" className="flex items-center gap-2 shrink-0">
           <img src="/imagens/logo.png" alt="RockySoulUp" className="h-7 w-auto opacity-90" />
           <span

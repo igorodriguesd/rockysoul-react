@@ -29,7 +29,6 @@ export function Solucao() {
         <p className="text-white/70">Como a RockySoulUp transforma hábitos sustentáveis em impacto real</p>
       </div>
 
-      {/* O problema */}
       <div className="card-primary rounded-2xl p-6 mb-6">
         <div className="flex items-center gap-2 mb-3">
           <img src="/icons/alvo.svg" alt="" className="w-5 h-5" />
@@ -43,7 +42,6 @@ export function Solucao() {
         </p>
       </div>
 
-      {/* Como funciona */}
       <h2 className="text-2xl font-bold text-white mb-4 drop-shadow">Como funciona</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
         {PASSOS.map((passo, i) => (
@@ -60,7 +58,6 @@ export function Solucao() {
         ))}
       </div>
 
-      {/* Ações sustentáveis */}
       <div className="card-secondary rounded-2xl p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-white">Ações sustentáveis</h2>
@@ -79,7 +76,6 @@ export function Solucao() {
         </div>
       </div>
 
-      {/* Níveis + Diferenciais */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
         <div className="card-secondary rounded-2xl p-6">
           <h2 className="text-lg font-bold text-white mb-4">Níveis e selos</h2>

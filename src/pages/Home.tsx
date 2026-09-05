@@ -47,7 +47,6 @@ export function Home() {
   return (
     <>
       <section className="relative min-h-screen w-full overflow-hidden pt-4 pb-6">
-        {/* Full-page gradient + decor */}
         <div className="home-bg pointer-events-none fixed inset-0">
           <div
             className="absolute inset-0 opacity-[0.03]"
@@ -91,10 +90,8 @@ export function Home() {
           />
         </div>
 
-        {/* ───── THREE-COLUMN LAYOUT ───── */}
         <div className="relative z-10 pt-2 w-full max-w-[1900px] mx-auto flex items-center justify-between gap-0 px-6">
 
-          {/* LEFT SIDEBAR — hidden on mobile */}
           <aside className="hidden xl:flex flex-col items-end gap-7 w-72.5 shrink-0 self-stretch justify-center">
             <div className="animate-float-slow">
               <div className="glass-side rounded-2xl px-6 py-5 flex items-center gap-3.5 opacity-85">
@@ -129,7 +126,6 @@ export function Home() {
             </div>
           </aside>
 
-          {/* ───── HERO CARD ───── */}
           <div
             className="glass-hero rounded-3xl flex flex-col lg:flex-row items-center gap-10 lg:gap-0 relative overflow-hidden flex-1 min-w-0 max-w-260"
             style={{ padding: 'clamp(44px, 7vw, 56px) clamp(22px, 6vw, 80px)', minHeight: 500 }}
@@ -139,7 +135,6 @@ export function Home() {
               style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)' }}
             />
 
-            {/* LEFT: Copy */}
             <div className="flex-1 flex flex-col items-start gap-7 z-10">
               <div className="flex items-center gap-2 glass rounded-full px-5 py-2.5">
                 <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
@@ -189,7 +184,6 @@ export function Home() {
               </button>
             </div>
 
-            {/* RIGHT: Floating island */}
             <div className="shrink-0 flex items-center justify-center relative max-w-full w-[300px] h-[350px] sm:w-[360px] sm:h-[420px] lg:w-[400px] lg:h-[470px]">
               <div className="floating-island absolute inset-0">
                 <img
@@ -201,7 +195,6 @@ export function Home() {
             </div>
           </div>
 
-          {/* RIGHT SIDEBAR — hidden on mobile */}
           <aside className="hidden xl:flex flex-col items-start gap-7 w-72.5 shrink-0 self-stretch justify-center">
             <div className="animate-float-slow" style={{ animationDelay: '2s' }}>
               <div className="glass-side rounded-2xl px-6 py-5 flex items-center gap-3.5 opacity-85">
@@ -254,7 +247,6 @@ export function Home() {
           </aside>
         </div>
 
-        {/* ───── SIGNATURE + STATS ───── */}
         <div className="relative z-10 mt-16 flex flex-col items-center w-full pb-8">
           <div className="flex items-center gap-3 mb-3 opacity-80">
             <LeafSmall />

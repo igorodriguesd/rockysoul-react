@@ -201,10 +201,8 @@ export function Dashboard() {
     <div className="min-h-screen">
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 py-4 lg:py-6 flex flex-col lg:flex-row gap-4">
 
-        {/* ── LEFT: Profile + Progress ── */}
         <aside className="hidden lg:flex flex-col lg:w-75 shrink-0 gap-4">
 
-          {/* Profile card */}
           <div className="card-secondary rounded-2xl p-5 flex flex-col items-center text-center gap-3 relative overflow-hidden">
             <div
               className="absolute top-0 right-0 w-24 h-24 rounded-full opacity-[0.08]"
@@ -272,7 +270,6 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Trilha de Evolução */}
           <div className="card-tertiary rounded-2xl p-4">
             <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Trilha de Evolução</p>
             <div className="flex flex-col gap-2">
@@ -306,7 +303,6 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Impacto ambiental */}
           <div className="card-tertiary rounded-2xl p-4 hidden lg:block">
             <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Impacto Ambiental</p>
             <div className="flex flex-col gap-2.5">
@@ -323,10 +319,8 @@ export function Dashboard() {
           </div>
         </aside>
 
-        {/* ── CENTER: Main content ── */}
         <div className="flex-1 min-w-0 flex flex-col gap-6">
 
-          {/* Greeting */}
           <div>
             <p className="text-white/35 text-sm">Bom dia,</p>
             <h1 className="text-white mt-0.5 font-serif-display" style={{ fontSize: 30 }}>
@@ -334,7 +328,6 @@ export function Dashboard() {
             </h1>
           </div>
 
-          {/* Desafio + Dica */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
             <div className="lg:col-span-3 card-primary rounded-2xl p-5 relative overflow-hidden">
@@ -383,7 +376,6 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Registrar ação */}
           <div className="card-secondary rounded-2xl p-5 flex-1 flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-white font-semibold">Registrar Ação</h2>
@@ -425,7 +417,6 @@ export function Dashboard() {
 
           <MiniJogoSeparacao compacto />
 
-          {/* Impacto mobile */}
           <div className="lg:hidden card-tertiary rounded-2xl p-4 grid grid-cols-3 gap-3">
             {impacto.map(m => (
               <div key={m.label} className="text-center rounded-xl p-3" style={{ background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.08)' }}>
@@ -437,10 +428,8 @@ export function Dashboard() {
           </div>
         </div>
 
-        {/* ── RIGHT: Ranking + Feed + Selos ── */}
         <aside className="hidden xl:flex flex-col xl:w-75 shrink-0 gap-4 xl:mt-[76px]">
 
-          {/* Ranking */}
           <div className="card-tertiary rounded-2xl p-4">
             <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Ranking Global</p>
             <div className="flex flex-col gap-1">
@@ -493,7 +482,6 @@ export function Dashboard() {
             </div>
           </div>
 
-          {/* Atividade recente */}
           <div className="card-tertiary rounded-2xl p-4 flex-1">
             <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Atividade Recente</p>
             {recentHistory.length === 0 ? (

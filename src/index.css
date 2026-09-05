@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  /* Alinhados ao spec do professor: Mobile <=480, Tablet 768, Desktop 992+ */
   --breakpoint-sm: 480px;
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
@@ -15,7 +14,6 @@
   --animate-float-card: float-card 7s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
 
-  /* Paleta reduzida */
   --color-moss: #063d25;
   --color-fern: #0b4a2c;
   --color-card: #0b4a2c;
@@ -35,7 +33,7 @@
   body {
     margin: 0;
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    font-weight: 500; /* Letras do texto geral mais encorpadas (Medium) */
+    font-weight: 500;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
@@ -43,7 +41,7 @@
   h1,
   h2 {
     font-family: var(--font-serif-display);
-    font-weight: 700; /* Títulos mais gordinhos (Bold) */
+    font-weight: 700;
   }
 }
 
@@ -138,20 +136,17 @@
   border: 1px solid rgba(82, 232, 138, 0.14);
 }
 
-/* Hierarquia de cards: 1º nível (principal) */
 @utility card-primary {
   background: #0d452d;
   border: 1px solid #20d968;
   box-shadow: 0 0 44px rgba(32, 217, 104, 0.14);
 }
 
-/* 2º nível (secundário) */
 @utility card-secondary {
   background: #104d32;
   border: 1px solid rgba(82, 232, 138, 0.18);
 }
 
-/* 3º nível (terciário / info complementar) */
 @utility card-tertiary {
   background: rgba(11, 74, 44, 0.32);
   border: none;

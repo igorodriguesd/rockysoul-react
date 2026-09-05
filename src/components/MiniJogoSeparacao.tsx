@@ -151,6 +151,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
     }
   });
   const finalizouRef = useRef(false);
+  const fluxoIdRef = useRef(0);
 
   useEffect(() => {
     if (estado !== 'jogando' || tempo <= 0) return;
@@ -159,9 +160,20 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
   }, [estado, tempo]);
 
   useEffect(() => {
-    if (estado === 'jogando' && tempo === 0) finalizar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tempo, estado]);
+    if (estado === 'jogando' && tempo === 0) {
+      if (finalizouRef.current) return;
+      finalizouRef.current = true;
+      setEstado('fim');
+      setRecordes(prev => {
+        const novo = [...prev, pontuacao].sort((a, b) => b - a).slice(0, 5);
+        try {
+          localStorage.setItem(RECORDE_KEY, novo.join(','));
+        } catch {
+        }
+        return novo;
+      });
+    }
+  }, [tempo, estado, pontuacao]);
 
   function iniciar() {
     finalizouRef.current = false;
@@ -246,7 +258,8 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
   }
 
   function adicionarFluxo(texto: string, cor: string) {
-    const id = Date.now() + Math.random();
+    fluxoIdRef.current += 1;
+    const id = fluxoIdRef.current;
     setFluxo(f => [...f, { id, texto, cor }]);
     setTimeout(() => setFluxo(f => f.filter(x => x.id !== id)), 1200);
   }
@@ -341,7 +354,6 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
 
       {estado === 'jogando' && (
         <>
-          {/* HUD */}
           <div className="flex items-center gap-2 mb-3 flex-wrap">
             <span className="text-sm text-white/70">Fase {fase}/3</span>
             <div className="h-1.5 flex-1 min-w-[80px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
@@ -370,7 +382,6 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
             </span>
           </div>
 
-          {/* Itens */}
           <div className="flex flex-wrap gap-2 min-h-[56px] mb-3 items-center justify-center p-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)' }}>
             {restantes.length === 0 ? (
               <p className="text-green-300 text-sm font-medium inline-flex items-center gap-1.5">
@@ -395,7 +406,6 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
             )}
           </div>
 
-          {/* Lixeiras */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {LIXEIRAS.map(bin => (
               <div
@@ -430,7 +440,6 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
             ))}
           </div>
 
-          {/* Feedback */}
           {feedback && (
             <div className={`mt-3 text-sm font-semibold text-center rounded-xl p-2.5 inline-flex items-center gap-1.5 w-full justify-center ${feedback.tipo === 'certo' ? 'text-green-300' : 'text-red-400'}`}
               style={{ background: feedback.tipo === 'certo' ? 'rgba(74,222,128,0.08)' : 'rgba(248,113,113,0.08)' }}>
@@ -445,7 +454,6 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
             </div>
           )}
 
-          {/* Pontuacao flutuante */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
             {fluxo.map(f => (
               <div key={f.id} className="absolute left-1/2 top-1/3 float-up font-serif-display font-bold"
