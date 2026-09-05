@@ -67,7 +67,7 @@ export default function Header() {
         </NavLink>
 
         <div className="flex items-center gap-6">
-          <nav className="hidden md:flex items-center gap-4">
+          <nav className="hidden lg:flex items-center gap-4">
             {links.map(link => (
               <NavLink
                 key={link.to}
@@ -173,7 +173,7 @@ export default function Header() {
 
             <button
               onClick={() => setMenuAberto(!menuAberto)}
-              className="md:hidden w-8 h-8 flex items-center justify-center rounded-lg text-white hover:bg-white/20 transition-colors drop-shadow-md"
+              className="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg text-white hover:bg-white/20 transition-colors drop-shadow-md"
               aria-label="Menu"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -189,7 +189,7 @@ export default function Header() {
       </header>
 
       {menuAberto && (
-        <div className="fixed top-20 right-6 z-100 md:hidden w-48 bg-white/90 backdrop-blur-xl shadow-lg rounded-2xl p-3">
+        <div className="fixed top-20 right-6 z-100 lg:hidden w-48 bg-white/90 backdrop-blur-xl shadow-lg rounded-2xl p-3">
           <nav className="flex flex-col gap-1">
             {links.map(link => (
               <NavLink
@@ -212,7 +212,7 @@ export default function Header() {
       )}
 
       {menuAberto && (
-        <div className="fixed inset-0 z-99 md:hidden" onClick={() => setMenuAberto(false)} />
+        <div className="fixed inset-0 z-99 lg:hidden" onClick={() => setMenuAberto(false)} />
       )}
 
       <LoginModal aberto={loginAberto} onFechar={handleLoginFechar} />

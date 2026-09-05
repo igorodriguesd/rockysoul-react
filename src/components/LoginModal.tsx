@@ -81,7 +81,7 @@ export default function LoginModal({ aberto, onFechar }: Props) {
               className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${erros.nome ? 'border-red-400' : 'border-gray-200'
                 }`}
             />
-            {erros.nome && <p className="text-red-500 text-xs mt-1">⚠️ {erros.nome}</p>}
+            {erros.nome && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></svg>{erros.nome}</p>}
           </div>
           <div>
             <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1">Email (opcional)</label>
@@ -94,7 +94,7 @@ export default function LoginModal({ aberto, onFechar }: Props) {
               className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 ${erros.email ? 'border-red-400' : 'border-gray-200'
                 }`}
             />
-            {erros.email && <p className="text-red-500 text-xs mt-1">⚠️ {erros.email}</p>}
+            {erros.email && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></svg>{erros.email}</p>}
           </div>
           <button
             type="submit"

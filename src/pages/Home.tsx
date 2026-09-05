@@ -120,7 +120,7 @@ export function Home() {
 
             <div className="animate-float-slow" style={{ animationDelay: '3s' }}>
               <div className="glass-side rounded-full px-6 py-4 flex items-center gap-3 opacity-70">
-                <span className="text-2xl">🍃</span>
+                <img src="/icons/folha.svg" alt="" className="w-6 h-6 shrink-0" />
                 <div>
                   <p className="text-white/40 text-xs uppercase tracking-widest">Dica do dia</p>
                   <p className="text-white/85 text-base font-medium">{dicaDoDia()}</p>
@@ -132,7 +132,7 @@ export function Home() {
           {/* ───── HERO CARD ───── */}
           <div
             className="glass-hero rounded-3xl flex flex-col lg:flex-row items-center gap-10 lg:gap-0 relative overflow-hidden flex-1 min-w-0 max-w-260"
-            style={{ padding: '56px 80px', minHeight: 500 }}
+            style={{ padding: 'clamp(44px, 7vw, 56px) clamp(22px, 6vw, 80px)', minHeight: 500 }}
           >
             <div
               className="pointer-events-none absolute top-0 left-0 right-0 h-px opacity-60"
@@ -190,7 +190,7 @@ export function Home() {
             </div>
 
             {/* RIGHT: Floating island */}
-            <div className="shrink-0 flex items-center justify-center relative" style={{ width: 400, height: 470 }}>
+            <div className="shrink-0 flex items-center justify-center relative max-w-full w-[300px] h-[350px] sm:w-[360px] sm:h-[420px] lg:w-[400px] lg:h-[470px]">
               <div className="floating-island absolute inset-0">
                 <img
                   src="/imagens/Ilha.png"
