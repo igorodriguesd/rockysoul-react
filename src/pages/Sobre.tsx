@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 
 const techs = [
-  { nome: 'React', logo: '/icons/react.png' },
-  { nome: 'TypeScript', logo: '/icons/typeScript.png' },
-  { nome: 'Vite', logo: '/icons/vite.png' },
-  { nome: 'Tailwind CSS', logo: '/icons/tailwindCSS.png' },
-  { nome: 'HTML5', logo: '/icons/html.png' },
-  { nome: 'IBM Watson', logo: '/icons/logo-ibm.png' },
-  { nome: 'Node-RED', logo: '/icons/logo-node_red.png' },
-  { nome: 'Telegram Bot', logo: '/icons/logo-telegram.png' },
+  { nome: 'React', logo: '/icons/react.svg' },
+  { nome: 'TypeScript', logo: '/icons/typescript.svg' },
+  { nome: 'Vite', logo: '/icons/vite.svg' },
+  { nome: 'Tailwind CSS', logo: '/icons/tailwindcss.svg' },
+  { nome: 'HTML5', logo: '/icons/html5.svg' },
+  { nome: 'IBM Watson', logo: '/icons/ibm-watson.svg' },
+  { nome: 'Node-RED', logo: '/icons/node-red.svg' },
+  { nome: 'Telegram Bot', logo: '/icons/telegram.svg' },
 ];
 
 export function Sobre() {
