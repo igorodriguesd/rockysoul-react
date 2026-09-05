@@ -1,4 +1,4 @@
-# 🌱 RockySoulUp — Frontend React
+# RockySoulUp — Frontend React
 
 <p align="center">
   <img src="public/imagens/logo.png" alt="Logo RockySoulUp" width="160">
@@ -8,7 +8,7 @@ Plataforma **gamificada** de sustentabilidade que transforma ações ecológicas
 
 Desenvolvida como **SPA (Single Page Application)** com **React + Vite + TypeScript + TailwindCSS**.
 
-> 🖥️ **Demonstração visual** — a tela inicial do projeto (Home) com a ilha flutuante e o assistente RockySoul:
+> **Demonstração visual** — a tela inicial do projeto (Home) com a ilha flutuante e o assistente RockySoul:
 
 <p align="center">
   <img src="public/imagens/Ilha.png" alt="Ilha Flutuante da Home" width="400">
@@ -16,15 +16,15 @@ Desenvolvida como **SPA (Single Page Application)** com **React + Vite + TypeScr
 
 ---
 
-## 🎮 Gamificação com Avatar Integrado
+## Gamificação com Avatar Integrado
 
 O coração do projeto é a combinação de **gamificação** com um **avatar/assistente virtual** que media toda a experiência dentro do site:
 
-- **Avatar RockySoul** 🥑 — assistente virtual integrado ao site. Ele conversa em português, entende comandos de linguagem natural ("reciclei", "usei bicicleta", "economizei água") e executa ações reais na aplicação: registra ações, mostra saldo/nível, sugere missões, ensina curiosidades e até resgata recompensas para o usuário.
+- **Avatar RockySoul** — assistente virtual integrado ao site. Ele conversa em português, entende comandos de linguagem natural ("reciclei", "usei bicicleta", "economizei água") e executa ações reais na aplicação: registra ações, mostra saldo/nível, sugere missões, ensina curiosidades e até resgata recompensas para o usuário.
 - **Pontos** — cada ação sustentável gera pontos que alimentam o avatar e o perfil do usuário.
 - **Níveis de evolução** — Semente → Broto → Árvore → Expert, com progresso visual em anel de progresso e barra de XP.
 - **Selos desbloqueáveis** — conquistas automáticas ao acumular pontos.
-- **Mini-jogo "Separe o Lixo"** 🗑️ — gamificação extra por meio de um jogo de separação de recicláveis (3 fases, vidas, combos e recordes).
+- **Mini-jogo "Separe o Lixo"** — gamificação extra por meio de um jogo de separação de recicláveis (3 fases, vidas, combos e recordes).
 - **Desafio do Dia** — missão diária com bônus por streak (dias seguidos).
 - **Ranking global** — posição do usuário entre os participantes.
 - **Recompensas reais** — troca de pontos por cupons, descontos e brindes.
@@ -34,7 +34,7 @@ O assistente **RockySoul** funciona como um "avatar" que representa o site: ele 
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 - **React 19** — Interface e componentização
 - **Vite** — Build, dev server e desempenho
@@ -47,7 +47,7 @@ O assistente **RockySoul** funciona como um "avatar" que representa o site: ele 
 
 ---
 
-## 📄 Páginas e Rotas
+## Páginas e Rotas
 
 | Rota | Página | Tipo |
 | --- | --- | --- |
@@ -63,7 +63,7 @@ O assistente **RockySoul** funciona como um "avatar" que representa o site: ele 
 
 ---
 
-## 🧩 Estrutura de Pastas
+## Estrutura de Pastas
 
 ```
 rockysoul-react/
@@ -103,16 +103,16 @@ rockysoul-react/
 
 ---
 
-## 🎨 Sistema de Gamificação
+## Sistema de Gamificação
 
 ### Níveis e Selos
 
 | Nível | Faixa de Pontos | Selo correspondente |
 | --- | --- | --- |
-| Semente | 0 – 99 | 🌱 Semente (100 pts) |
-| Broto | 100 – 299 | 🌿 Broto (300 pts) |
-| Árvore | 300 – 999 | 🌳 Árvore (600 pts) |
-| Expert | 1000+ | 🏆 Expert (1000 pts) |
+| Semente | 0 – 99 | Semente (100 pts) |
+| Broto | 100 – 299 | Broto (300 pts) |
+| Árvore | 300 – 999 | Árvore (600 pts) |
+| Expert | 1000+ | Expert (1000 pts) |
 
 ### Missoes (ações sustentáveis)
 
@@ -124,7 +124,7 @@ Descontos de energia/água, passes de transporte, mudas e adoção de árvores, 
 
 ---
 
-## ⚡ Avatar RockySoul (Assistente Virtual)
+## Avatar RockySoul (Assistente Virtual)
 
 O **Chat.tsx** implementa o avatar inteligente com:
 
@@ -136,7 +136,7 @@ O **Chat.tsx** implementa o avatar inteligente com:
 
 ---
 
-## 🚀 Como Usar
+## Como Usar
 
 ### 1. Instalação e execução
 
@@ -172,7 +172,7 @@ Acesse `http://localhost:5173` no navegador (porta padrão do Vite).
 
 ---
 
-## 📱 Responsividade
+## Responsividade
 
 - **Mobile** — até 480px
 - **Tablet** — 768px
@@ -180,7 +180,7 @@ Acesse `http://localhost:5173` no navegador (porta padrão do Vite).
 
 ---
 
-## 🖼️ Imagens e Ícones do Projeto
+## Imagens e Ícones do Projeto
 
 O projeto usa **ícones SVG proprietários** em `/public/icons` (reciclagem, transporte, energia, água, bicicleta, árvore, banho, semente, broto, troféu, folha, check e mais) e imagens em `/public/imagens` (logo da RockySoulUp, ilha flutuante da Home e fotos dos integrantes).
 
@@ -200,7 +200,7 @@ Alguns dos ícones que representam as missões:
 
 ---
 
-## 💾 Dados Persistidos
+## Dados Persistidos
 
 Todas as informações do usuário são salvas no **localStorage**, via hook `useLocalStorage`:
 
@@ -215,13 +215,13 @@ Todas as informações do usuário são salvas no **localStorage**, via hook `us
 
 ---
 
-## 🔗 Repositório
+## Repositório
 
 - **GitHub:** https://github.com/igorodriguesd/rockysoul-react
 
 ---
 
-## 👥 Integrantes
+## Integrantes
 
 | Foto | Nome | RM | Turma | GitHub | LinkedIn |
 | --- | --- | --- | --- | --- | --- |
@@ -234,7 +234,7 @@ Todas as informações do usuário são salvas no **localStorage**, via hook `us
 
 ---
 
-## 📬 Contato
+## Contato
 
 Para entrar em contato com a equipe RockySoulUp:
 
