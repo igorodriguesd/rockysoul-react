@@ -182,7 +182,7 @@ Acesse `http://localhost:5173` no navegador (porta padrão do Vite).
 
 ## Imagens e Ícones do Projeto
 
-O projeto usa **ícones SVG proprietários** em `/public/icons` (reciclagem, transporte, energia, água, bicicleta, árvore, banho, semente, broto, troféu, folha, check e mais) e imagens em `/public/imagens` (logo da RockySoulUp, ilha flutuante da Home e fotos dos integrantes).
+O projeto usa **ícones SVG proprietários** em `/public/icons` (reciclagem, transporte, energia, água, bicicleta, árvore, banho, semente, broto, troféu, folha, check e mais) e imagens em `/public/imagens` (logo da RockySoulUp, ilha flutuante da Home e fotos dos integrantes). Na página **Sobre**, as ferramentas utilizadas são apresentadas com as **logos oficiais em SVG** (React, TypeScript, Vite, TailwindCSS, HTML5, IBM Watson, Node-RED e Telegram).
 
 Alguns dos ícones que representam as missões:
 
