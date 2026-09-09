@@ -94,7 +94,7 @@ export function Home() {
         <div className="relative z-10 pt-2 w-full max-w-[1900px] mx-auto flex items-center justify-between gap-0 px-6">
 
           <aside className="hidden xl:flex flex-col items-end gap-7 w-72.5 shrink-0 self-stretch justify-center">
-            <div className="animate-float-slow">
+            <div>
               <div className="glass-side rounded-2xl px-6 py-5 flex items-center gap-3.5 opacity-85">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center animate-pulse-glow" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}>
                   <img src="/icons/semente.svg" alt="" className="w-7 h-7" />
@@ -107,7 +107,7 @@ export function Home() {
               </div>
             </div>
 
-            <div className="animate-float-card" style={{ animationDelay: '1.5s' }}>
+            <div>
               <div className="glass-side rounded-xl px-6 py-5 opacity-75" style={{ transform: 'rotate(-2deg)' }}>
                 <p className="text-white/40 text-xs uppercase tracking-widest mb-1">Seus pontos</p>
                 <p className="text-white font-serif-display leading-none" style={{ fontSize: 38 }}>
@@ -116,11 +116,11 @@ export function Home() {
               </div>
             </div>
 
-            <div className="animate-float-slow" style={{ animationDelay: '2.5s' }}>
+            <div>
               <CollectionChip />
             </div>
 
-            <div className="animate-float-slow" style={{ animationDelay: '3s' }}>
+            <div>
               <div className="glass-side rounded-full px-6 py-4 flex items-center gap-3 opacity-70">
                 <img src="/icons/folha.svg" alt="" className="w-6 h-6 shrink-0" />
                 <div>
@@ -201,7 +201,7 @@ export function Home() {
           </div>
 
           <aside className="hidden xl:flex flex-col items-start gap-7 w-72.5 shrink-0 self-stretch justify-center">
-            <div className="animate-float-slow" style={{ animationDelay: '2s' }}>
+            <div>
               <div className="glass-side rounded-2xl px-6 py-5 flex items-center gap-3.5 opacity-85">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #86efac, #4ade80)' }}>
                   <img src={NIVEL_ICONES[nivel] ?? '/icons/semente.svg'} alt="" className="w-7 h-7" />
@@ -214,7 +214,7 @@ export function Home() {
               </div>
             </div>
 
-            <div className="animate-float-card" style={{ animationDelay: '0.8s' }}>
+            <div>
               <div className="glass-side rounded-xl px-6 py-5 opacity-75" style={{ transform: 'rotate(2deg)' }}>
                 <p className="text-white/40 text-xs uppercase tracking-widest mb-2.5">Ranking</p>
                 <div className="flex items-center gap-3">
@@ -240,7 +240,7 @@ export function Home() {
               </div>
             </div>
 
-            <div className="animate-float-slow" style={{ animationDelay: '4s' }}>
+            <div>
               <div className="glass-side rounded-full px-6 py-4 flex items-center gap-3 opacity-70">
                 <img src={desafioDoDia.icone} alt="" className="w-6 h-6" />
                 <div>
