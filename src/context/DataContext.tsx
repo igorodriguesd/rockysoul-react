@@ -43,6 +43,7 @@ interface DataContextType {
   setNome: (nome: string) => void;
   setEmail: (email: string) => void;
   adicionarPontos: (pontos: number, nomeMissao: string) => void;
+  adicionarBonus: (pontos: number, motivo: string) => void;
   subtrairPontos: (pontos: number) => void;
   addResgate: (resgate: Resgate) => void;
   getNivel: () => string;
@@ -66,7 +67,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setData(prev => ({ ...prev, email }));
   }, [setData]);
 
-  const adicionarPontos = useCallback((pontos: number, nomeMissao: string) => {
+const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: boolean) => {
     setData(prev => {
       const hoje = hojeStr();
       const ehNovoDia = prev.dataHoje !== hoje;
@@ -80,13 +81,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
         : prev;
 
       const entrada: HistoricoEntrada = {
-        nome: nomeMissao,
+        nome,
         pontos,
         data: new Date().toISOString(),
       };
 
       const novosPontos = dataAtualizada.pontos + pontos;
-      const novasMissoes = dataAtualizada.missoesCompletas + 1;
       const novosPontosHoje = dataAtualizada.pontosHoje + pontos;
       const novoHistorico = [entrada, ...dataAtualizada.historico].slice(0, 50);
 
@@ -97,13 +97,22 @@ export function DataProvider({ children }: { children: ReactNode }) {
       return {
         ...dataAtualizada,
         pontos: novosPontos,
-        missoesCompletas: novasMissoes,
+        missoesCompletas: contaMissao ? dataAtualizada.missoesCompletas + 1 : dataAtualizada.missoesCompletas,
         pontosHoje: novosPontosHoje,
         historico: novoHistorico,
         selosDesbloqueados: [...dataAtualizada.selosDesbloqueados, ...novosSelos],
       };
     });
   }, [setData]);
+
+  const adicionarPontos = useCallback((pontos: number, nomeMissao: string) => {
+    aplicarPontos(pontos, nomeMissao, true);
+  }, [aplicarPontos]);
+
+  const adicionarBonus = useCallback((pontos: number, motivo: string) => {
+    aplicarPontos(pontos, motivo, false);
+    showToast(`+${pontos} créditos - ${motivo}`);
+  }, [aplicarPontos]);
 
   const subtrairPontos = useCallback((pontos: number) => {
     setData(prev => ({ ...prev, pontos: Math.max(0, prev.pontos - pontos) }));
@@ -161,12 +170,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
         selosDesbloqueados: [...prev.selosDesbloqueados, ...novosSelos],
       };
     });
-    showToast(`+${BONUS_DESAFIO} pontos - Bônus do Desafio do Dia`);
+    showToast(`+${BONUS_DESAFIO} créditos - Bônus do Desafio do Dia`);
   }, [setData]);
 
   return (
     <DataContext.Provider value={{
-      data, setNome, setEmail, adicionarPontos, subtrairPontos,
+      data, setNome, setEmail, adicionarPontos, adicionarBonus, subtrairPontos,
       addResgate, getNivel, getSelosDesbloqueados, resetar,
       desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio,
     }}>

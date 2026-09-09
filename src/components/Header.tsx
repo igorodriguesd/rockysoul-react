@@ -1,11 +1,38 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { CREDITOS_POR_REAL } from '../data/constants';
 import LoginModal from './LoginModal';
+
+const NIVEL_ICONE_HEADER: Record<string, string> = {
+  Semente: '/icons/semente.svg',
+  Broto: '/icons/broto.svg',
+  'Árvore': '/icons/arvore.svg',
+  Expert: '/icons/trofeu.svg',
+};
+
+function formatarReais(valor: number): string {
+  return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function progressoParaNivel(pontos: number): number {
+  if (pontos >= 1000) return 100;
+  if (pontos >= 300) return 30 + ((pontos - 300) / 700) * 70;
+  if (pontos >= 100) return 10 + ((pontos - 100) / 200) * 20;
+  return (pontos / 100) * 10;
+}
+
+function proximoNivel(pontos: number): { nome: string; falta: number } {
+  if (pontos < 100) return { nome: 'Broto', falta: 100 - pontos };
+  if (pontos < 300) return { nome: 'Árvore', falta: 300 - pontos };
+  if (pontos < 1000) return { nome: 'Expert', falta: 1000 - pontos };
+  return { nome: 'Expert', falta: 0 };
+}
 
 const links = [
   { to: '/', label: 'Home' },
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/colecao', label: 'Coleção' },
   { to: '/recompensas', label: 'Recompensas' },
   { to: '/solucao', label: 'Solução' },
   { to: '/sobre', label: 'Sobre' },
@@ -25,6 +52,11 @@ export default function Header() {
   const usuarioLogado = Boolean(data.nome.trim());
 
   const nivel = getNivel();
+  const progresso = progressoParaNivel(data.pontos);
+  const proximo = proximoNivel(data.pontos);
+  const valorEmReais = data.pontos / CREDITOS_POR_REAL;
+  const arcR = 40;
+  const arcCirc = 2 * Math.PI * arcR;
 
   useEffect(() => {
     if (!usuarioAberto) return;
@@ -99,7 +131,7 @@ export default function Header() {
                 </span>
                 <span className="hidden xl:flex flex-col items-start leading-tight">
                   <span className="text-white text-xs font-semibold max-w-90px truncate">{data.nome?.trim()?.split(' ')?.[0] || 'Usuário'}</span>
-                  <span className="text-[#4ade80] text-[10px] font-medium">{data.pontos} pts</span>
+                  <span className="text-[#4ade80] text-[10px] font-medium">{data.pontos} créditos</span>
                 </span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform ${usuarioAberto ? 'rotate-180' : ''}`}>
                   <path d="M6 9l6 6 6-6" />
@@ -120,32 +152,97 @@ export default function Header() {
             )}
 
             {usuarioAberto && (
-              <div className="absolute right-0 top-full mt-3 w-64 rounded-2xl bg-white/95 backdrop-blur-xl shadow-2xl border border-white/40 p-3 z-120">
-                <div className="flex items-center gap-3 px-2 py-2 border-b border-gray-100 mb-2">
-                  <span className="w-11 h-11 rounded-full bg-linear-to-br from-[#22c55e] to-[#16a34a] flex items-center justify-center text-white text-sm font-bold shadow-md shrink-0">
-                    {data.nome?.trim()?.[0]?.toUpperCase() || 'U'}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-gray-800 truncate">{data.nome}</p>
-                    <p className="text-xs text-gray-400 truncate">{data.email || 'email não informado'}</p>
+              <div className="absolute right-0 top-full mt-3 w-72 rounded-2xl bg-[#0f1c2e]/95 backdrop-blur-xl shadow-2xl border border-white/10 p-3 z-120">
+                <div className="rounded-2xl p-4 bg-[#0c3a22] relative overflow-hidden">
+                  <div
+                    className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-10"
+                    style={{ background: 'radial-gradient(circle, #4ade80, transparent)', transform: 'translate(30%,-30%)' }}
+                  />
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-22 h-22 shrink-0">
+                      <svg width="88" height="88" viewBox="0 0 88 88" className="-rotate-90 absolute inset-0">
+                        <circle cx="44" cy="44" r={arcR} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="5" />
+                        <circle
+                          cx="44" cy="44" r={arcR} fill="none" stroke="url(#headerArc)" strokeWidth="5" strokeLinecap="round"
+                          strokeDasharray={arcCirc} strokeDashoffset={arcCirc - (progresso / 100) * arcCirc}
+                          style={{ transition: 'stroke-dashoffset 0.7s ease' }}
+                        />
+                        <defs>
+                          <linearGradient id="headerArc" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#4ade80" />
+                            <stop offset="100%" stopColor="#22c55e" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold text-[#0f3c22]"
+                          style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)' }}>
+                          {data.nome?.trim()?.[0]?.toUpperCase() || 'U'}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-white font-bold text-base font-serif-display truncate">{data.nome || 'Usuário'}</p>
+                      <p className="text-white/40 text-xs truncate">{data.email || 'email não informado'}</p>
+                      <span className="inline-flex items-center gap-1.5 mt-1.5">
+                        <img src={NIVEL_ICONE_HEADER[nivel] || '/icons/semente.svg'} className="w-3.5 h-3.5" alt="" />
+                        <span className="text-green-300/90 text-sm font-medium">{nivel}</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 mt-4">
+                    {[
+                      { label: 'Total', value: data.pontos, suffix: 'créditos', cor: '#fff' },
+                      { label: 'Hoje', value: data.pontosHoje, suffix: 'créditos', cor: '#fff' },
+                      { label: 'Missões', value: data.missoesCompletas, suffix: '', cor: '#fff' },
+                      { label: 'Streak', value: data.streak, suffix: 'd', cor: '#ffc928' },
+                    ].map(s => (
+                      <div key={s.label} className="rounded-xl p-2 text-center" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                        <p className="font-bold text-base font-serif-display" style={{ color: s.cor }}>
+                          {s.value}<span className="text-[10px] opacity-60 ml-0.5">{s.suffix}</span>
+                        </p>
+                        <p className="text-white/50 text-[10px]">{s.label}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => { setUsuarioAberto(false); navigate('/recompensas'); }}
+                    className="w-full mt-3 rounded-xl p-3 flex items-center justify-between transition-all hover:brightness-105 cursor-pointer"
+                    style={{ background: 'linear-gradient(90deg, rgba(74,222,128,0.16), rgba(34,197,94,0.1))', border: '1px solid rgba(74,222,128,0.35)' }}
+                    aria-label="Ver conversão de créditos"
+                  >
+                    <div className="text-left">
+                      <p className="text-white/45 text-[10px] uppercase tracking-widest">Seus créditos</p>
+                      <p className="text-white font-bold font-serif-display" style={{ fontSize: 18 }}>
+                        {data.pontos.toLocaleString('pt-BR')} <span className="text-[10px] font-medium opacity-60">créditos</span>
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[#4ade80] font-bold font-serif-display" style={{ fontSize: 18 }}>R$ {formatarReais(valorEmReais)}</p>
+                      <p className="text-white/35 text-[9px]">{CREDITOS_POR_REAL} créditos = R$1,00 · converter</p>
+                    </div>
+                  </button>
+
+                  <div className="mt-3">
+                    <div className="flex justify-between text-[10px] text-white/50 mb-1">
+                      <span>Próximo: {proximo.nome}</span>
+                      <span>{proximo.falta} créditos restantes</span>
+                    </div>
+                    <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                      <div
+                        className="h-full rounded-full transition-all duration-700"
+                        style={{ width: `${progresso}%`, background: 'linear-gradient(90deg,#4ade80,#22c55e)' }}
+                      />
+                    </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 px-1 py-2 border-b border-gray-100 mb-2">
-                  <div className="bg-[#22c55e]/8 rounded-xl px-2.5 py-2 text-center">
-                    <p className="text-base font-bold text-[#16a34a] leading-none">{data.pontos}</p>
-                    <p className="text-[10px] text-gray-400 mt-1">pontos</p>
-                  </div>
-                  <div className="bg-[#22c55e]/8 rounded-xl px-2.5 py-2 text-center">
-                    <p className="text-base font-bold text-[#16a34a] leading-none">{nivel}</p>
-                    <p className="text-[10px] text-gray-400 mt-1">nível</p>
-                  </div>
-                </div>
-
-                <div className="space-y-1">
+                <div className="space-y-1 mt-2">
                   <button
                     onClick={() => { setUsuarioAberto(false); navigate('/dashboard'); }}
-                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-white/80 hover:bg-white/5 transition-colors cursor-pointer"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="3" width="7" height="7" rx="1" />
@@ -157,7 +254,7 @@ export default function Header() {
                   </button>
                   <button
                     onClick={handleSair}
-                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors cursor-pointer"
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -188,7 +285,7 @@ export default function Header() {
       </header>
 
       {menuAberto && (
-        <div className="fixed top-20 right-6 z-100 lg:hidden w-48 bg-white/90 backdrop-blur-xl shadow-lg rounded-2xl p-3">
+        <div className="fixed top-20 right-6 z-100 lg:hidden w-48 bg-[#0f1c2e]/95 backdrop-blur-xl shadow-lg rounded-2xl p-3 border border-white/10">
           <nav className="flex flex-col gap-1">
             {links.map(link => (
               <NavLink
@@ -199,7 +296,7 @@ export default function Header() {
                 className={({ isActive }) =>
                   `px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${isActive
                     ? 'text-[#22c55e] bg-[#22c55e]/10'
-                    : 'text-gray-800 hover:bg-gray-100'
+                    : 'text-white/80 hover:bg-white/5'
                   }`
                 }
               >

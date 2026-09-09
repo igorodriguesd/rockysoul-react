@@ -13,7 +13,38 @@ export const MISSOES: Missao[] = [
   { id: 'garrafa', nome: 'Garrafa Reutilizável', pontos: 15, icone: '/icons/agua.svg', comprovacao: 'declaracao' },
   { id: 'educar', nome: 'Compartilhar Dicas', pontos: 15, icone: '/icons/comunidade.svg', comprovacao: 'declaracao' },
   { id: 'sacola', nome: 'Sacola Reutilizável', pontos: 10, icone: '/icons/folha.svg', comprovacao: 'declaracao' },
+  { id: 'captacao', nome: 'Captação de Água da Chuva', pontos: 30, icone: '/icons/agua.svg', comprovacao: 'foto' },
+  { id: 'mobilidade', nome: 'Mobilidade Elétrica', pontos: 40, icone: '/icons/bateria.svg', comprovacao: 'foto' },
+  { id: 'ciclovia', nome: 'Usar Ciclovia', pontos: 25, icone: '/icons/transporte.svg', comprovacao: 'foto-gps' },
+  { id: 'solar', nome: 'Energia Solar', pontos: 45, icone: '/icons/energia.svg', comprovacao: 'foto' },
+  { id: 'eolica', nome: 'Energia Eólica', pontos: 45, icone: '/icons/energia.svg', comprovacao: 'declaracao' },
+  { id: 'led', nome: 'Iluminação Eficiente', pontos: 15, icone: '/icons/bateria.svg', comprovacao: 'foto' },
+  { id: 'horta', nome: 'Horta Doméstica', pontos: 50, icone: '/icons/muda.svg', comprovacao: 'foto' },
+  { id: 'agrofloresta', nome: 'Apoiar Agrofloresta', pontos: 60, icone: '/icons/arvore.svg', comprovacao: 'foto' },
 ];
+
+export const CO2_POR_MISSAO: Record<string, number> = {
+  reciclagem: 2.5,
+  transporte: 3.0,
+  energia: 1.5,
+  agua: 0.8,
+  bicicleta: 4.0,
+  plantio: 8.0,
+  banho: 0.5,
+  compostagem: 2.0,
+  consumo: 1.2,
+  garrafa: 0.6,
+  educar: 0.4,
+  sacola: 0.5,
+  captacao: 1.0,
+  mobilidade: 2.5,
+  ciclovia: 2.0,
+  solar: 3.5,
+  eolica: 3.5,
+  led: 0.8,
+  horta: 3.0,
+  agrofloresta: 6.0,
+};
 
 export const SELOS: Selo[] = [
   { id: 'semente', nome: 'Semente', descricao: 'Primeiros passos sustentáveis', icone: '/icons/semente.svg', minPontos: 100 },
@@ -33,10 +64,10 @@ export const RECOMPENSAS: Recompensa[] = [
   { id: 'r1', nome: 'Desconto Energia', descricao: '10% de desconto na conta de energia', pontos: 200, categoria: 'Energia', icone: '/icons/bateria.svg', badge: 'Novo' },
   { id: 'r2', nome: 'Passe de Transporte', descricao: 'Um passe livre de transporte público', pontos: 350, categoria: 'Transporte', icone: '/icons/transporte.svg' },
   { id: 'r3', nome: 'Muda de Árvore', descricao: 'Receba uma muda para plantar', pontos: 500, categoria: 'Natureza', icone: '/icons/muda.svg', badge: 'Top 1' },
-  { id: 'r4', nome: 'Cupom Reciclagem', descricao: 'Cupom de R$15 em lojas parceiras', pontos: 150, categoria: 'Cupons', icone: '/icons/carrinho.svg' },
+  { id: 'r4', nome: 'Cupom Reciclagem', descricao: 'Cupom de desconto em lojas parceiras', pontos: 150, categoria: 'Cupons', icone: '/icons/carrinho.svg' },
   { id: 'r5', nome: 'Kit Sustentável', descricao: 'Kit com canudo reutilizável e sacola ecológica', pontos: 250, categoria: 'Natureza', icone: '/icons/folha.svg' },
   { id: 'r6', nome: 'Desconto Água', descricao: '5% de desconto na conta de água', pontos: 180, categoria: 'Energia', icone: '/icons/agua.svg' },
-  { id: 'r7', nome: 'Cupom Bicicleta', descricao: 'Cupom de R$20 em bicicletarias', pontos: 400, categoria: 'Transporte', icone: '/icons/bicicleta.svg' },
+  { id: 'r7', nome: 'Cupom Bicicleta', descricao: 'Cupom de desconto em bicicletarias', pontos: 400, categoria: 'Transporte', icone: '/icons/bicicleta.svg' },
   { id: 'r8', nome: 'Adoção de Árvore', descricao: 'Adote uma árvore real por 3 meses', pontos: 800, categoria: 'Natureza', icone: '/icons/arvore.svg', badge: 'Top 1' },
 ];
 
@@ -61,6 +92,7 @@ export const PERGUNTAS_FAQ: { pergunta: string; resposta: string }[] = [
   { pergunta: 'Como funciona o ranking?', resposta: 'O ranking mostra sua posição em relação aos outros usuários da plataforma. Quanto mais ações sustentáveis você realizar, mais pontos acumula e maior será sua posição no ranking semanal.' },
   { pergunta: 'Preciso fazer a verificação por foto?', resposta: 'Sim! Para garantir a autenticidade das ações, solicitamos que você envie uma foto como comprovante. A verificação por GPS é opcional, mas ajuda a validar ainda mais sua ação.' },
   { pergunta: 'Como funciona o sistema de níveis?', resposta: 'Você evolui de Semente até Expert conforme acumula pontos: Semente (0-99), Broto (100-299), Árvore (300-999) e Expert (1000+). Cada nível desbloqueia novos selos e recompensas!' },
+  { pergunta: 'Como converter créditos em dinheiro?', resposta: 'Seus pontos funcionam como créditos da plataforma. No conversor da página de Recompensas, você informa a quantidade de créditos (mínimo de 500) e sua chave Pix para receber o valor: a cada 100 créditos, você recebe R$1,00.' },
   { pergunta: 'Posso resgatar recompensas várias vezes?', resposta: 'Sim, desde que tenha pontos suficientes. Cada recompensa tem um custo em pontos. Ao resgatar, os pontos são descontados do seu saldo e o resgate fica registrado no seu histórico.' },
 ];
 
@@ -81,3 +113,7 @@ export const RECOMPENSAS_CHAT: { icone: string; nome: string; pontos: number }[]
   { icone: '/icons/bicicleta.svg', nome: 'Cupom Bicicleta', pontos: 400 },
   { icone: '/icons/arvore.svg', nome: 'Adoção de Árvore', pontos: 800 },
 ];
+
+export const CREDITOS_POR_REAL = 100;
+
+export const MIN_CREDITOS_CONVERSAO = 500;

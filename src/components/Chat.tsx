@@ -1,15 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
 import { useData } from '../context/DataContext';
+import { useColecao } from '../context/CollectionContext';
 import { useChat } from '../context/ChatContext';
-import { MISSOES, RECOMPENSAS_CHAT, CURIOSIDADES } from '../data/constants';
+import { MISSOES, RECOMPENSAS_CHAT, CURIOSIDADES, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO } from '../data/constants';
+import { SETS_CARTAS, CHANCE_DROP_POR_RARIDADE, LABEL_RARIDADE } from '../data/cartas';
 import type { ChatMessage } from '../types';
 
-type BotState = 'normal' | 'aguardandoNome' | 'aguardandoAcao' | 'aguardandoResgate';
+type BotState = 'normal' | 'aguardandoNome' | 'aguardandoAcao' | 'aguardandoResgate' | 'aguardandoValorConversao' | 'aguardandoChavePix';
+
+function formatarReais(valor: number): string {
+  return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
 const INTENTS: Record<string, string[]> = {
   saudacoes: ['oi', 'ola', 'bom dia', 'boa tarde', 'boa noite', 'hey', 'e ai', 'fala', 'salve'],
   ajuda: ['ajuda', 'help', 'como', 'procedimento', 'tutorial', 'guia', 'orientacao'],
-  pontos: ['pontos', 'pontuacao', 'score', 'quantos pontos', 'saldo'],
+  pontos: ['pontos', 'pontuacao', 'score', 'quantos pontos', 'saldo', 'creditos', 'credito', 'saldo em creditos'],
   nivel: ['nivel', 'level', 'rank', 'ranking', 'evoluir', 'subir nivel'],
   sugestao: ['sugestao', 'dica', 'ideia', 'o que faco', 'recomendar'],
   curiosidade: ['curiosidade', 'curioso', 'fato', 'dado', 'sabia que', 'informacao'],
@@ -17,6 +23,8 @@ const INTENTS: Record<string, string[]> = {
   sobre: ['sobre', 'projeto', 'rockysoul', 'about'],
   registrar: ['registrar', 'registrar acao', 'salvar', 'gravar', 'anotar'],
   recompensa: ['recompensa', 'premio', 'resgatar', 'reward', 'trocar'],
+  converter: ['converter', 'conversao', 'pix', 'dinheiro', 'real', 'reais', 'sacar', 'trocar por dinheiro', 'saldo em reais'],
+  cartas: ['cartas', 'carta', 'cartinhas', 'colecao', 'drop', 'quimica', 'raridade', 'roleta'],
   reciclagem: ['reciclar', 'reciclagem', 'reciclei', 'lixo', 'material'],
   transporte: ['transporte', 'onibus', 'metro', 'trem', 'publico'],
   energia: ['energia', 'eletrica', 'luz', 'apagar', 'desligar'],
@@ -48,7 +56,9 @@ function randomItem<T>(arr: T[]): T {
 
 const SUGESTOES_RAPIDAS: { label: string; comando: string }[] = [
   { label: 'Registrar ação', comando: 'registrar' },
-  { label: 'Meus pontos', comando: 'pontos' },
+  { label: 'Meus créditos', comando: 'pontos' },
+  { label: 'Converter créditos', comando: 'converter' },
+  { label: 'Minhas cartas', comando: 'cartas' },
   { label: 'Meu nível', comando: 'nivel' },
   { label: 'Dica', comando: 'dica' },
   { label: 'Recompensas', comando: 'recompensa' },
@@ -61,10 +71,12 @@ export default function Chat() {
   const [mostrarTeaser, setMostrarTeaser] = useState(false);
   const [aguardandoEntrada, setAguardandoEntrada] = useState(false);
   const estadoRef = useRef<BotState>('normal');
+  const conversaoRef = useRef(0);
   const initRef = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data, adicionarPontos, subtrairPontos, addResgate, getNivel, setNome } = useData();
+  const { adquirirPorMissao, colecao, getProgressoTotal, getQuimica, getProximoObjetivo } = useColecao();
   const { aberto, abrirChat, fecharChat } = useChat();
 
   useEffect(() => {
@@ -76,7 +88,7 @@ export default function Chat() {
       initRef.current = true;
       setMostrarTeaser(false);
       setTimeout(() => {
-        setMensagens([{ texto: 'Olá! Eu sou o RockySoul, seu assistente de sustentabilidade.\n\nVocê pode **registrar ações**, ver seus **pontos e nível**, pedir **dicas** e **resgatar recompensas**.\n\nUse os atalhos abaixo ou digite o que quiser!', remetente: 'bot' }]);
+        setMensagens([{ texto: 'Olá! Eu sou o RockySoul, seu assistente de sustentabilidade.\n\nVocê pode **registrar ações**, ver seus **créditos e nível**, **converter créditos em dinheiro**, pedir **dicas** e **resgatar recompensas**.\n\nUse os atalhos abaixo ou digite o que quiser!', remetente: 'bot' }]);
       }, 350);
     }
   }, [aberto]);
@@ -118,6 +130,17 @@ export default function Chat() {
     setTimeout(() => adicionarMensagem(texto, 'bot'), 350);
   }
 
+  function registrarAcao(missaoId: string, nome: string, pontos: number): string {
+    adicionarPontos(pontos, nome);
+    const drop = adquirirPorMissao(missaoId);
+    let texto = `**Ação registrada: ${nome}!**\n\n+${pontos} créditos`;
+    if (drop) {
+      if (drop.caiu) texto += `\n\nNova carta obtida: **${drop.novaCarta.carta.nome}**`;
+      else texto += `\n\nA carta **${drop.carta.nome}** escapou desta vez! Chance de drop: ${drop.chance}%. Tente novamente.`;
+    }
+    return texto;
+  }
+
   function ProcessarMensagem(userText: string) {
     const texto = userText.trim();
     if (!texto) return;
@@ -134,7 +157,7 @@ export default function Chat() {
       setNome(nome);
       estadoRef.current = 'normal';
       setAguardandoEntrada(false);
-      responder(`Prazer em conhecer você, ${nome}! Bem-vindo ao RockySoulUp! Seu nível atual é **${getNivel()}** e você tem **${data.pontos} pontos**. Como posso te ajudar?`);
+      responder(`Prazer em conhecer você, ${nome}! Bem-vindo ao RockySoulUp! Seu nível atual é **${getNivel()}** e você tem **${data.pontos} créditos**. Como posso te ajudar?`);
       return;
     }
 
@@ -142,10 +165,11 @@ export default function Chat() {
       const num = parseInt(texto, 10);
       if (!isNaN(num) && num >= 1 && num <= MISSOES.length) {
         const missao = MISSOES[num - 1];
+        const drop = adquirirPorMissao(missao.id);
         adicionarPontos(missao.pontos, missao.nome);
         estadoRef.current = 'normal';
         setAguardandoEntrada(false);
-        responder(`Ação registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} pontos`);
+        responder(`Ação registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} créditos${drop && drop.caiu ? `\n\nNova carta obtida: **${drop.novaCarta.carta.nome}**` : ''}${drop && !drop.caiu ? `\n\nA carta **${drop.carta.nome}** escapou desta vez! Chance de drop: ${drop.chance}%. Tente novamente.` : ''}`);
       } else {
         responder(`Número inválido. Por favor, digite um número de 1 a ${MISSOES.length}.`);
       }
@@ -158,18 +182,61 @@ export default function Chat() {
         const recompensa = RECOMPENSAS_CHAT[num - 1];
         if (data.pontos >= recompensa.pontos) {
           subtrairPontos(recompensa.pontos);
-          addResgate({ nome: recompensa.nome, pontos: recompensa.pontos, data: new Date().toLocaleString('pt-BR') });
+          addResgate({ nome: recompensa.nome, pontos: recompensa.pontos, data: new Date().toISOString() });
           estadoRef.current = 'normal';
           setAguardandoEntrada(false);
-          responder(`Recompensa resgatada com sucesso!\n\n**${recompensa.nome}**\n-${recompensa.pontos} pontos`);
+          responder(`Recompensa resgatada com sucesso!\n\n**${recompensa.nome}**\n-${recompensa.pontos} créditos`);
         } else {
           estadoRef.current = 'normal';
           setAguardandoEntrada(false);
-          responder(`Você não tem pontos suficientes para esta recompensa.\n\nPrecisa de **${recompensa.pontos} pontos**, mas tem apenas **${data.pontos} pontos**.`);
+          responder(`Você não tem créditos suficientes para esta recompensa.\n\nPrecisa de **${recompensa.pontos} créditos**, mas tem apenas **${data.pontos} créditos**.`);
         }
       } else {
         responder(`Número inválido. Por favor, digite um número de 1 a ${RECOMPENSAS_CHAT.length}.`);
       }
+      return;
+    }
+
+    if (estado === 'aguardandoValorConversao') {
+      const num = parseInt(texto.replace(/\D+/g, ''), 10);
+      if (isNaN(num) || num <= 0) {
+        responder(`Digite a quantidade de créditos que deseja converter (apenas números).\n\nMínimo: **${MIN_CREDITOS_CONVERSAO} créditos** · Seu saldo: **${data.pontos} créditos**`);
+        return;
+      }
+      if (num < MIN_CREDITOS_CONVERSAO) {
+        responder(`O valor mínimo para conversão é **${MIN_CREDITOS_CONVERSAO} créditos** (R$${formatarReais(MIN_CREDITOS_CONVERSAO / CREDITOS_POR_REAL)}). Escolha um valor maior.`);
+        return;
+      }
+      if (num > data.pontos) {
+        responder(`Você não tem créditos suficientes. Seu saldo é **${data.pontos} créditos**. Digite um valor menor.`);
+        return;
+      }
+      conversaoRef.current = num;
+      estadoRef.current = 'aguardandoChavePix';
+      responder(`Você vai converter **${num} créditos** = **R$${formatarReais(num / CREDITOS_POR_REAL)}**.\n\nAgora digite sua **chave Pix** (CPF, e-mail, telefone ou chave aleatória):`);
+      return;
+    }
+
+    if (estado === 'aguardandoChavePix') {
+      const chave = texto.trim();
+      if (chave.length < 3) {
+        responder('Chave Pix inválida. Digite uma chave válida (CPF, e-mail, telefone ou chave aleatória).');
+        return;
+      }
+      const creditos = conversaoRef.current;
+      const valor = creditos / CREDITOS_POR_REAL;
+      subtrairPontos(creditos);
+      addResgate({
+        nome: `Conversão de créditos em dinheiro (R$${formatarReais(valor)})`,
+        pontos: creditos,
+        data: new Date().toISOString(),
+      });
+      conversaoRef.current = 0;
+      estadoRef.current = 'normal';
+      setAguardandoEntrada(false);
+      responder(
+        `**Conversão solicitada com sucesso!**\n\n**-${creditos} créditos** · **R$${formatarReais(valor)}**\n\nO valor será enviado para a chave Pix. A conversão aparece na sua **Atividade Recente**.`
+      );
       return;
     }
 
@@ -179,7 +246,7 @@ export default function Chat() {
       case 'saudacoes': {
         const nome = data.nome;
         if (nome) {
-          responder(`Olá, ${nome}! Bem-vindo de volta ao RockySoulUp! Você tem **${data.pontos} pontos** e está no nível **${getNivel()}**. Como posso te ajudar hoje?`);
+          responder(`Olá, ${nome}! Bem-vindo de volta ao RockySoulUp! Você tem **${data.pontos} créditos** e está no nível **${getNivel()}**. Como posso te ajudar hoje?`);
         } else {
           estadoRef.current = 'aguardandoNome';
           setAguardandoEntrada(true);
@@ -191,10 +258,12 @@ export default function Chat() {
       case 'ajuda': {
         responder(
           '**Como posso te ajudar:**\n\n' +
-          '- **Registrar ação** - Para registrar uma ação sustentável e ganhar pontos\n' +
-          '- **Meus pontos** - Para ver seu saldo atual\n' +
+          '- **Registrar ação** - Para registrar uma ação sustentável e ganhar créditos\n' +
+          '- **Meus créditos** - Para ver seu saldo atual\n' +
+          '- **Converter créditos** - Para converter créditos em dinheiro via Pix\n' +
           '- **Meu nível** - Para ver seu nível de evolução\n' +
           '- **Recompensas** - Para ver e resgatar recompensas\n' +
+          '- **Minhas cartas** - Para ver sua coleção de cartas, sets e chances de drop\n' +
           '- **Sugestão** - Para receber dicas de ações sustentáveis\n' +
           '- **Curiosidade** - Para aprender fatos interessantes\n\n' +
           'Também posso entender comandos como "reciclei", "usei bicicleta", "economizei água" e muito mais!'
@@ -203,20 +272,20 @@ export default function Chat() {
       }
 
       case 'pontos': {
-        responder('**Seu saldo de pontos:**\n\n**' + data.pontos + ' pontos**\nTotal de missões completas: ' + data.missoesCompletas + '\nPontos hoje: ' + data.pontosHoje);
+        responder('**Seu saldo de créditos:**\n\n**' + data.pontos + ' créditos**\nTotal de missões completas: ' + data.missoesCompletas + '\nCréditos hoje: ' + data.pontosHoje);
         break;
       }
 
       case 'nivel': {
         const nivel = getNivel();
         const proximoNivel =
-          nivel === 'Semente' ? 'Broto (100 pontos)' :
-            nivel === 'Broto' ? 'Árvore (300 pontos)' :
-              nivel === 'Árvore' ? 'Expert (1000 pontos)' :
+          nivel === 'Semente' ? 'Broto (100 créditos)' :
+            nivel === 'Broto' ? 'Árvore (300 créditos)' :
+              nivel === 'Árvore' ? 'Expert (1000 créditos)' :
                 'Nível máximo atingido!';
         responder(
           '**Seu nível atual:** ' + nivel + '\n\n' +
-          '**' + data.pontos + ' pontos acumulados**\n\n' +
+          '**' + data.pontos + ' créditos acumulados**\n\n' +
           'Próximo nível: **' + proximoNivel + '**\n\n' +
           'Continue realizando ações sustentáveis para evoluir!'
         );
@@ -228,11 +297,11 @@ export default function Chat() {
           m => !data.historico.some(h => h.nome === m.nome)
         );
         if (missoesNaoFeitas.length > 0) {
-          const lista = missoesNaoFeitas.map((m, i) => `${i + 1}. ${m.nome} (+${m.pontos} pontos)`).join('\n');
+          const lista = missoesNaoFeitas.map((m, i) => `${i + 1}. ${m.nome} (+${m.pontos} créditos)`).join('\n');
           responder('**Sugestões de ações sustentáveis que você ainda não realizou:**\n\n' + lista + '\n\nDigite "registrar" para começar!');
         } else {
           const missao = randomItem(MISSOES);
-          responder('Parabéns! Você já experimentou todas as ações! Que tal repetir uma?\n\nSugestão: **' + missao.nome + '** (+' + missao.pontos + ' pontos)');
+          responder('Parabéns! Você já experimentou todas as ações! Que tal repetir uma?\n\nSugestão: **' + missao.nome + '** (+' + missao.pontos + ' créditos)');
         }
         break;
       }
@@ -247,11 +316,11 @@ export default function Chat() {
       case 'motivacao': {
         const nivel = getNivel();
         const frases = [
-          'Você está no nível **' + nivel + '** com **' + data.pontos + ' pontos**! Continue assim!',
+          'Você está no nível **' + nivel + '** com **' + data.pontos + ' créditos**! Continue assim!',
           'Cada ação sustentável faz diferença! Você já completou **' + data.missoesCompletas + ' missões**!',
           'O planeta agradece cada gesto seu! Continue evoluindo!',
           'Nível **' + nivel + '**! Você é um exemplo de sustentabilidade!',
-          'Com **' + data.pontos + ' pontos**, você está fazendo a diferença! Não pare!',
+          'Com **' + data.pontos + ' créditos**, você está fazendo a diferença! Não pare!',
         ];
         responder(randomItem(frases));
         break;
@@ -260,13 +329,16 @@ export default function Chat() {
       case 'sobre': {
         responder(
           '**RockySoulUp**\n\n' +
-          'O RockySoulUp é uma plataforma de gamificação sustentável que transforma ações ecológicas em pontos, níveis e recompensas!\n\n' +
+          'O RockySoulUp é uma plataforma de gamificação sustentável que transforma ações ecológicas em créditos, níveis e recompensas!\n\n' +
           '**Nosso objetivo:**\n' +
           '- Incentivar práticas sustentáveis no dia a dia\n' +
           '- Recompensar quem cuida do planeta\n' +
           '- Criar uma comunidade de pessoas comprometidas com o meio ambiente\n\n' +
           '**Como funciona:**\n' +
-          '- Registre ações sustentáveis e ganhe pontos\n' +
+          '- Registre ações sustentáveis e ganhe créditos\n' +
+          '- Conquiste cartas por raridade com chance de drop (roleta)\n' +
+          '- Complete sets de cartas e ganhe bônus de química\n' +
+          '- Converta créditos em dinheiro via Pix\n' +
           '- Evolua de Semente a Expert\n' +
           '- Desbloqueie selos e resgate recompensas\n\n' +
           'Junte-se a nós e faça a diferença!'
@@ -277,58 +349,85 @@ export default function Chat() {
       case 'registrar': {
         estadoRef.current = 'aguardandoAcao';
         setAguardandoEntrada(true);
-        const lista = MISSOES.map((m, i) => `${i + 1}. ${m.nome} (+${m.pontos} pontos)`).join('\n');
+        const lista = MISSOES.map((m, i) => `${i + 1}. ${m.nome} (+${m.pontos} créditos)`).join('\n');
         responder('**Escolha uma ação sustentável para registrar:**\n\n' + lista + '\n\nDigite o número da ação que você realizou:');
+        break;
+      }
+
+      case 'converter': {
+        estadoRef.current = 'aguardandoValorConversao';
+        setAguardandoEntrada(true);
+        responder(
+          `**Conversor de créditos em dinheiro (Pix)**\n\n` +
+          `${CREDITOS_POR_REAL} créditos = **R$1,00**\nMínimo: **${MIN_CREDITOS_CONVERSAO} créditos**\nSeu saldo: **${data.pontos} créditos**\n\n` +
+          `Digite a quantidade de créditos que deseja converter:`
+        );
+        break;
+      }
+
+      case 'cartas': {
+        const { obtidas, total } = getProgressoTotal();
+        const linhasSets = SETS_CARTAS.map(set => {
+          const quimica = getQuimica(set.id);
+          const cartasSet = colecao.sets[set.id]?.cartas.length ?? 0;
+          const nivel = quimica.level === 3 ? 'Química Nível 3 · Set completo' : quimica.level > 0 ? `Química Nível ${quimica.level}` : 'Sem química';
+          return `- **${set.nome}** (${cartasSet}/4) · ${nivel}`;
+        }).join('\n');
+        const proximo = getProximoObjetivo();
+        const chances = (Object.entries(CHANCE_DROP_POR_RARIDADE) as [keyof typeof CHANCE_DROP_POR_RARIDADE, number][])
+          .map(([r, c]) => `${LABEL_RARIDADE[r]} ${c}%`)
+          .join(' · ');
+        responder(
+          '**Sua coleção de cartas**\n\n' +
+          `**${obtidas}/${total}** cartas conquistadas\n\n` +
+          '**Sets e química:**\n' + linhasSets + '\n\n' +
+          (proximo ? `Próximo objetivo: complete o set **${proximo.set.nome}** (faltam ${proximo.faltam} carta(s)) para ativar a química.\n\n` : 'Set completo em todos! Você domina a coleção 😄\n\n') +
+          '**Chance de drop por raridade:**\n' + chances + '\n\n' +
+          'Complete um set (4/4) para ganhar **+150 créditos** de bônus!'
+        );
         break;
       }
 
       case 'recompensa': {
         estadoRef.current = 'aguardandoResgate';
         setAguardandoEntrada(true);
-        const lista = RECOMPENSAS_CHAT.map((r, i) => `${i + 1}. ${r.nome} - ${r.pontos} pontos`).join('\n');
-        responder('**Recompensas disponíveis:**\n\n' + lista + '\n\nSeu saldo: **' + data.pontos + ' pontos**\n\nDigite o número da recompensa que deseja resgatar:');
+        const lista = RECOMPENSAS_CHAT.map((r, i) => `${i + 1}. ${r.nome} - ${r.pontos} créditos`).join('\n');
+        responder('**Recompensas disponíveis:**\n\n' + lista + '\n\nSeu saldo: **' + data.pontos + ' créditos**\n\nDigite o número da recompensa que deseja resgatar:');
         break;
       }
 
       case 'reciclagem': {
-        adicionarPontos(30, 'Reciclagem');
-        responder('**Ação registrada: Reciclagem!**\n\n+30 pontos');
+        responder(registrarAcao('reciclagem', 'Reciclagem', 30));
         break;
       }
 
       case 'transporte': {
-        adicionarPontos(50, 'Transporte Sustentável');
-        responder('**Ação registrada: Transporte Sustentável!**\n\n+50 pontos');
+        responder(registrarAcao('transporte', 'Transporte Sustentável', 50));
         break;
       }
 
       case 'energia': {
-        adicionarPontos(20, 'Economia de Energia');
-        responder('**Ação registrada: Economia de Energia!**\n\n+20 pontos');
+        responder(registrarAcao('energia', 'Economia de Energia', 20));
         break;
       }
 
       case 'agua': {
-        adicionarPontos(20, 'Economia de Água');
-        responder('**Ação registrada: Economia de Água!**\n\n+20 pontos');
+        responder(registrarAcao('agua', 'Economia de Água', 20));
         break;
       }
 
       case 'bicicleta': {
-        adicionarPontos(40, 'Bicicleta');
-        responder('**Ação registrada: Bicicleta!**\n\n+40 pontos');
+        responder(registrarAcao('bicicleta', 'Bicicleta', 40));
         break;
       }
 
       case 'arvore': {
-        adicionarPontos(100, 'Plantio');
-        responder('**Ação registrada: Plantio!**\n\n+100 pontos');
+        responder(registrarAcao('plantio', 'Plantio', 100));
         break;
       }
 
       case 'banho': {
-        adicionarPontos(20, 'Banho Rápido');
-        responder('**Ação registrada: Banho Rápido!**\n\n+20 pontos');
+        responder(registrarAcao('banho', 'Banho Rápido', 20));
         break;
       }
 
@@ -344,9 +443,11 @@ export default function Chat() {
           'Hmm, não tenho certeza se entendi!\n\n' +
           (nome ? 'Olá, ' + nome + '! ' : '') + 'Aqui estão algumas coisas que posso fazer:\n\n' +
           '- Digite **"registrar"** para registrar uma ação sustentável\n' +
-          '- Digite **"pontos"** para ver seu saldo\n' +
+          '- Digite **"creditos"** para ver seu saldo\n' +
           '- Digite **"nivel"** para ver seu nível\n' +
           '- Digite **"recompensa"** para resgatar recompensas\n' +
+          '- Digite **"converter"** para converter créditos em dinheiro via Pix\n' +
+          '- Digite **"cartas"** para ver sua coleção e chances de drop\n' +
           '- Digite **"ajuda"** para ver todas as opções\n' +
           '- Ou digite algo como **"reciclei"**, **"usei bicicleta"**, **"economizei água"**!'
         );
