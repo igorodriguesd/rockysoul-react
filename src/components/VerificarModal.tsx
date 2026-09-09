@@ -206,7 +206,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
   const chanceDrop = cartaDaMissao ? CHANCE_DROP_POR_RARIDADE[cartaDaMissao.raridade] : 0;
 
   return (
-    <div className="fixed inset-0 z-9998 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={fechar}>
+    <div className="fixed inset-0 z-9998 flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/60" onClick={fechar}>
       <div
         role="dialog"
         aria-modal="true"

@@ -77,7 +77,7 @@ export function Colecao() {
 
       {fabricaAberta && (
       <div
-        className="fixed inset-0 z-[110] flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/70 backdrop-blur-sm"
+        className="fixed inset-0 z-[110] flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/70"
         onClick={() => setFabricaAberta(false)}
       >
         <div
