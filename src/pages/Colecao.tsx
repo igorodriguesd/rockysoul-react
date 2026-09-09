@@ -77,11 +77,11 @@ export function Colecao() {
 
       {fabricaAberta && (
       <div
-        className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-sm"
+        className="fixed inset-0 z-[110] flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/70 backdrop-blur-sm"
         onClick={() => setFabricaAberta(false)}
       >
         <div
-          className="relative w-full max-w-3xl rounded-2xl p-4 sm:p-5 max-h-[85vh] overflow-y-auto overscroll-contain"
+          className="relative w-full max-w-5xl rounded-2xl p-4 sm:p-5 max-h-[calc(100vh-8rem)] sm:max-h-[85vh] overflow-y-auto overscroll-contain"
           style={{
             background: 'linear-gradient(180deg, rgba(18,32,54,0.98), rgba(9,17,30,0.98))',
             border: '1px solid rgba(166,108,255,0.4)',
@@ -152,7 +152,7 @@ export function Colecao() {
           {faltando.length === 0 ? (
             <p className="text-[#20d968] text-sm font-semibold text-center py-2">Coleção completa! Parabéns 🎉</p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5">
+            <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-2.5">
               {faltando.map(carta => {
                 const custo = CUSTO_FABRICACAO[carta.raridade];
                 const tem = (fragmentos[carta.raridade] ?? 0) >= custo;
