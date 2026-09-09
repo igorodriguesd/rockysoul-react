@@ -113,6 +113,70 @@ export function Recompensas() {
           })}
         </div>
 
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-12">
+          <div className="card-secondary rounded-2xl p-5">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-white/55 text-[11px] uppercase tracking-widest">Trilha de Evolução</p>
+              <span className="text-[#4ade80] text-sm font-bold">{nivel}</span>
+            </div>
+            <div className="flex flex-col gap-3">
+              {SELOS.map((l, i, arr) => {
+                const unlocked = data.pontos >= l.minPontos;
+                const active = nivel === l.nome;
+                return (
+                  <div key={l.id} className="flex items-center gap-3.5 relative">
+                    {i < arr.length - 1 && (
+                      <div className="absolute left-4.5 top-9 w-px h-5" style={{ background: unlocked ? 'rgba(74,222,128,0.4)' : 'rgba(255,255,255,0.06)' }} />
+                    )}
+                    <div
+                      className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all"
+                      style={{
+                        background: active ? 'linear-gradient(135deg,#4ade80,#22c55e)' : unlocked ? 'rgba(74,222,128,0.12)' : 'rgba(255,255,255,0.04)',
+                        border: active ? 'none' : unlocked ? '1px solid rgba(74,222,128,0.3)' : '1px solid rgba(255,255,255,0.06)',
+                        filter: unlocked ? 'none' : 'grayscale(1)',
+                        opacity: unlocked ? 1 : 0.35,
+                      }}
+                    >
+                      <img src={l.icone} className="w-5 h-5" alt="" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-sm font-semibold ${active ? 'text-green-300' : unlocked ? 'text-white/75' : 'text-white/35'}`}>{l.nome}</p>
+                      <p className="text-white/35 text-[11px]">{l.descricao} · {l.minPontos} pts</p>
+                    </div>
+                    {active && <span className="text-[11px] text-green-400 font-semibold">atual</span>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="card-secondary rounded-2xl p-5">
+            <p className="text-white/55 text-[11px] uppercase tracking-widest mb-4">Impacto Ambiental</p>
+            <div className="grid grid-cols-3 gap-2.5 mb-4">
+              {[
+                { icon: '/icons/folha.svg', label: 'kg CO₂ evitado', value: totalCO2.toFixed(1) },
+                { icon: '/icons/arvore.svg', label: 'Árvores equiv.', value: arvoresEquiv },
+                { icon: '/icons/semente.svg', label: 'Dias seguidos', value: `${data.streak}d` },
+              ].map(m => (
+                <div key={m.label} className="text-center rounded-2xl py-4 px-2" style={{ background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.1)' }}>
+                  <img src={m.icon} className="w-6 h-6 mx-auto" alt="" />
+                  <p className="text-green-300 font-bold mt-1.5 font-serif-display" style={{ fontSize: 20 }}>{m.value}</p>
+                  <p className="text-white/45 text-[10px] mt-0.5">{m.label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <p className="text-sm text-white/70 font-medium">Ações registradas</p>
+              <p className="text-white/40 text-xs mt-0.5 leading-relaxed">
+                Cada ação registrada conta como CO₂ evitado e aproxima você dos selos da trilha.
+              </p>
+              <p className="text-[#4ade80] font-bold mt-2 font-serif-display" style={{ fontSize: 22 }}>
+                {data.historico.length} <span className="text-[11px] font-medium opacity-60">ações</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="card-secondary rounded-2xl p-5 sm:p-6 mb-12">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-6 items-start">
             <div>
@@ -224,70 +288,6 @@ export function Recompensas() {
                 </p>
               </div>
             )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-12">
-          <div className="card-secondary rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-white/55 text-[11px] uppercase tracking-widest">Trilha de Evolução</p>
-              <span className="text-[#4ade80] text-sm font-bold">{nivel}</span>
-            </div>
-            <div className="flex flex-col gap-3">
-              {SELOS.map((l, i, arr) => {
-                const unlocked = data.pontos >= l.minPontos;
-                const active = nivel === l.nome;
-                return (
-                  <div key={l.id} className="flex items-center gap-3.5 relative">
-                    {i < arr.length - 1 && (
-                      <div className="absolute left-4.5 top-9 w-px h-5" style={{ background: unlocked ? 'rgba(74,222,128,0.4)' : 'rgba(255,255,255,0.06)' }} />
-                    )}
-                    <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all"
-                      style={{
-                        background: active ? 'linear-gradient(135deg,#4ade80,#22c55e)' : unlocked ? 'rgba(74,222,128,0.12)' : 'rgba(255,255,255,0.04)',
-                        border: active ? 'none' : unlocked ? '1px solid rgba(74,222,128,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                        filter: unlocked ? 'none' : 'grayscale(1)',
-                        opacity: unlocked ? 1 : 0.35,
-                      }}
-                    >
-                      <img src={l.icone} className="w-5 h-5" alt="" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className={`text-sm font-semibold ${active ? 'text-green-300' : unlocked ? 'text-white/75' : 'text-white/35'}`}>{l.nome}</p>
-                      <p className="text-white/35 text-[11px]">{l.descricao} · {l.minPontos} pts</p>
-                    </div>
-                    {active && <span className="text-[11px] text-green-400 font-semibold">atual</span>}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="card-secondary rounded-2xl p-5">
-            <p className="text-white/55 text-[11px] uppercase tracking-widest mb-4">Impacto Ambiental</p>
-            <div className="grid grid-cols-3 gap-2.5 mb-4">
-              {[
-                { icon: '/icons/folha.svg', label: 'kg CO₂ evitado', value: totalCO2.toFixed(1) },
-                { icon: '/icons/arvore.svg', label: 'Árvores equiv.', value: arvoresEquiv },
-                { icon: '/icons/semente.svg', label: 'Dias seguidos', value: `${data.streak}d` },
-              ].map(m => (
-                <div key={m.label} className="text-center rounded-2xl py-4 px-2" style={{ background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.1)' }}>
-                  <img src={m.icon} className="w-6 h-6 mx-auto" alt="" />
-                  <p className="text-green-300 font-bold mt-1.5 font-serif-display" style={{ fontSize: 20 }}>{m.value}</p>
-                  <p className="text-white/45 text-[10px] mt-0.5">{m.label}</p>
-                </div>
-              ))}
-            </div>
-            <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <p className="text-sm text-white/70 font-medium">Ações registradas</p>
-              <p className="text-white/40 text-xs mt-0.5 leading-relaxed">
-                Cada ação registrada conta como CO₂ evitado e aproxima você dos selos da trilha.
-              </p>
-              <p className="text-[#4ade80] font-bold mt-2 font-serif-display" style={{ fontSize: 22 }}>
-                {data.historico.length} <span className="text-[11px] font-medium opacity-60">ações</span>
-              </p>
-            </div>
           </div>
         </div>
 

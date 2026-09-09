@@ -17,6 +17,8 @@ import { Colecao } from './pages/Colecao';
 import Chat from './components/Chat';
 
 export default function App() {
+  const ehModoPrint = new URLSearchParams(window.location.search).has('print');
+
   return (
     <DataProvider>
       <CollectionProvider>
@@ -37,7 +39,7 @@ export default function App() {
                 <Route path="*" element={<Home />} />
               </Route>
             </Routes>
-            <Chat />
+            {!ehModoPrint && <Chat />}
             <ToastContainer />
           </div>
         </ChatProvider>
