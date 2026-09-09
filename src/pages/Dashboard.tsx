@@ -1,29 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useData } from '../context/DataContext';
-import { MISSOES, SELOS, USUARIOS_BASE, CURIOSIDADES } from '../data/constants';
+import { MISSOES, USUARIOS_BASE, CURIOSIDADES, RECOMPENSAS } from '../data/constants';
 import VerificarModal from '../components/VerificarModal';
 import MiniJogoSeparacao from '../components/MiniJogoSeparacao';
-import type { HistoricoEntrada } from '../types';
 
 interface RankingUser {
   nome: string;
   pontos: number;
 }
 
-const CO2_MAP: Record<string, number> = {
-  reciclagem: 2.5,
-  transporte: 3.0,
-  energia: 1.5,
-  agua: 0.8,
-  bicicleta: 4.0,
-  plantio: 8.0,
-  banho: 0.5,
-  compostagem: 2.0,
-  consumo: 1.2,
-  garrafa: 0.6,
-  educar: 0.4,
-  sacola: 0.5,
-};
+interface AtividadeItem {
+  id: string;
+  nome: string;
+  pontos: number;
+  tipo: 'acao' | 'resgate' | 'conversao';
+  icone: string;
+  data: string;
+  timestamp: number;
+}
 
 const MISSAO_ICONE_MAP: Record<string, string> = {
   reciclagem: '/icons/reciclagem.svg',
@@ -38,6 +32,14 @@ const MISSAO_ICONE_MAP: Record<string, string> = {
   garrafa: '/icons/agua.svg',
   educar: '/icons/comunidade.svg',
   sacola: '/icons/folha.svg',
+  captacao: '/icons/agua.svg',
+  mobilidade: '/icons/bateria.svg',
+  ciclovia: '/icons/transporte.svg',
+  solar: '/icons/energia.svg',
+  eolica: '/icons/energia.svg',
+  led: '/icons/bateria.svg',
+  horta: '/icons/muda.svg',
+  agrofloresta: '/icons/arvore.svg',
 };
 
 const MISSAO_COR_MAP: Record<string, string> = {
@@ -53,6 +55,14 @@ const MISSAO_COR_MAP: Record<string, string> = {
   garrafa: '#7dd3fc',
   educar: '#c4b5fd',
   sacola: '#86efac',
+  captacao: '#7dd3fc',
+  mobilidade: '#eab308',
+  ciclovia: '#7dd3fc',
+  solar: '#eab308',
+  eolica: '#eab308',
+  led: '#f5c451',
+  horta: '#a3e635',
+  agrofloresta: '#86efac',
 };
 
 const NIVEL_ICONE: Record<string, string> = {
@@ -72,20 +82,6 @@ function getGreeting(nivel: string): string {
   }
 }
 
-function getProgressPercent(pontos: number): number {
-  if (pontos >= 1000) return 100;
-  if (pontos >= 300) return 30 + ((pontos - 300) / 700) * 70;
-  if (pontos >= 100) return 10 + ((pontos - 100) / 200) * 20;
-  return (pontos / 100) * 10;
-}
-
-function getNextLevel(pontos: number): { nome: string; falta: number } {
-  if (pontos < 100) return { nome: 'Broto', falta: 100 - pontos };
-  if (pontos < 300) return { nome: 'Árvore', falta: 300 - pontos };
-  if (pontos < 1000) return { nome: 'Expert', falta: 1000 - pontos };
-  return { nome: 'Expert', falta: 0 };
-}
-
 function nivelPorPontos(pontos: number): string {
   if (pontos >= 1000) return 'Expert';
   if (pontos >= 300) return 'Árvore';
@@ -93,18 +89,23 @@ function nivelPorPontos(pontos: number): string {
   return 'Semente';
 }
 
+function parseData(raw: string): Date {
+  if (!raw) return new Date(0);
+  const d = new Date(raw);
+  if (!isNaN(d.getTime())) return d;
+  const m = raw.match(/^(\d{2})\/(\d{2})\/(\d{4})[, ]+(\d{2}):(\d{2})(?::(\d{2}))?/);
+  if (m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]), Number(m[4]), Number(m[5]), Number(m[6] || 0));
+  return new Date(0);
+}
+
 function timeAgo(data: string): string {
-  try {
-    const date = new Date(data);
-    const now = new Date();
-    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
-    if (diff < 60) return 'agora';
-    if (diff < 3600) return `${Math.floor(diff / 60)}min`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
-    return `${Math.floor(diff / 86400)}d`;
-  } catch {
-    return '';
-  }
+  const date = parseData(data);
+  const now = new Date();
+  const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+  if (diff < 60) return 'agora';
+  if (diff < 3600) return `${Math.floor(diff / 60)}min`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
+  return `${Math.floor(diff / 86400)}d`;
 }
 
 function getMissaoIdByName(name: string): string | null {
@@ -146,26 +147,44 @@ export function Dashboard() {
   }, []);
 
   const nivel = getNivel();
-  const progresso = getProgressPercent(data.pontos);
-  const nextLevel = getNextLevel(data.pontos);
-  const arcR = 52;
-  const arcCirc = 2 * Math.PI * arcR;
-  const arcOffset = arcCirc - (progresso / 100) * arcCirc;
 
   const ranking: RankingUser[] = [
     ...USUARIOS_BASE.map(u => ({ nome: u.nome, pontos: u.pontos })),
     { nome: data.nome || 'Você', pontos: data.pontos },
   ].sort((a, b) => b.pontos - a.pontos);
 
-  const recentHistory = data.historico.slice(0, 8);
+  const recentHistory = useMemo<AtividadeItem[]>(() => {
+    const itens: AtividadeItem[] = data.historico.map((h, i) => {
+      const missaoId = getMissaoIdByName(h.nome);
+      return {
+        id: `h${i}`,
+        nome: h.nome,
+        pontos: h.pontos,
+        tipo: 'acao',
+        icone: missaoId ? MISSAO_ICONE_MAP[missaoId] : '/icons/folha.svg',
+        data: h.data,
+        timestamp: parseData(h.data).getTime(),
+      };
+    });
 
-  const totalCO2 = data.historico.reduce((acc, entry) => {
-    const missaoId = getMissaoIdByName(entry.nome);
-    return acc + (missaoId ? CO2_MAP[missaoId] || 0 : 0);
-  }, 0);
+    data.resgates.forEach((r, i) => {
+      const ehConversao = r.nome.startsWith('Conversão');
+      itens.push({
+        id: `r${i}`,
+        nome: r.nome,
+        pontos: r.pontos,
+        tipo: ehConversao ? 'conversao' : 'resgate',
+        icone: ehConversao
+          ? ''
+          : RECOMPENSAS.find(x => x.nome === r.nome)?.icone || '/icons/trofeu.svg',
+        data: r.data,
+        timestamp: parseData(r.data).getTime(),
+      });
+    });
 
-  const arvoresEquiv = totalCO2 > 0 ? (totalCO2 / 22).toFixed(1) : '0';
-  const diasSeguidos = data.streak;
+    return itens.sort((a, b) => b.timestamp - a.timestamp).slice(0, 8);
+  }, [data.historico, data.resgates]);
+
   const dicaDoDia = getDicaDoDia();
 
   const feitasHoje = new Set(
@@ -191,135 +210,61 @@ export function Dashboard() {
     }
   }
 
-  const impacto = [
-    { icon: '/icons/folha.svg', label: 'kg CO₂ evitado', value: totalCO2.toFixed(1) },
-    { icon: '/icons/arvore.svg', label: 'Árvores equiv.', value: arvoresEquiv },
-    { icon: '/icons/semente.svg', label: 'Dias seguidos', value: `${diasSeguidos}d` },
-  ];
-
   return (
     <div className="min-h-screen">
       <div className="max-w-[1700px] mx-auto px-4 sm:px-6 py-4 lg:py-6 flex flex-col lg:flex-row gap-4">
 
         <aside className="hidden lg:flex flex-col lg:w-75 shrink-0 gap-4">
 
-          <div className="card-secondary rounded-2xl p-5 flex flex-col items-center text-center gap-3 relative overflow-hidden">
-            <div
-              className="absolute top-0 right-0 w-24 h-24 rounded-full opacity-[0.08]"
-              style={{ background: 'radial-gradient(circle, #4ade80, transparent)', transform: 'translate(30%,-30%)' }}
-            />
-
-            <div className="relative w-30 h-30">
-              <svg width="120" height="120" viewBox="0 0 120 120" className="-rotate-90 absolute inset-0">
-                <circle cx="60" cy="60" r={arcR} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="6" />
-                <circle
-                  cx="60" cy="60" r={arcR} fill="none" stroke="url(#profileArc)" strokeWidth="6" strokeLinecap="round"
-                  strokeDasharray={arcCirc} strokeDashoffset={arcOffset}
-                  style={{ transition: 'stroke-dashoffset 0.7s ease' }}
-                />
-                <defs>
-                  <linearGradient id="profileArc" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#4ade80" />
-                    <stop offset="100%" stopColor="#22c55e" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-20 h-20 rounded-full flex items-center justify-center text-2xl font-bold text-[#0f3c22]"
-                  style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)' }}>
-                  {inicial}
-                </div>
+          <div className="card-primary rounded-2xl p-4 relative overflow-hidden">
+            <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(#4ade80, transparent)' }} />
+            <div className="flex items-center gap-2 mb-3">
+              <BoltIcon />
+              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Desafio do Dia</span>
+            </div>
+            <div className="flex items-center gap-3 mb-3">
+              <img src={desafioDoDia.icone} className="w-10 h-10 shrink-0" alt="" />
+              <div className="flex-1 min-w-0">
+                <p className="text-white font-semibold text-base truncate">{desafioDoDia.nome}</p>
+                <p className="text-white/40 text-sm">
+                  +{desafioDoDia.pontos} pts · verificação por foto
+                </p>
               </div>
             </div>
-
-            <div>
-              <p className="text-white font-bold text-lg font-serif-display">{nomeExibido}</p>
-              <span className="inline-flex items-center gap-1.5 mt-1">
-                <img src={NIVEL_ICONE[nivel] || '/icons/semente.svg'} className="w-4 h-4" alt="" />
-                <span className="text-green-300/90 text-sm font-medium">{nivel}</span>
+            <div className="mb-3">
+              <span className="text-[#ffc928]/80 text-xs">
+                {desafioBonusDisponivel ? 'Bônus extra disponível' : 'bônus já resgatado'}
               </span>
             </div>
-
-            <div className="w-full grid grid-cols-2 gap-2 mt-1">
-              {[
-                { label: 'Total', value: data.pontos, suffix: 'pts', cor: '#fff' },
-                { label: 'Hoje', value: data.pontosHoje, suffix: 'pts', cor: '#fff' },
-                { label: 'Missões', value: data.missoesCompletas, suffix: '', cor: '#fff' },
-                { label: 'Streak', value: diasSeguidos, suffix: 'd', cor: '#ffc928' },
-              ].map(s => (
-                <div key={s.label} className="rounded-xl p-2 text-center" style={{ background: 'rgba(255,255,255,0.08)' }}>
-                  <p className="font-bold text-lg font-serif-display" style={{ color: s.cor }}>
-                    {s.value}<span className="text-[11px] opacity-60 ml-0.5">{s.suffix}</span>
-                  </p>
-                  <p className="text-white/50 text-[11px]">{s.label}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="w-full">
-              <div className="flex justify-between text-[11px] text-white/50 mb-1.5">
-                <span>Próximo: {nextLevel.nome}</span>
-                <span>{nextLevel.falta} pts restantes</span>
-              </div>
-              <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
-                <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{ width: `${progresso}%`, background: 'linear-gradient(90deg,#4ade80,#22c55e)' }}
-                />
-              </div>
-            </div>
+            <button
+              onClick={handleAcaoDesafio}
+              disabled={desafioFeito}
+              className={`w-full rounded-full font-semibold text-sm py-2.5 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${desafioFeito ? '' : 'animate-pulse-glow'}`}
+              style={{
+                background: desafioFeito ? 'rgba(74,222,128,0.15)' : 'linear-gradient(135deg,#4ade80,#22c55e)',
+                color: desafioFeito ? '#4ade80' : '#0f3c22',
+                border: desafioFeito ? '1px solid rgba(74,222,128,0.3)' : 'none',
+                boxShadow: desafioFeito ? 'none' : '0 8px 24px rgba(34,197,94,0.35)',
+              }}
+            >
+              {desafioFeito && <img src="/icons/check.svg" className="w-3.5 h-3.5" alt="" />}
+              {desafioFeito ? 'Concluído' : 'Cumprir desafio'}
+            </button>
           </div>
 
-          <div className="card-tertiary rounded-2xl p-4">
-            <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Trilha de Evolução</p>
-            <div className="flex flex-col gap-2">
-              {SELOS.map((l, i, arr) => {
-                const unlocked = data.pontos >= l.minPontos;
-                const active = nivel === l.nome;
-                return (
-                  <div key={l.id} className="flex items-center gap-3 relative">
-                    {i < arr.length - 1 && (
-                      <div className="absolute left-3.5 top-7 w-px h-4" style={{ background: unlocked ? 'rgba(74,222,128,0.4)' : 'rgba(255,255,255,0.06)' }} />
-                    )}
-                    <div
-                      className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all"
-                      style={{
-                        background: active ? 'linear-gradient(135deg,#4ade80,#22c55e)' : unlocked ? 'rgba(74,222,128,0.12)' : 'rgba(255,255,255,0.04)',
-                        border: active ? 'none' : unlocked ? '1px solid rgba(74,222,128,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                        filter: unlocked ? 'none' : 'grayscale(1)',
-                        opacity: unlocked ? 1 : 0.35,
-                      }}
-                    >
-                      <img src={l.icone} className="w-5 h-5" alt="" />
-                    </div>
-                    <div>
-                      <p className={`text-sm font-semibold ${active ? 'text-green-300' : unlocked ? 'text-white/75' : 'text-white/35'}`}>{l.nome}</p>
-                      <p className="text-white/35 text-[11px]">{l.minPontos} pts</p>
-                    </div>
-                    {active && <span className="ml-auto text-[11px] text-green-400 font-semibold">atual</span>}
-                  </div>
-                );
-              })}
+          <div className="card-tertiary rounded-2xl p-4 flex flex-col gap-2 min-w-0">
+            <div className="flex items-center gap-2">
+              <img src="/icons/folha.svg" className="w-4 h-4 opacity-60" alt="" />
+              <span className="text-white/40 text-[11px] font-bold uppercase tracking-widest">Dica do Dia</span>
             </div>
-          </div>
-
-          <div className="card-tertiary rounded-2xl p-4 hidden lg:block">
-            <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Impacto Ambiental</p>
-            <div className="flex flex-col gap-2.5">
-              {impacto.map(m => (
-                <div key={m.label} className="flex items-center gap-2.5">
-                  <img src={m.icon} className="w-4 h-4" alt="" />
-                  <div className="flex-1">
-                    <p className="text-white/50 text-[11px]">{m.label}</p>
-                  </div>
-                  <p className="text-green-300 font-bold text-base font-serif-display">{m.value}</p>
-                </div>
-              ))}
-            </div>
+            <p className="text-white/60 text-sm leading-snug flex-1 font-serif-display italic">
+              "{dicaDoDia}"
+            </p>
+            <span className="text-green-400/50 text-[11px] font-medium">Verificado pela IA</span>
           </div>
         </aside>
 
-        <div className="flex-1 min-w-0 flex flex-col gap-6">
+        <div className="flex-1 min-w-0 flex flex-col gap-5">
 
           <div>
             <p className="text-white/35 text-sm">Bom dia,</p>
@@ -328,56 +273,8 @@ export function Dashboard() {
             </h1>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
-
-            <div className="lg:col-span-3 card-primary rounded-2xl p-5 relative overflow-hidden">
-              <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(#4ade80, transparent)' }} />
-              <div className="flex items-center gap-2 mb-3">
-                <BoltIcon />
-                <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Desafio do Dia</span>
-                <span className="ml-auto text-[#ffc928]/80 text-xs">
-                  {desafioBonusDisponivel ? `+${desafioDoDia.pontos} pts · bônus extra` : 'bônus já resgatado'}
-                </span>
-              </div>
-              <div className="flex items-center gap-4">
-                <img src={desafioDoDia.icone} className="w-11 h-11" alt="" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-white font-semibold text-base truncate">{desafioDoDia.nome}</p>
-                  <p className="text-white/40 text-sm">
-                    +{desafioDoDia.pontos} pts base · verificação por foto
-                  </p>
-                </div>
-                <button
-                  onClick={handleAcaoDesafio}
-                  disabled={desafioFeito}
-                  className={`rounded-full font-semibold text-sm px-6 py-2.5 transition-all active:scale-95 shrink-0 flex items-center gap-1.5 cursor-pointer ${desafioFeito ? '' : 'animate-pulse-glow'}`}
-                  style={{
-                    background: desafioFeito ? 'rgba(74,222,128,0.15)' : 'linear-gradient(135deg,#4ade80,#22c55e)',
-                    color: desafioFeito ? '#4ade80' : '#0f3c22',
-                    border: desafioFeito ? '1px solid rgba(74,222,128,0.3)' : 'none',
-                    boxShadow: desafioFeito ? 'none' : '0 8px 24px rgba(34,197,94,0.35)',
-                  }}
-                >
-                  {desafioFeito && <img src="/icons/check.svg" className="w-3.5 h-3.5" alt="" />}
-                  {desafioFeito ? 'Concluído' : 'Cumprir'}
-                </button>
-              </div>
-            </div>
-
-            <div className="lg:col-span-1 card-tertiary rounded-2xl p-4 flex flex-col gap-2 min-w-0">
-              <div className="flex items-center gap-2">
-                <img src="/icons/folha.svg" className="w-4 h-4 opacity-60" alt="" />
-                <span className="text-white/40 text-[11px] font-bold uppercase tracking-widest">Dica do Dia</span>
-              </div>
-              <p className="text-white/60 text-sm leading-snug flex-1 font-serif-display italic">
-                "{dicaDoDia}"
-              </p>
-              <span className="text-green-400/50 text-[11px] font-medium">Verificado pela IA</span>
-            </div>
-          </div>
-
-          <div className="card-secondary rounded-2xl p-5 flex-1 flex flex-col">
-            <div className="flex items-center justify-between mb-4">
+          <div className="card-secondary rounded-2xl p-4 flex-1 flex flex-col">
+            <div className="flex items-center justify-between mb-3">
               <h2 className="text-white font-semibold">Registrar Ação</h2>
               <span className="text-white/50 text-[13px]">{feitasHoje.size}/{MISSOES.length} hoje</span>
             </div>
@@ -389,7 +286,7 @@ export function Dashboard() {
                   <button
                     key={missao.id}
                     onClick={() => handleMissao(missao)}
-                    className="rounded-xl p-3.5 h-full flex flex-col gap-2 text-left transition-all group active:scale-95 relative overflow-hidden cursor-pointer"
+                    className="rounded-xl p-3 h-full flex flex-col gap-1.5 text-left transition-all group active:scale-95 relative overflow-hidden cursor-pointer"
                     style={{
                       background: checked ? `rgba(${hexToRgb(cor)},0.08)` : 'rgba(255,255,255,0.06)',
                       border: checked ? `1px solid rgba(${hexToRgb(cor)},0.25)` : '1px solid rgba(255,255,255,0.12)',
@@ -402,7 +299,7 @@ export function Dashboard() {
                     )}
                     <img
                       src={MISSAO_ICONE_MAP[missao.id]}
-                      className="w-9 h-9 group-hover:scale-110 transition-transform"
+                      className="w-8 h-8 group-hover:scale-110 transition-transform"
                       alt=""
                     />
                     <div className="mt-auto">
@@ -415,20 +312,10 @@ export function Dashboard() {
             </div>
           </div>
 
-          <MiniJogoSeparacao compacto />
-
-          <div className="lg:hidden card-tertiary rounded-2xl p-4 grid grid-cols-3 gap-3">
-            {impacto.map(m => (
-              <div key={m.label} className="text-center rounded-xl p-3" style={{ background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.08)' }}>
-                <img src={m.icon} className="w-5 h-5 mx-auto" alt="" />
-                <p className="text-green-300 font-bold mt-1 font-serif-display" style={{ fontSize: 20 }}>{m.value}</p>
-                <p className="text-white/45 text-[11px]">{m.label}</p>
-              </div>
-            ))}
-          </div>
+          <MiniJogoSeparacao />
         </div>
 
-        <aside className="hidden xl:flex flex-col xl:w-75 shrink-0 gap-4 xl:mt-[76px]">
+        <aside className="hidden lg:flex flex-col lg:w-75 shrink-0 gap-4">
 
           <div className="card-tertiary rounded-2xl p-4">
             <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Ranking Global</p>
@@ -482,7 +369,7 @@ export function Dashboard() {
             </div>
           </div>
 
-          <div className="card-tertiary rounded-2xl p-4 flex-1">
+          <div className="card-tertiary rounded-2xl p-4 flex flex-col min-h-0">
             <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Atividade Recente</p>
             {recentHistory.length === 0 ? (
               <div className="text-center py-5">
@@ -497,23 +384,39 @@ export function Dashboard() {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col gap-0">
-                {recentHistory.map((entry: HistoricoEntrada, i: number) => {
-                  const missaoId = getMissaoIdByName(entry.nome);
+              <div className="flex flex-col gap-0 flex-1 justify-start">
+                {recentHistory.map((entry: AtividadeItem) => {
+                  const ganhou = entry.tipo === 'acao';
+                  const ehConversao = entry.tipo === 'conversao';
                   return (
-                    <div key={i} className="flex items-start gap-2.5 py-3 border-b border-white/5 last:border-0">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5" style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.1)' }}>
-                        {missaoId ? (
-                          <img src={MISSAO_ICONE_MAP[missaoId]} className="w-4 h-4" alt="" />
+                    <div key={entry.id} className="flex items-start gap-2.5 py-3 border-b border-white/5 last:border-0">
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5"
+                        style={{ background: ganhou ? 'rgba(74,222,128,0.08)' : ehConversao ? 'rgba(74,222,128,0.14)' : 'rgba(251,191,36,0.1)', border: '1px solid rgba(74,222,128,0.12)' }}
+                      >
+                        {ehConversao ? (
+                          <span className="text-green-400 text-[11px] font-bold">R$</span>
                         ) : (
-                          <span className="w-2 h-2 rounded-full" style={{ background: 'rgba(255,255,255,0.2)' }} />
+                          <img src={entry.icone} className="w-4 h-4" alt="" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-white/80 text-sm font-medium leading-snug truncate">{entry.nome}</p>
-                        <p className="text-white/40 text-[11px] mt-0.5">{timeAgo(entry.data)}</p>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className="text-white/40 text-[11px]">{timeAgo(entry.data)}</span>
+                          {!ganhou && (
+                            <span
+                              className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-full font-semibold"
+                              style={{ background: ehConversao ? 'rgba(74,222,128,0.14)' : 'rgba(251,191,36,0.14)', color: ehConversao ? '#4ade80' : '#fbbf24' }}
+                            >
+                              {ehConversao ? 'conversão' : 'resgate'}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      {entry.pontos > 0 && <span className="text-green-400 text-xs font-bold shrink-0 mt-1">+{entry.pontos}</span>}
+                      <span className={`text-xs font-bold shrink-0 mt-1 ${ganhou ? 'text-green-400' : 'text-red-400'}`}>
+                        {ganhou ? '+' : '-'}{entry.pontos}
+                      </span>
                     </div>
                   );
                 })}

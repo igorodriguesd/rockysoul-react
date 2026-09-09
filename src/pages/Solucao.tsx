@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { MISSOES, RECOMPENSAS, SELOS } from '../data/constants';
+import { RECOMPENSAS, SELOS } from '../data/constants';
 
 const PASSOS = [
   { icon: '/icons/reciclagem.svg', titulo: 'Registre sua ação', texto: 'Escolha uma das ações sustentáveis no Dashboard e informe o que você realizou hoje.' },
@@ -56,24 +56,6 @@ export function Solucao() {
             <p className="text-xs text-white/50 leading-relaxed">{passo.texto}</p>
           </div>
         ))}
-      </div>
-
-      <div className="card-secondary rounded-2xl p-6 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-white">Ações sustentáveis</h2>
-          <span className="text-xs text-white/40">{MISSOES.length} ações disponíveis</span>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-          {MISSOES.map(missao => (
-            <div key={missao.id} className="flex items-center gap-3 p-3 rounded-xl border border-white/10" style={{ background: 'rgba(255,255,255,0.05)' }}>
-              <img src={missao.icone} alt="" className="w-6 h-6 shrink-0" />
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-white/80 truncate">{missao.nome}</p>
-                <p className="text-xs font-semibold text-[#4ade80]">+{missao.pontos} pts</p>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
