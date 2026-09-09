@@ -1,6 +1,7 @@
 import type { NovaCartaInfo } from '../types';
 import { useColecao } from '../context/CollectionContext';
 import { getCardBackground, getCardLabel, getIniciaisSet, TIER } from '../data/cartasStyle';
+import { LABEL_RARIDADE } from '../data/cartas';
 
 interface Props {
   novaCarta: NovaCartaInfo;
@@ -46,7 +47,7 @@ export default function NovaCarta({ novaCarta, foil = false }: Props) {
         </span>
         <div className="relative z-10 fut-plate rounded-lg w-full px-1.5 py-1">
           <p className="text-white font-bold text-sm leading-tight">{carta.nome}</p>
-          <p className="text-white/75 text-[10px] mt-0.5">{set.nome} · {tier.nome}</p>
+          <p className="text-white/75 text-[10px] mt-0.5">{set.nome} · {LABEL_RARIDADE[carta.raridade]}</p>
         </div>
       </div>
 

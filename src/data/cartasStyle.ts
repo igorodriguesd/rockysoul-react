@@ -1,4 +1,5 @@
 import type { Carta, RaridadeCarta } from '../types';
+import { LABEL_RARIDADE } from './cartas';
 
 export const SETS_INICIAIS: Record<string, string> = {
   recursos: 'RE',
@@ -51,5 +52,5 @@ export function getCardBackground(raridade: RaridadeCarta, foil = false): string
 }
 
 export function getCardLabel(carta: Carta): string {
-  return TIER[carta.raridade].nome;
+  return LABEL_RARIDADE[carta.raridade];
 }
