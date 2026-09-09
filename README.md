@@ -276,12 +276,6 @@ Todas as informações do usuário são salvas no **localStorage**, via hook `us
 
 ---
 
-## Vídeo do Projeto
-
-- **YouTube:** *(insira aqui o link do vídeo de apresentação do projeto)*
-
----
-
 ## Integrantes
 
 | Foto | Nome | RM | Turma | GitHub | LinkedIn |
