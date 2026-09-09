@@ -112,17 +112,13 @@ export function Colecao() {
           </header>
 
           {mostrarDica && (
-            <div className="mb-4 rounded-xl p-3.5 text-xs leading-relaxed text-white/75 bg-white/5 border border-[#a66cff]/30">
+            <div className="mb-3 rounded-xl p-3 text-xs leading-relaxed text-white/75 bg-white/5 border border-[#a66cff]/30">
               <p>
-                <strong className="text-white">Fragmento</strong> é o «dinheiro de montar» da coleção: quando uma carta
-                repetida aparece, ela vira fragmentos da raridade dela. Juntando a quantidade certa, você{' '}
-                <strong className="text-white">monta a carta que falta sem depender de sorte</strong>.
+                <strong className="text-white">Fragmento</strong> é o «dinheiro de montar» da coleção: carta repetida vira
+                fragmentos da raridade dela, e juntando a quantidade certa você monta a que falta — sem sorte.
+                No chip fica seu total; no botão da carta, quanto falta (ex.: <strong className="text-white">3/10</strong> = tem 3, precisa de 10).
+                Cada repetida rende: comum <strong className="text-[#a66cff]">+3</strong>, incomum <strong className="text-[#a66cff]">+5</strong>, rara <strong className="text-[#a66cff]">+10</strong>, épica <strong className="text-[#a66cff]">+20</strong>, lendária <strong className="text-[#a66cff]">+40</strong>.
               </p>
-              <ul className="mt-2 space-y-1 list-disc pl-4">
-                <li>O chip ao lado mostra o total de cada raridade que você tem.</li>
-                <li>No botão da carta aparece quanto falta: <strong className="text-white">3/10</strong> = tem 3, precisa de 10.</li>
-                <li>Cada repetida rende: comum <strong className="text-[#a66cff]">+3</strong>, incomum <strong className="text-[#a66cff]">+5</strong>, rara <strong className="text-[#a66cff]">+10</strong>, épica <strong className="text-[#a66cff]">+20</strong>, lendária <strong className="text-[#a66cff]">+40</strong>.</li>
-              </ul>
             </div>
           )}
 
@@ -144,10 +140,6 @@ export function Colecao() {
               {mostrarDica ? 'Fechar dica' : 'O que é?'}
             </button>
           </div>
-          <p className="text-white/45 text-[11px] leading-snug mb-4">
-            Basta de termos: <strong className="text-white/70">fragmento = pedaço de carta</strong>. Repetiu a carta, ganhou o pedaço dela.
-            Junte os pedaços certos e monte a que falta. Toque no <strong className="text-[#a66cff]">?</strong> acima para ver tudo.
-          </p>
 
           {faltando.length === 0 ? (
             <p className="text-[#20d968] text-sm font-semibold text-center py-2">Coleção completa! Parabéns 🎉</p>
