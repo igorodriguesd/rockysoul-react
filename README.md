@@ -18,7 +18,7 @@ Desenvolvida como **SPA (Single Page Application)** com **React + Vite + TypeScr
 
 ## Prints do Projeto
 
-> Adicione as capturas de tela em `public/imagens/` com os nomes abaixo (print-home.png, print-dashboard.png, print-colecao.png, print-recompensas.png) e atualize os caminhos se necessário.
+As principais telas da plataforma (Home, Dashboard, Coleção e Recompensas):
 
 <table align="center">
   <tr>
