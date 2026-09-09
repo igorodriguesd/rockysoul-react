@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useChat } from '../context/ChatContext';
 import LoginModal from '../components/LoginModal';
+import CollectionChip from '../components/CollectionChip';
 import { USUARIOS_BASE } from '../data/constants';
 
 const NIVEL_ICONES: Record<string, string> = {
@@ -113,6 +114,10 @@ export function Home() {
                   {data.pontos} <span className="text-green-300 text-lg font-normal">pts</span>
                 </p>
               </div>
+            </div>
+
+            <div className="animate-float-slow" style={{ animationDelay: '2.5s' }}>
+              <CollectionChip />
             </div>
 
             <div className="animate-float-slow" style={{ animationDelay: '3s' }}>

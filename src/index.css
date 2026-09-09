@@ -103,18 +103,8 @@
   filter: drop-shadow(0 30px 30px rgba(0, 0, 0, 0.4));
 }
 
-@utility confetti-piece {
-  position: absolute;
-  width: 8px;
-  height: 14px;
-  border-radius: 2px;
-  top: 0;
-  animation: confettiFall 1.2s ease-in forwards;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .floating-island,
-  .confetti-piece,
   .animate-float-slow,
   .animate-float-card,
   .animate-pulse-glow {

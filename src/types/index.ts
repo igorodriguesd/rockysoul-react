@@ -69,3 +69,54 @@ export interface UserData {
   selosDesbloqueados: string[];
   resgates: Resgate[];
 }
+
+export type RaridadeCarta = 'comum' | 'incomum' | 'rara' | 'epica' | 'lendaria';
+
+export interface Carta {
+  id: string;
+  nome: string;
+  setId: string;
+  raridade: RaridadeCarta;
+  descricao: string;
+  educativa: string;
+  icone: string;
+}
+
+export interface SetCarta {
+  id: string;
+  nome: string;
+  icone: string;
+  tema: string;
+  descricao: string;
+  cor: string;
+}
+
+export type NivelQuimica = 0 | 1 | 2 | 3;
+
+export interface Quimica {
+  level: NivelQuimica;
+  bonusPontos: number;
+  descricao: string;
+}
+
+export interface SetColecaoUsuario {
+  cartas: string[];
+  level: NivelQuimica;
+}
+
+export interface ColecaoData {
+  cartasObtidas: string[];
+  sets: Record<string, SetColecaoUsuario>;
+}
+
+export interface NovaCartaInfo {
+  carta: Carta;
+  set: SetCarta;
+  quimicaAntes: Quimica;
+  quimicaNova: Quimica;
+  bonusGanho: number;
+}
+
+export type ResultadoDrop =
+  | { caiu: true; novaCarta: NovaCartaInfo }
+  | { caiu: false; carta: Carta; chance: number };

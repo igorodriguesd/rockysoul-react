@@ -1,7 +1,11 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+﻿import { useState, useRef, useEffect, useCallback } from 'react';
 import { useData } from '../context/DataContext';
+import { useColecao } from '../context/CollectionContext';
 import { showToast } from './Toast';
-import type { Missao } from '../types';
+import NovaCarta from './NovaCarta';
+import RoletaDrop from './RoletaDrop';
+import type { Missao, ResultadoDrop } from '../types';
+import { MISSION_TO_CARD, CARTAS, LABEL_RARIDADE, CHANCE_DROP_POR_RARIDADE } from '../data/cartas';
 
 interface Props {
   aberto: boolean;
@@ -9,8 +13,6 @@ interface Props {
   missao: Missao;
   onVerificado?: (missaoId: string) => void;
 }
-
-const CONFETTI_COLORS = ['#22c55e', '#4ade80', '#eab308', '#38bdf8', '#f97316', '#a78bfa'];
 
 function formatarTempo(seg: number): string {
   const m = Math.floor(seg / 60);
@@ -46,13 +48,16 @@ const DESCRICAO_COMPROVACAO: Record<string, string> = {
 
 export default function VerificarModal({ aberto, onFechar, missao, onVerificado }: Props) {
   const { adicionarPontos } = useData();
+  const { adquirirPorMissao } = useColecao();
   const [foto, setFoto] = useState<string | null>(null);
   const [localizacao, setLocalizacao] = useState('');
   const [gpsStatus, setGpsStatus] = useState<'idle' | 'capturando' | 'ok' | 'erro'>('idle');
   const [sucesso, setSucesso] = useState(false);
   const [pontosGanhos, setPontosGanhos] = useState(0);
   const [fotoErro, setFotoErro] = useState(false);
-  const [confetti, setConfetti] = useState<{ x: number; delay: number; color: string; rotate: number }[]>([]);
+  const [drop, setDrop] = useState<ResultadoDrop | null>(null);
+  const [roletaPronta, setRoletaPronta] = useState(false);
+  const [declaracaoConfirmada, setDeclaracaoConfirmada] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const confirmarButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -72,7 +77,9 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
     setSucesso(false);
     setPontosGanhos(0);
     setFotoErro(false);
-    setConfetti([]);
+    setDrop(null);
+    setRoletaPronta(false);
+    setDeclaracaoConfirmada(false);
     setSegundos(tempoTotal);
     setTimerAtivo(false);
     onFechar();
@@ -115,6 +122,10 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
 
   if (!aberto) return null;
 
+  const cartaDaMissao = MISSION_TO_CARD[missao.id]
+    ? CARTAS.find(c => c.id === MISSION_TO_CARD[missao.id]) ?? null
+    : null;
+
   function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -147,6 +158,10 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
         showToast('Você já declarou esse hábito hoje');
         return;
       }
+      if (!declaracaoConfirmada) {
+        showToast('Confirme a declaração para registrar a ação');
+        return;
+      }
       try {
         localStorage.setItem(declaracaoKey(missao.id), hojeStr());
       } catch {
@@ -154,9 +169,10 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
       adicionarPontos(missao.pontos, missao.nome);
       setPontosGanhos(missao.pontos);
       setSucesso(true);
-      showToast(`+${missao.pontos} pontos - ${missao.nome}`);
+      showToast(`+${missao.pontos} créditos - ${missao.nome}`);
       onVerificado?.(missao.id);
-      setConfetti([]);
+      setRoletaPronta(false);
+      setDrop(adquirirPorMissao(missao.id));
       return;
     }
 
@@ -168,9 +184,10 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
       adicionarPontos(missao.pontos, missao.nome);
       setPontosGanhos(missao.pontos);
       setSucesso(true);
-      showToast(`+${missao.pontos} pontos - ${missao.nome}`);
+      showToast(`+${missao.pontos} créditos - ${missao.nome}`);
       onVerificado?.(missao.id);
-      setConfetti([]);
+      setRoletaPronta(false);
+      setDrop(adquirirPorMissao(missao.id));
       return;
     }
 
@@ -182,55 +199,93 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
     adicionarPontos(missao.pontos, missao.nome);
     setPontosGanhos(missao.pontos);
     setSucesso(true);
-    setConfetti(Array.from({ length: 24 }, (_, i) => ({
-      x: (i / 24) * 100,
-      delay: Math.random() * 0.4,
-      color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-      rotate: Math.random() * 360,
-    })));
-    showToast(`+${missao.pontos} pontos - ${missao.nome}`);
+    showToast(`+${missao.pontos} créditos - ${missao.nome}`);
     onVerificado?.(missao.id);
+    setRoletaPronta(false);
+    setDrop(adquirirPorMissao(missao.id));
   }
 
   const exigeFoto = missao.comprovacao === 'foto' || missao.comprovacao === 'foto-gps';
+  const chanceDrop = cartaDaMissao ? CHANCE_DROP_POR_RARIDADE[cartaDaMissao.raridade] : 0;
 
   return (
-    <div className="fixed inset-0 z-9998 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={fechar}>
+    <div className="fixed inset-0 z-9998 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={fechar}>
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={sucesso ? 'Ação verificada' : missao.nome}
-        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-[620px] p-4 sm:p-5 relative border border-white/40 max-h-[90vh] overflow-y-auto"
+        aria-label={sucesso ? 'Resultado da ação' : missao.nome}
+        className="glass-strong rounded-2xl shadow-2xl w-[90vw] max-w-[620px] p-4 sm:p-5 relative max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
-        <button onClick={fechar} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 z-10" aria-label="Fechar">
+        <button onClick={fechar} className="absolute top-3 right-3 text-white/50 hover:text-white transition-colors z-10" aria-label="Fechar">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
         </button>
 
         {sucesso ? (
-          <div className="text-center py-3 overflow-hidden">
-            <div className="relative">
-              {confetti.map((c, i) => (
-                <span
-                  key={i}
-                  className="confetti-piece"
-                  style={{
-                    left: `${c.x}%`,
-                    background: c.color,
-                    animationDelay: `${c.delay}s`,
-                    transform: `rotate(${c.rotate}deg)`,
-                  }}
-                  aria-hidden="true"
-                />
-              ))}
-              <img src="/icons/sucesso.svg" alt="Sucesso" className="w-14 h-14 mx-auto mb-3" />
+          <div className="text-center">
+            <div
+              className="mx-auto w-fit px-6 py-3 rounded-2xl"
+              style={{ background: 'linear-gradient(160deg, rgba(32,217,104,0.15), rgba(11,74,44,0.28))', border: '1px solid rgba(32,217,104,0.4)' }}
+            >
+              <h2 className="text-lg font-bold text-white">Ação Verificada</h2>
+              <p className="text-sm text-white/60 mt-0.5">
+                <strong className="text-[#20d968]">{missao.nome}</strong> registrada com sucesso.
+              </p>
             </div>
-            <h2 className="text-lg font-bold text-gray-800 mb-1">Ação Verificada</h2>
-            <p className="text-sm text-gray-500 mb-3">
-              <strong>{missao.nome}</strong> registrada com sucesso.
-            </p>
-            <p className="text-2xl font-bold text-[#22c55e] mb-5">+{pontosGanhos} pontos</p>
-            <button onClick={fechar} className="w-full py-2.5 bg-[#22c55e] text-white font-semibold rounded-xl hover:bg-[#16a34a] transition-colors">
+
+            {cartaDaMissao ? (
+              <>
+                <RoletaDrop
+                  carta={cartaDaMissao}
+                  chance={chanceDrop}
+                  caiu={drop ? drop.caiu : true}
+                  onTerminar={() => setRoletaPronta(true)}
+                />
+
+                {roletaPronta &&
+                  (drop === null ? (
+                    <div className="mt-4 mx-auto max-w-[300px] rounded-2xl p-4" style={{ background: 'rgba(15,28,46,0.9)', border: '1px solid rgba(74,222,128,0.35)' }}>
+                      <div className="flex items-center justify-center gap-2.5 mb-1.5">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(74,222,128,0.12)' }}>
+                          <img src={cartaDaMissao.icone} className="w-6 h-6" alt="" />
+                        </div>
+                        <p className="text-white font-bold text-sm">{cartaDaMissao.nome}</p>
+                      </div>
+                      <p className="text-white/60 text-xs leading-snug">
+                        <strong className="text-[#20d968]">{cartaDaMissao.nome}</strong> já está na sua coleção!
+                        Continue realizando ações para tentar conquistar outras cartas.
+                      </p>
+                    </div>
+                  ) : drop.caiu ? (
+                    <div className="mt-2">
+                      <p className="text-[#20d968] font-semibold text-sm tracking-wide mb-1">VOCÊ GANHOU A CARTA!</p>
+                      <NovaCarta novaCarta={drop.novaCarta} />
+                    </div>
+                  ) : (
+                    <div className="mt-4 mx-auto max-w-[300px] rounded-2xl p-4" style={{ background: 'rgba(15,28,46,0.9)', border: '1px solid rgba(0,255,136,0.22)' }}>
+                      <div className="flex items-center justify-center gap-2.5 mb-1.5">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                          <img src={drop.carta.icone} className="w-6 h-6 grayscale opacity-60" alt="" />
+                        </div>
+                        <p className="text-white font-bold text-sm">{drop.carta.nome}</p>
+                      </div>
+                      <p className="text-white/60 text-xs leading-snug">
+                        Não foi dessa vez! A carta <strong className="text-white/80">{drop.carta.nome}</strong> escapou.
+                        Nesta ação você tinha <strong className="text-[#20d968]">{drop.chance}%</strong> de chance.
+                        Realize a ação novamente para tentar conquistá-la.
+                      </p>
+                    </div>
+                  ))}
+              </>
+            ) : (
+              <img src="/icons/sucesso.svg" alt="Sucesso" className="w-12 h-12 mx-auto mt-2" />
+            )}
+
+            <p className="text-[#20d968] text-2xl font-bold mt-4">+{pontosGanhos} créditos</p>
+            <button
+              onClick={fechar}
+              className="w-full py-2.5 mt-4 bg-[#20d968] text-[#070d19] font-bold rounded-xl hover:brightness-110 transition-all"
+            >
               Concluir
             </button>
           </div>
@@ -239,19 +294,29 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
             <div className="flex items-center gap-3 mb-4">
               <img src={missao.icone} alt="" className="w-8 h-8" />
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-gray-800">{missao.nome}</h2>
-                <p className="text-[11px] text-[#22c55e] font-semibold">+{missao.pontos} pontos</p>
+                <h2 className="text-base sm:text-lg font-bold text-white">{missao.nome}</h2>
+                <p className="text-[11px] text-[#20d968] font-semibold">+{missao.pontos} créditos</p>
               </div>
               <div className="flex-1" />
-              <span className="text-[10px] text-gray-400 text-right max-w-[140px] leading-tight">
+              <span className="text-[10px] text-white/40 text-right max-w-[140px] leading-tight">
                 {DESCRICAO_COMPROVACAO[missao.comprovacao]}
               </span>
             </div>
 
+            {cartaDaMissao && (
+              <div className="flex items-center gap-2.5 rounded-xl px-3 py-2 mb-4" style={{ background: 'rgba(0,255,136,0.07)', border: '1px solid rgba(0,255,136,0.22)' }}>
+                <img src={cartaDaMissao.icone} className="w-5 h-5 shrink-0" alt="" />
+                <p className="text-[11px] text-white/70 leading-snug">
+                  Ao concluir: carta <b className="text-white">{cartaDaMissao.nome}</b> · {LABEL_RARIDADE[cartaDaMissao.raridade]} ·{' '}
+                  <b className="text-[#20d968]">{chanceDrop}%</b> de drop
+                </p>
+              </div>
+            )}
+
             <div className="space-y-3">
               {exigeFoto && (
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-2">Envie uma foto como comprovante *</p>
+                  <p className="text-sm font-medium text-white/80 mb-2">Envie uma foto como comprovante *</p>
                   <input ref={fileRef} type="file" accept="image/*" onChange={handleFoto} className="hidden" aria-label="Enviar foto" />
                   {foto ? (
                     <div className="relative">
@@ -270,33 +335,33 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                       type="button"
                       onClick={() => fileRef.current?.click()}
                       className={`w-full border-2 border-dashed rounded-xl py-8 transition-colors flex flex-col items-center gap-2 ${fotoErro
-                        ? 'border-red-300 text-red-400 hover:border-red-400 hover:text-red-500'
-                        : 'border-gray-300 text-gray-400 hover:border-[#22c55e] hover:text-[#22c55e]'
+                        ? 'border-red-400/60 text-red-300 hover:border-red-400 hover:text-red-400'
+                        : 'border-white/20 text-white/50 hover:border-[#20d968] hover:text-[#20d968]'
                         }`}
                     >
-                      <img src="/icons/camera.svg" alt="" className="w-7 h-7 opacity-50" />
+                      <img src="/icons/camera.svg" alt="" className="w-7 h-7 opacity-40" />
                       <span className="text-sm">Clique para enviar foto</span>
                     </button>
                   )}
                   {fotoErro && !foto && (
-                    <p className="text-xs text-red-500 mt-1.5">A foto é obrigatória para confirmar a ação.</p>
+                    <p className="text-xs text-red-400 mt-1.5">A foto é obrigatória para confirmar a ação.</p>
                   )}
                 </div>
               )}
 
               {missao.comprovacao === 'timer' && (
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-2">Conclua no tempo (máx. {formatarTempo(tempoTotal)})</p>
-                  <div className="rounded-xl border border-gray-200 p-5 text-center bg-white/60">
-                    <p className={`font-bold font-serif-display tracking-tight ${segundos === 0 ? 'text-[#22c55e]' : 'text-gray-800'}`} style={{ fontSize: 44 }}>
+                  <p className="text-sm font-medium text-white/80 mb-2">Conclua no tempo (máx. {formatarTempo(tempoTotal)})</p>
+                  <div className="rounded-xl p-5 text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                    <p className={`font-bold font-serif-display tracking-tight ${segundos === 0 ? 'text-[#20d968]' : 'text-white'}`} style={{ fontSize: 44 }}>
                       {formatarTempo(segundos)}
                     </p>
-                    <div className="w-full h-2 rounded-full overflow-hidden mt-3" style={{ background: 'rgba(34,197,94,0.12)' }}>
+                    <div className="w-full h-2 rounded-full overflow-hidden mt-3" style={{ background: 'rgba(255,255,255,0.1)' }}>
                       <div
                         className="h-full rounded-full transition-all duration-1000"
                         style={{
                           width: `${((tempoTotal - segundos) / tempoTotal) * 100}%`,
-                          background: segundos === 0 ? 'linear-gradient(90deg,#22c55e,#4ade80)' : 'linear-gradient(90deg,#22c55e,#86efac)',
+                          background: segundos === 0 ? 'linear-gradient(90deg,#20d968,#4ade80)' : 'linear-gradient(90deg,#20d968,#86efac)',
                         }}
                       />
                     </div>
@@ -305,7 +370,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                         <button
                           type="button"
                           onClick={() => setTimerAtivo(true)}
-                          className="px-6 py-2.5 bg-[#22c55e] text-white font-semibold rounded-xl hover:bg-[#16a34a] transition-colors"
+                          className="px-6 py-2.5 bg-[#20d968] text-[#070d19] font-semibold rounded-xl hover:brightness-110 transition-all"
                         >
                           Iniciar timer
                         </button>
@@ -313,18 +378,19 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                         <button
                           type="button"
                           onClick={() => setTimerAtivo(false)}
-                          className="px-6 py-2.5 bg-gray-200 text-gray-600 font-semibold rounded-xl hover:bg-gray-300 transition-colors"
+                          className="px-6 py-2.5 text-white/80 font-semibold rounded-xl transition-colors hover:bg-white/10"
+                          style={{ background: 'rgba(255,255,255,0.1)' }}
                         >
                           Pausar
                         </button>
                       ) : (
-                        <span className="px-6 py-2.5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#22c55e]">
+                        <span className="px-6 py-2.5 inline-flex items-center gap-1.5 text-sm font-semibold text-[#20d968]">
                           <img src="/icons/check.svg" alt="" className="w-4 h-4" /> Tempo concluído!
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-gray-400 mt-3">
-                      Ao finalizar, confirme abaixo para ganhar os pontos.
+                    <p className="text-[11px] text-white/40 mt-3">
+                      Ao finalizar, confirme abaixo para ganhar os créditos.
                     </p>
                   </div>
                 </div>
@@ -332,20 +398,33 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
 
               {missao.comprovacao === 'declaracao' && (
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-2">Confiável e simples</p>
-                  <div className="rounded-xl border border-dashed border-gray-300 p-5 text-center bg-white/60">
-                    <p className="text-sm text-gray-500">
+                  <p className="text-sm font-medium text-white/80 mb-2">Confiável e simples</p>
+                  <div className="rounded-xl p-5 text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px dashed rgba(255,255,255,0.22)' }}>
+                    <p className="text-sm text-white/70">
                       {declaracaoFeitaHoje(missao.id)
                         ? 'Você já declarou esse hábito hoje. Volte amanhã!'
-                        : 'Declare que você praticou o hábito hoje para ganhar os pontos.'}
+                        : 'Declare que você praticou o hábito hoje para ganhar os créditos.'}
                     </p>
                   </div>
+                  {!declaracaoFeitaHoje(missao.id) && (
+                    <label className="flex items-start gap-2.5 mt-3 px-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={declaracaoConfirmada}
+                        onChange={e => setDeclaracaoConfirmada(e.target.checked)}
+                        className="mt-0.5 w-4 h-4 accent-[#20d968]"
+                      />
+                      <span className="text-sm text-white/70">
+                        Confirmo que pratico este hábito e declaro minha ação de forma verdadeira.
+                      </span>
+                    </label>
+                  )}
                 </div>
               )}
 
               {(missao.comprovacao === 'foto' || missao.comprovacao === 'foto-gps') && (
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-2">
+                  <p className="text-sm font-medium text-white/80 mb-2">
                     Localização {missao.comprovacao === 'foto-gps' ? '(recomendada para validar)' : '(opcional)'}
                   </p>
                   <div className="flex gap-2">
@@ -354,13 +433,15 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                       value={localizacao}
                       onChange={e => setLocalizacao(e.target.value)}
                       placeholder="Latitude, Longitude"
-                      className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] bg-white/60"
+                      className="flex-1 rounded-xl px-3 py-2.5 text-sm outline-none text-white placeholder-white/40"
+                      style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
                     />
                     <button
                       type="button"
                       onClick={obterGPS}
                       disabled={gpsStatus === 'capturando'}
-                      className="flex items-center gap-1.5 px-3 py-2.5 bg-[#22c55e]/10 text-[#22c55e] font-medium rounded-xl hover:bg-[#22c55e]/20 transition-colors text-sm whitespace-nowrap disabled:opacity-50"
+                      className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-medium transition-colors text-sm whitespace-nowrap disabled:opacity-50"
+                      style={{ background: 'rgba(32,217,104,0.15)', color: '#20d968' }}
                     >
                       <img src="/icons/localizacao.svg" alt="" className="w-4 h-4" />
                       {gpsStatus === 'capturando' ? 'Capturando...' : gpsStatus === 'ok' ? 'Capturado' : 'GPS'}
@@ -372,10 +453,14 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
               <button
                 ref={confirmarButtonRef}
                 onClick={confirmar}
-                disabled={missao.comprovacao === 'timer' && segundos !== 0}
-                className="w-full py-2.75 bg-[#22c55e] text-white font-bold rounded-xl hover:bg-[#16a34a] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                disabled={(missao.comprovacao === 'timer' && segundos !== 0) || (missao.comprovacao === 'declaracao' && !declaracaoConfirmada)}
+                className="w-full py-2.75 bg-[#20d968] text-[#070d19] font-bold rounded-xl hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                {missao.comprovacao === 'timer' && segundos !== 0 ? 'Confirme após concluir o tempo' : 'Confirmar Ação'}
+                {missao.comprovacao === 'timer' && segundos !== 0
+                  ? 'Confirme após concluir o tempo'
+                  : missao.comprovacao === 'declaracao'
+                    ? 'Confirmar Declaração'
+                    : 'Confirmar Ação'}
               </button>
             </div>
           </>
