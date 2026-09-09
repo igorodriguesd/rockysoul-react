@@ -282,7 +282,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                       <p className="text-white/60 text-xs leading-snug">
                         Você já tem <strong className="text-white/80">{drop.carta.nome}</strong>. Ela virou{' '}
                         <strong className="text-[#a66cff]">+{drop.fragmentosGanhos} fragmentos</strong> de {drop.carta.raridade.toLowerCase()}.
-                        Use-os na Fábrica de Cartas na sua Coleção.
+                        Junte fragmentos para montar uma carta que falta — abra as <strong className="text-white/80">Cartas repetidas</strong> na sua Coleção.
                       </p>
                     </div>
                   ) : (
