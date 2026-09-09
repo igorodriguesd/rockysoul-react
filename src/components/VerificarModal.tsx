@@ -169,10 +169,9 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
       adicionarPontos(missao.pontos, missao.nome);
       setPontosGanhos(missao.pontos);
       setSucesso(true);
-      showToast(`+${missao.pontos} créditos - ${missao.nome}`);
       onVerificado?.(missao.id);
       setRoletaPronta(false);
-      setDrop(adquirirPorMissao(missao.id));
+      setDrop(adquirirPorMissao(missao.id, true));
       return;
     }
 
@@ -184,10 +183,9 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
       adicionarPontos(missao.pontos, missao.nome);
       setPontosGanhos(missao.pontos);
       setSucesso(true);
-      showToast(`+${missao.pontos} créditos - ${missao.nome}`);
       onVerificado?.(missao.id);
       setRoletaPronta(false);
-      setDrop(adquirirPorMissao(missao.id));
+      setDrop(adquirirPorMissao(missao.id, true));
       return;
     }
 
@@ -199,10 +197,9 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
     adicionarPontos(missao.pontos, missao.nome);
     setPontosGanhos(missao.pontos);
     setSucesso(true);
-    showToast(`+${missao.pontos} créditos - ${missao.nome}`);
     onVerificado?.(missao.id);
     setRoletaPronta(false);
-    setDrop(adquirirPorMissao(missao.id));
+    setDrop(adquirirPorMissao(missao.id, true));
   }
 
   const exigeFoto = missao.comprovacao === 'foto' || missao.comprovacao === 'foto-gps';

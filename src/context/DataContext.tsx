@@ -43,7 +43,7 @@ interface DataContextType {
   setNome: (nome: string) => void;
   setEmail: (email: string) => void;
   adicionarPontos: (pontos: number, nomeMissao: string) => void;
-  adicionarBonus: (pontos: number, motivo: string) => void;
+  adicionarBonus: (pontos: number, motivo: string, semToast?: boolean) => void;
   subtrairPontos: (pontos: number) => void;
   addResgate: (resgate: Resgate) => void;
   getNivel: () => string;
@@ -109,9 +109,9 @@ const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: bo
     aplicarPontos(pontos, nomeMissao, true);
   }, [aplicarPontos]);
 
-  const adicionarBonus = useCallback((pontos: number, motivo: string) => {
+  const adicionarBonus = useCallback((pontos: number, motivo: string, semToast = false) => {
     aplicarPontos(pontos, motivo, false);
-    showToast(`+${pontos} créditos - ${motivo}`);
+    if (!semToast) showToast(`+${pontos} créditos - ${motivo}`);
   }, [aplicarPontos]);
 
   const subtrairPontos = useCallback((pontos: number) => {

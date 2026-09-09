@@ -35,8 +35,8 @@ const defaultColecao: ColecaoData = {
 
 interface CollectionContextType {
   colecao: ColecaoData;
-  adquirirCarta: (cardId: string, foil?: boolean) => NovaCartaInfo | null;
-  adquirirPorMissao: (missaoId: string) => ResultadoDrop | null;
+  adquirirCarta: (cardId: string, foil?: boolean, semToast?: boolean) => NovaCartaInfo | null;
+  adquirirPorMissao: (missaoId: string, semToast?: boolean) => ResultadoDrop | null;
   adicionarFragmentos: (raridade: RaridadeCarta, quantidade: number) => void;
   fabricarCarta: (cardId: string) => NovaCartaInfo | null;
   getChanceDrop: (carta: Carta) => number;
@@ -61,7 +61,7 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
   const [colecao, setColecao] = useLocalStorage<ColecaoData>(STORAGE_KEY, defaultColecao);
   const { adicionarBonus } = useData();
 
-  const adquirirCarta = useCallback((cardId: string, foil = false): NovaCartaInfo | null => {
+  const adquirirCarta = useCallback((cardId: string, foil = false, semToast = false): NovaCartaInfo | null => {
     const carta = CARTAS.find(c => c.id === cardId);
     if (!carta) return null;
     if (colecao.cartasObtidas.includes(cardId)) return null;
@@ -90,10 +90,12 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
 
     const bonusGanho = quimicaNova.level > quimicaAntes.level ? quimicaNova.bonusPontos : 0;
 
-    showToast(`${foil ? 'Carta BRILHANTE obtida: ' : 'Nova carta obtida: '}${carta.nome} (${getSetDeCarta(carta.setId).nome})`);
+    if (!semToast) {
+      showToast(`${foil ? 'Carta BRILHANTE obtida: ' : 'Nova carta obtida: '}${carta.nome} (${getSetDeCarta(carta.setId).nome})`);
+    }
 
     if (bonusGanho > 0) {
-      adicionarBonus(bonusGanho, `Bônus de Química - ${getSetDeCarta(carta.setId).nome} Nível ${quimicaNova.level}`);
+      adicionarBonus(bonusGanho, `Bônus de Química - ${getSetDeCarta(carta.setId).nome} Nível ${quimicaNova.level}`, semToast);
     }
 
     return { carta, set: getSetDeCarta(carta.setId), quimicaAntes, quimicaNova, bonusGanho };
@@ -106,7 +108,7 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
     }));
   }, [setColecao]);
 
-  const adquirirPorMissao = useCallback((missaoId: string): ResultadoDrop | null => {
+  const adquirirPorMissao = useCallback((missaoId: string, semToast = false): ResultadoDrop | null => {
     const cardId = MISSION_TO_CARD[missaoId];
     if (!cardId) return null;
     const carta = CARTAS.find(c => c.id === cardId);
@@ -122,7 +124,7 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
 
     if (!jaTem) {
       const ehFoil = Math.random() * 100 < CHANCE_FOIL;
-      const novaCarta = adquirirCarta(cardId, ehFoil);
+      const novaCarta = adquirirCarta(cardId, ehFoil, semToast);
       if (!novaCarta) return { caiu: false, carta, chance };
       return { caiu: true, novaCarta, foil: ehFoil };
     }
@@ -133,7 +135,9 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
         cartasFoil: [...(prev.cartasFoil ?? []), cardId],
         fragmentos: { ...fragmentosZero, ...prev.fragmentos },
       }));
-      showToast(`CARTA BRILHANTE! ${carta.nome} evoluiu para a versão premium`);
+      if (!semToast) {
+        showToast(`CARTA BRILHANTE! ${carta.nome} evoluiu para a versão premium`);
+      }
       return { caiu: true, foil: true, carta };
     }
 
