@@ -24,13 +24,6 @@ function progressoParaNivel(pontos: number): number {
   return (pontos / 100) * 10;
 }
 
-function proximoNivel(pontos: number): { nome: string; falta: number } {
-  if (pontos < 100) return { nome: 'Broto', falta: 100 - pontos };
-  if (pontos < 300) return { nome: 'Árvore', falta: 300 - pontos };
-  if (pontos < 1000) return { nome: 'Expert', falta: 1000 - pontos };
-  return { nome: 'Expert', falta: 0 };
-}
-
 const links = [
   { to: '/', label: 'Home' },
   { to: '/dashboard', label: 'Dashboard' },
@@ -56,7 +49,6 @@ export default function Header() {
 
   const nivel = getNivel();
   const progresso = progressoParaNivel(data.pontos);
-  const proximo = proximoNivel(data.pontos);
   const valorEmReais = data.pontos / CREDITOS_POR_REAL;
   const arcR = 40;
   const arcCirc = 2 * Math.PI * arcR;
@@ -197,7 +189,7 @@ export default function Header() {
                       </div>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-white font-bold text-base font-serif-display truncate">{data.nome || 'Usuário'}</p>
+                      <p className="text-white font-bold text-base truncate">{data.nome || 'Usuário'}</p>
                       <p className="text-white/40 text-xs truncate">{data.email || 'email não informado'}</p>
                       <span className="inline-flex items-center gap-1.5 mt-1.5">
                         <img src={NIVEL_ICONE_HEADER[nivel] || '/icons/semente.svg'} className="w-3.5 h-3.5" alt="" />
@@ -214,7 +206,7 @@ export default function Header() {
                       { label: 'Streak', value: data.streak, suffix: 'd', cor: '#ffc928' },
                     ].map(s => (
                       <div key={s.label} className="rounded-xl p-2 text-center" style={{ background: 'rgba(255,255,255,0.08)' }}>
-                        <p className="font-bold text-base font-serif-display" style={{ color: s.cor }}>
+                        <p className="font-bold text-base" style={{ color: s.cor }}>
                           {s.value}<span className="text-[10px] opacity-60 ml-0.5">{s.suffix}</span>
                         </p>
                         <p className="text-white/50 text-[10px]">{s.label}</p>
@@ -263,28 +255,16 @@ export default function Header() {
                   >
                     <div className="text-left">
                       <p className="text-white/45 text-[10px] uppercase tracking-widest">Seus créditos</p>
-                      <p className="text-white font-bold font-serif-display" style={{ fontSize: 18 }}>
+                      <p className="text-white font-bold" style={{ fontSize: 18 }}>
                         {data.pontos.toLocaleString('pt-BR')} <span className="text-[10px] font-medium opacity-60">créditos</span>
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[#4ade80] font-bold font-serif-display" style={{ fontSize: 18 }}>R$ {formatarReais(valorEmReais)}</p>
+                      <p className="text-[#4ade80] font-bold" style={{ fontSize: 18 }}>R$ {formatarReais(valorEmReais)}</p>
                       <p className="text-white/35 text-[9px]">{CREDITOS_POR_REAL} créditos = R$1,00 · converter</p>
                     </div>
                   </button>
 
-                  <div className="mt-3">
-                    <div className="flex justify-between text-[10px] text-white/50 mb-1">
-                      <span>Próximo: {proximo.nome}</span>
-                      <span>{proximo.falta} créditos restantes</span>
-                    </div>
-                    <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
-                      <div
-                        className="h-full rounded-full transition-all duration-700"
-                        style={{ width: `${progresso}%`, background: 'linear-gradient(90deg,#4ade80,#22c55e)' }}
-                      />
-                    </div>
-                  </div>
                 </div>
 
                 <div className="space-y-1 mt-2">

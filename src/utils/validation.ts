@@ -1,24 +1,47 @@
-export function validateName(name: string): string | null {
-  if (!name || !name.trim()) return 'Nome é obrigatório';
-  if (name.trim().length < 3) return 'Nome deve ter no mínimo 3 caracteres';
-  if (name.trim().length > 100) return 'Nome deve ter no máximo 100 caracteres';
-  if (!/^[a-zA-ZÀ-ÿ\s]+$/.test(name)) return 'Nome deve conter apenas letras';
+type Campo = {
+  rotulo: string;
+  min?: number;
+  max?: number;
+  regex?: RegExp;
+  mensagemRegex?: string;
+};
+
+function validarTexto(valor: string, campo: Campo, obrigatorio = true): string | null {
+  const texto = valor.trim();
+
+  if (!texto) return obrigatorio ? `${campo.rotulo} é obrigatório` : null;
+  if (campo.min != null && texto.length < campo.min) return `${campo.rotulo} deve ter no mínimo ${campo.min} caracteres`;
+  if (campo.max != null && texto.length > campo.max) return `${campo.rotulo} deve ter no máximo ${campo.max} caracteres`;
+  if (campo.regex && !campo.regex.test(texto)) return campo.mensagemRegex ?? 'Formato inválido';
+
   return null;
+}
+
+export function validateName(name: string): string | null {
+  return validarTexto(name, {
+    rotulo: 'Nome',
+    min: 3,
+    max: 100,
+    regex: /^[a-zA-ZÀ-ÿ\s]+$/,
+    mensagemRegex: 'Nome deve conter apenas letras',
+  });
 }
 
 export function validateEmail(email: string, isRequired = true): string | null {
-  if (!email && !isRequired) return null;
-  if (!email && isRequired) return 'Email é obrigatório';
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'Email deve ser válido';
-  if (email.length > 255) return 'Email muito longo';
-  return null;
+  return validarTexto(
+    email,
+    {
+      rotulo: 'Email',
+      max: 255,
+      regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      mensagemRegex: 'Email deve ser válido',
+    },
+    isRequired,
+  );
 }
 
 export function validateMessage(message: string): string | null {
-  if (!message || !message.trim()) return 'Mensagem é obrigatória';
-  if (message.trim().length < 10) return 'Mensagem deve ter no mínimo 10 caracteres';
-  if (message.length > 1000) return 'Mensagem deve ter no máximo 1000 caracteres';
-  return null;
+  return validarTexto(message, { rotulo: 'Mensagem', min: 10, max: 1000 });
 }
 
 export function normalizeName(name: string): string {
