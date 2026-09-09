@@ -501,7 +501,6 @@ export default function Chat() {
           )}
 
           <div className="relative">
-            <span className="absolute inset-0 rounded-full bg-leaf animate-ping opacity-20" aria-hidden="true" />
             <button
               onClick={abrirChat}
               className="relative flex items-center gap-2.5 rounded-full bg-leaf hover:bg-leaf-soft hover:shadow-[0_0_30px_rgba(32,217,104,0.5)] transition-all px-4 py-3.5 text-[#063d25] font-semibold shadow-xl cursor-pointer"
@@ -543,8 +542,8 @@ export default function Chat() {
               >
                 <div
                   className={`px-4 py-2 max-w-[80%] text-sm leading-relaxed whitespace-pre-line ${msg.remetente === 'user'
-                      ? 'bg-leaf text-[#063d25] rounded-2xl rounded-tr-sm font-medium'
-                      : 'card-primary text-white/90 rounded-2xl rounded-tl-sm'
+                    ? 'bg-leaf text-[#063d25] rounded-2xl rounded-tr-sm font-medium'
+                    : 'card-primary text-white/90 rounded-2xl rounded-tl-sm'
                     }`}
                 >
                   {msg.texto.split('**').map((part, idx) =>
