@@ -1,5 +1,8 @@
 import { useEffect } from 'react';
 import { RECOMPENSAS, SELOS } from '../data/constants';
+import { CARTAS, SETS_CARTAS, CHANCE_DROP_POR_RARIDADE, FRAGMENTOS_POR_DUPLICADA, LABEL_RARIDADE } from '../data/cartas';
+import CardItem from '../components/CardItem';
+import type { RaridadeCarta } from '../types';
 
 const PASSOS = [
   { icon: '/icons/reciclagem.svg', titulo: 'Registre sua ação', texto: 'Escolha uma das ações sustentáveis no Dashboard e informe o que você realizou hoje.' },
@@ -16,6 +19,16 @@ const DIFERENCIAIS = [
   'Níveis, selos e ranking gamificados',
   'Interface totalmente responsiva',
 ];
+
+const ORDEM_RARIDADES: RaridadeCarta[] = ['comum', 'incomum', 'rara', 'epica', 'lendaria'];
+
+const EXEMPLO_POR_RARIDADE: Record<RaridadeCarta, string> = {
+  comum: 'card-agua',
+  incomum: 'card-reutilizacao',
+  rara: 'card-solar',
+  epica: 'card-captacao',
+  lendaria: 'card-agrofloresta',
+};
 
 export function Solucao() {
   useEffect(() => {
@@ -56,6 +69,68 @@ export function Solucao() {
             <p className="text-xs text-white/50 leading-relaxed">{passo.texto}</p>
           </div>
         ))}
+      </div>
+
+      <h2 className="text-2xl font-bold text-white mb-4 drop-shadow">Coleção de Cartinhas</h2>
+      <p className="text-sm text-white/60 leading-relaxed max-w-3xl mb-6">
+        Realizar ações também pode premiar você com <strong className="text-white/85">cartinhas colecionáveis</strong>.
+        São <strong className="text-white/85">20 cartinhas</strong> em <strong className="text-white/85">5 sets temáticos</strong>,
+        com 5 níveis de raridade — cada um com a própria chance de ser encontrado na premiação.
+      </p>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+        {ORDEM_RARIDADES.map(raridade => {
+          const carta = CARTAS.find(c => c.id === EXEMPLO_POR_RARIDADE[raridade]);
+          if (!carta) return null;
+          return (
+            <div key={raridade} className="flex flex-col items-center">
+              <div className="w-28 sm:w-32">
+                <CardItem carta={carta} bloqueada={false} ativa={true} foil={raridade === 'lendaria'} />
+              </div>
+              <p className="mt-2 text-sm font-bold text-white">{LABEL_RARIDADE[raridade]}</p>
+              <p className="text-[11px] text-white/45">{CHANCE_DROP_POR_RARIDADE[raridade]}% de chance</p>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+        <div className="card-secondary rounded-2xl p-5">
+          <h3 className="font-bold text-white text-sm mb-3">Sets e Química</h3>
+          <div className="flex flex-col gap-2 mb-3">
+            {SETS_CARTAS.map(set => (
+              <div key={set.id} className="flex items-center gap-3 rounded-xl px-3 py-2" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <span className="w-2 h-2 rounded-full shrink-0" style={{ background: set.cor }} />
+                <img src={set.icone} alt="" className="w-4 h-4" />
+                <span className="text-sm text-white/75 font-medium">{set.nome}</span>
+                <span className="text-[10px] text-white/40 ml-auto">{set.tema}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-white/55 leading-relaxed">
+            Junte as <strong className="text-white/80">4 cartinhas de um set</strong> para ativar a <strong className="text-white/80">Química Nível 3</strong> e ganhar{' '}
+            <strong className="text-[#4ade80]">+150 créditos</strong> de bônus.
+          </p>
+        </div>
+
+        <div className="card-secondary rounded-2xl p-5">
+          <h3 className="font-bold text-white text-sm mb-3">Fábrica de Cartas</h3>
+          <p className="text-xs text-white/55 leading-relaxed mb-3">
+            <strong className="text-white/80">Carta repetida vira fragmento</strong> da raridade dela. Junte a quantidade certa
+            e monte a cartinha que falta — sem depender de sorte. Cada repetida rende:
+          </p>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {ORDEM_RARIDADES.map(raridade => (
+              <span key={raridade} className="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold" style={{ background: 'rgba(74,222,128,0.08)', border: '1px solid rgba(74,222,128,0.2)' }}>
+                {LABEL_RARIDADE[raridade]} <span className="text-[#a66cff]">+{FRAGMENTOS_POR_DUPLICADA[raridade]}</span>
+              </span>
+            ))}
+          </div>
+          <p className="text-xs text-white/55 leading-relaxed">
+            Monitore sua coleção na página <strong className="text-white/80">Coleção</strong> e use a{' '}
+            <strong className="text-white/80">Fábrica de Cartas</strong> para completar os sets e ativar as químicas.
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
