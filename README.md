@@ -86,6 +86,7 @@ O assistente **RockySoul** funciona como um "avatar" que representa o site: ele 
 | `/faq` | FAQ | Estática |
 | `/integrantes` | Equipe | Estática |
 | `/contato` | Contato | Estática |
+| `/*` | Página 404 (endereços desconhecidos) | Estática |
 
 ---
 

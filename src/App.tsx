@@ -14,6 +14,7 @@ import { Faq } from './pages/Faq';
 import { Integrantes } from './pages/Integrantes';
 import { Contato } from './pages/Contato';
 import { Colecao } from './pages/Colecao';
+import { PaginaNaoEncontrada } from './pages/PaginaNaoEncontrada';
 import Chat from './components/Chat';
 
 export default function App() {
@@ -36,7 +37,7 @@ export default function App() {
                 <Route path="faq" element={<Faq />} />
                 <Route path="integrantes" element={<Integrantes />} />
                 <Route path="contato" element={<Contato />} />
-                <Route path="*" element={<Home />} />
+                <Route path="*" element={<PaginaNaoEncontrada />} />
               </Route>
             </Routes>
             {!ehModoPrint && <Chat />}
