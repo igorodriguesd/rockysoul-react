@@ -10,7 +10,7 @@ Desenvolvida como **SPA (Single Page Application)** com **React + Vite + TypeScr
 
 ---
 
-## Prints do Projeto
+## Imagens e Ícones do Projeto
 
 As principais telas da plataforma (Home, Dashboard, Coleção e Recompensas):
 
@@ -231,26 +231,6 @@ Acesse `http://localhost:5173` no navegador (porta padrão do Vite).
 - **Desktop** — 992px+
 
 No TailwindCSS, os tokens de breakpoint (`sm`=480px, `md`=768px, `lg`=992px, `xl`=1280px) foram alinhados a esse spec em `src/index.css`, garantindo que o layout não quebre em nenhuma das larguras avaliadas.
-
----
-
-## Imagens e Ícones do Projeto
-
-O projeto usa **ícones SVG proprietários** em `/public/icons` (reciclagem, transporte, energia, água, bicicleta, árvore, banho, semente, broto, troféu, folha, check e mais), imagens em `/public/imagens` (logo da RockySoulUp, ilha flutuante da Home, fotos dos integrantes e os **4 prints das telas** exibidos na seção "Prints do Projeto") e as logos oficiais das ferramentas na página **Sobre** (React, TypeScript, Vite, TailwindCSS, HTML5, IBM Watson, Node-RED e Telegram).
-
-Alguns dos ícones que representam as missões:
-
-<p align="center">
-  <img src="public/icons/reciclagem.svg" alt="Reciclagem" width="48">
-  <img src="public/icons/transporte.svg" alt="Transporte" width="48">
-  <img src="public/icons/energia.svg" alt="Energia" width="48">
-  <img src="public/icons/agua.svg" alt="Água" width="48">
-  <img src="public/icons/bicicleta.svg" alt="Bicicleta" width="48">
-  <img src="public/icons/arvore.svg" alt="Plantio" width="48">
-  <img src="public/icons/semente.svg" alt="Semente" width="48">
-  <img src="public/icons/broto.svg" alt="Broto" width="48">
-  <img src="public/icons/trofeu.svg" alt="Troféu" width="48">
-</p>
 
 ---
 
