@@ -38,13 +38,14 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
   const winSlots = Math.max(1, Math.min(SLOTS - 1, Math.round((chance / 100) * SLOTS)));
   const [girando, setGirando] = useState(true);
   const [rotacao, setRotacao] = useState(0);
+  const [slotVencedor] = useState<number>(() =>
+    caiu
+      ? Math.floor(Math.random() * winSlots)
+      : winSlots + Math.floor(Math.random() * (SLOTS - winSlots))
+  );
 
   useEffect(() => {
-    const slotVencedor: number = caiu
-      ? Math.floor(Math.random() * winSlots)
-      : winSlots + Math.floor(Math.random() * (SLOTS - winSlots));
-    const anguloTopo = slotVencedor * degPorSlot + degPorSlot / 2;
-    const t1 = setTimeout(() => setRotacao(VOLTAS * 360 + (270 - anguloTopo)), 80);
+    const t1 = setTimeout(() => setRotacao(VOLTAS * 360), 80);
     const t2 = setTimeout(() => {
       setGirando(false);
       onTerminar?.();
@@ -63,17 +64,19 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
         viewBox="0 0 100 100"
         style={{
           transform: `rotate(${rotacao}deg)`,
-          transition: `transform ${DURACAO}ms cubic-bezier(0.12, 0.65, 0.1, 1.02)`,
+          transition: `transform ${DURACAO}ms cubic-bezier(0.12, 0.75, 0.15, 1)`,
           transformOrigin: 'center',
           filter: 'drop-shadow(0 0 24px rgba(0,255,136,0.15))',
         }}
       >
-        {Array.from({ length: SLOTS }, (_, i) => {
-          const ganhou = i < winSlots;
+        {Array.from({ length: SLOTS }, (_, k) => {
+          const idx = (slotVencedor + k) % SLOTS;
+          const ganhou = idx < winSlots;
+          const centro = 270 + k * degPorSlot;
           return (
             <path
-              key={i}
-              d={pathArco(i * degPorSlot, (i + 1) * degPorSlot)}
+              key={k}
+              d={pathArco(centro - degPorSlot / 2, centro + degPorSlot / 2)}
               fill={ganhou ? CORES_RARIDADE[carta.raridade] : '#1b2b45'}
               stroke="#0f1c2e"
               strokeWidth="0.6"
