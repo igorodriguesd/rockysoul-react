@@ -149,7 +149,9 @@ export function Dashboard() {
   const nivel = getNivel();
 
   const ranking: RankingUser[] = [
-    ...USUARIOS_BASE.map(u => ({ nome: u.nome, pontos: u.pontos })),
+    ...USUARIOS_BASE
+      .filter(u => u.nome.trim().toLowerCase() !== (data.nome || '').trim().toLowerCase())
+      .map(u => ({ nome: u.nome, pontos: u.pontos })),
     { nome: data.nome || 'Você', pontos: data.pontos },
   ].sort((a, b) => b.pontos - a.pontos);
 
