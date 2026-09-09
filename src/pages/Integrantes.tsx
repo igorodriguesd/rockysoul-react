@@ -18,7 +18,7 @@ export function Integrantes() {
               alt={m.nome}
               className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-[#22c55e]/20"
             />
-            <h3 className="font-bold text-gray-800 text-sm">{m.nome}</h3>
+            <h3 className="font-bold  text-sm">{m.nome}</h3>
             <p className="text-xs text-[#22c55e] font-medium mt-1 mb-4">{m.rm}</p>
             <div className="flex justify-center gap-4">
               <a href={m.github} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-700 transition-colors" title="GitHub">

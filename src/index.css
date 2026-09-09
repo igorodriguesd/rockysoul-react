@@ -42,7 +42,7 @@
     color: var(--color-frost); 
   }
 
-  h1, h2 {
+  h1, h2, h3, h4 {
     font-family: var(--font-serif-display);
     font-weight: 700;
     color: var(--color-frost);
@@ -159,6 +159,26 @@
 @keyframes fut-hue {
   0%, 100% { filter: hue-rotate(0deg) saturate(1); }
   50% { filter: hue-rotate(14deg) saturate(1.15); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-16px); }
+}
+
+@keyframes float-card {
+  0%, 100% { transform: translateY(0px) rotate(var(--tw-rotate, 0deg)); }
+  50% { transform: translateY(-10px) rotate(var(--tw-rotate, 0deg)); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 @media (prefers-reduced-motion: reduce) {
