@@ -8,6 +8,52 @@ export const CHANCE_DROP_POR_RARIDADE: Record<RaridadeCarta, number> = {
   lendaria: 10,
 };
 
+export const CHANCE_FOIL = 8;
+
+export const VALOR_POR_RARIDADE: Record<RaridadeCarta, number> = {
+  comum: 8,
+  incomum: 15,
+  rara: 30,
+  epica: 60,
+  lendaria: 120,
+};
+
+export const FRAGMENTOS_POR_DUPLICADA: Record<RaridadeCarta, number> = {
+  comum: 3,
+  incomum: 5,
+  rara: 10,
+  epica: 20,
+  lendaria: 40,
+};
+
+export const CUSTO_FABRICACAO: Record<RaridadeCarta, number> = {
+  comum: 10,
+  incomum: 16,
+  rara: 32,
+  epica: 70,
+  lendaria: 140,
+};
+
+export const PESO_RARIDADE: Record<RaridadeCarta, number> = {
+  comum: 1,
+  incomum: 2,
+  rara: 3,
+  epica: 4,
+  lendaria: 5,
+};
+
+export const NOVOS_FRAGMENTOS = {
+  comum: 0,
+  incomum: 0,
+  rara: 0,
+  epica: 0,
+  lendaria: 0,
+};
+
+export function getValorCarta(carta: Carta, foil = false): number {
+  return VALOR_POR_RARIDADE[carta.raridade] * (foil ? 3 : 1);
+}
+
 export const LABEL_RARIDADE: Record<RaridadeCarta, string> = {
   comum: 'Comum',
   incomum: 'Incomum',

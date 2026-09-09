@@ -106,6 +106,8 @@ export interface SetColecaoUsuario {
 
 export interface ColecaoData {
   cartasObtidas: string[];
+  cartasFoil: string[];
+  fragmentos: Record<RaridadeCarta, number>;
   sets: Record<string, SetColecaoUsuario>;
 }
 
@@ -118,5 +120,7 @@ export interface NovaCartaInfo {
 }
 
 export type ResultadoDrop =
-  | { caiu: true; novaCarta: NovaCartaInfo }
+  | { caiu: true; novaCarta: NovaCartaInfo; foil?: boolean }
+  | { caiu: true; foil: true; carta: Carta }
+  | { caiu: true; duplicada: true; carta: Carta; fragmentosGanhos: number }
   | { caiu: false; carta: Carta; chance: number };
