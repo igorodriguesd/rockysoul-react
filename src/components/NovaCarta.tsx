@@ -1,5 +1,6 @@
 import type { NovaCartaInfo } from '../types';
 import { useColecao } from '../context/CollectionContext';
+import { getCardBackground, getCardLabel, getIniciaisSet, TIER } from '../data/cartasStyle';
 
 interface Props {
   novaCarta: NovaCartaInfo;
@@ -10,6 +11,7 @@ export default function NovaCarta({ novaCarta, foil = false }: Props) {
   const { carta, set, quimicaNova, bonusGanho } = novaCarta;
   const { getProgressoTotal } = useColecao();
   const { obtidas, total } = getProgressoTotal();
+  const tier = TIER[carta.raridade];
 
   return (
     <div className="text-center">
@@ -17,18 +19,35 @@ export default function NovaCarta({ novaCarta, foil = false }: Props) {
       {foil && <p className="text-[#fde68a] text-sm font-bold tracking-wide mt-0.5">✨ VERSÃO BRILHANTE ✨</p>}
 
       <div
-        className="mx-auto mt-3 rounded-2xl p-4 max-w-[180px]"
+        className={`fut-card ${foil ? 'fut-foil' : ''} ${!foil && carta.raridade === 'lendaria' ? 'fut-legend' : ''} relative rounded-xl border mx-auto mt-3 max-w-[170px] p-2 flex flex-col items-center text-center`}
         style={{
-          border: foil ? '1px solid rgba(250,204,21,0.7)' : '1px solid rgba(32,217,104,0.5)',
-          boxShadow: foil ? '0 0 30px rgba(250,204,21,0.5)' : '0 0 30px rgba(32,217,104,0.35)',
-          background: foil
-            ? 'linear-gradient(160deg, rgba(120,85,20,0.75), rgba(70,45,15,0.85))'
-            : 'linear-gradient(160deg, rgba(11,74,44,0.9), rgba(18,89,54,0.8))',
+          borderColor: foil ? '#ffe9a8' : tier.border,
+          boxShadow: `0 0 26px ${foil ? 'rgba(250,204,21,0.5)' : tier.glow}`,
+          background: getCardBackground(carta.raridade, foil),
         }}
       >
-        <img src={carta.icone} alt="" className={`w-12 h-12 mx-auto ${foil ? 'drop-shadow-[0_0_8px_rgba(250,204,21,0.9)]' : ''}`} />
-        <p className="text-white font-bold text-sm mt-2">{carta.nome}</p>
-        <p className="text-white/60 text-xs">{set.nome} · {carta.raridade}</p>
+        <div className="relative z-10 flex items-center justify-between w-full">
+          <span className="fut-chip rounded-md px-1 py-0.5 text-[8px] font-bold tracking-wide text-white/95">
+            {foil ? `✨ ${getCardLabel(carta)}` : getCardLabel(carta)}
+          </span>
+          <span className="fut-chip rounded-md px-1 py-0.5 text-[8px] font-bold tracking-wide text-white/95">
+            {getIniciaisSet(set.id)}
+          </span>
+        </div>
+        <span
+          className="relative z-10 flex items-center justify-center w-12 h-12 rounded-xl my-2"
+          style={{ background: 'rgba(255,255,255,0.13)', border: '1px solid rgba(255,255,255,0.4)' }}
+        >
+          <img
+            src={carta.icone}
+            alt=""
+            className={`w-8 h-8 ${foil ? 'drop-shadow-[0_0_8px_rgba(250,204,21,0.95)]' : ''}`}
+          />
+        </span>
+        <div className="relative z-10 fut-plate rounded-lg w-full px-1.5 py-1">
+          <p className="text-white font-bold text-sm leading-tight">{carta.nome}</p>
+          <p className="text-white/75 text-[10px] mt-0.5">{set.nome} · {tier.nome}</p>
+        </div>
       </div>
 
       <p className="text-white/70 text-sm mt-3">

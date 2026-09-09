@@ -103,11 +103,73 @@
   filter: drop-shadow(0 30px 30px rgba(0, 0, 0, 0.4));
 }
 
+.fut-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.fut-card.fut-foil::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -80%;
+  width: 55%;
+  height: 260%;
+  pointer-events: none;
+  z-index: 2;
+  transform: rotate(18deg);
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  animation: fut-shine 2.4s linear infinite;
+}
+
+.fut-card.fut-hover {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, filter 0.3s ease;
+  will-change: transform;
+}
+
+.fut-card.fut-hover:not(:disabled):hover {
+  z-index: 60;
+  transform: perspective(800px) translateY(-58px) rotateZ(-7deg) rotateX(14deg) scale(1.16);
+  filter: brightness(1.12) saturate(1.12);
+  box-shadow: 0 34px 70px rgba(0, 0, 0, 0.55), 0 0 34px var(--fut-glow, rgba(32, 217, 104, 0.5));
+}
+
+.fut-plate {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.42));
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.fut-chip {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+@keyframes fut-shine {
+  0% { transform: translateX(-160%) rotate(18deg); }
+  100% { transform: translateX(420%) rotate(18deg); }
+}
+
+.fut-legend {
+  animation: fut-hue 9s ease-in-out infinite;
+}
+
+@keyframes fut-hue {
+  0%, 100% { filter: hue-rotate(0deg) saturate(1); }
+  50% { filter: hue-rotate(14deg) saturate(1.15); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .floating-island,
   .animate-float-slow,
   .animate-float-card,
   .animate-pulse-glow {
+    animation: none;
+  }
+  .fut-card.fut-foil::after,
+  .fut-legend {
     animation: none;
   }
   html {
