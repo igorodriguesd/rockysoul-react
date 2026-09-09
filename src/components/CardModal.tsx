@@ -1,5 +1,5 @@
 import type { Carta } from '../types';
-import { SETS_CARTAS } from '../data/cartas';
+import { SETS_CARTAS, getValorCarta } from '../data/cartas';
 
 const CORES_RARIDADE: Record<Carta['raridade'], string> = {
   comum: '#9ca3af',
@@ -11,12 +11,13 @@ const CORES_RARIDADE: Record<Carta['raridade'], string> = {
 
 interface Props {
   carta: Carta;
+  foil?: boolean;
   onFechar: () => void;
 }
 
-export default function CardModal({ carta, onFechar }: Props) {
+export default function CardModal({ carta, foil = false, onFechar }: Props) {
   const set = SETS_CARTAS.find(s => s.id === carta.setId) ?? SETS_CARTAS[0];
-  const cor = CORES_RARIDADE[carta.raridade];
+  const cor = foil ? '#fde68a' : CORES_RARIDADE[carta.raridade];
 
   return (
     <div
@@ -45,13 +46,21 @@ export default function CardModal({ carta, onFechar }: Props) {
           style={{ borderColor: cor, boxShadow: `0 0 30px ${cor}55`, background: 'rgba(11,74,44,0.5)' }}
         >
           <span className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: cor }}>
-            {carta.raridade}
+            {foil ? '✨ Brilhante · ' : ''}{carta.raridade}
           </span>
           <div className="flex justify-center my-3">
-            <img src={carta.icone} alt="" className="w-16 h-16 rounded-2xl" style={{ background: 'rgba(255,255,255,0.1)' }} />
+            <img
+              src={carta.icone}
+              alt=""
+              className={`w-16 h-16 rounded-2xl ${foil ? 'drop-shadow-[0_0_10px_rgba(250,204,21,0.9)]' : ''}`}
+              style={{ background: 'rgba(255,255,255,0.1)' }}
+            />
           </div>
           <h2 className="text-white text-2xl font-bold">{carta.nome}</h2>
           <p className="text-white/60 text-xs mt-1">{set.nome} · {set.tema}</p>
+          <p className="text-xs font-semibold mt-2" style={{ color: foil ? '#fde68a' : '#4ade80' }}>
+            Valor de coleção: <span className="font-bold">{getValorCarta(carta, foil)}</span> créditos{foil ? ' (×3 brilhante)' : ''}
+          </p>
         </div>
 
         <div className="space-y-3">

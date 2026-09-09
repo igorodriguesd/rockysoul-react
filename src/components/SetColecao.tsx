@@ -40,6 +40,7 @@ export default function SetColecao({ set }: Props) {
               carta={carta}
               bloqueada={!desbloqueada}
               ativa={desbloqueada && quimica.level > 0}
+              foil={colecao.cartasFoil?.includes(carta.id) ?? false}
             />
           );
         })}

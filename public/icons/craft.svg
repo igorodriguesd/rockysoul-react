@@ -1,0 +1,12 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="craftGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#a66cff"/>
+      <stop offset="100%" stopColor="#f5c451"/>
+    </linearGradient>
+  </defs>
+  <path d="M12 2l2.4 3.6L18 5l.6 3.6L22 10l-3.4 1.4L18 15l-3.6-1.4L12 17l-2.4-3.4L6 15l-.6-3.6L2 10l3.4-1.4L6 5l3.6.6L12 2z" fill="url(#craftGrad)"/>
+  <circle cx="19" cy="19" r="2.2" stroke="url(#craftGrad)" strokeWidth="1.4" fill="none"/>
+  <circle cx="5" cy="19" r="1.4" fill="#a66cff" opacity="0.7"/>
+  <path d="M18.5 17.5v3M17 19h3" stroke="url(#craftGrad)" strokeWidth="1.2" strokeLinecap="round"/>
+</svg>

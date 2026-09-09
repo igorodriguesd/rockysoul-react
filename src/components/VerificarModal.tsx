@@ -256,10 +256,37 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                         Continue realizando ações para tentar conquistar outras cartas.
                       </p>
                     </div>
-                  ) : drop.caiu ? (
+                  ) : drop.caiu && 'novaCarta' in drop ? (
                     <div className="mt-2">
                       <p className="text-[#20d968] font-semibold text-sm tracking-wide mb-1">VOCÊ GANHOU A CARTA!</p>
-                      <NovaCarta novaCarta={drop.novaCarta} />
+                      <NovaCarta novaCarta={drop.novaCarta} foil={drop.foil} />
+                    </div>
+                  ) : drop.caiu && 'foil' in drop ? (
+                    <div className="mt-4 mx-auto max-w-[300px] rounded-2xl p-4" style={{ background: 'rgba(120,85,20,0.25)', border: '1px solid rgba(250,204,21,0.6)' }}>
+                      <div className="flex items-center justify-center gap-2.5 mb-1.5">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(250,204,21,0.15)' }}>
+                          <img src={drop.carta.icone} className="w-6 h-6 drop-shadow-[0_0_6px_rgba(250,204,21,0.9)]" alt="" />
+                        </div>
+                        <p className="text-white font-bold text-sm">{drop.carta.nome} ✨</p>
+                      </div>
+                      <p className="text-white/70 text-xs leading-snug">
+                        <strong className="text-[#fde68a]">CARTA BRILHANTE!</strong> {drop.carta.nome} evoluiu para a versão
+                        premium (valor ×3) e ficou destacada na sua vitrine.
+                      </p>
+                    </div>
+                  ) : drop.caiu && 'duplicada' in drop ? (
+                    <div className="mt-4 mx-auto max-w-[300px] rounded-2xl p-4" style={{ background: 'rgba(15,28,46,0.9)', border: '1px solid rgba(166,108,255,0.45)' }}>
+                      <div className="flex items-center justify-center gap-2.5 mb-1.5">
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(166,108,255,0.12)' }}>
+                          <img src={drop.carta.icone} className="w-6 h-6" alt="" />
+                        </div>
+                        <p className="text-white font-bold text-sm">Carta repetida</p>
+                      </div>
+                      <p className="text-white/60 text-xs leading-snug">
+                        Você já tem <strong className="text-white/80">{drop.carta.nome}</strong>. Ela virou{' '}
+                        <strong className="text-[#a66cff]">+{drop.fragmentosGanhos} fragmentos</strong> de {drop.carta.raridade.toLowerCase()}.
+                        Use-os na Fábrica de Cartas na sua Coleção.
+                      </p>
                     </div>
                   ) : (
                     <div className="mt-4 mx-auto max-w-[300px] rounded-2xl p-4" style={{ background: 'rgba(15,28,46,0.9)', border: '1px solid rgba(0,255,136,0.22)' }}>
