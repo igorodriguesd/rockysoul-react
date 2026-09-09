@@ -8,12 +8,6 @@ Plataforma **gamificada** de sustentabilidade que transforma ações ecológicas
 
 Desenvolvida como **SPA (Single Page Application)** com **React + Vite + TypeScript + TailwindCSS**.
 
-> **Demonstração visual** — a tela inicial do projeto (Home) com a ilha flutuante e o assistente RockySoul:
-
-<p align="center">
-  <img src="public/imagens/Ilha.png" alt="Ilha Flutuante da Home" width="400">
-</p>
-
 ---
 
 ## Prints do Projeto
