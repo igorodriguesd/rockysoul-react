@@ -4,7 +4,7 @@
   <img src="public/imagens/logo.png" alt="Logo RockySoulUp" width="160">
 </p>
 
-Plataforma **gamificada** de sustentabilidade que transforma ações ecológicas do dia a dia em **pontos, níveis, selos, mini-jogos e recompensas reais** — com integração a um **avatar inteligente** (o assistente **RockySoul**) que guia a jornada do usuário dentro do site.
+Plataforma **gamificada** de sustentabilidade que transforma ações ecológicas do dia a dia em **pontos, níveis, selos, cartinhas colecionáveis, mini-jogos e recompensas reais** — com integração a um **avatar inteligente** (o assistente **RockySoul**) que guia a jornada do usuário dentro do site.
 
 Desenvolvida como **SPA (Single Page Application)** com **React + Vite + TypeScript + TailwindCSS**.
 
