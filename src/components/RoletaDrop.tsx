@@ -44,7 +44,7 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
       ? Math.floor(Math.random() * winSlots)
       : winSlots + Math.floor(Math.random() * (SLOTS - winSlots));
     const anguloTopo = slotVencedor * degPorSlot + degPorSlot / 2;
-    const t1 = setTimeout(() => setRotacao(VOLTAS * 360 + (360 - anguloTopo)), 80);
+    const t1 = setTimeout(() => setRotacao(VOLTAS * 360 + (270 - anguloTopo)), 80);
     const t2 = setTimeout(() => {
       setGirando(false);
       onTerminar?.();
