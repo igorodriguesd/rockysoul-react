@@ -28,14 +28,15 @@ export function Colecao() {
     <div className="max-w-[90rem] mx-auto px-4 sm:px-6 py-6">
       <header className="mb-6 text-center sm:text-left">
         <h1 className="text-white text-3xl font-bold mb-1">Minha Coleção</h1>
-        <p className="text-white/60 text-sm">
-          {obtidas}/{total} cartas · {Math.round(percentual)}% completa
-        </p>
         <p className="text-[#20d968] text-sm font-semibold mt-1">
           Valor da coleção: {valorTotal} créditos{foils.length > 0 && ` · ${foils.length} brilhante${foils.length > 1 ? 's' : ''} ✨`}
         </p>
       </header>
 
+      <div className="flex items-center justify-between mb-2 text-xs">
+        <span className="text-white/60 font-medium">Progresso da coleção</span>
+        <span className="text-white/80 font-semibold">{obtidas}/{total} cartas · {Math.round(percentual)}%</span>
+      </div>
       <div className="relative h-3 rounded-full overflow-hidden mb-5" style={{ background: 'rgba(82,232,138,0.12)' }}>
         <div
           className="h-full rounded-full transition-all duration-700"
