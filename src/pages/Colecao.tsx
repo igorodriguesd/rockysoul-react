@@ -16,10 +16,6 @@ export function Colecao() {
   const foils = colecao.cartasFoil ?? [];
   const fragmentos = colecao.fragmentos ?? { comum: 0, incomum: 0, rara: 0, epica: 0, lendaria: 0 };
 
-  const setsCompletos = SETS_CARTAS.filter(s => (colecao.sets[s.id]?.level ?? 0) === 3).length;
-  const setsAtivos = SETS_CARTAS.filter(s => (colecao.sets[s.id]?.level ?? 0) >= 1).length;
-  const quaseCompletos = SETS_CARTAS.filter(s => (colecao.sets[s.id]?.cartas.length ?? 0) === 3).length;
-
   const faltando = CARTAS
     .filter(c => !colecao.cartasObtidas.includes(c.id))
     .sort((a, b) => PESO_RARIDADE[a.raridade] - PESO_RARIDADE[b.raridade]);
@@ -45,21 +41,6 @@ export function Colecao() {
             background: 'linear-gradient(90deg, #20d968, #4ade80)',
           }}
         />
-      </div>
-
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="glass-side rounded-2xl py-3.5 text-center">
-          <p className="text-white text-xl font-bold">{setsAtivos}</p>
-          <p className="text-white/50 text-xs mt-0.5">sets ativos</p>
-        </div>
-        <div className="glass-side rounded-2xl py-3.5 text-center">
-          <p className="text-white text-xl font-bold">{quaseCompletos}</p>
-          <p className="text-white/50 text-xs mt-0.5">quase completos</p>
-        </div>
-        <div className="glass-side rounded-2xl py-3.5 text-center">
-          <p className="text-[#20d968] text-xl font-bold">{setsCompletos}</p>
-          <p className="text-white/50 text-xs mt-0.5">sets completos</p>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
