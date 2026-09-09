@@ -72,10 +72,10 @@ export const RECOMPENSAS: Recompensa[] = [
 ];
 
 export const USUARIOS_BASE: UsuarioSimulado[] = [
-  { nome: 'Ana Silva', pontos: 520 },
-  { nome: 'Carlos Souza', pontos: 380 },
-  { nome: 'Maria Oliveira', pontos: 610 },
-  { nome: 'Pedro Santos', pontos: 290 },
+  { nome: 'Maria Oliveira', pontos: 1320 },
+  { nome: 'Ana Silva', pontos: 620 },
+  { nome: 'Carlos Souza', pontos: 210 },
+  { nome: 'Pedro Santos', pontos: 75 },
 ];
 
 export const CURIOSIDADES: string[] = [

@@ -154,9 +154,10 @@ export function Home() {
                 <em className="not-italic" style={{ color: '#4ade80' }}>impacto real</em>
               </h1>
 
-              <p className="text-white/70 leading-relaxed" style={{ fontSize: 20, maxWidth: 480 }}>
-                Gamifique sua jornada ecológica. Ganhe selos, suba no ranking e deixe o planeta melhor — com IA como guia.
-              </p>
+<p className="text-white/70 leading-relaxed" style={{ fontSize: 20, maxWidth: 480 }}>
+  Gamifique sua jornada ecológica. Realize ações, ganhe cartas colecionáveis, monte sua coleção, suba no ranking
+  e deixe o planeta melhor — com IA como guia.
+</p>
 
               <div className="flex items-center gap-3 flex-wrap mt-3">
                 <button
