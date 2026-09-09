@@ -11,6 +11,7 @@ import {
   CHANCE_FOIL,
   FRAGMENTOS_POR_DUPLICADA,
   CUSTO_FABRICACAO,
+  PESO_RARIDADE,
   getValorCarta,
 } from '../data/cartas';
 import { showToast } from '../components/Toast';
@@ -167,7 +168,9 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const getCartasDoSet = useCallback((setId: string): Carta[] => {
-    return CARTAS.filter(c => c.setId === setId);
+    return CARTAS
+      .filter(c => c.setId === setId)
+      .sort((a, b) => PESO_RARIDADE[a.raridade] - PESO_RARIDADE[b.raridade]);
   }, []);
 
   const getQuimica = useCallback((setId: string): Quimica => {
