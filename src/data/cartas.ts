@@ -42,14 +42,6 @@ export const PESO_RARIDADE: Record<RaridadeCarta, number> = {
   lendaria: 5,
 };
 
-export const NOVOS_FRAGMENTOS = {
-  comum: 0,
-  incomum: 0,
-  rara: 0,
-  epica: 0,
-  lendaria: 0,
-};
-
 export function getValorCarta(carta: Carta, foil = false): number {
   return VALOR_POR_RARIDADE[carta.raridade] * (foil ? 3 : 1);
 }

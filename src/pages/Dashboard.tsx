@@ -134,10 +134,6 @@ function hexToRgb(hex: string): string {
   return `${r},${g},${b}`;
 }
 
-function capitalize(s: string): string {
-  return s.charAt(0).toLowerCase() + s.slice(1);
-}
-
 export function Dashboard() {
   const { data, getNivel, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio } = useData();
   const [missaoSelecionada, setMissaoSelecionada] = useState<(typeof MISSOES)[0] | null>(null);
@@ -271,7 +267,7 @@ export function Dashboard() {
           <div>
             <p className="text-white/35 text-sm">Bom dia,</p>
             <h1 className="text-white mt-0.5 font-serif-display" style={{ fontSize: 30 }}>
-              {nomeExibido} <span style={{ color: '#4ade80' }}>—</span> {capitalize(getGreeting(nivel))}
+              {nomeExibido} <span style={{ color: '#4ade80' }}>—</span> {getGreeting(nivel)}
             </h1>
           </div>
 

@@ -103,17 +103,6 @@ export const INTEGRANTES = [
   { nome: 'Rafael Santos Mendonça Costa', rm: 'RM572368', foto: '/imagens/rafael.jpg', github: 'https://github.com/rafaelSantos56', linkedin: 'https://www.linkedin.com/in/rafael-santos-b09bba237/' },
 ];
 
-export const RECOMPENSAS_CHAT: { icone: string; nome: string; pontos: number }[] = [
-  { icone: '/icons/bateria.svg', nome: 'Desconto Energia', pontos: 200 },
-  { icone: '/icons/transporte.svg', nome: 'Passe de Transporte', pontos: 350 },
-  { icone: '/icons/muda.svg', nome: 'Muda de Árvore', pontos: 500 },
-  { icone: '/icons/carrinho.svg', nome: 'Cupom Reciclagem', pontos: 150 },
-  { icone: '/icons/folha.svg', nome: 'Kit Sustentável', pontos: 250 },
-  { icone: '/icons/agua.svg', nome: 'Desconto Água', pontos: 180 },
-  { icone: '/icons/bicicleta.svg', nome: 'Cupom Bicicleta', pontos: 400 },
-  { icone: '/icons/arvore.svg', nome: 'Adoção de Árvore', pontos: 800 },
-];
-
 export const CREDITOS_POR_REAL = 100;
 
 export const MIN_CREDITOS_CONVERSAO = 500;

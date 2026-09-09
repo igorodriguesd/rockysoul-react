@@ -10,8 +10,6 @@
   --font-brand: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   --font-serif-display: Georgia, 'Times New Roman', serif;
 
-  --animate-float-slow: float-slow 8s ease-in-out infinite;
-  --animate-float-card: float-card 7s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
 
   --color-void: #070d19;        
@@ -166,25 +164,12 @@
   50% { transform: translateY(-12px); }
 }
 
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-16px); }
-}
-
-@keyframes float-card {
-  0%, 100% { transform: translateY(0px) rotate(var(--tw-rotate, 0deg)); }
-  50% { transform: translateY(-10px) rotate(var(--tw-rotate, 0deg)); }
-}
-
 @keyframes pulse-glow {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .floating-island,
-  .animate-float-slow,
-  .animate-float-card,
   .animate-pulse-glow {
     animation: none;
   }

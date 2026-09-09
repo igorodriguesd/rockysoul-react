@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { useColecao } from '../context/CollectionContext';
 import { useChat } from '../context/ChatContext';
-import { MISSOES, RECOMPENSAS_CHAT, CURIOSIDADES, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO } from '../data/constants';
+import { MISSOES, RECOMPENSAS, CURIOSIDADES, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO } from '../data/constants';
 import { SETS_CARTAS, CHANCE_DROP_POR_RARIDADE, LABEL_RARIDADE } from '../data/cartas';
 import type { ChatMessage, ResultadoDrop } from '../types';
 
@@ -188,8 +188,8 @@ export default function Chat() {
 
     if (estado === 'aguardandoResgate') {
       const num = parseInt(texto, 10);
-      if (!isNaN(num) && num >= 1 && num <= RECOMPENSAS_CHAT.length) {
-        const recompensa = RECOMPENSAS_CHAT[num - 1];
+      if (!isNaN(num) && num >= 1 && num <= RECOMPENSAS.length) {
+        const recompensa = RECOMPENSAS[num - 1];
         if (data.pontos >= recompensa.pontos) {
           subtrairPontos(recompensa.pontos);
           addResgate({ nome: recompensa.nome, pontos: recompensa.pontos, data: new Date().toISOString() });
@@ -202,7 +202,7 @@ export default function Chat() {
           responder(`Você não tem créditos suficientes para esta recompensa.\n\nPrecisa de **${recompensa.pontos} créditos**, mas tem apenas **${data.pontos} créditos**.`);
         }
       } else {
-        responder(`Número inválido. Por favor, digite um número de 1 a ${RECOMPENSAS_CHAT.length}.`);
+        responder(`Número inválido. Por favor, digite um número de 1 a ${RECOMPENSAS.length}.`);
       }
       return;
     }
@@ -405,7 +405,7 @@ export default function Chat() {
       case 'recompensa': {
         estadoRef.current = 'aguardandoResgate';
         setAguardandoEntrada(true);
-        const lista = RECOMPENSAS_CHAT.map((r, i) => `${i + 1}. ${r.nome} - ${r.pontos} créditos`).join('\n');
+        const lista = RECOMPENSAS.map((r, i) => `${i + 1}. ${r.nome} - ${r.pontos} créditos`).join('\n');
         responder('**Recompensas disponíveis:**\n\n' + lista + '\n\nSeu saldo: **' + data.pontos + ' créditos**\n\nDigite o número da recompensa que deseja resgatar:');
         break;
       }

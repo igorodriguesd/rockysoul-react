@@ -33,15 +33,14 @@ export interface FutTier {
   border: string;
   glow: string;
   texto: string;
-  nome: string;
 }
 
 export const TIER: Record<RaridadeCarta, FutTier> = {
-  comum: { border: '#8be2a0', glow: 'rgba(123,222,160,0.5)', texto: '#d7ffe4', nome: 'Eco' },
-  incomum: { border: '#e6edf6', glow: 'rgba(210,224,240,0.55)', texto: '#f2f7ff', nome: 'Prata' },
-  rara: { border: '#ffe18a', glow: 'rgba(255,209,102,0.55)', texto: '#fff2bf', nome: 'Centurião' },
-  epica: { border: '#ff9bcb', glow: 'rgba(255,120,200,0.6)', texto: '#ffe1f1', nome: 'TOTS' },
-  lendaria: { border: '#ffd977', glow: 'rgba(255,205,110,0.55)', texto: '#ffeab0', nome: 'Ícone' },
+  comum: { border: '#8be2a0', glow: 'rgba(123,222,160,0.5)', texto: '#d7ffe4' },
+  incomum: { border: '#e6edf6', glow: 'rgba(210,224,240,0.55)', texto: '#f2f7ff' },
+  rara: { border: '#ffe18a', glow: 'rgba(255,209,102,0.55)', texto: '#fff2bf' },
+  epica: { border: '#ff9bcb', glow: 'rgba(255,120,200,0.6)', texto: '#ffe1f1' },
+  lendaria: { border: '#ffd977', glow: 'rgba(255,205,110,0.55)', texto: '#ffeab0' },
 };
 
 const TONALIDADE_FOIL = 'linear-gradient(115deg, rgba(255,232,150,0.55) 0%, transparent 42%, rgba(255,255,255,0.35) 55%, transparent 78%)';
