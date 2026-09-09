@@ -16,6 +16,35 @@ Desenvolvida como **SPA (Single Page Application)** com **React + Vite + TypeScr
 
 ---
 
+## Prints do Projeto
+
+> Adicione as capturas de tela em `public/imagens/` com os nomes abaixo (print-home.png, print-dashboard.png, print-colecao.png, print-recompensas.png) e atualize os caminhos se necessário.
+
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="public/imagens/print-home.png" alt="Home" width="340"><br>
+      <sub><strong>Home</strong> — vitrine e o assistente RockySoul</sub>
+    </td>
+    <td align="center">
+      <img src="public/imagens/print-dashboard.png" alt="Dashboard" width="340"><br>
+      <sub><strong>Dashboard</strong> — pontos, nível, selos e desafio do dia</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="public/imagens/print-colecao.png" alt="Coleção" width="340"><br>
+      <sub><strong>Coleção</strong> — cartinhas, sets e Fábrica de Cartas</sub>
+    </td>
+    <td align="center">
+      <img src="public/imagens/print-recompensas.png" alt="Recompensas" width="340"><br>
+      <sub><strong>Recompensas</strong> — troca de pontos por prêmios</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## Gamificação com Avatar Integrado
 
 O coração do projeto é a combinação de **gamificação** com um **avatar/assistente virtual** que media toda a experiência dentro do site:
