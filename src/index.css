@@ -57,25 +57,19 @@
 }
 
 @utility glass-hero {
-  background: rgba(15, 28, 46, 0.75);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: rgba(9, 20, 34, 0.92);
   border: 1px solid rgba(0, 255, 136, 0.3);
   box-shadow: 0 0 40px rgba(0, 255, 136, 0.08), inset 0 0 20px rgba(0, 255, 136, 0.05);
 }
 
 @utility glass-side {
-  background: rgba(15, 28, 46, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(9, 20, 34, 0.96);
   border: 1px solid rgba(0, 255, 136, 0.2);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 @utility glass-strong {
-  background: linear-gradient(160deg, rgba(22, 40, 64, 0.9), rgba(15, 28, 46, 0.8));
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: linear-gradient(160deg, rgba(20, 38, 60, 0.96), rgba(12, 26, 44, 0.95));
   border: 1px solid rgba(0, 255, 136, 0.4);
   box-shadow: 0 12px 40px rgba(0, 255, 136, 0.12);
 }
@@ -122,7 +116,6 @@
 
 .fut-card.fut-hover {
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, filter 0.3s ease;
-  will-change: transform;
 }
 
 .fut-card.fut-hover:not(:disabled):hover {
@@ -180,4 +173,19 @@
   html {
     scroll-behavior: auto;
   }
+}
+
+html.resizing * {
+  animation-play-state: paused !important;
+  transition: none !important;
+}
+
+html.resizing,
+html.resizing * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.resizing .home-bg {
+  display: none !important;
 }

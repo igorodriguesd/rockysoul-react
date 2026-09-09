@@ -48,12 +48,12 @@ export default function LoginModal({ aberto, onFechar }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-9998 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onFechar}>
+    <div className="fixed inset-0 z-9998 flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/50" onClick={onFechar}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Entrar no RockySoulUp"
-        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl w-[90vw] max-w-95 p-6 relative border border-white/40"
+        className="bg-white/95 rounded-2xl shadow-2xl w-[90vw] max-w-95 p-6 relative border border-white/40"
         onClick={e => e.stopPropagation()}
       >
         <button onClick={handleClose} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600" aria-label="Fechar">

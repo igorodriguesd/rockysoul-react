@@ -93,7 +93,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-4 left-1/2 -translate-x-1/2 z-100 w-[calc(100%-2rem)] max-w-275 px-5 sm:px-6 py-4 flex items-center justify-between rounded-3xl bg-[#0c3a22]/30 backdrop-blur-xl border border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.18)] box-border">
+      <header className="fixed top-4 left-1/2 -translate-x-1/2 z-100 w-[calc(100%-2rem)] max-w-275 px-5 sm:px-6 py-4 flex items-center justify-between rounded-3xl bg-[#0c3a22]/85 border border-white/10 shadow-[0_12px_32px_rgba(0,0,0,0.18)] box-border">
         <NavLink to="/" className="flex items-center gap-2 shrink-0">
           <img src="/imagens/logo.png" alt="RockySoulUp" className="h-7 w-auto opacity-90" />
           <span
@@ -159,7 +159,7 @@ export default function Header() {
             )}
 
             {usuarioAberto && (
-              <div className="absolute right-0 top-full mt-3 w-72 rounded-2xl bg-[#0f1c2e]/95 backdrop-blur-xl shadow-2xl border border-white/10 p-3 z-120">
+              <div className="absolute right-0 top-full mt-3 w-72 rounded-2xl bg-[#0f1c2e]/95 shadow-2xl border border-white/10 p-3 z-120">
                 <div className="rounded-2xl p-4 bg-[#0c3a22] relative overflow-hidden">
                   <div
                     className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-10"
@@ -313,7 +313,7 @@ export default function Header() {
       </header>
 
       {menuAberto && (
-        <div className="fixed top-20 right-6 z-100 lg:hidden w-48 bg-[#0f1c2e]/95 backdrop-blur-xl shadow-lg rounded-2xl p-3 border border-white/10">
+        <div className="fixed top-20 right-6 z-100 lg:hidden w-48 bg-[#0f1c2e]/95 shadow-lg rounded-2xl p-3 border border-white/10">
           <nav className="flex flex-col gap-1">
             {links.map(link => (
               <NavLink

@@ -50,12 +50,6 @@ export function Home() {
       <section className="relative min-h-screen w-full overflow-hidden pt-4 pb-6">
         <div className="home-bg pointer-events-none fixed inset-0">
           <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-            }}
-          />
-          <div
             className="absolute rounded-full opacity-20"
             style={{
               width: 620,
@@ -64,7 +58,6 @@ export function Home() {
               left: '50%',
               transform: 'translateX(-50%)',
               background: 'radial-gradient(circle, #4ade80 0%, transparent 70%)',
-              filter: 'blur(60px)',
             }}
           />
           <div
@@ -75,7 +68,6 @@ export function Home() {
               bottom: '12%',
               right: '6%',
               background: 'radial-gradient(circle, #22c55e 0%, transparent 70%)',
-              filter: 'blur(60px)',
             }}
           />
           <div
@@ -86,7 +78,6 @@ export function Home() {
               top: '38%',
               left: '4%',
               background: 'radial-gradient(circle, #86efac 0%, transparent 70%)',
-              filter: 'blur(50px)',
             }}
           />
         </div>
