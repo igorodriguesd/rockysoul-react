@@ -238,7 +238,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                 <RoletaDrop
                   carta={cartaDaMissao}
                   chance={chanceDrop}
-                  caiu={drop ? drop.caiu : true}
+                  caiu={drop !== null && drop.caiu}
                   onTerminar={() => setRoletaPronta(true)}
                 />
 
@@ -335,7 +335,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                 <img src={cartaDaMissao.icone} className="w-5 h-5 shrink-0" alt="" />
                 <p className="text-[11px] text-white/70 leading-snug">
                   Ao concluir: carta <b className="text-white">{cartaDaMissao.nome}</b> · {LABEL_RARIDADE[cartaDaMissao.raridade]} ·{' '}
-                  <b className="text-[#20d968]">{chanceDrop}%</b> de drop
+                  <b className="text-[#20d968]">{chanceDrop}%</b> de chance de ganhar carta
                 </p>
               </div>
             )}

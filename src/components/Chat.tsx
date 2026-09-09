@@ -140,7 +140,7 @@ export default function Chat() {
     if ('duplicada' in drop) {
       return `${prefixo}\n\n💜 Carta repetida: **${drop.carta.nome}** virou **+${drop.fragmentosGanhos} fragmentos** de ${drop.carta.raridade.toLowerCase()}. Monte as cartas que faltam na Fábrica de Cartas.`;
     }
-    return `${prefixo}\n\nA carta **${drop.carta.nome}** escapou desta vez! Chance de drop: ${drop.chance}%. Tente novamente.`;
+    return `${prefixo}\n\nA carta **${drop.carta.nome}** escapou desta vez! Chance de ganhar carta: ${drop.chance}%. Tente novamente.`;
   }
 
   function registrarAcao(missaoId: string, nome: string, pontos: number): string {
@@ -273,7 +273,7 @@ export default function Chat() {
           '- **Converter créditos** - Para converter créditos em dinheiro via Pix\n' +
           '- **Meu nível** - Para ver seu nível de evolução\n' +
           '- **Recompensas** - Para ver e resgatar recompensas\n' +
-          '- **Minhas cartas** - Para ver sua coleção de cartas, sets e chances de drop\n' +
+          '- **Minhas cartas** - Para ver sua coleção de cartas, sets e chances de ganhar carta\n' +
           '- **Sugestão** - Para receber dicas de ações sustentáveis\n' +
           '- **Curiosidade** - Para aprender fatos interessantes\n\n' +
           'Também posso entender comandos como "reciclei", "usei bicicleta", "economizei água" e muito mais!'
@@ -346,7 +346,7 @@ export default function Chat() {
           '- Criar uma comunidade de pessoas comprometidas com o meio ambiente\n\n' +
           '**Como funciona:**\n' +
           '- Registre ações sustentáveis e ganhe créditos\n' +
-          '- Conquiste cartas por raridade com chance de drop (roleta)\n' +
+          '- Conquiste cartas por raridade com chance de ganhar carta (roleta)\n' +
           '- Complete sets de cartas e ganhe bônus de química\n' +
           '- Converta créditos em dinheiro via Pix\n' +
           '- Evolua de Semente a Expert\n' +
@@ -395,7 +395,7 @@ export default function Chat() {
           `Valor da coleção: **${valorTotal} créditos**\n\n` +
           '**Sets e química:**\n' + linhasSets + '\n\n' +
           (proximo ? `Próximo objetivo: complete o set **${proximo.set.nome}** (faltam ${proximo.faltam} carta(s)) para ativar a química.\n\n` : 'Set completo em todos! Você domina a coleção 😄\n\n') +
-          '**Chance de drop por raridade:**\n' + chances + '\n\n' +
+          '**Chance de ganhar carta por raridade:**\n' + chances + '\n\n' +
           'Complete um set (4/4) para ganhar **+150 créditos** de bônus!\n\n' +
           '**Dica:** cartas repetidas viram fragmentos — use-os na **Fábrica de Cartas** da sua Coleção para montar as que faltam!'
         );
@@ -461,7 +461,7 @@ export default function Chat() {
           '- Digite **"nivel"** para ver seu nível\n' +
           '- Digite **"recompensa"** para resgatar recompensas\n' +
           '- Digite **"converter"** para converter créditos em dinheiro via Pix\n' +
-          '- Digite **"cartas"** para ver sua coleção e chances de drop\n' +
+          '- Digite **"cartas"** para ver sua coleção e chances de ganhar carta\n' +
           '- Digite **"ajuda"** para ver todas as opções\n' +
           '- Ou digite algo como **"reciclei"**, **"usei bicicleta"**, **"economizei água"**!'
         );
