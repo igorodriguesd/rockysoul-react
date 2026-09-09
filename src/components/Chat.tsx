@@ -4,7 +4,7 @@ import { useColecao } from '../context/CollectionContext';
 import { useChat } from '../context/ChatContext';
 import { MISSOES, RECOMPENSAS_CHAT, CURIOSIDADES, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO } from '../data/constants';
 import { SETS_CARTAS, CHANCE_DROP_POR_RARIDADE, LABEL_RARIDADE } from '../data/cartas';
-import type { ChatMessage } from '../types';
+import type { ChatMessage, ResultadoDrop } from '../types';
 
 type BotState = 'normal' | 'aguardandoNome' | 'aguardandoAcao' | 'aguardandoResgate' | 'aguardandoValorConversao' | 'aguardandoChavePix';
 
@@ -76,7 +76,7 @@ export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data, adicionarPontos, subtrairPontos, addResgate, getNivel, setNome } = useData();
-  const { adquirirPorMissao, colecao, getProgressoTotal, getQuimica, getProximoObjetivo } = useColecao();
+  const { adquirirPorMissao, colecao, getProgressoTotal, getQuimica, getProximoObjetivo, getValorTotal } = useColecao();
   const { aberto, abrirChat, fecharChat } = useChat();
 
   useEffect(() => {
@@ -130,15 +130,24 @@ export default function Chat() {
     setTimeout(() => adicionarMensagem(texto, 'bot'), 350);
   }
 
+  function textoDrop(drop: ResultadoDrop, prefixo: string): string {
+    if ('novaCarta' in drop) {
+      return `${prefixo}\n\n🎉 **Nova carta obtida: ${drop.novaCarta.carta.nome}**${drop.foil ? ' ✨ (versão BRILHANTE!)' : ''}`;
+    }
+    if ('foil' in drop) {
+      return `${prefixo}\n\n✨ **CARTA BRILHANTE!** Sua ${drop.carta.nome} evoluiu para a versão premium (valor ×3) e está destacada na sua vitrine!`;
+    }
+    if ('duplicada' in drop) {
+      return `${prefixo}\n\n💜 Carta repetida: **${drop.carta.nome}** virou **+${drop.fragmentosGanhos} fragmentos** de ${drop.carta.raridade.toLowerCase()}. Monte as cartas que faltam na Fábrica de Cartas.`;
+    }
+    return `${prefixo}\n\nA carta **${drop.carta.nome}** escapou desta vez! Chance de drop: ${drop.chance}%. Tente novamente.`;
+  }
+
   function registrarAcao(missaoId: string, nome: string, pontos: number): string {
     adicionarPontos(pontos, nome);
     const drop = adquirirPorMissao(missaoId);
-    let texto = `**Ação registrada: ${nome}!**\n\n+${pontos} créditos`;
-    if (drop) {
-      if (drop.caiu) texto += `\n\nNova carta obtida: **${drop.novaCarta.carta.nome}**`;
-      else texto += `\n\nA carta **${drop.carta.nome}** escapou desta vez! Chance de drop: ${drop.chance}%. Tente novamente.`;
-    }
-    return texto;
+    const prefixo = `**Ação registrada: ${nome}!**\n\n+${pontos} créditos`;
+    return drop ? textoDrop(drop, prefixo) : prefixo;
   }
 
   function ProcessarMensagem(userText: string) {
@@ -169,7 +178,8 @@ export default function Chat() {
         adicionarPontos(missao.pontos, missao.nome);
         estadoRef.current = 'normal';
         setAguardandoEntrada(false);
-        responder(`Ação registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} créditos${drop && drop.caiu ? `\n\nNova carta obtida: **${drop.novaCarta.carta.nome}**` : ''}${drop && !drop.caiu ? `\n\nA carta **${drop.carta.nome}** escapou desta vez! Chance de drop: ${drop.chance}%. Tente novamente.` : ''}`);
+        const resposta = drop ? textoDrop(drop, `Ação registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} créditos`) : `Ação registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} créditos`;
+        responder(resposta);
       } else {
         responder(`Número inválido. Por favor, digite um número de 1 a ${MISSOES.length}.`);
       }
@@ -367,6 +377,8 @@ export default function Chat() {
 
       case 'cartas': {
         const { obtidas, total } = getProgressoTotal();
+        const foils = (colecao.cartasFoil ?? []).length;
+        const valorTotal = getValorTotal();
         const linhasSets = SETS_CARTAS.map(set => {
           const quimica = getQuimica(set.id);
           const cartasSet = colecao.sets[set.id]?.cartas.length ?? 0;
@@ -379,11 +391,13 @@ export default function Chat() {
           .join(' · ');
         responder(
           '**Sua coleção de cartas**\n\n' +
-          `**${obtidas}/${total}** cartas conquistadas\n\n` +
+          `**${obtidas}/${total}** cartas conquistadas${foils > 0 ? ` · **${foils} brilhante(s)** ✨` : ''}\n` +
+          `Valor da coleção: **${valorTotal} créditos**\n\n` +
           '**Sets e química:**\n' + linhasSets + '\n\n' +
           (proximo ? `Próximo objetivo: complete o set **${proximo.set.nome}** (faltam ${proximo.faltam} carta(s)) para ativar a química.\n\n` : 'Set completo em todos! Você domina a coleção 😄\n\n') +
           '**Chance de drop por raridade:**\n' + chances + '\n\n' +
-          'Complete um set (4/4) para ganhar **+150 créditos** de bônus!'
+          'Complete um set (4/4) para ganhar **+150 créditos** de bônus!\n\n' +
+          '**Dica:** cartas repetidas viram fragmentos — use-os na **Fábrica de Cartas** da sua Coleção para montar as que faltam!'
         );
         break;
       }

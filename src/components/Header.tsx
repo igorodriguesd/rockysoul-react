@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { useColecao } from '../context/CollectionContext';
 import { CREDITOS_POR_REAL } from '../data/constants';
+import { CARTAS, PESO_RARIDADE } from '../data/cartas';
 import LoginModal from './LoginModal';
 
 const NIVEL_ICONE_HEADER: Record<string, string> = {
@@ -46,6 +48,7 @@ export default function Header() {
   const [usuarioAberto, setUsuarioAberto] = useState(false);
   const [loginAberto, setLoginAberto] = useState(false);
   const { data, getNivel, resetar } = useData();
+  const { colecao, getValorTotal } = useColecao();
   const navigate = useNavigate();
   const avatarRef = useRef<HTMLDivElement>(null);
 
@@ -57,6 +60,18 @@ export default function Header() {
   const valorEmReais = data.pontos / CREDITOS_POR_REAL;
   const arcR = 40;
   const arcCirc = 2 * Math.PI * arcR;
+
+  const foils = new Set(colecao.cartasFoil ?? []);
+  const vitrine = CARTAS
+    .filter(c => colecao.cartasObtidas.includes(c.id))
+    .sort((a, b) => {
+      const fa = foils.has(a.id) ? 1 : 0;
+      const fb = foils.has(b.id) ? 1 : 0;
+      if (fa !== fb) return fb - fa;
+      return PESO_RARIDADE[b.raridade] - PESO_RARIDADE[a.raridade];
+    })
+    .slice(0, 4);
+  const valorTotal = getValorTotal();
 
   useEffect(() => {
     if (!usuarioAberto) return;
@@ -205,6 +220,39 @@ export default function Header() {
                         <p className="text-white/50 text-[10px]">{s.label}</p>
                       </div>
                     ))}
+                  </div>
+
+                  <div className="mt-3 w-full rounded-xl p-3 cursor-pointer transition-all hover:brightness-105"
+                    onClick={() => { setUsuarioAberto(false); navigate('/colecao'); }}
+                    style={{ background: 'rgba(166,108,255,0.1)', border: '1px solid rgba(166,108,255,0.35)' }}
+                    aria-label="Ver vitrine da coleção"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-white/45 text-[10px] uppercase tracking-widest">Minha vitrine</p>
+                      <p className="text-[#a66cff] text-[11px] font-bold">{valorTotal} créditos</p>
+                    </div>
+                    {vitrine.length === 0 ? (
+                      <p className="text-white/40 text-xs text-center py-1.5">Conquiste cartas para exibir aqui</p>
+                    ) : (
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {vitrine.map(c => {
+                          const ehFoil = foils.has(c.id);
+                          const cor = ehFoil ? '#fde68a' : c.raridade === 'comum' ? '#9ca3af' : c.raridade === 'incomum' ? '#38bdf8' : c.raridade === 'rara' ? '#a66cff' : c.raridade === 'epica' ? '#f5c451' : '#f59e0b';
+                          return (
+                            <div
+                              key={c.id}
+                              className="relative rounded-lg py-1.5 flex flex-col items-center"
+                              style={{ background: ehFoil ? 'rgba(250,204,21,0.12)' : 'rgba(255,255,255,0.06)', border: `1px solid ${cor}66`, boxShadow: ehFoil ? '0 0 10px rgba(250,204,21,0.4)' : 'none' }}
+                              title={`${c.nome}${ehFoil ? ' ✨' : ''}`}
+                            >
+                              {ehFoil && <span className="absolute top-0 right-1 text-[9px]">✨</span>}
+                              <img src={c.icone} alt="" className="w-5 h-5" />
+                              <span className="text-white/70 text-[8px] font-semibold mt-1 truncate w-full text-center px-0.5 leading-tight">{c.nome}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
 
                   <button
