@@ -47,10 +47,12 @@ O coração do projeto é a combinação de **gamificação** com um **avatar/as
 - **Pontos** — cada ação sustentável gera pontos que alimentam o avatar e o perfil do usuário.
 - **Níveis de evolução** — Semente → Broto → Árvore → Expert, com progresso visual em anel de progresso e barra de XP.
 - **Selos desbloqueáveis** — conquistas automáticas ao acumular pontos.
+- **Coleção de Cartinhas** — ao concluir missões, uma **roleta** sorteia **cartinhas colecionáveis** de 5 sets temáticos e 5 raridades (Comum a Lendária), com chance de versão **brilhante** ✨. Cartas repetidas viram **fragmentos** para a **Fábrica de Cartas**, e completar um set (4/4) ativa a **química** com bônus de +150 créditos.
 - **Mini-jogo "Separe o Lixo"** — gamificação extra por meio de um jogo de separação de recicláveis (3 fases, vidas, combos e recordes), em modo treino: a pontuação não vira recompensa, serve para praticar e se divertir.
 - **Desafio do Dia** — missão diária com bônus por streak (dias seguidos).
-- **Ranking global** — posição do usuário entre os participantes.
-- **Recompensas reais** — troca de pontos por cupons, descontos e brindes.
+- **Ranking global** — posição do usuário entre os participantes da comunidade.
+- **Recompensas reais** — troca de pontos por cupons, descontos e brindes na página Recompensas.
+- **Conversor de créditos em dinheiro** — converte créditos em reais que são enviados pela sua **chave Pix** (100 créditos = R$ 1,00, mínimo de 500 créditos).
 - **Impacto ambiental** — métricas de CO₂ evitado e árvores equivalentes.
 
 O assistente **RockySoul** funciona como um "avatar" que representa o site: ele interage com o usuário, conhece o progresso dele (via estado global) e o acompanha em cada página — reforçando o laço entre gamificação e a interface.
@@ -76,6 +78,7 @@ O assistente **RockySoul** funciona como um "avatar" que representa o site: ele 
 | --- | --- | --- |
 | `/` | Home | Estática |
 | `/dashboard` | Dashboard (gamificação + avatar) | Estática |
+| `/colecao` | Coleção de Cartinhas + Fábrica de Cartas | Estática |
 | `/solucao` | Solução do Projeto | Estática |
 | `/recompensas` | Recompensas | Estática |
 | `/recompensas/:id` | Detalhe da Recompensa | **Dinâmica (useParams)** |
@@ -91,10 +94,10 @@ O assistente **RockySoul** funciona como um "avatar" que representa o site: ele 
 ```
 rockysoul-react/
 ├── public/
-│   ├── icons/          # Icones SVG da aplicacao
-│   └── imagens/        # Logo, ilha flutuante e fotos dos integrantes
+│   ├── icons/                  # Icones SVG da aplicacao
+│   └── imagens/                # Logo, ilha, prints das telas e fotos dos integrantes
 ├── src/
-│   ├── components/     # Componentes reutilizaveis
+│   ├── components/             # Componentes reutilizaveis
 │   │   ├── Header.tsx          # Navegacao principal + menu do usuario
 │   │   ├── Footer.tsx          # Rodape do site
 │   │   ├── Chat.tsx            # Avatar RockySoul (assistente virtual)
@@ -102,10 +105,17 @@ rockysoul-react/
 │   │   ├── LoginModal.tsx      # Cadastro/entrada com validacao propria
 │   │   ├── VerificarModal.tsx  # Verificacao de acao (foto/GPS/timer/declaracao)
 │   │   ├── ResgatarModal.tsx   # Confirmacao de resgate de recompensa
-│   │   └── MiniJogoSeparacao.tsx # Mini-jogo de separacao de lixo
-│   ├── pages/          # Paginas da aplicacao (componentes React)
+│   │   ├── MiniJogoSeparacao.tsx # Mini-jogo de separacao de lixo
+│   │   ├── CardItem.tsx        # Cartinha colecionavel (raridade, foil, hover)
+│   │   ├── NovaCarta.tsx       # Cartinha revelada depois da roleta
+│   │   ├── RoletaDrop.tsx      # Roleta de sorteio da cartinha
+│   │   ├── SetColecao.tsx      # Set de cartinhas com quimica
+│   │   ├── SetProgress.tsx     # Barra de progresso do set
+│   │   └── CollectionChip.tsx  # Chip da colecao (header/dashboard)
+│   ├── pages/                  # Paginas da aplicacao (componentes React)
 │   │   ├── Home.tsx
 │   │   ├── Dashboard.tsx
+│   │   ├── Colecao.tsx         # Colecao de cartinhas + Fabrica de Cartas
 │   │   ├── Solucao.tsx
 │   │   ├── Recompensas.tsx
 │   │   ├── RecompensaDetalhe.tsx  # Rota dinamica com useParams
@@ -113,9 +123,9 @@ rockysoul-react/
 │   │   ├── Faq.tsx
 │   │   ├── Integrantes.tsx
 │   │   └── Contato.tsx
-│   ├── context/        # Estado global (DataContext, ChatContext)
+│   ├── context/        # Estado global (DataContext, CollectionContext, ChatContext)
 │   ├── hooks/          # Hooks personalizados (useLocalStorage)
-│   ├── data/           # Dados e constantes (missoes, selos, niveis, recompensas, integrantes)
+│   ├── data/           # Dados e constantes (missoes, selos, niveis, recompensas, cartas, integrantes)
 │   ├── types/          # Interfaces TypeScript
 │   ├── layouts/        # LayoutPrincipal (Header + Outlet + Footer)
 │   ├── utils/          # Formatacao e validacao de formulario
@@ -139,11 +149,29 @@ rockysoul-react/
 
 ### Missoes (ações sustentáveis)
 
-Reciclagem, Transporte Sustentável, Economia de Energia, Economia de Água, Bicicleta, Plantio, Banho Rápido (timer), Compostagem, Consumo Consciente, Garrafa Reutilizável, Compartilhar Dicas e Sacola Reutilizável — cada uma com formatação de **comprovação** (foto, foto+GPS, timer ou declaração).
+São **20 missões** — Reciclagem, Transporte Sustentável, Economia de Energia, Economia de Água, Bicicleta, Plantio, Banho Rápido (timer), Compostagem, Consumo Consciente, Garrafa Reutilizável, Compartilhar Dicas, Sacola Reutilizável, Captação de Água da Chuva, Mobilidade Elétrica, Usar Ciclovia, Energia Solar, Energia Eólica, Iluminação Eficiente, Horta Doméstica e Apoiar Agrofloresta — cada uma com pontuação própria e formato de **comprovação** (foto, foto+GPS, timer ou declaração).
+
+### Coleção de Cartinhas
+
+Ao concluir uma missão, o Dashboard aciona a **roleta** e pode premiar você com uma cartinha. São **20 cartinhas** divididas em **5 sets temáticos** — Recursos, Guardiões da Água, Cidade Verde, Energia Limpa e Cultivo — com **Química** de set: complete 4 cartinhas de um set para ganhar **+150 créditos**. Cada raridade tem sua própria chance de ser sorteada e rende fragmentos diferentes quando repetida:
+
+| Raridade | Chance de encontrar | Fragmentos por repetida |
+| --- | --- | --- |
+| Comum | 75% | +3 |
+| Incomum | 55% | +5 |
+| Rara | 35% | +10 |
+| Épica | 20% | +20 |
+| Lendária | 10% | +40 |
+
+Há ainda **8% de chance** de a cartinha vir na versão **brilhante** (✨). Na **Fábrica de Cartas** (dentro do popup de "Cartas repetidas" na página Coleção), fragmentos são usados para montar cartinhas que faltam — custo de 10/16/32/70/140 fragmentos por raridade (Comum/Incomum/Rara/Épica/Lendária).
 
 ### Recompensas
 
-Descontos de energia/água, passes de transporte, mudas e adoção de árvores, cupons e kits sustentáveis — resgatáveis conforme o saldo de pontos.
+**8 recompensas** — descontos de energia/água, passes de transporte, mudas, adoção de árvores, cupons e kits sustentáveis — resgatáveis conforme o saldo de créditos. A página também traz o **Conversor de Créditos** (100 créditos = R$ 1,00, mínimo de 500, pagamento via **chave Pix**) e os painéis de **Trilha de Evolução** e **Impacto Ambiental** (CO₂ evitado e árvores equivalentes).
+
+### Ranking global
+
+Além do seu saldo, o app simula a comunidade com o **Ranking global** (Maria Oliveira, Ana Silva, Carlos Souza e Pedro Santos) para posicionar o usuário entre os participantes.
 
 ---
 
@@ -152,8 +180,8 @@ Descontos de energia/água, passes de transporte, mudas e adoção de árvores, 
 O **Chat.tsx** implementa o avatar inteligente com:
 
 - **Detecção de intenção** via palavras-chave em português (saudação, pontos, nível, dica, recompensa, registro de ação, curiosidade, despedida etc.).
-- **Fluxos guiados** (registrar ação e resgatar recompensa) com entrada numérica.
-- **Integração com o estado global** (`DataContext`): o avatar acessa pontos, nível, histórico e realiza ações reais (adicionar/subtrair pontos, registrar resgates).
+- **Fluxos guiados** (registrar ação, converter créditos e resgatar recompensa) com entrada numérica.
+- **Integração com o estado global** (`DataContext` e `CollectionContext`): o avatar acessa pontos, nível, histórico e coleção de cartinhas, e realiza ações reais (adicionar/subtrair pontos, registrar resgates).
 - **Sugestões rápidas** e **curiosidades sustentáveis**.
 - Teaser inicial que convida o usuário a conversar com o assistente (`ChatContext`).
 
@@ -187,11 +215,12 @@ Acesse `http://localhost:5173` no navegador (porta padrão do Vite).
 
 1. Na **Home**, clique em **"Começar Agora"** e informe seu nome/email.
 2. No **Dashboard**, registre uma ação sustentável (reciclar, economizar energia/água, usar transporte etc.), envie a foto como comprovação e acumule **pontos**.
-3. Complete o **Desafio do Dia** para ganhar bônus e mantenha o **streak** (dias seguidos).
-4. Treine no **Mini-jogo "Separe o Lixo"** para praticar a separação de recicláveis e bater seus recordes (modo treino, sem valer recompensa).
-5. Evolua nos **níveis** (Semente → Broto → Árvore → Expert), desbloqueie **selos** e veja sua posição no **ranking**.
-6. Troque seus pontos por **recompensas reais** na página Recompensas.
-7. Converse com o **avatar RockySoul** (canto inferior direito) — ele registra ações, mostra saldo e resgata recompensas por voz/texto.
+3. Cada missão concluída aciona a **roleta**: conquiste **cartinhas colecionáveis** e monte sua coleção na página **Coleção** — completando sets você ativa a **química** (+150 créditos).
+4. Complete o **Desafio do Dia** para ganhar bônus e mantenha o **streak** (dias seguidos).
+5. Treine no **Mini-jogo "Separe o Lixo"** para praticar a separação de recicláveis e bater seus recordes (modo treino, sem valer recompensa).
+6. Evolua nos **níveis** (Semente → Broto → Árvore → Expert), desbloqueie **selos** e veja sua posição no **ranking**.
+7. Troque seus créditos por **recompensas reais** ou **converta em dinheiro via Pix** na página Recompensas.
+8. Converse com o **avatar RockySoul** (canto inferior direito) — ele registra ações, mostra saldo e resgata recompensas por voz/texto.
 
 ---
 
@@ -207,7 +236,7 @@ No TailwindCSS, os tokens de breakpoint (`sm`=480px, `md`=768px, `lg`=992px, `xl
 
 ## Imagens e Ícones do Projeto
 
-O projeto usa **ícones SVG proprietários** em `/public/icons` (reciclagem, transporte, energia, água, bicicleta, árvore, banho, semente, broto, troféu, folha, check e mais) e imagens em `/public/imagens` (logo da RockySoulUp, ilha flutuante da Home e fotos dos integrantes). Na página **Sobre**, as ferramentas utilizadas são apresentadas com as **logos oficiais em SVG** (React, TypeScript, Vite, TailwindCSS, HTML5, IBM Watson, Node-RED e Telegram).
+O projeto usa **ícones SVG proprietários** em `/public/icons` (reciclagem, transporte, energia, água, bicicleta, árvore, banho, semente, broto, troféu, folha, check e mais), imagens em `/public/imagens` (logo da RockySoulUp, ilha flutuante da Home, fotos dos integrantes e os **4 prints das telas** exibidos na seção "Prints do Projeto") e as logos oficiais das ferramentas na página **Sobre** (React, TypeScript, Vite, TailwindCSS, HTML5, IBM Watson, Node-RED e Telegram).
 
 Alguns dos ícones que representam as missões:
 
@@ -233,9 +262,10 @@ Todas as informações do usuário são salvas no **localStorage**, via hook `us
 - Missões completadas
 - Histórico de ações
 - Selos desbloqueados
-- Resgates realizados
+- Resgates e conversões
 - Dados do usuário (nome/email)
 - Streak (dias seguidos) e desafio do dia
+- **Coleção de cartinhas** (cartas obtidas, brilhantes, fragmentos e sets)
 - Recordes do mini-jogo
 
 ---
@@ -243,6 +273,12 @@ Todas as informações do usuário são salvas no **localStorage**, via hook `us
 ## Repositório
 
 - **GitHub:** https://github.com/igorodriguesd/rockysoul-react
+
+---
+
+## Vídeo do Projeto
+
+- **YouTube:** *(insira aqui o link do vídeo de apresentação do projeto)*
 
 ---
 
