@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { validateName, validateEmail, validateMessage, normalizeName, normalizeEmail, normalizeMessage } from '../utils/validation';
+import { validateName, validateEmail, validateMessage } from '../utils/validation';
 
 export function Contato() {
   useEffect(() => { document.title = 'Contato - RockySoulUp'; }, []);
@@ -21,14 +21,6 @@ export function Contato() {
       setErros({ nome: nomeErro ?? undefined, email: emailErro ?? undefined, mensagem: mensagemErro ?? undefined });
       return;
     }
-
-    const dadosNormalizados = {
-      nome: normalizeName(nome),
-      email: normalizeEmail(email),
-      mensagem: normalizeMessage(mensagem),
-    };
-
-    console.log('Mensagem enviada:', dadosNormalizados);
 
     setEnviado(true);
     setNome('');

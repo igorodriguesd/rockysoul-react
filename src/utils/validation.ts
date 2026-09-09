@@ -31,10 +31,3 @@ export function normalizeName(name: string): string {
 export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
-
-export function normalizeMessage(message: string): string {
-  return message
-    .trim()
-    .replace(/\s+/g, ' ')
-    .substring(0, 1000);
-}
