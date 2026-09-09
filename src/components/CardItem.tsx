@@ -22,7 +22,7 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false }: Prop
 
   return (
     <div
-      className={`fut-card fut-hover ${foil ? 'fut-foil' : ''} relative rounded-xl border p-1.5 pt-2 flex flex-col items-center w-full aspect-[2/3]`}
+      className={`fut-card ${bloqueada ? '' : 'fut-hover'} ${foil ? 'fut-foil' : ''} relative rounded-xl border p-1.5 pt-2 flex flex-col items-center w-full aspect-[2/3]`}
       style={{
         ['--fut-glow' as string]: glow === 'none' ? undefined : !ativa ? tier.glow : 'rgba(32,217,104,0.6)',
         borderColor: corBorda,
@@ -34,11 +34,11 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false }: Prop
       title={`${carta.nome}${foil ? ' · brilhante' : ''}`}
     >
       <div className="relative z-10 flex items-center justify-between w-full gap-1">
-        <span className="fut-chip rounded-md px-1 py-0.5 text-[7px] leading-none font-bold tracking-wide text-white/95">
-          {bloqueada ? carta.raridade.toUpperCase() : foil ? `✨ ${getCardLabel(carta)}` : getCardLabel(carta)}
+        <span className="fut-chip rounded-md px-1.5 py-1 text-[9px] leading-none font-bold tracking-wide text-white/95">
+          {`${foil ? '✨ ' : ''}${getCardLabel(carta).toUpperCase()}`}
         </span>
         <span
-          className="fut-chip rounded-md px-1 py-0.5 text-[7px] leading-none font-bold tracking-wide"
+          className="fut-chip rounded-md px-1.5 py-1 text-[9px] leading-none font-bold tracking-wide"
           style={{ color: bloqueada ? 'rgba(255,255,255,0.5)' : tier.texto }}
         >
           {bloqueada ? `${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%` : set ? getIniciaisSet(set.id) : ''}
@@ -47,7 +47,7 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false }: Prop
 
       <div className="relative z-10 flex-1 flex items-center justify-center w-full py-1">
         <span
-          className="flex items-center justify-center w-10 h-10 rounded-lg"
+          className="flex items-center justify-center w-12 h-12 rounded-lg"
           style={{
             background: foil ? 'rgba(0,0,0,0.22)' : 'rgba(255,255,255,0.12)',
             boxShadow: bloqueada ? 'none' : `0 0 12px ${tier.glow}`,
@@ -57,7 +57,7 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false }: Prop
           <img
             src={carta.icone}
             alt=""
-            className={`w-7 h-7 ${bloqueada ? 'grayscale opacity-35' : ''} ${
+            className={`w-9 h-9 ${bloqueada ? 'grayscale opacity-35' : ''} ${
               foil ? 'drop-shadow-[0_0_7px_rgba(250,204,21,0.95)]' : 'drop-shadow-[0_2px_3px_rgba(0,0,0,0.45)]'
             }`}
           />
@@ -66,24 +66,24 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false }: Prop
 
       <div className="relative z-10 fut-plate rounded-lg w-full px-1 py-1 text-center">
         <p
-          className="text-[10px] font-semibold leading-tight text-white line-clamp-1"
+          className="text-xs font-semibold leading-tight text-white line-clamp-1"
           style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}
         >
           {carta.nome}
         </p>
         {!bloqueada && (
-          <p className="mt-0.5 text-[7px] leading-tight text-white/60 line-clamp-2">{carta.descricao}</p>
+          <p className="mt-0.5 text-[10px] leading-tight text-white/60 line-clamp-2">{carta.descricao}</p>
         )}
         <div className="flex items-center justify-center gap-1.5 mt-1">
           <span
-            className="rounded px-1 py-0.5 text-[7px] leading-none font-bold"
+            className="rounded px-1.5 py-1 text-[9px] leading-none font-bold"
             style={{ background: 'rgba(255,255,255,0.1)', color: bloqueada ? 'rgba(255,255,255,0.4)' : tier.texto }}
           >
             chance {CHANCE_DROP_POR_RARIDADE[carta.raridade]}%
           </span>
           {!bloqueada && (
             <span
-              className="rounded px-1 py-0.5 text-[7px] leading-none font-bold"
+              className="rounded px-1.5 py-1 text-[9px] leading-none font-bold"
               style={{ background: 'rgba(32,217,104,0.22)', color: foil ? '#fde68a' : '#7dffb0' }}
             >
               +{getValorCarta(carta, foil)} créd.
