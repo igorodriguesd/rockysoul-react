@@ -7,9 +7,10 @@ interface Props {
   bloqueada: boolean;
   ativa: boolean;
   foil?: boolean;
+  semHover?: boolean;
 }
 
-export default function CardItem({ carta, bloqueada, ativa, foil = false }: Props) {
+export default function CardItem({ carta, bloqueada, ativa, foil = false, semHover = false }: Props) {
   const set = SETS_CARTAS.find(s => s.id === carta.setId);
   const tier = TIER[carta.raridade];
 
@@ -19,10 +20,11 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false }: Prop
     : ativa
       ? `0 0 16px rgba(32,217,104,0.6), 0 0 40px ${tier.glow}`
       : `0 0 12px ${tier.glow}`;
+  const habilitarHover = !bloqueada && !semHover;
 
   return (
     <div
-      className={`fut-card ${bloqueada ? '' : 'fut-hover'} ${foil ? 'fut-foil' : ''} relative rounded-xl border p-1.5 pt-2 flex flex-col items-center w-full aspect-[2/3]`}
+      className={`fut-card ${habilitarHover ? 'fut-hover' : ''} ${foil ? 'fut-foil' : ''} relative rounded-xl border p-1.5 pt-2 flex flex-col items-center w-full aspect-[2/3]`}
       style={{
         ['--fut-glow' as string]: glow === 'none' ? undefined : !ativa ? tier.glow : 'rgba(32,217,104,0.6)',
         borderColor: corBorda,
