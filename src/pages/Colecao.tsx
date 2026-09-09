@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CARTAS, SETS_CARTAS, FRAGMENTOS_POR_DUPLICADA, CUSTO_FABRICACAO, getValorCarta } from '../data/cartas';
+import { CARTAS, SETS_CARTAS, FRAGMENTOS_POR_DUPLICADA, CUSTO_FABRICACAO, PESO_RARIDADE, getValorCarta } from '../data/cartas';
 import SetColecao from '../components/SetColecao';
 import { useColecao } from '../context/CollectionContext';
 import type { Carta } from '../types';
@@ -7,11 +7,10 @@ import type { Carta } from '../types';
 export function Colecao() {
   useEffect(() => { document.title = 'RockySoulUp - Coleção'; }, []);
 
-  const { colecao, getProgressoTotal, getProximoObjetivo, getValorTotal, fabricarCarta } = useColecao();
+  const { colecao, getProgressoTotal, getValorTotal, fabricarCarta } = useColecao();
   const [fabricada, setFabricada] = useState<Carta | null>(null);
 
   const { obtidas, total } = getProgressoTotal();
-  const proximo = getProximoObjetivo();
   const percentual = total > 0 ? (obtidas / total) * 100 : 0;
   const valorTotal = getValorTotal();
   const foils = colecao.cartasFoil ?? [];
@@ -21,10 +20,12 @@ export function Colecao() {
   const setsAtivos = SETS_CARTAS.filter(s => (colecao.sets[s.id]?.level ?? 0) >= 1).length;
   const quaseCompletos = SETS_CARTAS.filter(s => (colecao.sets[s.id]?.cartas.length ?? 0) === 3).length;
 
-  const faltando = CARTAS.filter(c => !colecao.cartasObtidas.includes(c.id));
+  const faltando = CARTAS
+    .filter(c => !colecao.cartasObtidas.includes(c.id))
+    .sort((a, b) => PESO_RARIDADE[a.raridade] - PESO_RARIDADE[b.raridade]);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+    <div className="max-w-[90rem] mx-auto px-4 sm:px-6 py-6">
       <header className="mb-6 text-center sm:text-left">
         <h1 className="text-white text-3xl font-bold mb-1">Minha Coleção</h1>
         <p className="text-white/60 text-sm">
@@ -60,21 +61,7 @@ export function Colecao() {
         </div>
       </div>
 
-      {proximo && (
-        <div className="rounded-2xl p-4 mb-6 flex items-center gap-3" style={{ background: 'rgba(32,217,104,0.1)', border: '1px solid rgba(32,217,104,0.35)' }}>
-          <span className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}>
-            <img src="/icons/alvo.svg" alt="" className="w-4 h-4" />
-          </span>
-          <div className="min-w-0">
-            <p className="text-white/60 text-xs">Próximo objetivo</p>
-            <p className="text-white text-sm font-semibold">
-              Completar {proximo.set.nome} · faltam {proximo.faltam} carta{proximo.faltam > 1 ? 's' : ''}
-            </p>
-          </div>
-        </div>
-      )}
-
-      <div className="space-y-4 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         {SETS_CARTAS.map(set => (
           <SetColecao key={set.id} set={set} />
         ))}
@@ -107,7 +94,7 @@ export function Colecao() {
         {faltando.length === 0 ? (
           <p className="text-[#20d968] text-sm font-semibold text-center py-2">Coleção completa! Parabéns 🎉</p>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5">
             {faltando.map(carta => {
               const custo = CUSTO_FABRICACAO[carta.raridade];
               const tem = (fragmentos[carta.raridade] ?? 0) >= custo;
