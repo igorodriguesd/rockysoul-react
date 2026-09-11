@@ -47,6 +47,21 @@ export function Home() {
 
   return (
     <>
+      {/* ANIMAÇÃO DA ILHA FLUTUANTE */}
+      <style>{`
+        @keyframes flutuarIlha {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-16px);
+          }
+        }
+        .animacao-flutuante {
+          animation: flutuarIlha 4s ease-in-out infinite;
+        }
+      `}</style>
+
       <section className="relative min-h-screen w-full overflow-hidden pt-4 pb-6">
         <div className="home-bg pointer-events-none fixed inset-0">
           <div
@@ -84,9 +99,17 @@ export function Home() {
 
         <div className="relative z-10 pt-2 w-full max-w-[1900px] mx-auto flex items-center justify-between gap-0 px-6">
 
+          {/* ASIDE ESQUERDA - CARDS LATERAIS */}
           <aside className="hidden xl:flex flex-col items-end gap-7 w-72.5 shrink-0 self-stretch justify-center">
+            {/* Card Conquista - Borda Verde Semente */}
             <div>
-              <div className="glass-side rounded-2xl px-6 py-5 flex items-center gap-3.5 opacity-85">
+              <div
+                className="glass-side rounded-2xl px-6 py-5 flex items-center gap-3.5 opacity-85 transition-transform duration-300 hover:-translate-y-2"
+                style={{
+                  border: '1px solid rgba(74, 222, 128, 0.4)',
+                  boxShadow: '0 4px 20px rgba(74, 222, 128, 0.15)',
+                }}
+              >
                 <div className="w-12 h-12 rounded-full flex items-center justify-center animate-pulse-glow" style={{ background: 'linear-gradient(135deg, #4ade80, #22c55e)' }}>
                   <img src="/icons/semente.svg" alt="" className="w-7 h-7" />
                 </div>
@@ -98,8 +121,15 @@ export function Home() {
               </div>
             </div>
 
+            {/* Card Seus Pontos - Borda Azul/Ciano */}
             <div>
-              <div className="glass-side rounded-xl px-6 py-5 opacity-75" style={{ transform: 'rotate(-2deg)' }}>
+              <div
+                className="glass-side rounded-xl px-6 py-5 opacity-75 -rotate-2 transition-transform duration-300 hover:-translate-y-2"
+                style={{
+                  border: '1px solid rgba(56, 189, 248, 0.4)',
+                  boxShadow: '0 4px 20px rgba(56, 189, 248, 0.15)',
+                }}
+              >
                 <p className="text-white/40 text-xs uppercase tracking-widest mb-1">Seus pontos</p>
                 <p className="text-white font-serif-display leading-none" style={{ fontSize: 38 }}>
                   {data.pontos} <span className="text-green-300 text-lg font-normal">pts</span>
@@ -107,12 +137,26 @@ export function Home() {
               </div>
             </div>
 
-            <div>
+            {/* Card Coleção - Borda Púrpura Épica */}
+            <div
+              className="transition-transform duration-300 hover:-translate-y-2 [&_*]:pointer-events-none cursor-default rounded-2xl"
+              style={{
+                border: '1px solid rgba(166, 108, 255, 0.45)',
+                boxShadow: '0 4px 20px rgba(166, 108, 255, 0.18)',
+              }}
+            >
               <CollectionChip />
             </div>
 
+            {/* Card Dica do Dia - Borda Esmeralda */}
             <div>
-              <div className="glass-side rounded-full px-6 py-4 flex items-center gap-3 opacity-70">
+              <div
+                className="glass-side rounded-full px-6 py-4 flex items-center gap-3 opacity-70 transition-transform duration-300 hover:-translate-y-2"
+                style={{
+                  border: '1px solid rgba(34, 197, 94, 0.4)',
+                  boxShadow: '0 4px 20px rgba(34, 197, 94, 0.15)',
+                }}
+              >
                 <img src="/icons/folha.svg" alt="" className="w-6 h-6 shrink-0" />
                 <div>
                   <p className="text-white/40 text-xs uppercase tracking-widest">Dica do dia</p>
@@ -122,9 +166,10 @@ export function Home() {
             </div>
           </aside>
 
+          {/* HERO CENTRAL */}
           <div
-            className="glass-hero rounded-3xl flex flex-col lg:flex-row items-center gap-10 lg:gap-0 relative overflow-hidden flex-1 min-w-0 max-w-260"
-            style={{ padding: 'clamp(44px, 7vw, 56px) clamp(22px, 6vw, 80px)', minHeight: 500 }}
+            className="glass-hero rounded-3xl flex flex-col lg:flex-row items-center gap-6 lg:gap-0 relative overflow-hidden flex-1 min-w-0 max-w-5xl"
+            style={{ padding: '30px 38px', minHeight: 300 }}
           >
             <div
               className="pointer-events-none absolute top-0 left-0 right-0 h-px opacity-60"
@@ -145,10 +190,10 @@ export function Home() {
                 <em className="not-italic" style={{ color: '#4ade80' }}>impacto real</em>
               </h1>
 
-<p className="text-white/70 leading-relaxed" style={{ fontSize: 20, maxWidth: 480 }}>
-  Gamifique sua jornada ecológica. Realize ações, ganhe cartas colecionáveis, monte sua coleção, suba no ranking
-  e deixe o planeta melhor — com IA como guia.
-</p>
+              <p className="text-white/70 leading-relaxed" style={{ fontSize: 20, maxWidth: 480 }}>
+                Gamifique sua jornada ecológica. Realize ações, ganhe cartas colecionáveis, monte sua coleção, suba no ranking
+                e deixe o planeta melhor — com IA como guia.
+              </p>
 
               <div className="flex items-center gap-3 flex-wrap mt-3">
                 <button
@@ -181,8 +226,9 @@ export function Home() {
               </button>
             </div>
 
+            {/* ILHA FLUTUANTE */}
             <div className="shrink-0 flex items-center justify-center relative max-w-full w-[300px] h-[350px] sm:w-[360px] sm:h-[420px] lg:w-[400px] lg:h-[470px]">
-              <div className="floating-island absolute inset-0">
+              <div className="floating-island animacao-flutuante absolute inset-0">
                 <img
                   src="/imagens/Ilha.png"
                   alt="Ilha Flutuante com Cachoeira"
@@ -192,9 +238,17 @@ export function Home() {
             </div>
           </div>
 
+          {/* ASIDE DIREITA - CARDS LATERAIS */}
           <aside className="hidden xl:flex flex-col items-start gap-7 w-72.5 shrink-0 self-stretch justify-center">
+            {/* Card Nível - Borda Verde Menta */}
             <div>
-              <div className="glass-side rounded-2xl px-6 py-5 flex items-center gap-3.5 opacity-85">
+              <div
+                className="glass-side rounded-2xl px-6 py-5 flex items-center gap-3.5 opacity-85 transition-transform duration-300 hover:-translate-y-2"
+                style={{
+                  border: '1px solid rgba(134, 239, 172, 0.4)',
+                  boxShadow: '0 4px 20px rgba(134, 239, 172, 0.15)',
+                }}
+              >
                 <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #86efac, #4ade80)' }}>
                   <img src={NIVEL_ICONES[nivel] ?? '/icons/semente.svg'} alt="" className="w-7 h-7" />
                 </div>
@@ -206,8 +260,15 @@ export function Home() {
               </div>
             </div>
 
+            {/* Card Ranking - Borda Dourada */}
             <div>
-              <div className="glass-side rounded-xl px-6 py-5 opacity-75" style={{ transform: 'rotate(2deg)' }}>
+              <div
+                className="glass-side rounded-xl px-6 py-5 opacity-75 rotate-2 transition-transform duration-300 hover:-translate-y-2"
+                style={{
+                  border: '1px solid rgba(245, 196, 81, 0.45)',
+                  boxShadow: '0 4px 20px rgba(245, 196, 81, 0.15)',
+                }}
+              >
                 <p className="text-white/40 text-xs uppercase tracking-widest mb-2.5">Ranking</p>
                 <div className="flex items-center gap-3">
                   <span
@@ -223,7 +284,7 @@ export function Home() {
                 </div>
                 {ranking[1] && (
                   <div className="flex items-center gap-3 mt-2.5 opacity-60">
-                    <span className="text-sm font-bold text-white/60 w-7 text-center">2</span>
+                    <span className="text-sm font-bold text-[#ffffff99] w-7 text-center">2</span>
                     <div>
                       <p className="text-white/75 text-base leading-none">{ranking[1].nome.split(' ')[0]} · {ranking[1].pontos} pts</p>
                     </div>
@@ -232,8 +293,15 @@ export function Home() {
               </div>
             </div>
 
+            {/* Card Desafio do Dia - Borda Laranja/Âmbar */}
             <div>
-              <div className="glass-side rounded-full px-6 py-4 flex items-center gap-3 opacity-70">
+              <div
+                className="glass-side rounded-full px-6 py-4 flex items-center gap-3 opacity-70 transition-transform duration-300 hover:-translate-y-2"
+                style={{
+                  border: '1px solid rgba(245, 158, 11, 0.4)',
+                  boxShadow: '0 4px 20px rgba(245, 158, 11, 0.15)',
+                }}
+              >
                 <img src={desafioDoDia.icone} alt="" className="w-6 h-6" />
                 <div>
                   <p className="text-white/40 text-xs uppercase tracking-widest">Desafio do dia</p>

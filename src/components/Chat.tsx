@@ -523,7 +523,6 @@ export default function Chat() {
               <svg className="shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
-              <span className="text-sm font-semibold whitespace-nowrap">Fale com o RockySoul</span>
             </button>
           </div>
         </div>
@@ -536,7 +535,7 @@ export default function Chat() {
               <img src="/imagens/logo.png" alt="" className="h-6 w-auto opacity-90" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-serif-display text-lg leading-tight">RockySoulUp</h3>
+              <h3 className="font-serif-display text-lg leading-tight">RockySoul</h3>
               <p className="text-white/70 text-xs">Assistente de Sustentabilidade</p>
             </div>
             <button
