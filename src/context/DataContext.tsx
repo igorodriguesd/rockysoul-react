@@ -28,14 +28,21 @@ function hojeStr(): string {
 }
 
 function ontemStr(): string {
-  return new Date(Date.now() - 86400000).toDateString();
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toDateString();
 }
 
 function getDesafioDoDia(): Missao {
+  if (!MISSOES || MISSOES.length === 0) {
+    return { id: 'default', titulo: 'Desafio Diário', descricao: 'Complete suas tarefas diárias', pontos: 10 } as unknown as Missao;
+  }
   const hoje = new Date();
-  const inicioAno = new Date(hoje.getFullYear(), 0, 0);
+  hoje.setHours(0, 0, 0, 0);
+  const inicioAno = new Date(hoje.getFullYear(), 0, 1);
   const diaDoAno = Math.floor((hoje.getTime() - inicioAno.getTime()) / 86400000);
-  return MISSOES[diaDoAno % MISSOES.length];
+  const index = Math.abs(diaDoAno) % MISSOES.length;
+  return MISSOES[index] ?? MISSOES[0];
 }
 
 interface DataContextType {
@@ -67,14 +74,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setData(prev => ({ ...prev, email }));
   }, [setData]);
 
-const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: boolean) => {
+  const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: boolean) => {
     setData(prev => {
       const hoje = hojeStr();
       const ehNovoDia = prev.dataHoje !== hoje;
       const streak = ehNovoDia
         ? (prev.ultimoDia === ontemStr() ? prev.streak + 1 : 1)
         : prev.streak;
-      const ultimoDia = ehNovoDia ? hoje : prev.ultimoDia;
+      const ultimoDia = ehNovoDia ? hoje : (prev.ultimoDia || hoje);
 
       const dataAtualizada = ehNovoDia
         ? { ...prev, dataHoje: hoje, pontosHoje: 0, ultimoDia, streak }
@@ -86,12 +93,15 @@ const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: bo
         data: new Date().toISOString(),
       };
 
+      const prevHistorico = dataAtualizada.historico ?? [];
+      const prevSelos = dataAtualizada.selosDesbloqueados ?? [];
+
       const novosPontos = dataAtualizada.pontos + pontos;
       const novosPontosHoje = dataAtualizada.pontosHoje + pontos;
-      const novoHistorico = [entrada, ...dataAtualizada.historico].slice(0, 50);
+      const novoHistorico = [entrada, ...prevHistorico].slice(0, 50);
 
-      const novosSelos = SELOS
-        .filter(s => novosPontos >= s.minPontos && !dataAtualizada.selosDesbloqueados.includes(s.id))
+      const novosSelos = (SELOS || [])
+        .filter(s => novosPontos >= s.minPontos && !prevSelos.includes(s.id))
         .map(s => s.id);
 
       return {
@@ -100,7 +110,7 @@ const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: bo
         missoesCompletas: contaMissao ? dataAtualizada.missoesCompletas + 1 : dataAtualizada.missoesCompletas,
         pontosHoje: novosPontosHoje,
         historico: novoHistorico,
-        selosDesbloqueados: [...dataAtualizada.selosDesbloqueados, ...novosSelos],
+        selosDesbloqueados: [...prevSelos, ...novosSelos],
       };
     });
   }, [setData]);
@@ -119,21 +129,26 @@ const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: bo
   }, [setData]);
 
   const addResgate = useCallback((resgate: Resgate) => {
-    setData(prev => ({
-      ...prev,
-      resgates: [resgate, ...prev.resgates].slice(0, 20),
-    }));
+    setData(prev => {
+      const resgatesAntigos = prev.resgates ?? [];
+      return {
+        ...prev,
+        resgates: [resgate, ...resgatesAntigos].slice(0, 20),
+      };
+    });
   }, [setData]);
 
   const getNivel = useCallback(() => {
     const pts = data.pontos;
+    if (!NIVEIS || NIVEIS.length === 0) return 'Iniciante';
     for (const nivel of NIVEIS) {
       if (pts >= nivel.min && pts <= nivel.max) return nivel.nome;
     }
-    return NIVEIS[NIVEIS.length - 1].nome;
+    return NIVEIS[NIVEIS.length - 1]?.nome ?? 'Iniciante';
   }, [data.pontos]);
 
   const getSelosDesbloqueados = useCallback(() => {
+    if (!SELOS) return [];
     return SELOS
       .filter(s => data.pontos >= s.minPontos)
       .map(s => s.id);
@@ -148,7 +163,18 @@ const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: bo
 
   const resgatarBonusDesafio = useCallback(() => {
     setData(prev => {
-      if (prev.ultimoDesafio === hojeStr()) return prev;
+      const hoje = hojeStr();
+      if (prev.ultimoDesafio === hoje) return prev;
+
+      const ehNovoDia = prev.dataHoje !== hoje;
+      const streak = ehNovoDia
+        ? (prev.ultimoDia === ontemStr() ? prev.streak + 1 : 1)
+        : prev.streak;
+      const ultimoDia = ehNovoDia ? hoje : (prev.ultimoDia || hoje);
+      const pontosHojeBase = ehNovoDia ? 0 : prev.pontosHoje;
+
+      const prevHistorico = prev.historico ?? [];
+      const prevSelos = prev.selosDesbloqueados ?? [];
 
       const entrada: HistoricoEntrada = {
         nome: `Bônus do Desafio do Dia (+${BONUS_DESAFIO})`,
@@ -157,17 +183,20 @@ const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: bo
       };
 
       const novosPontos = prev.pontos + BONUS_DESAFIO;
-      const novosSelos = SELOS
-        .filter(s => novosPontos >= s.minPontos && !prev.selosDesbloqueados.includes(s.id))
+      const novosSelos = (SELOS || [])
+        .filter(s => novosPontos >= s.minPontos && !prevSelos.includes(s.id))
         .map(s => s.id);
 
       return {
         ...prev,
         pontos: novosPontos,
-        pontosHoje: prev.pontosHoje + BONUS_DESAFIO,
-        ultimoDesafio: hojeStr(),
-        historico: [entrada, ...prev.historico].slice(0, 50),
-        selosDesbloqueados: [...prev.selosDesbloqueados, ...novosSelos],
+        pontosHoje: pontosHojeBase + BONUS_DESAFIO,
+        dataHoje: hoje,
+        ultimoDia,
+        streak,
+        ultimoDesafio: hoje,
+        historico: [entrada, ...prevHistorico].slice(0, 50),
+        selosDesbloqueados: [...prevSelos, ...novosSelos],
       };
     });
     showToast(`+${BONUS_DESAFIO} créditos - Bônus do Desafio do Dia`);

@@ -4,12 +4,12 @@ import Footer from '../components/Footer';
 
 export function LayoutPrincipal() {
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 pt-24 pb-8 relative z-10">
         <Outlet />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

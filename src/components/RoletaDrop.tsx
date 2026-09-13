@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Carta } from '../types';
 
 const SLOTS = 36;
@@ -38,6 +38,12 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
   const winSlots = Math.max(1, Math.min(SLOTS - 1, Math.round((chance / 100) * SLOTS)));
   const [girando, setGirando] = useState(true);
   const [rotacao, setRotacao] = useState(0);
+
+  const onTerminarRef = useRef(onTerminar);
+  useEffect(() => {
+    onTerminarRef.current = onTerminar;
+  }, [onTerminar]);
+
   const [slotVencedor] = useState<number>(() =>
     caiu
       ? Math.floor(Math.random() * winSlots)
@@ -45,20 +51,27 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
   );
 
   useEffect(() => {
-    const t1 = setTimeout(() => setRotacao(VOLTAS * 360), 80);
+    const anguloAlvo = (SLOTS - slotVencedor) * degPorSlot;
+    const rotacaoFinal = VOLTAS * 360 + anguloAlvo;
+
+    const t1 = setTimeout(() => setRotacao(rotacaoFinal), 80);
     const t2 = setTimeout(() => {
       setGirando(false);
-      onTerminar?.();
+      onTerminarRef.current?.();
     }, DURACAO + 100);
+
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [slotVencedor, degPorSlot]);
 
   return (
-    <div className="relative w-48 h-52 mx-auto mt-2 select-none" aria-label="Roleta de carta">
+    <div 
+      className="relative w-48 h-52 mx-auto mt-2 select-none" 
+      role="img" 
+      aria-label={`Roleta de sorteio para a carta ${carta.nome}`}
+    >
       <svg
         className="w-full h-48"
         viewBox="0 0 100 100"
@@ -70,8 +83,7 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
         }}
       >
         {Array.from({ length: SLOTS }, (_, k) => {
-          const idx = (slotVencedor + k) % SLOTS;
-          const ganhou = idx < winSlots;
+          const ganhou = k < winSlots;
           const centro = 270 + k * degPorSlot;
           return (
             <path

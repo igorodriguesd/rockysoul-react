@@ -46,10 +46,17 @@ export const TIER: Record<RaridadeCarta, FutTier> = {
 const TONALIDADE_FOIL = 'linear-gradient(115deg, rgba(255,232,150,0.55) 0%, transparent 42%, rgba(255,255,255,0.35) 55%, transparent 78%)';
 
 export function getCardBackground(raridade: RaridadeCarta, foil = false): string {
-  const fundo = `${FUNDO_POR_RARIDADE[raridade]}, ${GLOW_POR_RARIDADE[raridade]}`;
-  return foil ? `${fundo}, ${TONALIDADE_FOIL}` : fundo;
+  const raridadeValida = FUNDO_POR_RARIDADE[raridade] ? raridade : 'comum';
+  const fundoBase = FUNDO_POR_RARIDADE[raridadeValida];
+  const glow = GLOW_POR_RARIDADE[raridadeValida];
+
+  if (foil) {
+    return `${TONALIDADE_FOIL}, ${glow}, ${fundoBase}`;
+  }
+  return `${glow}, ${fundoBase}`;
 }
 
 export function getCardLabel(carta: Carta): string {
-  return LABEL_RARIDADE[carta.raridade];
+  if (!carta || !carta.raridade) return LABEL_RARIDADE.comum;
+  return LABEL_RARIDADE[carta.raridade] ?? LABEL_RARIDADE.comum;
 }

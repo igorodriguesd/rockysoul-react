@@ -12,37 +12,51 @@ const MARCOS = [
 ];
 
 export default function SetProgress({ set }: Props) {
-  const { quimica, totalCartas, percentual, mensagem, setCompleto } = useChemistry(set.id);
+  const { quimica, totalCartas = 0, percentual = 0, mensagem = '', setCompleto = false } = useChemistry(set.id);
+
+  const levelAtual = quimica?.level ?? 0;
+  const totalMaximo = 4;
 
   return (
     <div>
       <div className="flex items-center justify-between text-xs mb-1.5">
-        <span className="text-white/60 font-medium">{totalCartas}/4 cartas</span>
-        {quimica.level > 0 ? (
-          <span className="font-bold" style={{ color: set.cor }}>
-            Química Nível {quimica.level}
+        <span className="text-white/60 font-medium">{totalCartas}/{totalMaximo} cartas</span>
+        {levelAtual > 0 ? (
+          <span className="font-bold" style={{ color: set.cor || '#20d968' }}>
+            Química Nível {levelAtual}
           </span>
         ) : (
           <span className="text-white/40">Sem química</span>
         )}
       </div>
 
-      <div className="relative h-2.5 rounded-full overflow-hidden" style={{ background: 'rgba(82,232,138,0.12)' }}>
-        <div
-          className="h-full rounded-full transition-all duration-700"
-          style={{
-            width: `${percentual}%`,
-            background: `linear-gradient(90deg, ${set.cor}, #20d968)`,
-          }}
-        />
+      <div 
+        role="progressbar"
+        aria-valuenow={percentual}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Progresso da coleção ${set.nome}`}
+        className="relative h-2.5 rounded-full" 
+        style={{ background: 'rgba(82,232,138,0.12)' }}
+      >
+        <div className="w-full h-full rounded-full overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-700"
+            style={{
+              width: `${percentual}%`,
+              background: `linear-gradient(90deg, ${set.cor || '#20d968'}, #20d968)`,
+            }}
+          />
+        </div>
+
         {MARCOS.map(m => (
           <span
             key={m.alvo}
-            className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full"
+            className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full transition-all z-10"
             style={{
-              left: `calc(${(m.alvo / 4) * 100}% - 3px)`,
-              background: quimica.level >= m.nivel ? set.cor : 'rgba(255,255,255,0.3)',
-              boxShadow: quimica.level >= m.nivel ? `0 0 6px ${set.cor}` : 'none',
+              left: `calc(${(m.alvo / totalMaximo) * 100}% - 3px)`,
+              background: levelAtual >= m.nivel ? (set.cor || '#20d968') : 'rgba(255,255,255,0.3)',
+              boxShadow: levelAtual >= m.nivel ? `0 0 6px ${set.cor || '#20d968'}` : 'none',
             }}
           />
         ))}
