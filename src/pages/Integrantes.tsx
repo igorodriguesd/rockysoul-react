@@ -12,7 +12,7 @@ export function Integrantes() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {INTEGRANTES.map(m => (
-          <div key={m.rm} className="card-secondary rounded-2xl p-6 text-center hover:shadow-md transition-all hover:scale-[1.02] flex flex-col">
+          <div key={m.rm} className="bg-card-secondary border border-card-secondary-border rounded-2xl p-6 text-center hover:shadow-md transition-all hover:scale-[1.02] flex flex-col">
             <img
               src={m.foto}
               alt={m.nome}

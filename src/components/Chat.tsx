@@ -494,7 +494,7 @@ export default function Chat() {
               tabIndex={0}
               onClick={abrirComTeaser}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirComTeaser(); } }}
-              className="relative max-w-65 card-secondary rounded-2xl rounded-br-sm shadow-2xl border border-brand/25 p-4 text-left cursor-pointer"
+              className="relative max-w-65 bg-card-secondary border border-card-secondary-border rounded-2xl rounded-br-sm shadow-2xl border border-brand/25 p-4 text-left cursor-pointer"
             >
               <button
                 onClick={(e) => { e.stopPropagation(); marcarTeaserVisto(); }}
@@ -530,7 +530,7 @@ export default function Chat() {
       )}
 
       {aberto && (
-        <div className="fixed bottom-6 right-6 z-50 card-secondary rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] h-110 max-h-[80vh] border border-brand/25">
+        <div className="fixed bottom-6 right-6 z-50 bg-card-secondary border border-card-secondary-border rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] h-110 max-h-[80vh] border border-brand/25">
           <div className="text-white p-4 flex items-center gap-3 shrink-0" style={{ background: 'var(--t-grad-strong)' }}>
             <div className="w-10 h-10 rounded-full bg-leaf/25 flex items-center justify-center shrink-0">
               <img src="/imagens/logo.png" alt="" className="h-6 w-auto opacity-90" />
@@ -557,7 +557,7 @@ export default function Chat() {
                 <div
                   className={`px-4 py-2 max-w-[80%] text-sm leading-relaxed whitespace-pre-line ${msg.remetente === 'user'
                     ? 'bg-brand text-(--t-onaccent) rounded-2xl rounded-tr-sm font-medium'
-                    : 'card-primary text-slate-800 rounded-2xl rounded-tl-sm'
+                    : 'bg-card-primary border border-card-primary-border text-slate-800 rounded-2xl rounded-tl-sm'
                     }`}
                 >
                   {msg.texto.split('**').map((part, idx) =>

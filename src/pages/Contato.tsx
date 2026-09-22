@@ -35,7 +35,7 @@ export function Contato() {
       <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Contato</h1>
       <p className="text-center text-white/70 mb-10">Entre em contato com a equipe RockySoulUp</p>
 
-      <div className="card-primary rounded-2xl p-8">
+      <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-8">
         {enviado ? (
           <div className="text-center py-8">
             <img src="/icons/sucesso.svg" alt="Enviado" className="w-16 h-16 mx-auto mb-4" />

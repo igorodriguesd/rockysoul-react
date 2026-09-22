@@ -191,12 +191,12 @@ export function Colecao() {
                 return (
                   <div
                     key={carta.id}
-                    className="rounded-xl p-2.5 flex flex-col items-center text-center"
-                    style={{ background: 'var(--t-card-primary)', border: '1px solid var(--t-card-primary-border)', boxShadow: 'var(--t-card-primary-shadow)', opacity: nivelBloqueio ? 0.55 : 1 }}
+                    className="bg-(--t-card-primary) border border-(--t-card-primary-border) shadow-(--t-card-primary-shadow) rounded-xl p-2.5 flex flex-col items-center text-center"
+                    style={{ opacity: nivelBloqueio ? 0.55 : 1 }}
                   >
                     <div
-                      className="w-11 h-11 rounded-xl flex items-center justify-center mb-1.5"
-                      style={{ background: 'var(--t-mist)', border: `1px solid ${{ comum: '#9ca3af', incomum: '#38bdf8', rara: '#a66cff', epica: '#f5c451', lendaria: '#f59e0b' }[carta.raridade]}44` }}
+                      className="bg-(--t-mist) w-11 h-11 rounded-xl flex items-center justify-center mb-1.5"
+                      style={{ border: `1px solid ${{ comum: '#9ca3af', incomum: '#38bdf8', rara: '#a66cff', epica: '#f5c451', lendaria: '#f59e0b' }[carta.raridade]}44` }}
                     >
                       <img src={carta.icone} alt="" className="w-6 h-6" />
                     </div>

@@ -55,7 +55,7 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
         role="dialog"
         aria-modal="true"
         aria-label={sucesso ? 'Resgate confirmado' : `Resgatar ${recompensa.nome}`}
-        className="glass-strong rounded-2xl shadow-2xl w-[90vw] max-w-100 p-6 relative max-h-[90vh] overflow-y-auto"
+        className="[background:var(--t-glass-strong)] border border-(--t-glass-strong-border) shadow-(--t-glass-strong-shadow) rounded-2xl shadow-2xl w-[90vw] max-w-100 p-6 relative max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <button onClick={fechar} className="absolute top-3 right-3 text-slate-400 hover:text-slate-600 transition-colors z-10" aria-label="Fechar">
@@ -94,7 +94,7 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
               </div>
             </div>
 
-            <div className="card-secondary rounded-xl p-4 mb-5 space-y-2">
+            <div className="bg-card-secondary border border-card-secondary-border rounded-xl p-4 mb-5 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-slate-500">Custo</span>
                 <span className="font-semibold text-gold-deep">{recompensa.pontos} créditos</span>

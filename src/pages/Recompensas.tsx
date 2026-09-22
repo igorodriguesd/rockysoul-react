@@ -76,7 +76,7 @@ export function Recompensas() {
             return (
               <div
                 key={r.id}
-                className="card-secondary rounded-2xl p-5 flex flex-col hover:scale-[1.01] transition-all"
+                className="bg-card-secondary border border-card-secondary-border rounded-2xl p-5 flex flex-col hover:scale-[1.01] transition-all"
               >
                 <div className="h-6 mb-3 flex items-start">
                   {r.badge && (
@@ -120,7 +120,7 @@ export function Recompensas() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-12">
-          <div className="card-secondary rounded-2xl p-5">
+          <div className="bg-card-secondary border border-card-secondary-border rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
               <p className="text-slate-500 text-[11px] uppercase tracking-widest">Trilha de Evolução</p>
               <span className="text-brand text-sm font-bold">{nivel}</span>
@@ -156,7 +156,7 @@ export function Recompensas() {
             </div>
           </div>
 
-          <div className="card-secondary rounded-2xl p-5">
+          <div className="bg-card-secondary border border-card-secondary-border rounded-2xl p-5">
             <p className="text-slate-500 text-[11px] uppercase tracking-widest mb-4">Impacto Ambiental</p>
             <div className="grid grid-cols-3 gap-2.5 mb-4">
               {[
@@ -183,7 +183,7 @@ export function Recompensas() {
           </div>
         </div>
 
-        <div className="card-secondary rounded-2xl p-5 sm:p-6 mb-12">
+        <div className="bg-card-secondary border border-card-secondary-border rounded-2xl p-5 sm:p-6 mb-12">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-6 items-start">
             <div>
               <div className="flex items-center gap-3 mb-3">

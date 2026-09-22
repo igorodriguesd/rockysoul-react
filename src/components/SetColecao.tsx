@@ -19,7 +19,7 @@ export default function SetColecao({ set }: Props) {
   const bloqueado = (data.pontosAcumulados ?? data.pontos) < set.pontosMin;
 
   return (
-    <section className="glass-strong rounded-2xl p-4 sm:p-5" style={bloqueado ? { opacity: 0.85 } : undefined}>
+    <section className="[background:var(--t-glass-strong)] border border-(--t-glass-strong-border) shadow-(--t-glass-strong-shadow) rounded-2xl p-4 sm:p-5" style={bloqueado ? { opacity: 0.85 } : undefined}>
       <header className="flex items-center gap-3 mb-4">
         <div
           className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"

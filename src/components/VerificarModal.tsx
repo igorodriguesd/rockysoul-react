@@ -255,7 +255,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
         role="dialog"
         aria-modal="true"
         aria-label={sucesso ? 'Resultado da ação' : missao.nome}
-        className="glass-strong rounded-2xl shadow-2xl w-[90vw] max-w-[620px] p-4 sm:p-5 relative max-h-[90vh] overflow-y-auto"
+        className="[background:var(--t-glass-strong)] border border-(--t-glass-strong-border) shadow-(--t-glass-strong-shadow) rounded-2xl shadow-2xl w-[90vw] max-w-[620px] p-4 sm:p-5 relative max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <button onClick={fechar} className="absolute top-3 right-3 text-slate-400 hover:text-slate-600 transition-colors z-10" aria-label="Fechar">

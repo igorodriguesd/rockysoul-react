@@ -12,7 +12,7 @@ export function Faq() {
 
       <div className="flex flex-col gap-3">
         {PERGUNTAS_FAQ.map((item, i) => (
-          <div key={i} className="card-secondary rounded-xl overflow-hidden">
+          <div key={i} className="bg-card-secondary border border-card-secondary-border rounded-xl overflow-hidden">
             <button
               onClick={() => setAberto(aberto === i ? null : i)}
               className="w-full flex items-center justify-between px-6 py-4 text-left cursor-pointer"

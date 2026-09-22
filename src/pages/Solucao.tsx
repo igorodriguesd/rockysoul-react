@@ -42,7 +42,7 @@ export function Solucao() {
         <p className="text-white/70">Como a RockySoulUp transforma hábitos sustentáveis em impacto real</p>
       </div>
 
-      <div className="card-primary rounded-2xl p-6 mb-6">
+      <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-6 mb-6">
         <div className="flex items-center gap-2 mb-3">
           <img src="/icons/alvo.svg" alt="" className="w-5 h-5" />
           <h2 className="text-lg font-bold text-slate-900">O problema</h2>
@@ -58,7 +58,7 @@ export function Solucao() {
       <h2 className="text-2xl font-bold text-slate-900 mb-4 drop-shadow">Como funciona</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
         {PASSOS.map((passo, i) => (
-          <div key={passo.titulo} className="card-secondary rounded-2xl p-5 flex flex-col gap-3">
+          <div key={passo.titulo} className="bg-card-secondary border border-card-secondary-border rounded-2xl p-5 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <img src={passo.icon} alt="" className="w-8 h-8" />
               <span className="w-7 h-7 rounded-full bg-brand/15 text-brand flex items-center justify-center text-sm font-bold">
@@ -94,7 +94,7 @@ export function Solucao() {
         })}
       </div>
 
-      <div className="card-secondary rounded-2xl p-5 mb-10">
+      <div className="bg-card-secondary border border-card-secondary-border rounded-2xl p-5 mb-10">
         <h3 className="font-bold text-slate-900 text-sm mb-3">Sets e Química</h3>
         <div className="flex flex-col gap-2 mb-3">
           {SETS_CARTAS.map(set => (
@@ -116,7 +116,7 @@ export function Solucao() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        <div className="card-secondary rounded-2xl p-6">
+        <div className="bg-card-secondary border border-card-secondary-border rounded-2xl p-6">
           <h2 className="text-lg font-bold text-slate-900 mb-4">Níveis e selos</h2>
           <div className="flex items-center justify-between">
             {SELOS.map((selo, i) => (
@@ -130,7 +130,7 @@ export function Solucao() {
           </div>
         </div>
 
-        <div className="card-secondary rounded-2xl p-6">
+        <div className="bg-card-secondary border border-card-secondary-border rounded-2xl p-6">
           <h2 className="text-lg font-bold text-slate-900 mb-4">Diferenciais</h2>
           <ul className="space-y-2.5">
             {DIFERENCIAIS.map(item => (

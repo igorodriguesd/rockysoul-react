@@ -31,7 +31,7 @@ export function Home() {
   return (
     <>
       <section className="relative min-h-dvh xl:h-dvh w-full overflow-hidden pt-24 pb-4 flex flex-col">
-        <div className="home-bg pointer-events-none fixed inset-0" />
+        <div className="[background:var(--t-bg-app)] pointer-events-none fixed inset-0" />
 
         <div className="relative z-10 pt-2 w-full max-w-[1900px] mx-auto flex items-center justify-center gap-x-5 px-6 flex-1 min-h-0">
 
@@ -44,7 +44,7 @@ export function Home() {
           </aside>
 
           <div
-            className="glass-hero rounded-3xl flex flex-col lg:flex-row items-center gap-8 lg:gap-0 relative overflow-hidden flex-1 min-w-0 max-w-[1040px]"
+            className="[background:var(--t-glass-hero)] border border-[var(--t-glass-hero-border)] shadow-glass-hero rounded-3xl flex flex-col lg:flex-row items-center gap-8 lg:gap-0 relative overflow-hidden flex-1 min-w-0 max-w-[1040px]"
             style={{ padding: 'clamp(30px, 4vw, 44px) clamp(18px, 4vw, 44px)', minHeight: 330 }}
           >
             <div
@@ -53,7 +53,7 @@ export function Home() {
             />
 
             <div className="flex-1 flex flex-col items-start gap-5 z-10">
-              <div className="flex items-center gap-2 glass rounded-full px-4 py-2">
+              <div className="flex items-center gap-2 [background:var(--t-glass)] border border-[var(--t-glass-border)] backdrop-blur rounded-full px-4 py-2">
                 <span className="w-2 h-2 rounded-full bg-gold animate-pulse" />
                 <span className="text-white text-xs font-semibold tracking-wide uppercase">Plataforma IA Sustentável</span>
               </div>
@@ -103,7 +103,7 @@ export function Home() {
             </div>
 
             <div className="shrink-0 flex items-center justify-center relative max-w-full w-[260px] h-[310px] sm:w-[320px] sm:h-[370px] lg:w-[360px] lg:h-[410px]">
-              <div className="floating-island absolute inset-0">
+              <div className="animate-float drop-shadow-[0_30px_30px_var(--t-island-shadow)] absolute inset-0">
                 <img
                   src="/imagens/Ilha.png"
                   alt="Ilha Flutuante com Cachoeira"
@@ -202,7 +202,7 @@ function PassoCard({ passo, navigate }: PassoCardProps) {
     <button
       type="button"
       onClick={() => navigate(passo.rota)}
-      className="glass-side rounded-[22px] p-5 text-left flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1 group cursor-pointer w-full relative overflow-hidden"
+      className="bg-(--t-glass-side) border border-[var(--t-glass-side-border)] shadow-glass-side rounded-[22px] p-5 text-left flex flex-col gap-3 transition-all duration-300 hover:-translate-y-1 group cursor-pointer w-full relative overflow-hidden"
       aria-label={`Como funciona, passo ${passo.numero}: ${passo.titulo}. Abrir.`}
       title={`${passo.titulo} — abrir`}
     >

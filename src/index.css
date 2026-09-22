@@ -2,18 +2,17 @@
 
 /* ============================================================
    TEMAS: :root = Light ("Azul Royal") | [data-theme="dark"] = Classic "Soul Up"
+   Definidos como variáveis apenas (config de tema, via @theme abaixo)
    ============================================================ */
 :root {
   color-scheme: light;
 
-  /* Sólidos de superfície e texto */
   --t-void: #f8fafc;
   --t-surface: #ffffff;
   --t-surface-2: #f1f5f9;
   --t-text-base: #0f172a;
   --t-text-muted: #64748b;
 
-  /* Marca / acentos */
   --t-accent: #4f46e5;
   --t-accent-hover: #4338ca;
   --t-accent-2: #3b82f6;
@@ -24,14 +23,11 @@
   --t-accent-soft-2: #e0e7ff;
   --t-onaccent: #ffffff;
 
-  /* Dourado (recompensas) */
   --t-gold: #facc15;
   --t-gold-deep: #eab308;
 
-  /* Fundos de página */
   --t-bg-app: linear-gradient(180deg, #6366f1 0%, #4f46e5 26%, #3b82f6 44%, #60a5fa 58%, #f1f5f9 72%, #f8fafc 100%);
 
-  /* Vidros e cards */
   --t-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08));
   --t-glass-border: rgba(255, 255, 255, 0.28);
   --t-glass-hero: linear-gradient(150deg, #4f46e5 0%, #3b82f6 46%, #38bdf8 80%, #60a5fa 100%);
@@ -50,14 +46,11 @@
   --t-card-secondary-border: rgba(79, 70, 229, 0.16);
   --t-card-tertiary: #eef1fc;
 
-  /* Header */
   --t-header: rgba(255, 255, 255, 0.9);
   --t-header-border: rgba(79, 70, 229, 0.15);
   --t-header-shadow: 0 12px 32px rgba(79, 70, 229, 0.14);
 
-  /* Gradientes utilitários */
   --t-grad-brand: linear-gradient(135deg, #4f46e5, #3b82f6);
-  /* Gradiente "forte" para textos brancos/dourados em cima (perfil, chat, botões) */
   --t-grad-strong: linear-gradient(135deg, #4f46e5, #3b82f6);
   --t-grad-menu: linear-gradient(135deg, #4f46e5, #3b82f6 55%, #38bdf8);
   --t-grad-arena: linear-gradient(155deg, #4f46e5, #3b82f6, #38bdf8);
@@ -67,15 +60,10 @@
   --t-arena-btn-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
   --t-arena-shadow: 0 12px 32px rgba(79, 70, 229, 0.3);
 
-  /* Hero da Home */
   --t-hero-btn: linear-gradient(135deg, #ffffff, #e0e7ff);
   --t-hero-text: #4f46e5;
   --t-hero-shadow: 0 10px 40px rgba(255, 255, 255, 0.4);
-  --t-hero-blob-1: rgba(56, 189, 248, 0.5);
-  --t-hero-blob-2: rgba(96, 165, 250, 0.45);
-  --t-hero-blob-3: rgba(99, 102, 241, 0.4);
 
-  /* Glows / decoração */
   --t-glow: rgba(79, 70, 229, 0.5);
   --t-mist: rgba(79, 70, 229, 0.12);
   --t-brand-border: rgba(79, 70, 229, 0.4);
@@ -86,7 +74,6 @@
   --t-wheel-stroke: #0f172a;
   --t-wheel-point: #4f46e5;
 
-  /* Escala slate (textos, bordas, superfícies neutras) */
   --t-slate-50: #f8fafc;
   --t-slate-100: #f1f5f9;
   --t-slate-200: #e2e8f0;
@@ -147,7 +134,6 @@
   --t-header-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
 
   --t-grad-brand: linear-gradient(135deg, #22c55e, #00ff88);
-  /* Versão escura/legível para textos brancos e dourados */
   --t-grad-strong: linear-gradient(160deg, #047857, #065f46);
   --t-grad-menu: linear-gradient(135deg, #22c55e, #00ff88 55%, #38bdf8);
   --t-grad-arena: linear-gradient(155deg, #0b1f33, #0f1c2e, #070d19);
@@ -160,9 +146,6 @@
   --t-hero-btn: linear-gradient(135deg, #22c55e, #00ff88);
   --t-hero-text: #07110b;
   --t-hero-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
-  --t-hero-blob-1: rgba(0, 255, 136, 0.4);
-  --t-hero-blob-2: rgba(34, 197, 94, 0.35);
-  --t-hero-blob-3: rgba(56, 189, 248, 0.25);
 
   --t-glow: rgba(0, 255, 136, 0.45);
   --t-mist: rgba(0, 255, 136, 0.12);
@@ -198,19 +181,23 @@
   --font-serif-display: Georgia, 'Times New Roman', serif;
 
   --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-fut-shine: fut-shine 2.4s linear infinite;
+  --animate-fut-hue: fut-hue 9s ease-in-out infinite;
 
   --color-void: var(--t-void);
   --color-surface: var(--t-surface);
   --color-surface-2: var(--t-surface-2);
+  --color-frost: var(--t-text-base);
 
   --color-brand: var(--t-accent);
   --color-brand-hover: var(--t-accent-hover);
   --color-brand-2: var(--t-accent-2);
   --color-brand-3: var(--t-accent-3);
   --color-brand-4: var(--t-accent-4);
+  --color-violet: var(--t-accent-5);
   --color-brand-soft: var(--t-accent-soft);
   --color-brand-soft-2: var(--t-accent-soft-2);
-  --color-violet: var(--t-accent-5);
 
   --color-gold: var(--t-gold);
   --color-gold-deep: var(--t-gold-deep);
@@ -223,9 +210,26 @@
   --color-leaf-soft: var(--t-accent-2);
   --color-moss: var(--t-accent-hover);
   --color-fern: var(--t-accent-2);
-  --color-frost: var(--t-text-base);
   --color-sage: var(--t-accent-3);
   --color-sun: var(--t-gold);
+
+  --color-card-primary: var(--t-card-primary);
+  --color-card-primary-border: var(--t-card-primary-border);
+  --color-card-secondary: var(--t-card-secondary);
+  --color-card-secondary-border: var(--t-card-secondary-border);
+  --color-card-tertiary: var(--t-card-tertiary);
+  --color-mist: var(--t-mist);
+  --color-mist-gray: var(--t-mist-gray);
+
+  --color-glass-border: var(--t-glass-border);
+  --color-glass-hero-border: var(--t-glass-hero-border);
+  --color-glass-side-border: var(--t-glass-side-border);
+  --color-glass-strong-border: var(--t-glass-strong-border);
+
+  --shadow-card-primary: var(--t-card-primary-shadow);
+  --shadow-glass-hero: var(--t-glass-hero-shadow);
+  --shadow-glass-side: var(--t-glass-side-shadow);
+  --shadow-glass-strong: var(--t-glass-strong-shadow);
 
   --color-slate-50: var(--t-slate-50);
   --color-slate-100: var(--t-slate-100);
@@ -238,6 +242,26 @@
   --color-slate-800: var(--t-slate-800);
   --color-slate-900: var(--t-slate-900);
   --color-slate-950: var(--t-slate-950);
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  @keyframes fut-shine {
+    0% { transform: translateX(-160%) rotate(18deg); }
+    100% { transform: translateX(420%) rotate(18deg); }
+  }
+
+  @keyframes fut-hue {
+    0%, 100% { filter: hue-rotate(0deg) saturate(1); }
+    50% { filter: hue-rotate(14deg) saturate(1.15); }
+  }
 }
 
 @layer base {
@@ -251,166 +275,10 @@
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
-    color: var(--color-frost);
-    background-color: var(--color-void);
-    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   h1, h2, h3, h4 {
     font-family: var(--font-serif-display);
     font-weight: 700;
-    color: var(--color-frost);
   }
-}
-
-/* ============ Utilities temáticas ============ */
-@utility bg-app {
-  background: var(--t-bg-app);
-  position: relative;
-}
-
-@utility home-bg {
-  background: var(--t-bg-app);
-}
-
-@utility glass {
-  background: var(--t-glass);
-  border: 1px solid var(--t-glass-border);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-@utility glass-hero {
-  background: var(--t-glass-hero);
-  border: 1px solid var(--t-glass-hero-border);
-  box-shadow: var(--t-glass-hero-shadow);
-}
-
-@utility glass-side {
-  background: var(--t-glass-side);
-  border: 1px solid var(--t-glass-side-border);
-  box-shadow: var(--t-glass-side-shadow);
-}
-
-@utility glass-strong {
-  background: var(--t-glass-strong);
-  border: 1px solid var(--t-glass-strong-border);
-  box-shadow: var(--t-glass-strong-shadow);
-}
-
-@utility card-primary {
-  background: var(--t-card-primary);
-  border: 1px solid var(--t-card-primary-border);
-  box-shadow: var(--t-card-primary-shadow);
-}
-
-@utility card-secondary {
-  background: var(--t-card-secondary);
-  border: 1px solid var(--t-card-secondary-border);
-}
-
-@utility card-tertiary {
-  background: var(--t-card-tertiary);
-  border: 1px solid var(--t-card-secondary-border);
-}
-
-@utility floating-island {
-  animation: float 6s ease-in-out infinite;
-  filter: drop-shadow(0 30px 30px var(--t-island-shadow));
-}
-
-/* ============ Cartas (overtime) ============ */
-.fut-card {
-  position: relative;
-  overflow: hidden;
-}
-
-.fut-card.fut-foil::after {
-  content: '';
-  position: absolute;
-  top: -60%;
-  left: -80%;
-  width: 55%;
-  height: 260%;
-  pointer-events: none;
-  z-index: 2;
-  transform: rotate(18deg);
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-  animation: fut-shine 2.4s linear infinite;
-}
-
-.fut-card.fut-hover {
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, filter 0.3s ease;
-}
-
-.fut-card.fut-hover:not(:disabled):hover {
-  z-index: 60;
-  transform: perspective(800px) translateY(-58px) rotateZ(-7deg) rotateX(14deg) scale(1.16);
-  filter: brightness(1.12) saturate(1.12);
-  box-shadow: 0 34px 70px rgba(0, 0, 0, 0.4), 0 0 34px var(--fut-glow, var(--t-glow-card));
-}
-
-.fut-plate {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.42));
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-}
-
-.fut-chip {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-}
-
-@keyframes fut-shine {
-  0% { transform: translateX(-160%) rotate(18deg); }
-  100% { transform: translateX(420%) rotate(18deg); }
-}
-
-.fut-legend {
-  animation: fut-hue 9s ease-in-out infinite;
-}
-
-@keyframes fut-hue {
-  0%, 100% { filter: hue-rotate(0deg) saturate(1); }
-  50% { filter: hue-rotate(14deg) saturate(1.15); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-12px); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-pulse-glow {
-    animation: none;
-  }
-  .fut-card.fut-foil::after,
-  .fut-legend {
-    animation: none;
-  }
-  html {
-    scroll-behavior: auto;
-  }
-}
-
-html.resizing * {
-  animation-play-state: paused !important;
-  transition: none !important;
-}
-
-html.resizing,
-html.resizing * {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-html.resizing .home-bg {
-  display: none !important;
 }

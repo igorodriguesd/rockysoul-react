@@ -25,7 +25,7 @@ export default function App() {
     <DataProvider>
       <CollectionProvider>
         <ChatProvider>
-          <div className="bg-app min-h-screen flex flex-col">
+          <div className="[background:var(--t-bg-app)] min-h-screen flex flex-col">
             <Routes>
               <Route element={<LayoutPrincipal />}>
                 <Route index element={<Home />} />

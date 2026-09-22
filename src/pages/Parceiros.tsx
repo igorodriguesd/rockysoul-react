@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { PARCEIROS, ENTREGA_ESTIMADA_KG } from '../data/constants';
+import { PARCEIROS } from '../data/constants';
 import type { Parceiro } from '../types';
 
 interface LinhaRanking {
   parceiro: Parceiro;
-  kg: number;
-  vouchers: number;
+  creditos: number;
+  cortesias: number;
   pessoaEntregas: number;
   pessoaResgates: number;
   tipo: string;
@@ -35,24 +35,24 @@ export function Parceiros() {
         const meu = impacto[p.id] ?? { entregas: 0, resgates: 0, creditos: 0 };
         return {
           parceiro: p,
-          kg: p.impactoBase!.kg + meu.entregas * ENTREGA_ESTIMADA_KG,
-          vouchers: p.impactoBase!.vouchers + meu.resgates,
+          creditos: p.impactoBase!.creditos + meu.creditos,
+          cortesias: p.impactoBase!.cortesias + meu.resgates,
           pessoaEntregas: meu.entregas,
           pessoaResgates: meu.resgates,
           tipo: rotuloTipo(p),
         };
       })
-      .sort((a, b) => b.kg - a.kg || b.vouchers - a.vouchers);
+      .sort((a, b) => b.creditos - a.creditos || b.cortesias - a.cortesias);
   }, [data.impactoParceiros]);
 
-  const maxKg = Math.max(...linhas.map(l => l.kg), 1);
-  const totalKg = linhas.reduce((s, l) => s + l.kg, 0);
-  const totalVouchers = linhas.reduce((s, l) => s + l.vouchers, 0);
+  const maxCreditos = Math.max(...linhas.map(l => l.creditos), 1);
+  const totalCreditos = linhas.reduce((s, l) => s + l.creditos, 0);
+  const totalCortesias = linhas.reduce((s, l) => s + l.cortesias, 0);
   const contribuicoesPessoais = linhas.filter(l => l.pessoaEntregas > 0 || l.pessoaResgates > 0).length;
 
   return (
     <div className="max-w-[900px] mx-auto px-4 sm:px-6 py-4 lg:py-6 flex flex-col gap-4">
-      <div className="card-primary rounded-2xl p-5 relative overflow-hidden">
+      <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-5 relative overflow-hidden">
         <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(var(--color-brand), transparent)' }} />
         <div className="flex items-center gap-2 mb-2">
           <img src="/icons/trofeu.svg" alt="" className="w-5 h-5" />
@@ -60,17 +60,18 @@ export function Parceiros() {
         </div>
         <h1 className="text-2xl font-bold text-slate-900 font-serif-display">Parceiras que sustentam o impacto</h1>
         <p className="text-sm text-slate-600 mt-1 max-w-[560px]">
-          Cada entrega no ecoponto soma <strong className="text-slate-800">{ENTREGA_ESTIMADA_KG}kg</strong> ao volume da empresa e cada cortesia
-          resgatada vira um resgate registrado. Suas ações fazem essas empresas subirem no ranking.
+          Cada entrega comprovada num ecoponto e cada cortesia resgatada movimentam
+          <strong className="text-slate-800"> créditos</strong> para o parceiro. Suas ações fazem
+          essas empresas subirem no ranking.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mt-4">
           <div className="rounded-xl p-3" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
-            <p className="text-slate-500 text-[10px] uppercase tracking-widest">Volume recuperado</p>
-            <p className="text-brand font-bold" style={{ fontSize: 20 }}>{totalKg.toLocaleString('pt-BR')} kg</p>
+            <p className="text-slate-500 text-[10px] uppercase tracking-widest">Créditos movimentados</p>
+            <p className="text-brand font-bold" style={{ fontSize: 20 }}>{totalCreditos.toLocaleString('pt-BR')}</p>
           </div>
           <div className="rounded-xl p-3" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
             <p className="text-slate-500 text-[10px] uppercase tracking-widest">Cortesias concedidas</p>
-            <p className="text-brand font-bold" style={{ fontSize: 20 }}>{totalVouchers.toLocaleString('pt-BR')}</p>
+            <p className="text-brand font-bold" style={{ fontSize: 20 }}>{totalCortesias.toLocaleString('pt-BR')}</p>
           </div>
           {contribuicoesPessoais > 0 && (
             <div className="rounded-xl p-3" style={{ background: 'color-mix(in srgb, #FACC15 10%, var(--t-mist))', border: '1px solid rgba(250,204,21,0.5)' }}>
@@ -83,7 +84,7 @@ export function Parceiros() {
         </div>
       </div>
 
-      <div className="card-tertiary rounded-2xl p-4 sm:p-5 flex flex-col gap-1">
+      <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 sm:p-5 flex flex-col gap-1">
         {linhas.map((l, i) => {
           const med = medalha(i);
           return (
@@ -113,20 +114,20 @@ export function Parceiros() {
                 <div className="h-2 rounded-full overflow-hidden mt-2" style={{ background: 'var(--t-slate-200)' }}>
                   <div
                     className="h-full rounded-full transition-all"
-                    style={{ width: `${(l.kg / maxKg) * 100}%`, background: `linear-gradient(90deg, ${l.parceiro.cor}, var(--color-brand-2))` }}
+                    style={{ width: `${(l.creditos / maxCreditos) * 100}%`, background: `linear-gradient(90deg, ${l.parceiro.cor}, var(--color-brand-2))` }}
                   />
                 </div>
               </div>
               <div className="text-right shrink-0">
-                <p className="text-slate-900 font-bold text-sm">{l.kg.toLocaleString('pt-BR')} kg</p>
-                <p className="text-slate-500 text-[10px]">{l.vouchers.toLocaleString('pt-BR')} cortesias</p>
+                <p className="text-slate-900 font-bold text-sm">{l.creditos.toLocaleString('pt-BR')} créditos</p>
+                <p className="text-slate-500 text-[10px]">{l.cortesias.toLocaleString('pt-BR')} cortesias</p>
               </div>
             </div>
           );
         })}
       </div>
 
-      <div className="card-tertiary rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+      <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
         <div>
           <p className="text-sm font-semibold text-slate-800">Sua empresa pode entrar nesse ranking</p>
           <p className="text-xs text-slate-500 mt-0.5">

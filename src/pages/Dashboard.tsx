@@ -230,7 +230,7 @@ export function Dashboard() {
 
         <aside className="hidden lg:flex flex-col lg:w-75 shrink-0 gap-4">
 
-          <div className="card-primary rounded-2xl p-4 relative overflow-hidden">
+          <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-4 relative overflow-hidden">
             <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(var(--color-brand), transparent)' }} />
             <div className="flex items-center gap-2 mb-3">
               <BoltIcon />
@@ -274,7 +274,7 @@ export function Dashboard() {
             </button>
           </div>
 
-          <div className="card-tertiary rounded-2xl p-4 flex flex-col gap-2">
+          <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <img src="/icons/localizacao.svg" className="w-4 h-4 opacity-60" alt="" />
               <span className="text-slate-500 text-[11px] font-bold uppercase tracking-widest">Ecopontos parceiros</span>
@@ -296,7 +296,7 @@ export function Dashboard() {
             </p>
           </div>
 
-          <div className="card-tertiary rounded-2xl p-4 flex flex-col gap-2 min-w-0">
+          <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col gap-2 min-w-0">
             <div className="flex items-center gap-2">
               <img src="/icons/lampada.svg" className="w-4 h-4 opacity-60" alt="" />
               <span className="text-slate-500 text-[11px] font-bold uppercase tracking-widest">Dica do Dia</span>
@@ -312,7 +312,7 @@ export function Dashboard() {
 
           <Link
             to="/recompensas"
-            className="lg:hidden card-tertiary rounded-2xl p-4 flex items-center justify-between gap-3 hover:bg-brand-soft transition-colors"
+            className="lg:hidden bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex items-center justify-between gap-3 hover:bg-brand-soft transition-colors"
           >
             <div className="flex items-center gap-3 min-w-0">
               <img src="/icons/trofeu.svg" className="w-6 h-6 shrink-0 opacity-80" alt="" />
@@ -336,7 +336,7 @@ export function Dashboard() {
             </h1>
           </div>
 
-          <div className="lg:hidden card-primary rounded-2xl p-4 relative overflow-hidden">
+          <div className="lg:hidden bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-4 relative overflow-hidden">
             <div className="flex items-center justify-between gap-2 mb-3">
               <div className="flex items-center gap-2">
                 <BoltIcon />
@@ -377,7 +377,7 @@ export function Dashboard() {
             </button>
           </div>
 
-          <div className="card-secondary rounded-2xl p-4 flex-1 flex flex-col">
+          <div className="bg-card-secondary border border-card-secondary-border rounded-2xl p-4 flex-1 flex flex-col">
             <div className="flex items-center justify-between mb-1">
               <h2 className="text-slate-900 font-semibold">
                 Registrar Ação
@@ -440,7 +440,7 @@ export function Dashboard() {
 
         <aside className="hidden lg:flex flex-col lg:w-75 shrink-0 gap-4">
 
-          <div className="card-tertiary rounded-2xl p-4">
+          <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4">
             <div className="flex items-center justify-between gap-2 mb-1">
               <p className="text-slate-500 text-[11px] uppercase tracking-widest">Comunidade de Amigos</p>
               <button
@@ -546,7 +546,7 @@ export function Dashboard() {
             )}
           </div>
 
-          <div className="card-tertiary rounded-2xl p-4 flex flex-col min-h-0">
+          <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col min-h-0">
             <p className="text-slate-500 text-[11px] uppercase tracking-widest mb-3">Atividade Recente</p>
             {recentHistory.length === 0 ? (
               <div className="text-center py-5">

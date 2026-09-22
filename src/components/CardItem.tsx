@@ -24,7 +24,15 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
 
   return (
     <div
-      className={`fut-card ${habilitarHover ? 'fut-hover' : ''} ${foil ? 'fut-foil' : ''} relative rounded-xl border p-1.5 pt-2 flex flex-col items-center w-full aspect-[2/3]`}
+      className={`relative overflow-hidden rounded-xl border p-1.5 pt-2 flex flex-col items-center w-full aspect-[2/3] ${
+        habilitarHover
+          ? 'transition-[transform_0.4s_cubic-bezier(0.22,1,0.36,1),box-shadow_0.4s_ease,filter_0.3s_ease] hover:z-[60] hover:[transform:perspective(800px)_translateY(-58px)_rotateZ(-7deg)_rotateX(14deg)_scale(1.16)] hover:[filter:brightness(1.12)_saturate(1.12)] hover:[box-shadow:0_34px_70px_rgba(0,0,0,0.4),0_0_34px_var(--fut-glow,var(--t-glow-card))]'
+          : ''
+      } ${
+        foil
+          ? 'after:absolute after:content-[""] after:top-[-60%] after:left-[-80%] after:w-[55%] after:h-[260%] after:rotate-[18deg] after:z-[2] after:pointer-events-none after:bg-[linear-gradient(100deg,transparent,rgba(255,255,255,0.5),transparent)] after:animate-fut-shine'
+          : ''
+      }`}
       style={{
         ['--fut-glow' as string]: glow === 'none' ? undefined : !ativa ? tier.glow : 'var(--t-glow)',
         borderColor: corBorda,
@@ -36,11 +44,11 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
       title={`${carta.nome}${foil ? ' · brilhante' : ''}`}
     >
       <div className="relative z-10 flex items-center justify-between w-full gap-1">
-        <span className="fut-chip rounded-md px-1.5 py-1 text-[9px] leading-none font-bold tracking-wide text-white/95">
+        <span className="bg-[rgba(0,0,0,0.35)] border border-white/30 backdrop-blur-[2px] rounded-md px-1.5 py-1 text-[9px] leading-none font-bold tracking-wide text-white/95">
           {`${foil ? '✨ ' : ''}${getCardLabel(carta).toUpperCase()}`}
         </span>
         <span
-          className="fut-chip rounded-md px-1.5 py-1 text-[9px] leading-none font-bold tracking-wide"
+          className="bg-[rgba(0,0,0,0.35)] border border-white/30 backdrop-blur-[2px] rounded-md px-1.5 py-1 text-[9px] leading-none font-bold tracking-wide"
           style={{ color: bloqueada ? 'rgba(255,255,255,0.5)' : tier.texto }}
         >
           {bloqueada ? `${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%` : set ? getIniciaisSet(set.id) : ''}
@@ -66,7 +74,7 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
         </span>
       </div>
 
-      <div className="relative z-10 fut-plate rounded-lg w-full px-1 py-1 text-center">
+      <div className="relative z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.28),rgba(0,0,0,0.42))] backdrop-blur-[2px] rounded-lg w-full px-1 py-1 text-center">
         <p
           className="text-xs font-semibold leading-tight text-white line-clamp-1"
           style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}

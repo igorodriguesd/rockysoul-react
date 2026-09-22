@@ -19,7 +19,7 @@ export function RecompensaDetalhe() {
   if (!recompensa) {
     return (
       <div className="max-w-150 mx-auto px-6 py-20 text-center">
-        <div className="card-secondary rounded-2xl p-8">
+        <div className="bg-card-secondary border border-card-secondary-border rounded-2xl p-8">
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Recompensa não encontrada</h1>
           <p className="text-sm text-slate-500 mb-6">O item que você procura não existe ou foi removido.</p>
           <Link
@@ -45,7 +45,7 @@ export function RecompensaDetalhe() {
         Voltar para Recompensas
       </Link>
 
-      <div className="card-primary rounded-2xl p-6 sm:p-8">
+      <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row items-start gap-4 sm:items-center mb-5">
           <div className="w-16 h-16 rounded-2xl bg-brand/15 flex items-center justify-center shrink-0">
             <img src={recompensa.icone} alt="" className="w-9 h-9" />

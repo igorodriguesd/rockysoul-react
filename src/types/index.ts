@@ -46,7 +46,7 @@ export interface Parceiro {
   localizacao: string;
   descricao: string;
   temas?: string[];
-  impactoBase?: { kg: number; vouchers: number };
+  impactoBase?: { creditos: number; cortesias: number };
   valorCortesia?: number;
 }
 

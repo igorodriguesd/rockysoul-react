@@ -72,12 +72,12 @@ export function nomeNivelPorPontos(pontos: number): string {
 export const CREDITOS_POR_REAL = 100;
 
 export const PARCEIROS: Parceiro[] = [
-  { id: 'p-adega', nome: 'Adega do Zé', tipos: ['ecoponto'], cor: '#eab308', localizacao: 'Centro', descricao: 'Recebe vidro, garrafas e retornáveis.', impactoBase: { kg: 1420, vouchers: 0 }, valorCortesia: 6 },
-  { id: 'p-ferro', nome: 'Ferro-Velho do João', tipos: ['ecoponto'], cor: '#94a3b8', localizacao: 'Zona Norte', descricao: 'Recebe metais, eletrônicos e sucata.', impactoBase: { kg: 2310, vouchers: 0 } },
-  { id: 'p-reciclava', nome: 'Recicla Vale', tipos: ['patrocinador', 'ecoponto'], cor: '#22c55e', localizacao: 'Zona Sul', descricao: 'Recebe papel, plástico e orgânico compostável.', temas: ['reciclagem', 'compostagem'], impactoBase: { kg: 3860, vouchers: 0 } },
-  { id: 'p-cafe', nome: 'Café do Vale', tipos: ['voucher'], cor: '#b45309', localizacao: 'Centro', descricao: 'Cortesia de café para quem faz a diferença.', impactoBase: { kg: 0, vouchers: 415 }, valorCortesia: 8 },
-  { id: 'p-doce', nome: 'Doce da Dona Neide', tipos: ['voucher'], cor: '#db2777', localizacao: 'Zona Leste', descricao: 'Doce artesanal que premia o impacto.', impactoBase: { kg: 0, vouchers: 268 }, valorCortesia: 6 },
-  { id: 'p-cicloverde', nome: 'CicloVerde Bikes', tipos: ['patrocinador', 'ecoponto'], cor: '#38bdf8', localizacao: 'Zona Oeste', descricao: 'Patrocina mobilidade e recebe baterias de e-bike e eletrônicos.', temas: ['bicicleta', 'transporte', 'mobilidade', 'ciclovia'], impactoBase: { kg: 640, vouchers: 0 } },
+  { id: 'p-adega', nome: 'Adega do Zé', tipos: ['ecoponto'], cor: '#eab308', localizacao: 'Centro', descricao: 'Recebe vidro, garrafas e retornáveis.', impactoBase: { creditos: 12800, cortesias: 0 }, valorCortesia: 6 },
+  { id: 'p-ferro', nome: 'Ferro-Velho do João', tipos: ['ecoponto'], cor: '#94a3b8', localizacao: 'Zona Norte', descricao: 'Recebe metais, eletrônicos e sucata.', impactoBase: { creditos: 19600, cortesias: 0 } },
+  { id: 'p-reciclava', nome: 'Recicla Vale', tipos: ['patrocinador', 'ecoponto'], cor: '#22c55e', localizacao: 'Zona Sul', descricao: 'Recebe papel, plástico e orgânico compostável.', temas: ['reciclagem', 'compostagem'], impactoBase: { creditos: 34400, cortesias: 0 } },
+  { id: 'p-cafe', nome: 'Café do Vale', tipos: ['voucher'], cor: '#b45309', localizacao: 'Centro', descricao: 'Cortesia de café para quem faz a diferença.', impactoBase: { creditos: 33000, cortesias: 415 }, valorCortesia: 8 },
+  { id: 'p-doce', nome: 'Doce da Dona Neide', tipos: ['voucher'], cor: '#db2777', localizacao: 'Zona Leste', descricao: 'Doce artesanal que premia o impacto.', impactoBase: { creditos: 27200, cortesias: 268 }, valorCortesia: 6 },
+  { id: 'p-cicloverde', nome: 'CicloVerde Bikes', tipos: ['patrocinador', 'ecoponto'], cor: '#38bdf8', localizacao: 'Zona Oeste', descricao: 'Patrocina mobilidade e recebe baterias de e-bike e eletrônicos.', temas: ['bicicleta', 'transporte', 'mobilidade', 'ciclovia'], impactoBase: { creditos: 9200, cortesias: 0 } },
   { id: 'p-renova', nome: 'Renova Energia', tipos: ['patrocinador'], cor: '#f5c451', localizacao: 'Nacional', descricao: 'Patrocina as missões de eficiência energética.', temas: ['energia', 'solar', 'eolica', 'led'] },
   { id: 'p-aguaviva', nome: 'Água Viva', tipos: ['patrocinador'], cor: '#60a5fa', localizacao: 'Nacional', descricao: 'Patrocina as missões de economia de água.', temas: ['agua', 'banho', 'captacao', 'garrafa'] },
   { id: 'p-verdecult', nome: 'Verde Cultivo', tipos: ['patrocinador'], cor: '#22c55e', localizacao: 'Rural', descricao: 'Patrocina plantio e agroflorestas.', temas: ['plantio', 'horta', 'agrofloresta'] },
@@ -128,8 +128,6 @@ export const USUARIOS_BASE: UsuarioSimulado[] = [
   { nome: 'Pedro Santos', pontos: 75 },
 ];
 
-export const ENTREGA_ESTIMADA_KG = 2;
-
 export const AMIGOS_SIMULADOS: Amigo[] = [
   { nome: 'Ana Silva', codigo: 'ANA-SILVA-01', pontos: 620, streak: 6 },
   { nome: 'Carlos Souza', codigo: 'CARLOS-02', pontos: 210, streak: 3 },
@@ -164,7 +162,7 @@ export const CURIOSIDADES: string[] = [
 export const PERGUNTAS_FAQ: { pergunta: string; resposta: string }[] = [
   { pergunta: 'Como ganhar pontos no RockySoulUp?', resposta: 'Você ganha pontos realizando ações sustentáveis como reciclar, usar transporte público, economizar água e energia, andar de bicicleta e plantar árvores. Cada ação tem um valor de pontos diferente!' },
   { pergunta: 'O que é o avatar inteligente?', resposta: 'O avatar inteligente é um assistente virtual que ajuda você a acompanhar seu progresso, sugere ações sustentáveis e responde dúvidas sobre sustentabilidade e gamificação.' },
-  { pergunta: 'Como funciona o ranking?', resposta: 'Na sua comunidade, você adiciona amigos por código e cada um aparece com pontos, nível e sequência de dias — comparando quem faz mais diferença. Fora isso, um ranking de empresas parceiras mostra quem mais recupera resíduos e concede cortesias; suas entregas e resgates fazem essas empresas subirem de posição.' },
+  { pergunta: 'Como funciona o ranking?', resposta: 'Na sua comunidade, você adiciona amigos por código e cada um aparece com pontos, nível e sequência de dias — comparando quem faz mais diferença. Fora isso, um ranking de empresas parceiras mostra quem mais movimenta créditos e concede cortesias; suas entregas e resgates fazem essas empresas subirem de posição.' },
   { pergunta: 'Preciso fazer a verificação por foto?', resposta: 'Sim! Para garantir a autenticidade das ações, solicitamos que você envie uma foto como comprovante. A verificação por GPS é opcional, mas ajuda a validar ainda mais sua ação.' },
   { pergunta: 'Como funciona o sistema de níveis?', resposta: 'Você evolui seguindo a natureza conforme acumula pontos: Semente (0-149), Broto (150-449), Árvore (450-999) e Floresta (1000+). Cada nível desbloqueia novos sets de cartas, selos e recompensas!' },
   { pergunta: 'Como converter créditos em dinheiro?', resposta: 'Seus pontos funcionam como créditos da plataforma. No conversor da página de Recompensas, você informa a quantidade de créditos (mínimo de 500) e sua chave Pix para receber o valor: a cada 100 créditos, você recebe R$1,00.' },
