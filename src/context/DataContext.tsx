@@ -1,17 +1,18 @@
 import { createContext, useContext, useCallback, type ReactNode } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import type { UserData, HistoricoEntrada, Resgate, Missao } from '../types';
-import { SELOS, NIVEIS, MISSOES } from '../data/constants';
+import { SELOS, NIVEIS, MISSOES, buscarAmigoPorCodigo, gerarCodigoAmigo } from '../data/constants';
 import { showToast } from '../components/Toast';
 
 const STORAGE_KEY = 'rocky_user_data';
 
-const BONUS_DESAFIO = 30;
+const BONUS_DESAFIO = 20;
 
 const defaultData: UserData = {
   nome: '',
   email: '',
   pontos: 0,
+  pontosAcumulados: 0,
   missoesCompletas: 0,
   pontosHoje: 0,
   dataHoje: '',
@@ -21,6 +22,8 @@ const defaultData: UserData = {
   historico: [],
   selosDesbloqueados: [],
   resgates: [],
+  impactoParceiros: {},
+  amigos: [],
 };
 
 function hojeStr(): string {
@@ -52,6 +55,10 @@ interface DataContextType {
   desafioDoDia: Missao;
   desafioBonusDisponivel: boolean;
   resgatarBonusDesafio: () => void;
+  registrarImpactoParceiro: (parceiroId: string, tipo: 'entrega' | 'resgate', creditos: number) => void;
+  addAmigo: (codigo: string) => boolean;
+  codigoAmigo: string;
+  amigos: string[];
 }
 
 const DataContext = createContext<DataContextType | null>(null);
@@ -88,15 +95,17 @@ const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: bo
 
       const novosPontos = dataAtualizada.pontos + pontos;
       const novosPontosHoje = dataAtualizada.pontosHoje + pontos;
+      const novosAcumulados = (dataAtualizada.pontosAcumulados ?? dataAtualizada.pontos) + pontos;
       const novoHistorico = [entrada, ...dataAtualizada.historico].slice(0, 50);
 
       const novosSelos = SELOS
-        .filter(s => novosPontos >= s.minPontos && !dataAtualizada.selosDesbloqueados.includes(s.id))
+        .filter(s => novosAcumulados >= s.minPontos && !dataAtualizada.selosDesbloqueados.includes(s.id))
         .map(s => s.id);
 
       return {
         ...dataAtualizada,
         pontos: novosPontos,
+        pontosAcumulados: novosAcumulados,
         missoesCompletas: contaMissao ? dataAtualizada.missoesCompletas + 1 : dataAtualizada.missoesCompletas,
         pontosHoje: novosPontosHoje,
         historico: novoHistorico,
@@ -126,18 +135,19 @@ const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: bo
   }, [setData]);
 
   const getNivel = useCallback(() => {
-    const pts = data.pontos;
+    const pts = data.pontosAcumulados ?? data.pontos;
     for (const nivel of NIVEIS) {
       if (pts >= nivel.min && pts <= nivel.max) return nivel.nome;
     }
     return NIVEIS[NIVEIS.length - 1].nome;
-  }, [data.pontos]);
+  }, [data.pontosAcumulados, data.pontos]);
 
   const getSelosDesbloqueados = useCallback(() => {
+    const pts = data.pontosAcumulados ?? data.pontos;
     return SELOS
-      .filter(s => data.pontos >= s.minPontos)
+      .filter(s => pts >= s.minPontos)
       .map(s => s.id);
-  }, [data.pontos]);
+  }, [data.pontosAcumulados, data.pontos]);
 
   const resetar = useCallback(() => {
     setData(defaultData);
@@ -157,13 +167,15 @@ const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: bo
       };
 
       const novosPontos = prev.pontos + BONUS_DESAFIO;
+      const novosAcumulados = (prev.pontosAcumulados ?? prev.pontos) + BONUS_DESAFIO;
       const novosSelos = SELOS
-        .filter(s => novosPontos >= s.minPontos && !prev.selosDesbloqueados.includes(s.id))
+        .filter(s => novosAcumulados >= s.minPontos && !prev.selosDesbloqueados.includes(s.id))
         .map(s => s.id);
 
       return {
         ...prev,
         pontos: novosPontos,
+        pontosAcumulados: novosAcumulados,
         pontosHoje: prev.pontosHoje + BONUS_DESAFIO,
         ultimoDesafio: hojeStr(),
         historico: [entrada, ...prev.historico].slice(0, 50),
@@ -173,11 +185,37 @@ const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: bo
     showToast(`+${BONUS_DESAFIO} créditos - Bônus do Desafio do Dia`);
   }, [setData]);
 
+  const registrarImpactoParceiro = useCallback((parceiroId: string, tipo: 'entrega' | 'resgate', creditos: number) => {
+    setData(prev => {
+      const atual = prev.impactoParceiros[parceiroId] ?? { entregas: 0, resgates: 0, creditos: 0 };
+      const novo: typeof atual = {
+        creditos: atual.creditos + creditos,
+        entregas: atual.entregas + (tipo === 'entrega' ? 1 : 0),
+        resgates: atual.resgates + (tipo === 'resgate' ? 1 : 0),
+      };
+      return { ...prev, impactoParceiros: { ...prev.impactoParceiros, [parceiroId]: novo } };
+    });
+  }, [setData]);
+
+  const addAmigo = useCallback((codigo: string) => {
+    const alvo = buscarAmigoPorCodigo(codigo);
+    if (!alvo) return false;
+    setData(prev => {
+      if (prev.amigos.includes(alvo.codigo)) return prev;
+      return { ...prev, amigos: [...prev.amigos, alvo.codigo] };
+    });
+    return true;
+  }, [setData]);
+
+  const codigoAmigo = gerarCodigoAmigo(data.nome);
+  const amigos = data.amigos ?? [];
+
   return (
     <DataContext.Provider value={{
       data, setNome, setEmail, adicionarPontos, adicionarBonus, subtrairPontos,
       addResgate, getNivel, getSelosDesbloqueados, resetar,
       desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio,
+      registrarImpactoParceiro, addAmigo, codigoAmigo, amigos,
     }}>
       {children}
     </DataContext.Provider>
