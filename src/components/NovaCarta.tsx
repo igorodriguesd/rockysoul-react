@@ -16,8 +16,8 @@ export default function NovaCarta({ novaCarta, foil = false }: Props) {
 
   return (
     <div className="text-center">
-      <p className="text-[#20d968] text-xl font-bold tracking-wide">NOVA CARTA!</p>
-      {foil && <p className="text-[#fde68a] text-sm font-bold tracking-wide mt-0.5">✨ VERSÃO BRILHANTE ✨</p>}
+      <p className="text-brand text-xl font-bold tracking-wide">NOVA CARTA!</p>
+      {foil && <p className="text-gold-deep text-sm font-bold tracking-wide mt-0.5">✨ VERSÃO BRILHANTE ✨</p>}
 
       <div
         className={`fut-card ${foil ? 'fut-foil' : ''} ${!foil && carta.raridade === 'lendaria' ? 'fut-legend' : ''} relative rounded-xl border mx-auto mt-3 max-w-[170px] p-2 flex flex-col items-center text-center`}
@@ -51,7 +51,7 @@ export default function NovaCarta({ novaCarta, foil = false }: Props) {
         </div>
       </div>
 
-      <p className="text-white/70 text-sm mt-3">
+      <p className="text-slate-700 text-sm mt-3">
         Coleção {obtidas}/{total} · {quimicaNova.level > 0 ? `Química Nível ${quimicaNova.level}` : 'Química não ativada'}
       </p>
 

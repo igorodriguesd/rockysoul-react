@@ -18,7 +18,7 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
   const glow = bloqueada
     ? 'none'
     : ativa
-      ? `0 0 16px rgba(32,217,104,0.6), 0 0 40px ${tier.glow}`
+      ? `0 0 16px rgba(79,70,229,0.6), 0 0 40px ${tier.glow}`
       : `0 0 12px ${tier.glow}`;
   const habilitarHover = !bloqueada && !semHover;
 
@@ -26,7 +26,7 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
     <div
       className={`fut-card ${habilitarHover ? 'fut-hover' : ''} ${foil ? 'fut-foil' : ''} relative rounded-xl border p-1.5 pt-2 flex flex-col items-center w-full aspect-[2/3]`}
       style={{
-        ['--fut-glow' as string]: glow === 'none' ? undefined : !ativa ? tier.glow : 'rgba(32,217,104,0.6)',
+        ['--fut-glow' as string]: glow === 'none' ? undefined : !ativa ? tier.glow : 'var(--t-glow)',
         borderColor: corBorda,
         boxShadow: glow,
         background: bloqueada
@@ -86,7 +86,7 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
           {!bloqueada && (
             <span
               className="rounded px-1.5 py-1 text-[9px] leading-none font-bold"
-              style={{ background: 'rgba(32,217,104,0.22)', color: foil ? '#fde68a' : '#7dffb0' }}
+              style={{ background: 'rgba(250,204,21,0.2)', color: foil ? '#fde68a' : '#FACC15' }}
             >
               +{getValorCarta(carta, foil)} créd.
             </span>

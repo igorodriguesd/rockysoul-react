@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <defs>
+    <linearGradient id="coringaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#a66cff"/>
+      <stop offset="100%" stopColor="#f5c451"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="3" width="16" height="18" rx="2.5" stroke="url(#coringaGrad)" strokeWidth="1.6"/>
+  <path d="M12 6.2l1.25 2.55 2.8.4-2.02 1.97.48 2.8L12 12.55l-2.51 1.32.48-2.8-2.02-1.97 2.8-.4z" fill="url(#coringaGrad)"/>
+  <circle cx="7.5" cy="8" r="1.1" fill="url(#coringaGrad)" opacity="0.8"/>
+  <circle cx="16.5" cy="16.5" r="1.1" fill="url(#coringaGrad)" opacity="0.8"/>
+</svg>

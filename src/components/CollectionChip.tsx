@@ -10,13 +10,13 @@ export default function CollectionChip() {
     <Link to="/colecao" className="block transition-opacity hover:opacity-90">
       <div className="glass-side rounded-2xl px-6 py-5">
         <div className="flex items-center justify-between mb-1.5">
-          <p className="text-white/50 text-xs uppercase tracking-widest font-medium">Coleção</p>
-          <span className="text-[#20d968] font-bold text-sm">{obtidas}/{total}</span>
+          <p className="text-slate-500 text-xs uppercase tracking-widest font-medium">Coleção</p>
+          <span className="text-brand font-bold text-sm">{obtidas}/{total}</span>
         </div>
         {proximo && (
-          <p className="text-white/85 text-sm font-medium leading-snug">
+          <p className="text-slate-800 text-sm font-medium leading-snug">
             Próximo set: {proximo.set.nome}
-            <span className="text-white/50"> · faltam {proximo.faltam}</span>
+            <span className="text-slate-500"> · faltam {proximo.faltam}</span>
           </p>
         )}
       </div>
