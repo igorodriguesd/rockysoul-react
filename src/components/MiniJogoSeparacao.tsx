@@ -15,16 +15,16 @@ interface Feedback {
 }
 
 const LIXEIRAS: { categoria: Categoria; nome: string; cor: string; dica: string }[] = [
-  { categoria: 'reciclavel', nome: 'Reciclável', cor: '#4ade80', dica: 'Papel, plástico e embalagens limpas.' },
+  { categoria: 'reciclavel', nome: 'Reciclável', cor: '#00E676', dica: 'Papel, plástico e embalagens limpas.' },
   { categoria: 'organico', nome: 'Orgânico', cor: '#ffc928', dica: 'Restos de comida e cascas viram adubo.' },
   { categoria: 'vidro', nome: 'Vidro', cor: '#60a5fa', dica: 'Vidro é 100% reciclável, sem perder qualidade.' },
   { categoria: 'metal', nome: 'Metal', cor: '#cbd5e1', dica: 'Alumínio e metais valem ouro na reciclagem.' },
 ];
 
 const ITENS: ItemLixo[] = [
-  { id: 'pet', nome: 'Garrafa PET', categoria: 'reciclavel', cor: '#4ade80' },
-  { id: 'copo-plastico', nome: 'Copo plástico', categoria: 'reciclavel', cor: '#34d399' },
-  { id: 'papelao', nome: 'Caixa de papelão', categoria: 'reciclavel', cor: '#86efac' },
+  { id: 'pet', nome: 'Garrafa PET', categoria: 'reciclavel', cor: '#00E676' },
+  { id: 'copo-plastico', nome: 'Copo plástico', categoria: 'reciclavel', cor: '#00E676' },
+  { id: 'papelao', nome: 'Caixa de papelão', categoria: 'reciclavel', cor: '#00E676' },
   { id: 'jornal', nome: 'Jornal', categoria: 'reciclavel', cor: '#a3e635' },
   { id: 'sacola', nome: 'Sacola plástica', categoria: 'reciclavel', cor: '#6ee7b7' },
   { id: 'casca-banana', nome: 'Casca de banana', categoria: 'organico', cor: '#fbbf24' },
@@ -120,7 +120,7 @@ function medalha(pontos: number): { nome: string; cor: string; icone: string[] }
   if (pontos >= 300) return { nome: 'Mestre da Reciclagem', cor: '#ffc928', icone: ICONE_TROFEU };
   if (pontos >= 150) return { nome: 'Reciclador', cor: '#e2e8f0', icone: ICONE_MEDALHA };
   if (pontos >= 60) return { nome: 'Aprendiz', cor: '#cd9a5b', icone: ICONE_MEDALHA };
-  return { nome: 'Começando', cor: '#4ade80', icone: ICONE_SEMENTE };
+  return { nome: 'Começando', cor: '#00E676', icone: ICONE_SEMENTE };
 }
 
 interface MiniJogoSeparacaoProps {
@@ -237,7 +237,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
       setMaxCombo(m => Math.max(m, novoCombo));
       setAcertos(a => a + 1);
       setFeedback({ tipo: 'certo', item });
-      adicionarFluxo(`+${ganho}`, '#4ade80');
+      adicionarFluxo(`+${ganho}`, '#FACC15');
       const rest = restantes.filter(i => i.id !== item.id);
       setRestantes(rest);
       if (rest.length === 0) {
@@ -270,10 +270,10 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
 
   if (compacto && !expandido) {
     return (
-      <div className="glass-strong rounded-2xl p-4 w-full relative overflow-hidden">
-        <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(#4ade80, transparent)' }} />
+      <div className="rounded-2xl p-4 w-full relative overflow-hidden" style={{ background: 'var(--t-grad-arena)', boxShadow: 'var(--t-arena-shadow)' }}>
+        <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(#38BDF8, transparent)' }} />
         <div className="relative flex items-center gap-3 flex-wrap sm:flex-nowrap">
-          <div className="text-3xl select-none text-green-300 shrink-0">
+          <div className="text-3xl select-none text-sky-300 shrink-0">
             <Icone paths={ICONE_LIXEIRA} className="w-8 h-8" />
           </div>
           <div className="flex-1 min-w-0">
@@ -293,8 +293,8 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
           </div>
           <button
             onClick={() => { setExpandido(true); iniciar(); }}
-            className="rounded-full px-5 py-2 text-sm font-bold transition-all active:scale-95 cursor-pointer"
-            style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)', color: '#0f3c22' }}
+            className="rounded-full px-5 py-2 text-sm font-bold transition-all active:scale-95 cursor-pointer hover:brightness-105"
+            style={{ background: 'var(--t-grad-arena-btn)', color: 'var(--t-on-arena-btn)', boxShadow: 'var(--t-arena-btn-shadow)' }}
 >
             Jogar
           </button>
@@ -304,7 +304,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
   }
 
   return (
-    <div className="glass-strong rounded-2xl p-5 w-full relative overflow-hidden">
+    <div className="rounded-2xl p-5 w-full relative overflow-hidden" style={{ background: 'var(--t-grad-arena)', boxShadow: 'var(--t-arena-shadow)' }}>
       <div className="flex items-center gap-3 mb-4">
         <div className="flex-1">
           <p className="text-white font-semibold">Separe o Lixo</p>
@@ -344,8 +344,8 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
           </ul>
           <button
             onClick={iniciar}
-            className="w-full rounded-full py-2.5 font-bold transition-all active:scale-95 cursor-pointer"
-            style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)', color: '#0f3c22' }}
+            className="w-full rounded-full py-2.5 font-bold transition-all active:scale-95 cursor-pointer hover:brightness-105"
+            style={{ background: 'var(--t-grad-arena-btn)', color: 'var(--t-on-arena-btn)', boxShadow: 'var(--t-arena-btn-shadow)' }}
           >
             Começar
           </button>
@@ -356,9 +356,9 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
         <>
           <div className="flex items-center gap-2 mb-3 flex-wrap">
             <span className="text-sm text-white/70">Fase {fase}/3</span>
-            <div className="h-1.5 flex-1 min-w-[80px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+            <div className="h-1.5 flex-1 min-w-[80px] rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.18)' }}>
               <div className="h-full rounded-full transition-all duration-300"
-                style={{ width: `${tempoPct}%`, background: tempo <= 5 ? '#f87171' : '#4ade80' }} />
+                style={{ width: `${tempoPct}%`, background: tempo <= 5 ? '#f87171' : 'var(--color-brand-3)' }} />
             </div>
             <span className={`text-sm font-bold inline-flex items-center gap-1 ${tempo <= 5 ? 'text-red-400' : 'text-white/70'}`}>
               <Icone paths={ICONE_RELOGIO} className="w-4 h-4" />{tempo}s
@@ -382,9 +382,9 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
             </span>
           </div>
 
-          <div className="flex flex-wrap gap-2 min-h-[56px] mb-3 items-center justify-center p-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.04)' }}>
+          <div className="flex flex-wrap gap-2 min-h-[56px] mb-3 items-center justify-center p-2 rounded-xl" style={{ background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)' }}>
             {restantes.length === 0 ? (
-              <p className="text-green-300 text-sm font-medium inline-flex items-center gap-1.5">
+              <p className="text-sky-300 text-sm font-medium inline-flex items-center gap-1.5">
                 <Icone paths={ICONE_CHECK} className="w-4 h-4" />Fase concluída!
               </p>
             ) : (
@@ -394,8 +394,8 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
                   draggable
                   onDragStart={(e) => e.dataTransfer.setData('text/plain', item.id)}
                   onClick={() => setSelecionado(s => (s === item.id ? null : item.id))}
-                  className={`select-none rounded-xl px-3 py-2 flex items-center gap-2 cursor-grab active:cursor-grabbing shadow-lg transition-all hover:scale-105 ${selecionado === item.id ? 'ring-2 ring-green-300' : ''}`}
-                  style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(74,222,128,0.25)' }}
+                  className={`select-none rounded-xl px-3 py-2 flex items-center gap-2 cursor-grab active:cursor-grabbing shadow-lg transition-all hover:scale-105 ${selecionado === item.id ? 'ring-2 ring-sky-300' : ''}`}
+                  style={{ background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)' }}
                 >
                   <span className="w-7 h-7 rounded-full grid place-items-center shrink-0" style={{ background: `${item.cor}22`, border: `1px solid ${item.cor}55`, color: item.cor }}>
                     <Icone paths={ICONE_ITEM[item.id] ?? ICONE_CATEGORIA[item.categoria]} className="w-4 h-4" />
@@ -441,12 +441,12 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
           </div>
 
           {feedback && (
-            <div className={`mt-3 text-sm font-semibold text-center rounded-xl p-2.5 inline-flex items-center gap-1.5 w-full justify-center ${feedback.tipo === 'certo' ? 'text-green-300' : 'text-red-400'}`}
-              style={{ background: feedback.tipo === 'certo' ? 'rgba(74,222,128,0.08)' : 'rgba(248,113,113,0.08)' }}>
+            <div className={`mt-3 text-sm font-semibold text-center rounded-xl p-2.5 inline-flex items-center gap-1.5 w-full justify-center ${feedback.tipo === 'certo' ? 'text-sky-300' : 'text-red-400'}`}
+              style={{ background: feedback.tipo === 'certo' ? 'rgba(255,255,255,0.14)' : 'rgba(248,113,113,0.12)' }}>
               {feedback.tipo === 'certo' ? (
                 <>
                   <Icone paths={ICONE_CHECK} className="w-4 h-4" />
-                  <span>Certo! <span className="text-green-200">{feedback.item?.nome}</span> vai aí mesmo</span>
+                  <span>Certo! <span className="text-sky-200">{feedback.item?.nome}</span> vai aí mesmo</span>
                 </>
               ) : (
                 <>{feedback.item?.nome} <span className="text-white/70">na verdade vai no</span> <b>{LIXEIRAS.find(l => l.categoria === feedback.item?.categoria)?.nome}</b> — agora você aprendeu!</>
@@ -472,7 +472,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
           </div>
           <p className="text-white font-bold font-serif-display text-xl">{medalhaInfo.nome}</p>
           <p className="text-white/50 text-sm mt-0.5">{acertos} acertos · {erros} erros · combo máx ×{maxCombo}</p>
-          <p className="text-green-300 font-serif-display text-3xl mt-2">{pontuacao} pts</p>
+          <p className="text-sun font-serif-display text-3xl mt-2">{pontuacao} pts</p>
           {pontuacao === melhor && pontuacao > 0 && (
             <p className="text-sun text-xs font-bold mt-1 inline-flex items-center gap-1">
               <Icone paths={ICONE_ESTRELA} className="w-4 h-4" />NOVO RECORDE!
@@ -480,7 +480,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
           )}
           <div className="flex flex-wrap justify-center gap-1.5 mt-4">
             {recordes.length > 0 && (
-              <div className="rounded-xl px-3 py-1.5" style={{ background: 'rgba(255,255,255,0.05)' }}>
+              <div className="rounded-xl px-3 py-1.5" style={{ background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)' }}>
                 <p className="text-white/40 text-[10px] uppercase tracking-widest">Top 5</p>
                 <div className="flex gap-1.5 mt-0.5 justify-center">
                   {recordes.map((r, i) => (
@@ -489,23 +489,23 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
                 </div>
               </div>
             )}
-            <div className="rounded-xl px-3 py-1.5" style={{ background: 'rgba(255,255,255,0.05)' }}>
+            <div className="rounded-xl px-3 py-1.5" style={{ background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)' }}>
               <p className="text-white/40 text-[10px] uppercase tracking-widest">Modo treino</p>
-              <p className="text-green-300 text-sm font-bold mt-0.5">Não soma recompensa</p>
+              <p className="text-sky-300 text-sm font-bold mt-0.5">Não soma recompensa</p>
             </div>
           </div>
           <div className="mt-4 flex items-center justify-center gap-2">
             <button
               onClick={iniciar}
-              className="rounded-full px-6 py-2 text-sm font-bold transition-all active:scale-95 cursor-pointer"
-              style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)', color: '#0f3c22' }}
+              className="rounded-full px-6 py-2 text-sm font-bold transition-all active:scale-95 cursor-pointer hover:brightness-105"
+              style={{ background: 'var(--t-grad-arena-btn)', color: 'var(--t-on-arena-btn)', boxShadow: 'var(--t-arena-btn-shadow)' }}
             >
               Jogar novamente
             </button>
             {compacto && (
               <button
                 onClick={recolher}
-                className="rounded-full px-4 py-2 text-sm font-semibold text-white/60 border border-white/15 transition-all hover:bg-white/5 active:scale-95 cursor-pointer"
+                className="rounded-full px-4 py-2 text-sm font-semibold text-white border border-white/40 transition-all hover:bg-white/10 active:scale-95 cursor-pointer"
               >
                 Recolher
               </button>
