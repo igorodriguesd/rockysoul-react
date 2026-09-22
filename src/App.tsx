@@ -9,6 +9,7 @@ import { Dashboard } from './pages/Dashboard';
 import { Solucao } from './pages/Solucao';
 import { Recompensas } from './pages/Recompensas';
 import { RecompensaDetalhe } from './pages/RecompensaDetalhe';
+import { Parceiros } from './pages/Parceiros';
 import { Sobre } from './pages/Sobre';
 import { Faq } from './pages/Faq';
 import { Integrantes } from './pages/Integrantes';
@@ -33,6 +34,7 @@ export default function App() {
                 <Route path="solucao" element={<Solucao />} />
                 <Route path="recompensas" element={<Recompensas />} />
                 <Route path="recompensas/:id" element={<RecompensaDetalhe />} />
+                <Route path="parceiros" element={<Parceiros />} />
                 <Route path="sobre" element={<Sobre />} />
                 <Route path="faq" element={<Faq />} />
                 <Route path="integrantes" element={<Integrantes />} />
