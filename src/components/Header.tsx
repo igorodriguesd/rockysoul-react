@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useColecao } from '../context/CollectionContext';
 import { CREDITOS_POR_REAL } from '../data/constants';
@@ -40,15 +40,6 @@ const linksSecundarios = [
   { to: '/contato', label: 'Contato' },
 ];
 
-const CORES_LINKS = [
-  '#22c55e', '#14b8a6', '#3b82f6', '#6366f1', '#a855f7',
-  '#db2777', '#f43f5e', '#f59e0b', '#eab308', '#84cc16',
-];
-
-function corPorIndice(indice: number): string {
-  return CORES_LINKS[((indice % CORES_LINKS.length) + CORES_LINKS.length) % CORES_LINKS.length];
-}
-
 export default function Header() {
   const [menuAberto, setMenuAberto] = useState(false);
   const [usuarioAberto, setUsuarioAberto] = useState(false);
@@ -61,13 +52,8 @@ export default function Header() {
   const { data, getNivel, resetar } = useData();
   const { colecao, getValorTotal } = useColecao();
   const navigate = useNavigate();
-  const location = useLocation();
   const avatarRef = useRef<HTMLDivElement>(null);
   const maisRef = useRef<HTMLDivElement>(null);
-
-  const todosLinks = [...links, ...linksSecundarios];
-  const indiceAtivo = todosLinks.findIndex(l => l.to === '/' ? location.pathname === '/' : location.pathname.startsWith(l.to));
-  const corHeader = corPorIndice(indiceAtivo >= 0 ? indiceAtivo : 0);
 
   const usuarioLogado = Boolean(data.nome.trim());
 
@@ -136,15 +122,7 @@ export default function Header() {
 
   return (
     <>
-      <header
-        className="fixed top-4 left-1/2 -translate-x-1/2 z-100 w-[calc(100%-2rem)] max-w-275 px-5 sm:px-6 py-4 flex items-center justify-between rounded-3xl bg-(--t-header) backdrop-blur-xl border border-(--t-header-border) shadow-(--t-header-shadow) box-border"
-        style={{
-          background: `linear-gradient(135deg, color-mix(in srgb, ${corHeader} 62%, var(--t-header)), color-mix(in srgb, ${corHeader} 34%, var(--t-header)))`,
-          borderColor: `color-mix(in srgb, ${corHeader} 80%, var(--t-header-border))`,
-          boxShadow: `0 12px 34px color-mix(in srgb, ${corHeader} 45%, transparent)`,
-          transition: 'background 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease',
-        }}
-      >
+      <header className="fixed top-4 left-1/2 -translate-x-1/2 z-100 w-[calc(100%-2rem)] max-w-275 px-5 sm:px-6 py-4 flex items-center justify-between rounded-3xl bg-(--t-header) backdrop-blur-xl border border-(--t-header-border) shadow-(--t-header-shadow) box-border">
         <NavLink to="/" className="flex items-center gap-2 shrink-0">
           <img src="/imagens/logo.png" alt="RockySoulUp" className="h-7 w-auto opacity-90" />
           <span
@@ -164,9 +142,8 @@ export default function Header() {
                 end={link.to === '/'}
                 onClick={() => { setUsuarioAberto(false); setMaisAberto(false); }}
                 className={({ isActive }) =>
-                  `px-1 py-1.5 text-sm font-semibold transition-all ${isActive ? 'border-b-2' : 'text-slate-600 hover:text-brand'}`
+                  `px-1 py-1.5 text-sm font-semibold transition-all ${isActive ? 'text-brand border-b-2 border-brand' : 'text-slate-600 hover:text-brand'}`
                 }
-                style={({ isActive }) => isActive ? { color: corHeader, borderColor: corHeader } : undefined}
               >
                 {link.label}
               </NavLink>
