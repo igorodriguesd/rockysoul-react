@@ -219,7 +219,7 @@ function PassoCard({ passo, navigate }: PassoCardProps) {
         <div className="relative shrink-0">
           <div
             className="w-11 h-11 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3"
-            style={{ background: 'var(--t-grad-brand)', boxShadow: '0 6px 18px var(--t-glow)' }}
+            style={{boxShadow: '0 6px 18px var(--t-glow)' }}
           >
             <img src={passo.icone} alt="" className="w-6 h-6" />
           </div>

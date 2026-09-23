@@ -140,7 +140,7 @@ export default function Header() {
         className="fixed top-4 left-1/2 -translate-x-1/2 z-100 w-[calc(100%-2rem)] max-w-275 px-5 sm:px-6 py-4 flex items-center justify-between rounded-3xl bg-(--t-header) backdrop-blur-xl border border-(--t-header-border) shadow-(--t-header-shadow) box-border"
         style={{
           background: `linear-gradient(135deg, color-mix(in srgb, ${corHeader} 62%, var(--t-header)), color-mix(in srgb, ${corHeader} 34%, var(--t-header)))`,
-          borderColor: `color-mix(in srgb, ${corHeader} 80%, var(--t-header-border))`,
+          borderColor: `color-mix(${corHeader} 80%, var(--t-header-border))`,
           boxShadow: `0 12px 34px color-mix(in srgb, ${corHeader} 45%, transparent)`,
           transition: 'background 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease',
         }}
