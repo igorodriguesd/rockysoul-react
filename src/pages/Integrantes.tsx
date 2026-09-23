@@ -10,13 +10,13 @@ export function Integrantes() {
       <p className="text-center text-white/70 mb-2">Conheça a equipe por trás do RockySoulUp</p>
       <p className="text-center text-sm text-gold font-medium mb-10">Turma 1TDSPK — FIAP 2026</p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {INTEGRANTES.map(m => (
           <div key={m.rm} className="bg-card-secondary border border-card-secondary-border rounded-2xl p-6 text-center hover:shadow-md transition-all hover:scale-[1.02] flex flex-col">
             <img
               src={m.foto}
               alt={m.nome}
-              className="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-brand/30"
+              className="w-35 h-35 rounded-full object-cover mx-auto mb-4 border-4 border-brand/30"
             />
             <h3 className="font-bold  text-sm">{m.nome}</h3>
             <p className="text-xs text-brand font-medium mt-1 mb-4">{m.rm}</p>
