@@ -7,8 +7,8 @@ import type { RaridadeCarta } from '../types';
 const PASSOS = [
   { icon: '/icons/reciclagem.svg', titulo: 'Registre sua ação', texto: 'Escolha uma das ações sustentáveis no Dashboard e informe o que você realizou hoje.' },
   { icon: '/icons/camera.svg', titulo: 'Verificação por foto', texto: 'Envie uma foto como comprovante da ação. A localização GPS é opcional e reforça a validação.' },
-  { icon: '/icons/trofeu.svg', titulo: 'Ganhe pontos e níveis', texto: 'Cada ação vale pontos. Acumule para evoluir de Semente até Floresta e desbloquear sets de cartas e selos.' },
-  { icon: '/icons/carrinho.svg', titulo: 'Resgate recompensas', texto: `Troque seus pontos por recompensas reais em um catálogo com ${RECOMPENSAS.length} opções.` },
+  { icon: '/icons/trofeu.svg', titulo: 'Ganhe XP e níveis', texto: 'Cada ação vale XP. Acumule para evoluir de Broto até Floresta e desbloquear sets de cartas e selos.' },
+  { icon: '/icons/carrinho.svg', titulo: 'Resgate recompensas', texto: `Troque seus créditos por recompensas reais em um catálogo com ${RECOMPENSAS.length} opções.` },
   { icon: '/icons/arvore.svg', titulo: 'Acompanhe o impacto', texto: 'Visualize o CO₂ evitado, as árvores equivalentes e sua posição no ranking da comunidade.' },
 ];
 
@@ -98,12 +98,12 @@ export function Solucao() {
         <h3 className="font-bold text-slate-900 text-sm mb-3">Sets e Química</h3>
         <div className="flex flex-col gap-2 mb-3">
           {SETS_CARTAS.map(set => (
-            <div key={set.id} className="flex items-center gap-3 rounded-xl px-3 py-2" style={{ background: 'var(--t-mist)', border: '1px solid rgba(99,102,241,0.15)' }}>
+            <div key={set.id} className="flex items-center gap-3 rounded-xl px-3 py-2" style={{ background: 'var(--t-collection-bg)', border: '1px solid rgba(109,79,194,0.35)' }}>
               <span className="w-2 h-2 rounded-full shrink-0" style={{ background: set.cor }} />
               <img src={set.icone} alt="" className="w-4 h-4" />
               <span className="text-sm text-slate-700 font-medium">{set.nome}</span>
               {set.pontosMin > 0 && (
-                <span className="text-[10px] font-semibold text-amber-600 shrink-0">desde {nomeNivelPorPontos(set.pontosMin)}</span>
+                <span className="text-[10px] font-semibold text-gold shrink-0">desde {nomeNivelPorPontos(set.pontosMin)}</span>
               )}
               <span className="text-[10px] text-slate-500 ml-auto">{set.tema}</span>
             </div>
@@ -123,7 +123,7 @@ export function Solucao() {
               <div key={selo.id} className="flex flex-col items-center gap-1.5 flex-1">
                 <img src={selo.icone} alt="" className="w-9 h-9" />
                 <span className="text-[10px] text-slate-500 text-center leading-tight">{selo.nome}</span>
-                <span className="text-[9px] text-brand font-semibold">{selo.minPontos > 0 ? `${selo.minPontos} pts` : 'desde o início'}</span>
+                <span className="text-[9px] text-brand font-semibold">{selo.minPontos > 0 ? `${selo.minPontos} XP` : 'desde o início'}</span>
                 {i < SELOS.length - 1 && <div className="hidden" aria-hidden="true" />}
               </div>
             ))}
