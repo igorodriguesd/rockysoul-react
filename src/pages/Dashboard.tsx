@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { MISSOES, CURIOSIDADES, RECOMPENSAS, PARCEIROS, BONUS_ECOPONTO, AMIGOS_SIMULADOS } from '../data/constants';
+import { MISSOES, CURIOSIDADES, RECOMPENSAS, PARCEIROS, CO2_POR_MISSAO, AMIGOS_SIMULADOS, NIVEIS, TRILHA_EVOLUCAO } from '../data/constants';
 import VerificarModal from '../components/VerificarModal';
+import TrilhaEvolucaoModal from '../components/TrilhaEvolucaoModal';
 import MiniJogoSeparacao from '../components/MiniJogoSeparacao';
-import { TermoAjuda } from '../components/TermoAjuda';
+import { useColecao } from '../context/CollectionContext';
 import { showToast } from '../components/Toast';
 
 interface AtividadeItem {
@@ -63,28 +64,36 @@ const MISSAO_COR_MAP: Record<string, string> = {
   agrofloresta: 'var(--color-brand)',
 };
 
-const NIVEL_ICONE: Record<string, string> = {
-  Semente: '/icons/semente.svg',
-  Broto: '/icons/folha.svg',
-  'Árvore': '/icons/arvore.svg',
-  Floresta: '/icons/floresta.svg',
-};
+const CATEGORIA_CASA = ['energia', 'agua', 'banho', 'captacao', 'compostagem', 'led', 'horta'];
+const CATEGORIA_MOBILIDADE = ['transporte', 'bicicleta', 'mobilidade', 'ciclovia'];
+const CATEGORIA_ENERGIA = ['energia', 'solar', 'eolica', 'led', 'mobilidade'];
+const CATEGORIA_NATUREZA = ['plantio', 'horta', 'agrofloresta', 'captacao', 'compostagem'];
+
+const FILTROS_MISSOES = [
+  { id: 'todas', label: 'Todas', matcher: () => true },
+  { id: 'casa', label: 'Casa', matcher: (id: string) => CATEGORIA_CASA.includes(id) },
+  { id: 'mobilidade', label: 'Mobilidade', matcher: (id: string) => CATEGORIA_MOBILIDADE.includes(id) },
+  { id: 'energia', label: 'Energia', matcher: (id: string) => CATEGORIA_ENERGIA.includes(id) },
+  { id: 'natureza', label: 'Natureza', matcher: (id: string) => CATEGORIA_NATUREZA.includes(id) },
+];
+
+const MISSOES_DESTAQUE = ['reciclagem', 'bicicleta', 'agua', 'energia', 'plantio', 'consumo'];
+const INICIAIS_VISIVEIS = 9;
+const META_ACOES_MES = 50;
+
+const PERIODOS_GRAFICO = [
+  { id: '7', label: '7 dias', dias: 7 },
+  { id: '30', label: '30 dias', dias: 30 },
+  { id: 'tudo', label: 'Tudo', dias: 0 },
+];
 
 function getGreeting(nivel: string): string {
-  switch (nivel) {
-    case 'Semente': return 'Continue plantando sementes!';
-    case 'Broto': return 'Você está crescendo!';
-    case 'Árvore': return 'Que impacto incrível!';
-    case 'Floresta': return 'Você é uma verdadeira guardiã do planeta!';
-    default: return 'Bem-vindo!';
+    switch (nivel) {
+    case 'Broto': return 'Você está crescendo.';
+    case 'Árvore': return 'Seu impacto está florescendo.';
+    case 'Floresta': return 'Você é uma verdadeira guardiã do planeta.';
+    default: return 'Vamos transformar o mundo juntos.';
   }
-}
-
-function nivelPorPontos(pontos: number): string {
-  if (pontos >= 1000) return 'Floresta';
-  if (pontos >= 450) return 'Árvore';
-  if (pontos >= 150) return 'Broto';
-  return 'Semente';
 }
 
 function parseData(raw: string): Date {
@@ -125,12 +134,28 @@ function hojeStr(): string {
   return `${d.getFullYear()}-${mm}-${dd}`;
 }
 
+const NOMES_DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
+function chaveDia(data: Date): string {
+  const mm = String(data.getMonth() + 1).padStart(2, '0');
+  const dd = String(data.getDate()).padStart(2, '0');
+  return `${data.getFullYear()}-${mm}-${dd}`;
+}
+
+function inicioDoDia(data: Date): Date {
+  return new Date(data.getFullYear(), data.getMonth(), data.getDate());
+}
 
 export function Dashboard() {
   const { data, getNivel, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio, addAmigo, codigoAmigo, amigos } = useData();
+  const { getProgressoTotal } = useColecao();
   const [missaoSelecionada, setMissaoSelecionada] = useState<(typeof MISSOES)[0] | null>(null);
   const [codigoInput, setCodigoInput] = useState('');
+  const [filtroMissoes, setFiltroMissoes] = useState('todas');
+  const [verTodas, setVerTodas] = useState(false);
+  const [periodoGrafico, setPeriodoGrafico] = useState('7');
+  const [mostrarEvolucao, setMostrarEvolucao] = useState(false);
+  const missoesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.title = 'RockySoulUp - Dashboard';
@@ -175,7 +200,6 @@ export function Dashboard() {
   const patrocinadorDesafio =
     PARCEIROS.find(p => p.tipos.includes('patrocinador') && p.temas?.includes(desafioDoDia.id))
     ?? PARCEIROS.find(p => p.tipos.includes('patrocinador'));
-  const ecopontos = PARCEIROS.filter(p => p.tipos.includes('ecoponto'));
 
   const amigosAdicionados = AMIGOS_SIMULADOS
     .filter(a => amigos.includes(a.codigo))
@@ -206,8 +230,105 @@ export function Dashboard() {
   );
   const desafioFeito = feitasHoje.has(desafioDoDia.nome);
 
+  const { obtidas: cartasObtidas, total: totalCartas } = getProgressoTotal();
+
+  const missoesFiltradas = useMemo(() => {
+    const matcher = FILTROS_MISSOES.find(f => f.id === filtroMissoes) ?? FILTROS_MISSOES[0];
+    const lista = MISSOES.filter(m => matcher.matcher(m.id));
+    if (filtroMissoes === 'todas') {
+      lista.sort((a, b) => {
+        const ia = MISSOES_DESTAQUE.indexOf(a.id);
+        const ib = MISSOES_DESTAQUE.indexOf(b.id);
+        if (ia === -1 && ib === -1) return 0;
+        if (ia === -1) return 1;
+        if (ib === -1) return -1;
+        return ia - ib;
+      });
+    }
+    return lista;
+  }, [filtroMissoes]);
+
+  const missoesVisiveis = verTodas ? missoesFiltradas : missoesFiltradas.slice(0, INICIAIS_VISIVEIS);
+  const totalFiltro = missoesFiltradas.length;
+
   const nomeExibido = data.nome.trim() || 'USUÁRIO';
   const inicial = data.nome.trim() ? data.nome[0].toUpperCase() : 'I';
+
+  const pontos = data.pontosAcumulados ?? data.pontos ?? 0;
+  const idxNivel = Math.max(0, NIVEIS.findIndex(n => pontos >= n.min && pontos <= n.max));
+  const nivelAtual = idxNivel === -1 ? NIVEIS[NIVEIS.length - 1] : NIVEIS[idxNivel];
+  const nivelProx = (idxNivel >= 0 && idxNivel < NIVEIS.length - 1) ? NIVEIS[idxNivel + 1] : null;
+  const xpNoNivel = Math.max(0, pontos - nivelAtual.min);
+  const xpTotalNivel = nivelProx ? nivelProx.min - nivelAtual.min : null;
+  const pctNivel = xpTotalNivel ? Math.min(100, Math.max(0, Math.round((xpNoNivel / xpTotalNivel) * 100))) : 100;
+  const xpFaltando = xpTotalNivel ? Math.max(0, xpTotalNivel - xpNoNivel) : 0;
+
+  const impactoMes = useMemo(() => {
+    const agora = new Date();
+    const inicioMes = new Date(agora.getFullYear(), agora.getMonth(), 1).getTime();
+    const fimMes = new Date(agora.getFullYear(), agora.getMonth() + 1, 0).getTime();
+
+    let acoes = 0;
+    let co2 = 0;
+    data.historico.forEach(h => {
+      const t = parseData(h.data).getTime();
+      if (t < inicioMes || t > fimMes) return;
+      acoes++;
+      const id = getMissaoIdByName(h.nome);
+      if (!id) return;
+      co2 += CO2_POR_MISSAO[id] ?? 0;
+    });
+    return { acoes, co2 };
+  }, [data.historico]);
+
+  const co2MesFormatado = impactoMes.co2.toFixed(1).replace('.', ',');
+  const arvoresEquivalentes = Math.floor(impactoMes.co2 / 22);
+  const pctMetaMes = Math.min(100, Math.round((impactoMes.acoes / META_ACOES_MES) * 100));
+
+  const graficoImpacto = useMemo(() => {
+    const cfg = PERIODOS_GRAFICO.find(p => p.id === periodoGrafico) ?? PERIODOS_GRAFICO[0];
+    const hoje = inicioDoDia(new Date());
+
+    const porDia = new Map<string, number>();
+    data.historico.forEach(h => {
+      const d = parseData(h.data);
+      if (isNaN(d.getTime())) return;
+      const dia = inicioDoDia(d).getTime();
+      if (cfg.dias > 0 && dia < hoje.getTime() - (cfg.dias - 1) * 86400000) return;
+      if (dia > hoje.getTime()) return;
+      const id = getMissaoIdByName(h.nome);
+      if (!id) return;
+      const co2 = CO2_POR_MISSAO[id] ?? 0;
+      if (co2 <= 0) return;
+      const k = chaveDia(d);
+      porDia.set(k, (porDia.get(k) ?? 0) + co2);
+    });
+
+    const dias: { rotulo: string; valor: number }[] = [];
+    const primeiroDia = cfg.dias > 0
+      ? new Date(hoje.getTime() - (cfg.dias - 1) * 86400000)
+      : (() => {
+          const chaves = [...porDia.keys()].sort();
+          if (chaves.length === 0) return hoje;
+          const [y, m, d] = chaves[0].split('-').map(Number);
+          return new Date(y, m - 1, d);
+        })();
+
+    const cursor = new Date(primeiroDia);
+    while (cursor.getTime() <= hoje.getTime()) {
+      const valor = porDia.get(chaveDia(cursor)) ?? 0;
+      dias.push({
+        rotulo: cfg.dias === 7 ? NOMES_DIAS[cursor.getDay()] : String(cursor.getDate()),
+        valor: Math.round(valor * 10) / 10,
+      });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    const max = Math.max(0.1, ...dias.map(d => d.valor));
+    return { dias, max };
+  }, [data.historico, periodoGrafico]);
+
+  const totalPeriodo = graficoImpacto.dias.reduce((s, d) => s + d.valor, 0);
 
   function handleMissao(missao: (typeof MISSOES)[0]) {
     setMissaoSelecionada(missao);
@@ -224,187 +345,194 @@ export function Dashboard() {
     }
   }
 
+  const chips = [
+    { rotulo: 'Créditos', valor: data.pontos.toLocaleString('pt-BR'), icone: '/icons/trofeu.svg' },
+    { rotulo: 'Sequência', valor: `${data.streak}d`, icone: '/icons/folha.svg' },
+    { rotulo: 'Cartas', valor: `${cartasObtidas}/${totalCartas}`, icone: '/icons/coringa.svg' },
+  ];
+
   return (
     <div className="min-h-screen">
-      <div className="max-w-[1700px] mx-auto px-4 sm:px-6 py-4 lg:py-6 flex flex-col lg:flex-row gap-4">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 lg:py-6 flex flex-col gap-5">
 
-        <aside className="hidden lg:flex flex-col lg:w-75 shrink-0 gap-4">
+        <Link
+          to="/recompensas"
+          className="lg:hidden bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex items-center justify-between gap-3 hover:bg-brand-soft transition-colors"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <img src="/icons/trofeu.svg" className="w-6 h-6 shrink-0 opacity-80" alt="" />
+            <p className="text-slate-600 text-sm leading-snug">
+              Seus créditos valem <strong className="text-brand">recompensas</strong> e{" "}
+              <strong className="text-gold-deep">Pix</strong>
+            </p>
+          </div>
+          <span className="text-brand text-xs font-bold flex items-center gap-1 shrink-0">
+            Ver
+            <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </span>
+        </Link>
 
-          <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-4 relative overflow-hidden">
-            <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(var(--color-brand), transparent)' }} />
-            <div className="flex items-center gap-2 mb-3">
-              <BoltIcon />
-              <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Desafio do Dia</span>
-            </div>
-            <div className="flex items-center gap-3 mb-3">
-              <img src={desafioDoDia.icone} className="w-10 h-10 shrink-0" alt="" />
-              <div className="flex-1 min-w-0">
-                <p className="text-slate-900 font-semibold text-base truncate">{desafioDoDia.nome}</p>
-                <p className="text-slate-500 text-sm">
-                  +{desafioDoDia.pontos} pts · verificação por foto
-                </p>
-              </div>
-            </div>
-            <div className="mb-3">
-              <span className="text-[#ffc928]/80 text-xs">
-                {desafioBonusDisponivel ? 'Bônus extra disponível' : 'bônus já resgatado'}
+        {/* ===================== PROGRESSO (protagonista) ===================== */}
+        <div className="relative overflow-hidden rounded-3xl p-5 sm:p-7 [background:var(--t-grad-strong)] shadow-[0_14px_40px_rgba(0,230,118,0.28)]">
+          <div
+            className="pointer-events-none absolute -top-16 -right-10 w-64 h-64 rounded-full opacity-20"
+            style={{ background: 'radial-gradient(circle, #fff, transparent 70%)' }}
+          />
+          <div
+            className="pointer-events-none absolute -bottom-20 -left-10 w-56 h-56 rounded-full opacity-10"
+            style={{ background: 'radial-gradient(circle, var(--color-brand-3), transparent 70%)' }}
+          />
+
+          <div className="relative flex flex-col gap-5">
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
+              <p className="text-white/60 text-sm">Bom dia,</p>
+              <h1 className="text-white font-serif-display" style={{ fontSize: 26 }}>{nomeExibido}</h1>
+              <span className="inline-flex items-center gap-1.5 text-white/80 text-sm font-medium mt-0.5">
+                {getGreeting(nivel)}
+                {TRILHA_EVOLUCAO[idxNivel] && <img src={TRILHA_EVOLUCAO[idxNivel].icone} className="w-4 h-4" alt="" />}
               </span>
             </div>
-            {patrocinadorDesafio && (
-              <div className="flex items-center gap-1.5 mb-3 rounded-lg px-2.5 py-1.5 w-fit" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
-                <span className="w-2 h-2 rounded-full shrink-0" style={{ background: patrocinadorDesafio.cor }} />
-                <span className="text-[10px] uppercase tracking-wider text-slate-600">
-                  Desafio do dia patrocinado por <strong className="text-slate-800">{patrocinadorDesafio.nome}</strong>
-                </span>
-              </div>
-            )}
-            <button
-              onClick={handleAcaoDesafio}
-              disabled={desafioFeito}
-              className={`w-full rounded-full font-semibold text-sm py-2.5 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${desafioFeito ? '' : 'animate-pulse-glow'}`}
-              style={{
-                background: desafioFeito ? 'var(--t-mist)' : 'var(--t-grad-strong)',
-                color: desafioFeito ? 'var(--color-brand)' : '#FFFFFF',
-                border: desafioFeito ? '1px solid var(--t-brand-border)' : 'none',
-                boxShadow: desafioFeito ? 'none' : '0 8px 24px rgba(79,70,229,0.35)',
-              }}
-            >
-              {desafioFeito && <img src="/icons/check.svg" className="w-3.5 h-3.5" alt="" />}
-              {desafioFeito ? 'Concluído' : 'Cumprir desafio'}
-            </button>
-          </div>
 
-          <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <img src="/icons/localizacao.svg" className="w-4 h-4 opacity-60" alt="" />
-              <span className="text-slate-500 text-[11px] font-bold uppercase tracking-widest">Ecopontos parceiros</span>
+            <div className="flex flex-col lg:flex-row lg:items-center gap-5">
+              <div className="min-w-0">
+                <p className="text-white/70 text-[11px] font-bold uppercase tracking-widest">{nivelAtual.nome}</p>
+                <p className="text-white font-serif-display leading-none mt-1 tabular-nums" style={{ fontSize: 'clamp(36px, 4.5vw, 52px)' }}>
+                  {pontos.toLocaleString('pt-BR')}
+                  <span className="text-white/65 text-lg font-bold ml-1.5">/ {nivelProx ? nivelProx.min.toLocaleString('pt-BR') : 'máx'} XP</span>
+                </p>
+                <p className="text-white/75 text-sm font-medium mt-1.5">
+                  {xpFaltando > 0 ? `Faltam ${xpFaltando.toLocaleString('pt-BR')} XP para ${nivelProx?.nome ?? 'o topo'}` : 'Você atingiu o nível máximo!'}
+                </p>
+              </div>
+
+              <div className="flex-1 w-full min-w-0">
+                <div className="flex items-center justify-between text-[11px] font-bold text-white/80 mb-1.5 uppercase tracking-wider">
+                  <span>{nivelAtual.nome}</span>
+                  <span>{nivelProx ? nivelProx.nome : 'Máximo'}</span>
+                </div>
+                <div className="relative h-3.5 rounded-full overflow-hidden bg-white/20">
+                  <div className="h-full rounded-full bg-white transition-all duration-700" style={{ width: `${pctNivel}%` }} />
+                </div>
+                <div className="flex items-center justify-between mt-1.5">
+                  <span className="text-white/75 text-[11px] font-semibold tabular-nums">{pctNivel}% concluído</span>
+                  <button
+                    onClick={() => setMostrarEvolucao(true)}
+                    className="text-white/85 hover:text-white text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    Ver trilha completa
+                    <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2 mt-4">
+                  {TRILHA_EVOLUCAO.map((etapa, i) => {
+                    const ehAlvo = !!nivelProx && i === idxNivel + 1;
+                    const chegado = i < idxNivel || i === idxNivel;
+                    const visivel = i <= idxNivel || ehAlvo;
+                    return (
+                      <Fragment key={etapa.nome}>
+                        {i > 0 && <div className="flex-1 h-px bg-white/25" style={{ minWidth: 8 }} />}
+                        <div className="flex flex-col items-center gap-1 shrink-0" title={etapa.nome}>
+                          <img
+                            src={etapa.icone}
+                            className="w-5 h-5 sm:w-6 sm:h-6"
+                            alt=""
+                            style={{ opacity: visivel ? 1 : 0.45, filter: visivel ? 'none' : 'grayscale(0.6)' }}
+                          />
+                          <span className="hidden sm:block text-[9px] font-bold text-white/70 uppercase tracking-wider">{etapa.nome}</span>
+                          <span className="text-[11px] leading-none h-3.5">
+                            {chegado
+                              ? <span className="text-white font-bold">✓</span>
+                              : ehAlvo
+                                ? <span className="text-[#ffc928] font-serif-display" style={{ fontSize: 15 }}>●</span>
+                                : <span className="text-white/40">○</span>}
+                          </span>
+                        </div>
+                      </Fragment>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col gap-2.5">
-              {ecopontos.map(p => (
-                <div key={p.id} className="flex items-start gap-2.5">
-                  <span className="w-2 h-2 rounded-full shrink-0 mt-1" style={{ background: p.cor }} />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-slate-800 text-xs font-semibold leading-tight truncate">{p.nome}</p>
-                    <p className="text-slate-500 text-[10px] leading-snug line-clamp-1">{p.descricao}</p>
+
+            <div className="grid grid-cols-3 gap-2">
+              {chips.map(s => (
+                <div key={s.rotulo} className="rounded-xl px-3 py-3 flex items-center gap-2.5 bg-white/12 border border-white/20 backdrop-blur">
+                  <img src={s.icone} className="w-4.5 h-4.5 shrink-0 opacity-90" alt="" />
+                  <div className="min-w-0">
+                    <p className="text-white font-extrabold text-sm leading-tight tabular-nums truncate">{s.valor}</p>
+                    <p className="text-white/70 text-[10px]">{s.rotulo}</p>
                   </div>
-                  <span className="text-slate-400 text-[10px] shrink-0">{p.localizacao}</span>
                 </div>
               ))}
             </div>
-            <p className="text-brand/80 text-[10px] font-medium">
-              +{BONUS_ECOPONTO} créditos ao entregar seus resíduos em um parceiro (Reciclagem e Compostagem)
-            </p>
           </div>
+        </div>
 
-          <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col gap-2 min-w-0">
-            <div className="flex items-center gap-2">
-              <img src="/icons/lampada.svg" className="w-4 h-4 opacity-60" alt="" />
-              <span className="text-slate-500 text-[11px] font-bold uppercase tracking-widest">Dica do Dia</span>
+        {/* ===================== REGISTRAR AÇÃO (CTA) ===================== */}
+        <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
+              <img src="/icons/folha.svg" className="w-5 h-5" alt="" />
             </div>
-            <p className="text-slate-600 text-sm leading-snug flex-1 font-serif-display italic">
-              "{dicaDoDia}"
-            </p>
-            <span className="text-brand/60 text-[11px] font-medium">Verificado pela IA</span>
+            <div className="min-w-0">
+              <p className="text-slate-900 font-semibold text-sm">O que você fez hoje?</p>
+              <p className="text-slate-500 text-xs">Registre uma ação sustentável e some XP + créditos</p>
+            </div>
           </div>
-        </aside>
-
-        <div className="flex-1 min-w-0 flex flex-col gap-5">
-
-          <Link
-            to="/recompensas"
-            className="lg:hidden bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex items-center justify-between gap-3 hover:bg-brand-soft transition-colors"
+          <button
+            onClick={() => missoesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            className="shrink-0 rounded-full font-semibold text-[13px] py-2 px-5 flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer animate-pulse-glow"
+            style={{ background: 'var(--t-grad-strong)', color: '#FFFFFF', boxShadow: '0 8px 24px rgba(0,230,118,0.3)' }}
           >
-            <div className="flex items-center gap-3 min-w-0">
-              <img src="/icons/trofeu.svg" className="w-6 h-6 shrink-0 opacity-80" alt="" />
-              <p className="text-slate-600 text-sm leading-snug">
-                Seus créditos valem <strong className="text-brand">recompensas</strong> e{" "}
-                <strong className="text-gold-deep">Pix</strong>
-              </p>
-            </div>
-            <span className="text-brand text-xs font-bold flex items-center gap-1 shrink-0">
-              Ver
-              <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </span>
-          </Link>
+            + Registrar ação
+          </button>
+        </div>
 
-          <div>
-            <p className="text-white/35 text-sm">Bom dia,</p>
-            <h1 className="text-white mt-0.5 font-serif-display" style={{ fontSize: 30 }}>
-              {nomeExibido} <span style={{ color: 'var(--color-brand-3)' }}>—</span> {getGreeting(nivel)}
-            </h1>
-          </div>
+        {/* ===================== MISSÕES + IMPACTO ===================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-          <div className="lg:hidden bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-4 relative overflow-hidden">
-            <div className="flex items-center justify-between gap-2 mb-3">
-              <div className="flex items-center gap-2">
-                <BoltIcon />
-                <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Desafio do Dia</span>
-              </div>
-              <span className={`text-[10px] font-semibold ${desafioBonusDisponivel ? 'text-[#ffc928]/80' : 'text-slate-400'}`}>
-                {desafioBonusDisponivel ? 'Bônus extra disponível' : 'bônus já resgatado'}
-              </span>
-            </div>
-            <div className="flex items-center gap-3 mb-3">
-              <img src={desafioDoDia.icone} className="w-9 h-9 shrink-0" alt="" />
-              <div className="flex-1 min-w-0">
-                <p className="text-slate-900 font-semibold text-sm truncate">{desafioDoDia.nome}</p>
-                <p className="text-slate-500 text-xs">+{desafioDoDia.pontos} pts · verificação por foto</p>
-              </div>
-            </div>
-            {patrocinadorDesafio && (
-              <div className="flex items-center gap-1.5 mb-3 rounded-lg px-2.5 py-1.5 w-fit" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
-                <span className="w-2 h-2 rounded-full shrink-0" style={{ background: patrocinadorDesafio.cor }} />
-                <span className="text-[10px] uppercase tracking-wider text-slate-600">
-                  Patrocinado por <strong className="text-slate-800">{patrocinadorDesafio.nome}</strong>
-                </span>
-              </div>
-            )}
-            <button
-              onClick={handleAcaoDesafio}
-              disabled={desafioFeito}
-              className={`w-full rounded-full font-semibold text-sm py-2.5 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${desafioFeito ? '' : 'animate-pulse-glow'}`}
-              style={{
-                background: desafioFeito ? 'var(--t-mist)' : 'var(--t-grad-strong)',
-                color: desafioFeito ? 'var(--color-brand)' : '#FFFFFF',
-                border: desafioFeito ? '1px solid var(--t-brand-border)' : 'none',
-                boxShadow: desafioFeito ? 'none' : '0 8px 24px rgba(79,70,229,0.35)',
-              }}
-            >
-              {desafioFeito && <img src="/icons/check.svg" className="w-3.5 h-3.5" alt="" />}
-              {desafioFeito ? 'Concluído' : 'Cumprir desafio'}
-            </button>
-          </div>
-
-          <div className="bg-card-secondary border border-card-secondary-border rounded-2xl p-4 flex-1 flex flex-col">
-            <div className="flex items-center justify-between mb-1">
-              <h2 className="text-slate-900 font-semibold">
-                Registrar Ação
-                <TermoAjuda
-                  termo="Créditos"
-                  dica="Toda ação sustentável que você registra (com foto) paga créditos — os pontos da plataforma. Eles sobem seu nível, alimentam o ranking e podem ser trocados por recompensas ou Pix."
-                />
+          <div ref={missoesRef} className="lg:col-span-2 bg-card-secondary border border-card-secondary-border rounded-2xl p-4 flex flex-col scroll-mt-28">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-slate-900 font-semibold text-base">
+                Missões de hoje
+                <span className="ml-2 text-slate-500 text-xs font-normal tabular-nums">{feitasHoje.size}/{MISSOES.length} feitas</span>
               </h2>
-              <span className="text-slate-500 text-[13px]">{feitasHoje.size}/{MISSOES.length} hoje</span>
             </div>
-            <p className="text-slate-500 text-xs mb-3">
-              Toque em uma ação para registrar com foto e ganhar créditos.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 auto-rows-min flex-1 content-start">
-              {MISSOES.map(missao => {
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {FILTROS_MISSOES.map(f => (
+                <button
+                  key={f.id}
+                  onClick={() => { setFiltroMissoes(f.id); setVerTodas(false); }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${filtroMissoes === f.id
+                    ? 'text-(--t-onaccent)'
+                    : 'text-slate-600 bg-surface-2 hover:bg-surface-hover'
+                  }`}
+                  style={filtroMissoes === f.id ? { background: 'var(--t-grad-brand)' } : undefined}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            <div id="lista-missoes" className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 auto-rows-min flex-1 content-start">
+              {missoesVisiveis.map(missao => {
                 const cor = MISSAO_COR_MAP[missao.id] || 'var(--color-brand-2)';
                 const checked = feitasHoje.has(missao.nome);
                 return (
                   <button
                     key={missao.id}
                     onClick={() => handleMissao(missao)}
-                    title={`${missao.nome} · +${missao.pontos} pontos`}
-                    aria-label={`${checked ? 'Feita hoje · ' : ''}${missao.nome}, +${missao.pontos} pontos. Toque para registrar.`}
+                    title={`${missao.nome} · +${missao.pontos} créditos`}
+                    aria-label={`${checked ? 'Feita hoje · ' : ''}${missao.nome}, +${missao.pontos} créditos. Toque para registrar.`}
                     className="rounded-xl p-3 h-full flex flex-col gap-1.5 text-left transition-all group active:scale-95 relative overflow-hidden cursor-pointer"
                     style={{
                       background: checked ? `color-mix(in srgb, ${cor} 12%, transparent)` : 'var(--t-surface-2)',
-                      border: checked ? `1px solid color-mix(in srgb, ${cor} 45%, transparent)` : '1px solid var(--t-slate-200)',
+                      border: checked ? `1px solid color-mix(in srgb, ${cor} 45%, transparent)` : '1px solid var(--t-border-subtle)',
                     }}
                   >
                     {checked && (
@@ -420,7 +548,7 @@ export function Dashboard() {
                     <div className="mt-auto">
                       <p className="text-slate-800 text-sm font-medium leading-snug">{missao.nome}</p>
                       <div className="flex items-center justify-between gap-1 mt-1.5">
-                        <p className="font-semibold text-sm" style={{ color: cor }}>+{missao.pontos} pts</p>
+                        <p className="font-semibold text-sm tabular-nums" style={{ color: cor }}>+{missao.pontos} créditos</p>
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${checked ? 'text-brand bg-brand-soft' : 'text-white'}`}
                           style={checked ? {} : { background: cor }}
@@ -433,121 +561,155 @@ export function Dashboard() {
                 );
               })}
             </div>
+
+            {totalFiltro > INICIAIS_VISIVEIS && (
+              <button
+                onClick={() => setVerTodas(v => !v)}
+                className="w-full mt-3 py-2.5 rounded-xl text-xs font-bold transition-colors cursor-pointer text-brand hover:bg-brand/10"
+                style={{ border: '1px dashed var(--t-brand-border)' }}
+              >
+                {verTodas ? 'Mostrar menos' : `Ver todas (${totalFiltro}) →`}
+              </button>
+            )}
           </div>
 
-          <MiniJogoSeparacao compacto />
+          <div className="flex flex-col gap-4">
+            {/* ===== DESAFIO DO DIA (topo da coluna) ===== */}
+            <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-xl p-3 flex flex-col sm:flex-row sm:items-center gap-2.5">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
+                  <BoltIcon />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-slate-500 text-[9px] font-bold uppercase tracking-widest">Desafio do Dia</p>
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <img src={desafioDoDia.icone} className="w-4 h-4 shrink-0" alt="" />
+                    <p className="text-slate-900 font-semibold text-[13px] truncate">{desafioDoDia.nome}</p>
+                  </div>
+                </div>
+                <span className={`text-[11px] font-bold shrink-0 ${desafioBonusDisponivel ? 'text-[#ffc928]' : 'text-slate-400'}`}>
+                  +{desafioDoDia.pontos} créditos
+                </span>
+              </div>
+
+              {patrocinadorDesafio && (
+                <div className="flex items-center gap-1.5 rounded-lg px-2 py-1 w-fit sm:ml-auto" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: patrocinadorDesafio.cor }} />
+                  <span className="text-[10px] uppercase tracking-wider text-slate-600">
+                    <strong className="text-slate-800">{patrocinadorDesafio.nome}</strong>
+                  </span>
+                </div>
+              )}
+
+              <button
+                onClick={handleAcaoDesafio}
+                disabled={desafioFeito}
+                className={`shrink-0 rounded-full font-semibold text-[13px] py-2 px-4 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${desafioFeito ? '' : 'animate-pulse-glow'}`}
+                style={{
+                  background: desafioFeito ? 'var(--t-mist)' : 'var(--t-grad-strong)',
+                  color: desafioFeito ? 'var(--color-brand)' : '#FFFFFF',
+                  border: desafioFeito ? '1px solid var(--t-brand-border)' : 'none',
+                  boxShadow: desafioFeito ? 'none' : '0 8px 24px rgba(0,230,118,0.3)',
+                }}
+              >
+                {desafioFeito && <img src="/icons/check.svg" className="w-3.5 h-3.5" alt="" />}
+                {desafioFeito ? 'Concluído' : 'Cumprir desafio'}
+              </button>
+            </div>
+
+            {/* ===== SEU IMPACTO (número principal) ===== */}
+            <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col overflow-hidden relative">
+              <div
+                className="pointer-events-none absolute -top-16 -right-10 w-48 h-48 rounded-full opacity-10"
+                style={{ background: 'radial-gradient(circle, var(--color-brand-3), transparent 70%)' }}
+              />
+              <div className="flex items-center gap-1.5 mb-4">
+                <span className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'var(--t-impact-bg)', border: '1px solid rgba(56,189,248,0.35)' }}>
+                  <img src="/icons/arvore.svg" className="w-3.5 h-3.5" alt="" />
+                </span>
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Seu impacto</p>
+              </div>
+
+              <div className="relative flex flex-col items-center py-1">
+                <p className="font-serif-display leading-none text-impact tabular-nums" style={{ fontSize: 'clamp(46px, 6vw, 62px)' }}>
+                  {co2MesFormatado}
+                  <span className="text-lg font-bold ml-1">kg</span>
+                </p>
+                <p className="text-slate-500 text-sm font-semibold mt-1">CO₂ evitado</p>
+
+                <div className="flex items-center gap-1.5 mt-3 rounded-full px-3 py-1.5" style={{ background: 'var(--t-impact-bg)', border: '1px solid rgba(56,189,248,0.35)' }}>
+                  <span className="text-slate-500 text-[11px]">equivalente a</span>
+                  <img src="/icons/folha.svg" className="w-3.5 h-3.5" alt="" />
+                  <span className="text-[12px] font-bold text-impact">{arvoresEquivalentes} árvores</span>
+                </div>
+              </div>
+
+              <div className="h-px my-4" style={{ background: 'var(--t-slate-200)' }} />
+
+              <div className="flex items-center justify-between mb-1.5">
+                <p className="text-slate-700 text-sm font-semibold tabular-nums">{impactoMes.acoes} ações realizadas</p>
+                <p className="text-slate-400 text-[11px] font-bold tabular-nums">{pctMetaMes}%</p>
+              </div>
+              <div className="h-2.5 rounded-full overflow-hidden" style={{ background: 'var(--t-surface-2)', border: '1px solid var(--t-slate-200)' }}>
+                <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pctMetaMes}%`, background: 'var(--t-grad-brand)' }} />
+              </div>
+              <p className="text-slate-400 text-[10px] mt-2">Meta de {META_ACOES_MES} ações · Seu impacto neste mês</p>
+            </div>
+
+            {/* ===== GRÁFICO DE IMPACTO ===== */}
+            <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col">
+              <div className="flex items-center justify-between gap-2 mb-3 flex-wrap">
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">
+                  Impacto nos {periodoGrafico === 'tudo' ? 'dias de atividade' : `últimos ${periodoGrafico === '7' ? '7' : '30'} dias`}
+                </p>
+                <span className="text-impact/80 text-[10px] font-semibold tabular-nums">{totalPeriodo.toFixed(1).replace('.', ',')} kg CO₂ no período</span>
+              </div>
+
+              <div className="flex gap-1.5 mb-4">
+                {PERIODOS_GRAFICO.map(p => (
+                  <button
+                    key={p.id}
+                    onClick={() => setPeriodoGrafico(p.id)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${periodoGrafico === p.id ? 'text-(--t-onaccent)' : 'text-slate-600 bg-surface-2 hover:bg-surface-hover'}`}
+                    style={periodoGrafico === p.id ? { background: 'var(--t-grad-brand)' } : undefined}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-end gap-1.5 h-28">
+                {graficoImpacto.dias.map((d, i) => {
+                  const h = Math.max(4, Math.round((d.valor / graficoImpacto.max) * 108));
+                  return (
+                    <div key={i} className="flex-1 flex flex-col items-center justify-end h-full gap-1 min-w-0">
+                      <div
+                        className="w-full rounded-t-md transition-all duration-500"
+                        title={`${d.rotulo}: ${d.valor.toFixed(1).replace('.', ',')} kg CO₂`}
+                        style={{
+                          height: `${h}%`,
+                          background: d.valor > 0 ? 'linear-gradient(180deg, #7dd3fc, var(--t-impact))' : 'var(--t-slate-200)',
+                          opacity: d.valor > 0 ? 1 : 0.6,
+                        }}
+                      />
+                      <span className="text-[9px] text-slate-400 font-medium truncate w-full text-center">{d.rotulo}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-slate-400 text-[10px] mt-3 leading-snug">Cada ação sua devolve vida ao mundo — é isso que faz a ilha evoluir.</p>
+            </div>
+          </div>
         </div>
 
-        <aside className="hidden lg:flex flex-col lg:w-75 shrink-0 gap-4">
+        {/* ===================== ATIVIDADE + AMIGOS ===================== */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-          <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4">
-            <div className="flex items-center justify-between gap-2 mb-1">
-              <p className="text-slate-500 text-[11px] uppercase tracking-widest">Comunidade de Amigos</p>
-              <button
-                onClick={copiarCodigoAmigo}
-                title="Copiar meu código de amigo"
-                className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold text-brand transition-colors hover:bg-brand-soft cursor-pointer"
-                style={{ border: '1px solid var(--t-brand-border)' }}
-              >
-                <svg aria-hidden="true" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="9" y="9" width="12" height="12" rx="2" />
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                </svg>
-                {codigoAmigo}
-              </button>
+          <div className="lg:col-span-2 bg-card-tertiary border border-card-secondary-border rounded-2xl p-4">
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Atividade recente</p>
+              <span className="text-slate-400 text-[11px] font-semibold">Ver histórico →</span>
             </div>
-            <p className="text-slate-500 text-[11px] mb-2">Adicione amigos e compare pontos, níveis e sequência.</p>
-
-            <div className="flex gap-1.5 mb-3">
-              <input
-                value={codigoInput}
-                onChange={e => setCodigoInput(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddAmigo(); } }}
-                placeholder="Código do amigo"
-                className="flex-1 min-w-0 rounded-lg px-2.5 py-2 text-[12px] outline-none text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-1 focus:ring-brand"
-                style={{ background: 'var(--t-surface)', border: '1px solid var(--t-slate-300)' }}
-              />
-              <button
-                onClick={handleAddAmigo}
-                className="px-3 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 cursor-pointer"
-                style={{ background: 'var(--t-grad-brand)', color: 'var(--t-onaccent)' }}
-              >
-                Adicionar
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2.5 rounded-xl px-2.5 py-2.5" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-(--t-onaccent) shrink-0" style={{ background: 'var(--t-grad-brand)' }}>
-                  {inicial}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-brand text-sm font-medium truncate">
-                    {nomeExibido} <span className="text-sky-400 text-[10px]">você</span>
-                  </p>
-                  <p className="text-slate-500 text-[11px]">{data.pontos} pts · 🔥 {data.streak}d</p>
-                </div>
-                <img src={NIVEL_ICONE[nivel] || '/icons/semente.svg'} className="w-4 h-4" alt="" />
-              </div>
-
-              {amigosAdicionados.map((u, i) => {
-                const nivelUser = NIVEL_ICONE[nivelPorPontos(u.pontos)] || '/icons/semente.svg';
-                return (
-                  <div key={u.codigo} className="flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 transition-all hover:bg-brand-soft">
-                    <span
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
-                      style={{
-                        background: i === 0 ? 'linear-gradient(135deg,#ffc928,#f59e0b)' : i === 1 ? 'linear-gradient(135deg,#cbd5e1,#94a3b8)' : i === 2 ? 'linear-gradient(135deg,#d97706,#b45309)' : 'var(--t-mist)',
-                        color: i < 3 ? 'white' : 'var(--color-brand)',
-                      }}
-                    >
-                      {i + 1}
-                    </span>
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-(--t-onaccent) shrink-0"
-                      style={{ background: 'var(--t-grad-brand)', opacity: i === 0 ? 1 : 0.7 }}
-                    >
-                      {u.nome[0].toUpperCase()}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-slate-800 text-sm font-medium truncate">{u.nome}</p>
-                      <p className="text-slate-500 text-[11px]">{u.pontos} pts · 🔥 {u.streak}d</p>
-                    </div>
-                    <img src={nivelUser} className="w-4 h-4" alt="" />
-                  </div>
-                );
-              })}
-            </div>
-
-            {amigosAdicionados.length === 0 && (
-              <p className="text-slate-400 text-[11px] mt-2">Nenhum amigo ainda — use o código acima para adicionar.</p>
-            )}
-
-            {poolAmigos.length > 0 && (
-              <div className="mt-3">
-                <p className="text-slate-400 text-[10px] uppercase tracking-widest mb-1.5">Possíveis amigos</p>
-                <div className="flex flex-col gap-1">
-                  {poolAmigos.map(a => (
-                    <button
-                      key={a.codigo}
-                      onClick={() => addAmigo(a.codigo)}
-                      className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-brand-soft cursor-pointer"
-                      title={`Código: ${a.codigo}`}
-                    >
-                      <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-(--t-onaccent) shrink-0" style={{ background: 'var(--t-grad-brand)', opacity: 0.85 }}>
-                        {a.nome[0].toUpperCase()}
-                      </span>
-                      <span className="text-slate-600 text-[11px] font-medium truncate flex-1">{a.nome}</span>
-                      <span className="text-brand text-[10px] font-semibold">+ Adicionar</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col min-h-0">
-            <p className="text-slate-500 text-[11px] uppercase tracking-widest mb-3">Atividade Recente</p>
             {recentHistory.length === 0 ? (
               <div className="text-center py-5">
                 <img src="/icons/check.svg" alt="" className="w-8 h-8 mx-auto mb-2 opacity-40" />
@@ -561,15 +723,15 @@ export function Dashboard() {
                 </button>
               </div>
             ) : (
-              <div className="flex flex-col gap-0 flex-1 justify-start">
+              <div className="flex flex-col gap-0">
                 {recentHistory.map((entry: AtividadeItem) => {
                   const ganhou = entry.tipo === 'acao';
                   const ehConversao = entry.tipo === 'conversao';
                   return (
-                    <div key={entry.id} className="flex items-start gap-2.5 py-3 border-b border-slate-200 last:border-0">
+                    <div key={entry.id} className="flex items-start gap-2.5 py-2.5 border-b border-slate-200 last:border-0">
                       <div
                         className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                        style={{ background: ganhou ? 'var(--t-mist)' : ehConversao ? 'var(--t-mist)' : 'rgba(251,191,36,0.1)', border: '1px solid var(--t-brand-border)' }}
+                        style={{ background: ehConversao ? 'var(--t-mist)' : 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}
                       >
                         {ehConversao ? (
                           <span className="text-brand text-[11px] font-bold">R$</span>
@@ -579,17 +741,7 @@ export function Dashboard() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-slate-800 text-sm font-medium leading-snug truncate">{entry.nome}</p>
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className="text-slate-500 text-[11px]">{timeAgo(entry.data)}</span>
-                          {!ganhou && (
-                            <span
-                              className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-full font-semibold"
-                              style={{ background: ehConversao ? 'var(--t-mist)' : 'rgba(251,191,36,0.14)', color: ehConversao ? 'var(--color-brand)' : '#fbbf24' }}
-                            >
-                              {ehConversao ? 'conversão' : 'resgate'}
-                            </span>
-                          )}
-                        </div>
+                        <p className="text-slate-500 text-[11px] mt-0.5">{timeAgo(entry.data)}</p>
                       </div>
                       <span className={`text-xs font-bold shrink-0 mt-1 ${ganhou ? 'text-brand' : 'text-red-400'}`}>
                         {ganhou ? '+' : '-'}{entry.pontos}
@@ -600,8 +752,114 @@ export function Dashboard() {
               </div>
             )}
           </div>
-        </aside>
+
+          <div className="flex flex-col gap-4">
+            <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col">
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Amigos</p>
+                <button
+                  onClick={copiarCodigoAmigo}
+                  title="Copiar meu código de amigo"
+                  className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold text-brand transition-colors hover:bg-surface-hover cursor-pointer"
+                  style={{ border: '1px solid var(--t-brand-border)' }}
+                >
+                  <svg aria-hidden="true" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="9" y="9" width="12" height="12" rx="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  Meu código: {codigoAmigo}
+                </button>
+              </div>
+
+              <div className="flex gap-1.5 mb-3">
+                <input
+                  value={codigoInput}
+                  onChange={e => setCodigoInput(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddAmigo(); } }}
+                  placeholder="Código do amigo"
+                  className="flex-1 min-w-0 rounded-lg px-2.5 py-2 text-[12px] outline-none text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-1 focus:ring-brand"
+                  style={{ background: 'var(--t-surface)', border: '1px solid var(--t-slate-300)' }}
+                />
+                <button
+                  onClick={handleAddAmigo}
+                  className="px-3 py-2 rounded-lg text-xs font-bold transition-all active:scale-95 cursor-pointer shrink-0"
+                  style={{ background: 'var(--t-grad-brand)', color: 'var(--t-onaccent)' }}
+                >
+                  + Adicionar
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2.5 rounded-xl px-2.5 py-2.5" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-(--t-onaccent) shrink-0" style={{ background: 'var(--t-grad-brand)' }}>
+                    {inicial}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-brand text-sm font-medium truncate">
+                      {nomeExibido} <span className="text-sky-400 text-[10px]">você</span>
+                    </p>
+                  </div>
+                  <span className="text-slate-700 text-xs font-bold tabular-nums shrink-0">{data.pontos.toLocaleString('pt-BR')} créditos</span>
+                </div>
+
+                {amigosAdicionados.map(u => (
+                  <div key={u.codigo} className="flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 transition-all hover:bg-surface-hover">
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-(--t-onaccent) shrink-0"
+                      style={{ background: 'var(--t-grad-brand)', opacity: 0.8 }}
+                    >
+                      {u.nome[0].toUpperCase()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-slate-800 text-sm font-medium truncate">{u.nome}</p>
+                    </div>
+                    <span className="text-slate-700 text-xs font-bold tabular-nums shrink-0">{u.pontos.toLocaleString('pt-BR')} créditos</span>
+                  </div>
+                ))}
+
+                {amigosAdicionados.length === 0 && (
+                  <p className="text-slate-400 text-[11px]">Nenhum amigo ainda — cole um código acima.</p>
+                )}
+              </div>
+
+              {poolAmigos.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-slate-400 text-[10px] uppercase tracking-widest mb-1.5">Sugestões</p>
+                  <div className="flex flex-col gap-1">
+                    {poolAmigos.slice(0, 3).map(a => (
+                      <button
+                        key={a.codigo}
+                        onClick={() => addAmigo(a.codigo)}
+                        className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-surface-hover cursor-pointer"
+                        title={`Código: ${a.codigo}`}
+                      >
+                        <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-(--t-onaccent) shrink-0" style={{ background: 'var(--t-grad-brand)', opacity: 0.85 }}>
+                          {a.nome[0].toUpperCase()}
+                        </span>
+                        <span className="text-slate-600 text-[11px] font-medium truncate flex-1">{a.nome}</span>
+                        <span className="text-brand text-[10px] font-semibold">+ Adicionar</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <img src="/icons/lampada.svg" className="w-4 h-4 opacity-60" alt="" />
+                <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Dica do Dia</span>
+              </div>
+              <p className="text-slate-600 text-sm leading-snug font-serif-display italic">"{dicaDoDia}"</p>
+              <span className="text-brand/60 text-[11px] font-medium">Verificado pela IA</span>
+            </div>
+          </div>
+        </div>
+
+        <MiniJogoSeparacao compacto />
       </div>
+
+      <TrilhaEvolucaoModal aberto={mostrarEvolucao} onFechar={() => setMostrarEvolucao(false)} pontos={pontos} />
 
       {missaoSelecionada && (
         <VerificarModal
