@@ -132,13 +132,13 @@ export default function Chat() {
 
   function textoDrop(drop: ResultadoDrop, prefixo: string): string {
     if ('novaCarta' in drop) {
-      return `${prefixo}\n\n🎉 **Nova carta obtida: ${drop.novaCarta.carta.nome}**${drop.foil ? ' ✨ (versão BRILHANTE!)' : ''}`;
+      return `${prefixo}\n\n**Nova carta obtida: ${drop.novaCarta.carta.nome}**${drop.foil ? ' (versão BRILHANTE!)' : ''}`;
     }
     if ('foil' in drop) {
-      return `${prefixo}\n\n✨ **CARTA BRILHANTE!** Sua ${drop.carta.nome} evoluiu para a versão premium (valor ×3) e está destacada na sua vitrine!`;
+      return `${prefixo}\n\n**CARTA BRILHANTE!** Sua ${drop.carta.nome} evoluiu para a versão premium (valor ×3) e está destacada na sua vitrine!`;
     }
     if ('duplicada' in drop) {
-      return `${prefixo}\n\n💜 Carta repetida: **${drop.carta.nome}** virou **+${drop.fragmentosGanhos} fragmentos** de ${drop.carta.raridade.toLowerCase()}. Monte as cartas que faltam na Fábrica de Cartas.`;
+      return `${prefixo}\n\nCarta repetida: **${drop.carta.nome}** virou **+${drop.fragmentosGanhos} fragmentos** de ${drop.carta.raridade.toLowerCase()}. Monte as cartas que faltam na Fábrica de Cartas.`;
     }
     return `${prefixo}\n\nA carta **${drop.carta.nome}** escapou desta vez! Chance de ganhar carta: ${drop.chance}%. Tente novamente.`;
   }
@@ -289,13 +289,13 @@ export default function Chat() {
       case 'nivel': {
         const nivel = getNivel();
         const proximoNivel =
-          nivel === 'Semente' ? 'Broto (150 créditos)' :
-            nivel === 'Broto' ? 'Árvore (450 créditos)' :
-              nivel === 'Árvore' ? 'Floresta (1000 créditos)' :
+          nivel === 'Broto' ? 'Semente (500 XP)' :
+            nivel === 'Semente' ? 'Árvore (1200 XP)' :
+              nivel === 'Árvore' ? 'Floresta (2000 XP)' :
                 'Nível máximo atingido!';
         responder(
           '**Seu nível atual:** ' + nivel + '\n\n' +
-          '**' + (data.pontosAcumulados ?? data.pontos) + ' créditos acumulados**\n\n' +
+          '**' + (data.pontosAcumulados ?? data.pontos) + ' XP acumulados**\n\n' +
           'Próximo nível: **' + proximoNivel + '**\n\n' +
           'Continue realizando ações sustentáveis para evoluir!'
         );
@@ -349,7 +349,7 @@ export default function Chat() {
           '- Conquiste cartas por raridade com chance de ganhar carta (roleta)\n' +
           '- Complete sets de cartas e ganhe bônus de química\n' +
           '- Converta créditos em dinheiro via Pix\n' +
-          '- Evolua de Semente a Floresta\n' +
+          '- Evolua de Broto a Floresta\n' +
           '- Desbloqueie selos e resgate recompensas\n\n' +
           'Junte-se a nós e faça a diferença!'
         );
@@ -391,13 +391,13 @@ export default function Chat() {
           .join(' · ');
         responder(
           '**Sua coleção de cartas**\n\n' +
-          `**${obtidas}/${total}** cartas conquistadas${foils > 0 ? ` · **${foils} brilhante(s)** ✨` : ''}\n` +
+          `**${obtidas}/${total}** cartas conquistadas${foils > 0 ? ` · **${foils} brilhante(s)**` : ''}\n` +
           `Valor da coleção: **${valorTotal} créditos**\n\n` +
           '**Sets e química:**\n' + linhasSets + '\n\n' +
           (proximo ? `Próximo objetivo: complete o set **${proximo.set.nome}** (faltam ${proximo.faltam} carta(s)) para ativar a química.\n\n` : 'Set completo em todos! Você domina a coleção 😄\n\n') +
           '**Chance de ganhar carta por raridade:**\n' + chances + '\n\n' +
           'Complete um set (4/4) para ganhar **+150 créditos** de bônus!\n\n' +
-          '**Sets por nível:** Recursos e Cidade Verde já no início · Guardiões da Água no Broto (150 pts) · Energia Limpa na Árvore (450 pts) · Cultivo na Floresta (1000 pts).\n\n' +
+          '**Sets por nível:** Recursos e Cidade Verde já no início · Guardiões da Água no Semente (500 XP) · Energia Limpa na Árvore (1200 XP) · Cultivo na Floresta (2000 XP).\n\n' +
           '**Dica:** cartas repetidas viram fragmentos — use-os na **Fábrica de Cartas** da sua Coleção para montar as que faltam!'
         );
         break;
@@ -498,7 +498,7 @@ export default function Chat() {
             >
               <button
                 onClick={(e) => { e.stopPropagation(); marcarTeaserVisto(); }}
-                className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-slate-500 hover:text-slate-800 rounded-full hover:bg-brand-soft transition-colors"
+                className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-slate-500 hover:text-slate-800 rounded-full hover:bg-surface-hover transition-colors"
                 aria-label="Dispensar dica"
               >
                 <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
@@ -530,7 +530,7 @@ export default function Chat() {
       )}
 
       {aberto && (
-        <div className="fixed bottom-6 right-6 z-50 bg-card-secondary border border-card-secondary-border rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] h-110 max-h-[80vh] border border-brand/25">
+        <div className="fixed bottom-6 right-6 z-50 bg-card-secondary border border-card-secondary-border rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] max-h-[calc(100vh-3rem)] border border-brand/25">
           <div className="text-white p-4 flex items-center gap-3 shrink-0" style={{ background: 'var(--t-grad-strong)' }}>
             <div className="w-10 h-10 rounded-full bg-leaf/25 flex items-center justify-center shrink-0">
               <img src="/imagens/logo.png" alt="" className="h-6 w-auto opacity-90" />

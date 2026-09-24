@@ -1,4 +1,4 @@
-import type { Missao, Selo, Nivel, Recompensa, UsuarioSimulado, Parceiro, Amigo } from '../types';
+import type { Missao, Selo, Nivel, Recompensa, Parceiro, Amigo, TrilhaEtapa } from '../types';
 
 // Créditos escalam por esforço/comprovação e impacto:
 // fácil (declaração/hábito) < leve (foto) < médio (timer/esforço) < alto (GPS/investimento) < máximo (alto impacto)
@@ -49,17 +49,24 @@ export const CO2_POR_MISSAO: Record<string, number> = {
 };
 
 export const SELOS: Selo[] = [
-  { id: 'semente', nome: 'Semente', descricao: 'Primeiros passos sustentáveis', icone: '/icons/semente.svg', minPontos: 0 },
-  { id: 'broto', nome: 'Broto', descricao: 'Crescendo a cada ação', icone: '/icons/folha.svg', minPontos: 150 },
-  { id: 'arvore', nome: 'Árvore', descricao: 'Impacto real no planeta', icone: '/icons/arvore.svg', minPontos: 450 },
-  { id: 'floresta', nome: 'Floresta', descricao: 'Guardiã do meio ambiente', icone: '/icons/floresta.svg', minPontos: 1000 },
+  { id: 'broto', nome: 'Broto', descricao: 'Primeiros passos sustentáveis', icone: '/icons/folha.svg', minPontos: 0 },
+  { id: 'semente', nome: 'Semente', descricao: 'Crescendo a cada ação', icone: '/icons/semente.svg', minPontos: 500 },
+  { id: 'arvore', nome: 'Árvore', descricao: 'Impacto real no planeta', icone: '/icons/arvore.svg', minPontos: 1200 },
+  { id: 'floresta', nome: 'Floresta', descricao: 'Guardiã do meio ambiente', icone: '/icons/floresta.svg', minPontos: 2000 },
 ];
 
 export const NIVEIS: Nivel[] = [
-  { nome: 'Semente', min: 0, max: 149 },
-  { nome: 'Broto', min: 150, max: 449 },
-  { nome: 'Árvore', min: 450, max: 999 },
-  { nome: 'Floresta', min: 1000, max: Infinity },
+  { nome: 'Broto', min: 0, max: 499 },
+  { nome: 'Semente', min: 500, max: 1199 },
+  { nome: 'Árvore', min: 1200, max: 1999 },
+  { nome: 'Floresta', min: 2000, max: Infinity },
+];
+
+export const TRILHA_EVOLUCAO: TrilhaEtapa[] = [
+  { nome: 'Broto', icone: '/icons/folha.svg', emoji: '🌱', minXP: 0, recompensa: '+50 créditos de boas-vindas', desbloqueio: 'Seus primeiros sets de cartas', explicacao: 'Todo impacto começa pequeno — a primeira ação já te coloca aqui.' },
+  { nome: 'Semente', icone: '/icons/semente.svg', emoji: '🌿', minXP: 500, recompensa: '+100 créditos', desbloqueio: 'Cartas novas e o set Guardiões da Água', explicacao: '500 XP acumulados: sua rotina já faz a ilha respirar melhor.' },
+  { nome: 'Árvore', icone: '/icons/arvore.svg', emoji: '🌳', minXP: 1200, recompensa: '+200 créditos', desbloqueio: 'Cartas raras e o set Energia Limpa', explicacao: '1.200 XP: o impacto real começa a proteger o planeta.' },
+  { nome: 'Floresta', icone: '/icons/floresta.svg', emoji: '🌎', minXP: 2000, recompensa: '+400 créditos e selo exclusivo', desbloqueio: 'Todas as cartas, o set Cultivo e o selo Floresta', explicacao: '2.000 XP: você é uma verdadeira guardiã do planeta.' },
 ];
 
 export function nomeNivelPorPontos(pontos: number): string {
@@ -121,13 +128,6 @@ export function getParceiro(id: string): Parceiro | undefined {
   return PARCEIROS.find(p => p.id === id);
 }
 
-export const USUARIOS_BASE: UsuarioSimulado[] = [
-  { nome: 'Maria Oliveira', pontos: 1320 },
-  { nome: 'Ana Silva', pontos: 620 },
-  { nome: 'Carlos Souza', pontos: 210 },
-  { nome: 'Pedro Santos', pontos: 75 },
-];
-
 export const AMIGOS_SIMULADOS: Amigo[] = [
   { nome: 'Ana Silva', codigo: 'ANA-SILVA-01', pontos: 620, streak: 6 },
   { nome: 'Carlos Souza', codigo: 'CARLOS-02', pontos: 210, streak: 3 },
@@ -160,18 +160,18 @@ export const CURIOSIDADES: string[] = [
 ];
 
 export const PERGUNTAS_FAQ: { pergunta: string; resposta: string }[] = [
-  { pergunta: 'Como ganhar pontos no RockySoulUp?', resposta: 'Você ganha pontos realizando ações sustentáveis como reciclar, usar transporte público, economizar água e energia, andar de bicicleta e plantar árvores. Cada ação tem um valor de pontos diferente!' },
+  { pergunta: 'Como ganhar créditos e XP?', resposta: 'Toda ação sustentável registrada (reciclar, usar transporte público, economizar água e energia, andar de bicicleta, plantar árvores) rende créditos — a moeda gasta em recompensas e Pix — e XP, o acumulado que evolui seu nível. Cada ação tem um valor diferente!' },
   { pergunta: 'O que é o avatar inteligente?', resposta: 'O avatar inteligente é um assistente virtual que ajuda você a acompanhar seu progresso, sugere ações sustentáveis e responde dúvidas sobre sustentabilidade e gamificação.' },
-  { pergunta: 'Como funciona o ranking?', resposta: 'Na sua comunidade, você adiciona amigos por código e cada um aparece com pontos, nível e sequência de dias — comparando quem faz mais diferença. Fora isso, um ranking de empresas parceiras mostra quem mais movimenta créditos e concede cortesias; suas entregas e resgates fazem essas empresas subirem de posição.' },
+  { pergunta: 'Como funciona o ranking?', resposta: 'Na sua comunidade, você adiciona amigos por código e cada um aparece com créditos, nível e sequência de dias — comparando quem faz mais diferença. Fora isso, um ranking de empresas parceiras mostra quem mais movimenta créditos e concede cortesias; suas entregas e resgates fazem essas empresas subirem de posição.' },
   { pergunta: 'Preciso fazer a verificação por foto?', resposta: 'Sim! Para garantir a autenticidade das ações, solicitamos que você envie uma foto como comprovante. A verificação por GPS é opcional, mas ajuda a validar ainda mais sua ação.' },
-  { pergunta: 'Como funciona o sistema de níveis?', resposta: 'Você evolui seguindo a natureza conforme acumula pontos: Semente (0-149), Broto (150-449), Árvore (450-999) e Floresta (1000+). Cada nível desbloqueia novos sets de cartas, selos e recompensas!' },
-  { pergunta: 'Como converter créditos em dinheiro?', resposta: 'Seus pontos funcionam como créditos da plataforma. No conversor da página de Recompensas, você informa a quantidade de créditos (mínimo de 500) e sua chave Pix para receber o valor: a cada 100 créditos, você recebe R$1,00.' },
-  { pergunta: 'Posso resgatar recompensas várias vezes?', resposta: 'Sim, desde que tenha pontos suficientes. Cada recompensa tem um custo em pontos. Ao resgatar, os pontos são descontados do seu saldo e o resgate fica registrado no seu histórico.' },
-  { pergunta: 'O que são os "créditos"?', resposta: 'Crédito é o nome dos seus pontos na plataforma. Toda ação sustentável registrada paga uma quantidade de créditos, e você os gasta em recompensas ou converte em dinheiro via Pix (100 créditos = R$1,00). No menu do seu perfil você vê seu saldo total e o de hoje.' },
+  { pergunta: 'Como funciona o sistema de níveis?', resposta: 'Seu nível evolui conforme o XP acumulado (ele nunca diminui): Broto (0-499), Semente (500-1199), Árvore (1200-1999) e Floresta (2000+). Cada nível desbloqueia novos sets de cartas, selos e recompensas!' },
+  { pergunta: 'Como converter créditos em dinheiro?', resposta: 'Créditos são a moeda da plataforma. No conversor da página de Recompensas, você informa a quantidade de créditos (mínimo de 500) e sua chave Pix para receber o valor: a cada 100 créditos, você recebe R$1,00.' },
+  { pergunta: 'Posso resgatar recompensas várias vezes?', resposta: 'Sim, desde que tenha créditos suficientes. Cada recompensa tem um custo em créditos. Ao resgatar, os créditos são descontados do seu saldo e o resgate fica registrado no seu histórico.' },
+  { pergunta: 'Qual a diferença entre créditos e XP?', resposta: 'Crédito é a moeda: toda ação registrada paga créditos, e você os gasta em recompensas, na roleta ou converta em dinheiro via Pix (100 créditos = R$1,00). XP é o seu histórico de evolução: ele só acumula e define seu nível (Semente → Floresta). Gastar créditos não reduz seu XP nem seu nível.' },
   { pergunta: 'O que são cartas, sets e "química"?', resposta: 'Cada ação registrada pode soltar uma carta colecionável dos influenciadores da plataforma. As cartas estão organizadas em 4 sets (Soluções, Siga a Ciência, Energia e Tecnologia). Quando você completa o conjunto de um mesmo influenciador no set, ativa a "química" entre elas, que aumenta o valor da coleção. Tudo isso acontece na página Coleção.' },
-  { pergunta: 'O que é uma carta "brilhante" (foil)?', resposta: 'Uma carta foil (representada por ✨) é a versão especial e mais valiosa de uma carta comum. Ela aparece ao obter uma repetida — você ganha a normal e a brilhante vem junto — e vale mais créditos na sua coleção.' },
+  { pergunta: 'O que é uma carta "brilhante" (foil)?', resposta: 'Uma carta foil é a versão especial e mais valiosa de uma carta comum. Ela aparece ao obter uma repetida — você ganha a normal e a brilhante vem junto — e vale mais créditos na sua coleção.' },
   { pergunta: 'O que são "fragmentos" e a "Fábrica de Cartas"?', resposta: 'Fragmentos são a moeda de montar cartas: cada carta repetida vira fragmentos da raridade dela (comum, incomum, rara, épica ou lendária). Na "Fábrica de Cartas" (botão "Cartas repetidas" na Coleção) você usa fragmentos para montar exatamente a carta que ainda não tem — sem depender de sorte. Carta repetida vira +3 a +40 fragmentos conforme a raridade.' },
-  { pergunta: 'O que significam "streak", "combo" e "roleta"?', resposta: '"Streak" (sequência) é quantos dias seguidos você registrou ações — manter a sequência diária é uma forma de ganhar mais. "Combo" é quando você encadeia ações no Mini-jogo de separação de resíduos para multiplicar pontos. Já a "roleta" fica na página Recompensas: com 100 créditos você gira e pode multiplicar o que gastou ou ganhar cartas.' },
+  { pergunta: 'O que significam "streak", "combo" e "roleta"?', resposta: '"Streak" (sequência) é quantos dias seguidos você registrou ações — manter a sequência diária é uma forma de ganhar mais. "Combo" é quando você encadeia ações no Mini-jogo de separação de resíduos para multiplicar a pontuação. Já a "roleta" fica na página Recompensas: com 100 créditos você gira e pode multiplicar o que gastou ou ganhar cartas.' },
   { pergunta: 'Como a economia de créditos é financiada?', resposta: 'A plataforma é gratuita para quem pratica e se sustenta por parcerias: ecopontos credenciados (como a Adega do Zé e o Ferro-Velho do João) pagam por cada entrega comprovada, patrocinadores bancam o Desafio do Dia (como a CicloVerde Bikes), e parceiros oferecem cortesias na loja de recompensas. As conversões em Pix são liquidadas por essa verba de parcerias — assim o financiamento cresce junto com o impacto real de cada usuário.' },
 ];
 
