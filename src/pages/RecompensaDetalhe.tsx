@@ -68,11 +68,11 @@ export function RecompensaDetalhe() {
         <div className="flex items-center justify-between rounded-xl bg-brand/10 border border-brand/20 px-4 py-3 mb-6">
           <div>
             <p className="text-[10px] text-slate-500">Seu saldo</p>
-            <p className="text-base font-bold text-slate-900">{data.pontos} pts</p>
+            <p className="text-base font-bold text-slate-900">{data.pontos} créditos</p>
           </div>
           <div className="text-right">
             <p className="text-[10px] text-slate-500">Custo</p>
-            <p className="text-base font-bold text-gold-deep">{recompensa.pontos} pts</p>
+            <p className="text-base font-bold text-gold-deep">{recompensa.pontos} créditos</p>
           </div>
         </div>
 
@@ -84,7 +84,7 @@ export function RecompensaDetalhe() {
               : 'bg-brand-soft text-slate-400 cursor-not-allowed'
             }`}
         >
-          {podeResgatar ? 'Resgatar recompensa' : `Faltam ${recompensa.pontos - data.pontos} pts para resgatar`}
+          {podeResgatar ? 'Resgatar recompensa' : `Faltam ${recompensa.pontos - data.pontos} créditos para resgatar`}
         </button>
       </div>
 

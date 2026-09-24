@@ -8,8 +8,8 @@ const DURACAO = 4200;
 const CORES_RARIDADE: Record<Carta['raridade'], string> = {
   comum: '#9ca3af',
   incomum: '#38bdf8',
-  rara: '#a66cff',
-  epica: '#f5c451',
+  rara: '#a855f7',
+  epica: '#ff4d9e',
   lendaria: '#fbbf24',
 };
 

@@ -17,7 +17,7 @@ export function useChemistry(setId: string) {
     : quimica.level === 3
       ? 'Set completo · Química Nível 3'
       : quimica.level === 2
-        ? 'Química Nível 2 · +30 pontos de bônus'
+        ? 'Química Nível 2 · +30 créditos de bônus'
         : 'Química Nível 1 ativa';
 
   return {

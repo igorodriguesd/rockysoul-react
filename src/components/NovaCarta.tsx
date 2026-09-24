@@ -1,6 +1,6 @@
 import type { NovaCartaInfo } from '../types';
 import { useColecao } from '../context/CollectionContext';
-import { getCardBackground, getCardLabel, getIniciaisSet, TIER } from '../data/cartasStyle';
+import { getCardBackgroundComBorda, getCardLabel, getIniciaisSet, TIER, usaBordaGradiente } from '../data/cartasStyle';
 import { LABEL_RARIDADE } from '../data/cartas';
 
 interface Props {
@@ -13,27 +13,29 @@ export default function NovaCarta({ novaCarta, foil = false }: Props) {
   const { getProgressoTotal } = useColecao();
   const { obtidas, total } = getProgressoTotal();
   const tier = TIER[carta.raridade];
+  const comGradiente = usaBordaGradiente(carta.raridade);
 
   return (
     <div className="text-center">
       <p className="text-brand text-xl font-bold tracking-wide">NOVA CARTA!</p>
-      {foil && <p className="text-gold-deep text-sm font-bold tracking-wide mt-0.5">✨ VERSÃO BRILHANTE ✨</p>}
+      {foil && <p className="text-gold-deep text-sm font-bold tracking-wide mt-0.5">VERSÃO BRILHANTE</p>}
 
       <div
         className={`relative overflow-hidden rounded-xl border mx-auto mt-3 max-w-[170px] p-2 flex flex-col items-center text-center ${
           foil
             ? 'after:absolute after:content-[""] after:top-[-60%] after:left-[-80%] after:w-[55%] after:h-[260%] after:rotate-[18deg] after:z-[2] after:pointer-events-none after:bg-[linear-gradient(100deg,transparent,rgba(255,255,255,0.5),transparent)] after:animate-fut-shine'
             : ''
-        } ${!foil && carta.raridade === 'lendaria' ? 'animate-fut-hue' : ''}`}
+        } ${carta.raridade === 'lendaria' ? 'animate-holo-shine' : ''}`}
         style={{
-          borderColor: foil ? '#ffe9a8' : tier.border,
+          borderColor: comGradiente && !foil ? 'transparent' : foil ? '#ffe9a8' : tier.border,
+          borderWidth: comGradiente && !foil ? 2 : 1,
           boxShadow: `0 0 26px ${foil ? 'rgba(250,204,21,0.5)' : tier.glow}`,
-          background: getCardBackground(carta.raridade, foil),
+          background: getCardBackgroundComBorda(carta.raridade, foil),
         }}
       >
         <div className="relative z-10 flex items-center justify-between w-full">
           <span className="bg-[rgba(0,0,0,0.35)] border border-white/30 backdrop-blur-[2px] rounded-md px-1 py-0.5 text-[8px] font-bold tracking-wide text-white/95">
-            {foil ? `✨ ${getCardLabel(carta)}` : getCardLabel(carta)}
+            {foil ? `F·${getCardLabel(carta)}` : getCardLabel(carta)}
           </span>
           <span className="bg-[rgba(0,0,0,0.35)] border border-white/30 backdrop-blur-[2px] rounded-md px-1 py-0.5 text-[8px] font-bold tracking-wide text-white/95">
             {getIniciaisSet(set.id)}

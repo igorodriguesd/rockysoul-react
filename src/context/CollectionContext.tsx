@@ -155,7 +155,7 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
 
     const set = getSetDeCarta(carta.setId);
     if ((data.pontosAcumulados ?? data.pontos) < set.pontosMin) {
-      showToast(`Set "${set.nome}" desbloqueia no nível ${nomeNivelPorPontos(set.pontosMin)} (${set.pontosMin} pts)`);
+      showToast(`Set "${set.nome}" desbloqueia no nível ${nomeNivelPorPontos(set.pontosMin)} (${set.pontosMin} XP)`);
       return null;
     }
 

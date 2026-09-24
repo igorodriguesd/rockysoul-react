@@ -6,17 +6,6 @@ import App from './App'
 
 let resizeTimer: ReturnType<typeof setTimeout>
 
-(function initTheme() {
-  try {
-    const t = localStorage.getItem('rocky_theme')
-    if (t !== 'light' && t !== 'dark') return
-    document.documentElement.dataset.theme = t
-    document.documentElement.style.colorScheme = t
-  } catch {
-    /* armazenamento indisponível */
-  }
-})()
-
 window.addEventListener('resize', () => {
   document.documentElement.classList.add('resizing')
   clearTimeout(resizeTimer)

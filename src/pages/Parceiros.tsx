@@ -74,9 +74,9 @@ export function Parceiros() {
             <p className="text-brand font-bold" style={{ fontSize: 20 }}>{totalCortesias.toLocaleString('pt-BR')}</p>
           </div>
           {contribuicoesPessoais > 0 && (
-            <div className="rounded-xl p-3" style={{ background: 'color-mix(in srgb, #FACC15 10%, var(--t-mist))', border: '1px solid rgba(250,204,21,0.5)' }}>
+            <div className="rounded-xl p-3" style={{ background: 'var(--t-impact-bg)', border: '1px solid rgba(56,189,248,0.35)' }}>
               <p className="text-slate-500 text-[10px] uppercase tracking-widest">Seu impacto</p>
-              <p className="text-gold-deep font-bold" style={{ fontSize: 20 }}>
+              <p className="text-impact font-bold" style={{ fontSize: 20 }}>
                 {linhas.reduce((s, l) => s + l.pessoaEntregas + l.pessoaResgates, 0)} ações
               </p>
             </div>

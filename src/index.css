@@ -1,173 +1,112 @@
 @import "tailwindcss";
 
-/* ============================================================
-   TEMAS: :root = Light ("Azul Royal") | [data-theme="dark"] = Classic "Soul Up"
-   Definidos como variáveis apenas (config de tema, via @theme abaixo)
-   ============================================================ */
-:root {
-  color-scheme: light;
-
-  --t-void: #f8fafc;
-  --t-surface: #ffffff;
-  --t-surface-2: #f1f5f9;
-  --t-text-base: #0f172a;
-  --t-text-muted: #64748b;
-
-  --t-accent: #4f46e5;
-  --t-accent-hover: #4338ca;
-  --t-accent-2: #3b82f6;
-  --t-accent-3: #38bdf8;
-  --t-accent-4: #60a5fa;
-  --t-accent-5: #6366f1;
-  --t-accent-soft: #eef2ff;
-  --t-accent-soft-2: #e0e7ff;
-  --t-onaccent: #ffffff;
-
-  --t-gold: #facc15;
-  --t-gold-deep: #eab308;
-
-  --t-bg-app: linear-gradient(180deg, #6366f1 0%, #4f46e5 26%, #3b82f6 44%, #60a5fa 58%, #f1f5f9 72%, #f8fafc 100%);
-
-  --t-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08));
-  --t-glass-border: rgba(255, 255, 255, 0.28);
-  --t-glass-hero: linear-gradient(150deg, #4f46e5 0%, #3b82f6 46%, #38bdf8 80%, #60a5fa 100%);
-  --t-glass-hero-border: rgba(255, 255, 255, 0.4);
-  --t-glass-hero-shadow: 0 26px 70px rgba(79, 70, 229, 0.35);
-  --t-glass-side: rgba(255, 255, 255, 0.92);
-  --t-glass-side-border: rgba(79, 70, 229, 0.28);
-  --t-glass-side-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-  --t-glass-strong: linear-gradient(160deg, rgba(255, 255, 255, 0.98), rgba(241, 245, 249, 0.98));
-  --t-glass-strong-border: rgba(79, 70, 229, 0.4);
-  --t-glass-strong-shadow: 0 12px 40px rgba(79, 70, 229, 0.14);
-  --t-card-primary: #ffffff;
-  --t-card-primary-border: rgba(79, 70, 229, 0.28);
-  --t-card-primary-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
-  --t-card-secondary: #f1f5f9;
-  --t-card-secondary-border: rgba(79, 70, 229, 0.16);
-  --t-card-tertiary: #eef1fc;
-
-  --t-header: rgba(255, 255, 255, 0.9);
-  --t-header-border: rgba(79, 70, 229, 0.15);
-  --t-header-shadow: 0 12px 32px rgba(79, 70, 229, 0.14);
-
-  --t-grad-brand: linear-gradient(135deg, #4f46e5, #3b82f6);
-  --t-grad-strong: linear-gradient(135deg, #4f46e5, #3b82f6);
-  --t-grad-menu: linear-gradient(135deg, #4f46e5, #3b82f6 55%, #38bdf8);
-  --t-grad-arena: linear-gradient(155deg, #4f46e5, #3b82f6, #38bdf8);
-  --t-grad-factory: linear-gradient(180deg, #eef0ff 0%, #f9fafc 55%, #ffffff 100%);
-  --t-grad-arena-btn: #ffffff;
-  --t-on-arena-btn: #4f46e5;
-  --t-arena-btn-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-  --t-arena-shadow: 0 12px 32px rgba(79, 70, 229, 0.3);
-
-  --t-hero-btn: linear-gradient(135deg, #ffffff, #e0e7ff);
-  --t-hero-text: #4f46e5;
-  --t-hero-shadow: 0 10px 40px rgba(255, 255, 255, 0.4);
-
-  --t-glow: rgba(79, 70, 229, 0.5);
-  --t-mist: rgba(79, 70, 229, 0.12);
-  --t-brand-border: rgba(79, 70, 229, 0.4);
-  --t-mist-gray: rgba(148, 163, 184, 0.15);
-  --t-glow-card: rgba(79, 70, 229, 0.45);
-  --t-island-shadow: rgba(15, 23, 42, 0.35);
-  --t-wheel-slot: #3b82f6;
-  --t-wheel-stroke: #0f172a;
-  --t-wheel-point: #4f46e5;
-
-  --t-slate-50: #f8fafc;
-  --t-slate-100: #f1f5f9;
-  --t-slate-200: #e2e8f0;
-  --t-slate-300: #cbd5e1;
-  --t-slate-400: #94a3b8;
-  --t-slate-500: #64748b;
-  --t-slate-600: #475569;
-  --t-slate-700: #334155;
-  --t-slate-800: #1e293b;
-  --t-slate-900: #0f172a;
-  --t-slate-950: #020617;
+@property --holo-angle {
+  syntax: '<angle>';
+  initial-value: 220deg;
+  inherits: false;
 }
 
-[data-theme="dark"] {
+/* ============================================================
+   TEMA ÚNICO: :root = Classic "Soul Up" (dark)
+   ============================================================ */
+:root {
   color-scheme: dark;
 
-  --t-void: #070d19;
-  --t-surface: #0f1c2e;
-  --t-surface-2: #162840;
-  --t-text-base: #ffffff;
-  --t-text-muted: #94a3b8;
+  /* RockySoulUp Dark Theme — identidade única */
+  --t-void: #07111d;            /* Fundo da aplicação */
+  --t-surface: #0b1725;         /* Áreas secundárias */
+  --t-surface-2: #12233a;       /* Cards */
+  --t-surface-hover: #172b45;   /* Card elevado / hover */
 
-  --t-accent: #00ff88;
-  --t-accent-hover: #34d399;
-  --t-accent-2: #22c55e;
-  --t-accent-3: #38bdf8;
+  --t-text-base: #f8fafc;       /* Texto principal */
+  --t-text-secondary: #cbd5e1;  /* Texto secundário */
+  --t-text-muted: #94a3b8;      /* Texto muted */
+  --t-text-disabled: #64748b;   /* Texto desabilitado */
+
+  --t-accent: #00e676;          /* Verde Rocky — ação principal */
+  --t-accent-hover: #00f57a;
+  --t-accent-2: #22c55e;        /* Sucesso / progresso */
+  --t-accent-3: #38bdf8;        /* Azul — informação / impacto */
   --t-accent-4: #60a5fa;
-  --t-accent-5: #00ff88;
-  --t-accent-soft: rgba(0, 255, 136, 0.12);
-  --t-accent-soft-2: rgba(0, 255, 136, 0.18);
-  --t-onaccent: #07110b;
+  --t-accent-5: #a78bfa;        /* Roxo — coleção / cartas */
+  --t-accent-soft: rgba(0, 230, 118, 0.12);
+  --t-accent-soft-2: rgba(0, 230, 118, 0.18);
+  --t-onaccent: #03110a;
 
-  --t-gold: #facc15;
+  --t-primary-dark: #047857;    /* Verde escuro */
+  --t-gold: #facc15;            /* Amarelo destaque */
   --t-gold-deep: #fbbf24;
+  --t-red: #f87171;             /* Vermelho erro */
 
-  --t-bg-app: radial-gradient(circle at 50% 0%, #102a3a 0%, #070d19 70%);
+  --t-bg-app: radial-gradient(circle at 50% 0%, #12233a 0%, #07111d 70%);
+
+  --t-border-subtle: rgba(148, 163, 184, 0.12);  /* Borda padrão dos cards */
+  --t-border-active: rgba(0, 230, 118, 0.45);     /* Borda verde: ativo/concluído/destaque */
+
+  --t-collection: #a78bfa;          /* Roxo coleção */
+  --t-collection-bg: #241b3d;       /* Superfície de coleção */
+  --t-collection-border: #6d4fc2;
+
+  --t-impact: #38bdf8;              /* Azul impacto */
+  --t-impact-bg: #102d3d;           /* Superfície de impacto */
 
   --t-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
-  --t-glass-border: rgba(0, 255, 136, 0.22);
-  --t-glass-hero: rgba(9, 20, 34, 0.92);
-  --t-glass-hero-border: rgba(0, 255, 136, 0.3);
-  --t-glass-hero-shadow: 0 0 40px rgba(0, 255, 136, 0.08), inset 0 0 20px rgba(0, 255, 136, 0.05);
-  --t-glass-side: rgba(9, 20, 34, 0.96);
-  --t-glass-side-border: rgba(0, 255, 136, 0.2);
+  --t-glass-border: var(--t-border-subtle);
+  --t-glass-hero: rgba(11, 23, 37, 0.92);
+  --t-glass-hero-border: var(--t-border-subtle);
+  --t-glass-hero-shadow: 0 0 40px rgba(0, 230, 118, 0.08), inset 0 0 20px rgba(0, 230, 118, 0.05);
+  --t-glass-side: rgba(11, 23, 37, 0.96);
+  --t-glass-side-border: var(--t-border-subtle);
   --t-glass-side-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --t-glass-strong: linear-gradient(160deg, rgba(20, 38, 60, 0.96), rgba(12, 26, 44, 0.95));
-  --t-glass-strong-border: rgba(0, 255, 136, 0.4);
-  --t-glass-strong-shadow: 0 12px 40px rgba(0, 255, 136, 0.12);
-  --t-card-primary: #0f1c2e;
-  --t-card-primary-border: rgba(0, 255, 136, 0.4);
+  --t-glass-strong: linear-gradient(160deg, rgba(18, 35, 58, 0.96), rgba(11, 23, 37, 0.95));
+  --t-glass-strong-border: var(--t-border-subtle);
+  --t-glass-strong-shadow: 0 12px 40px rgba(0, 230, 118, 0.12);
+  --t-card-primary: #12233a;    /* Cards / Surface */
+  --t-card-primary-border: var(--t-border-subtle);
   --t-card-primary-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --t-card-secondary: #162840;
-  --t-card-secondary-border: rgba(0, 255, 136, 0.2);
-  --t-card-tertiary: rgba(11, 74, 44, 0.32);
+  --t-card-secondary: #172b45;  /* Card elevado */
+  --t-card-secondary-border: var(--t-border-subtle);
+  --t-card-tertiary: #0d3b35;   /* Fundo de elemento ativo */
 
-  --t-header: rgba(9, 20, 34, 0.9);
-  --t-header-border: rgba(0, 255, 136, 0.18);
+  --t-header: rgba(11, 23, 37, 0.9);
+  --t-header-border: #164e63;
   --t-header-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
 
-  --t-grad-brand: linear-gradient(135deg, #22c55e, #00ff88);
+  --t-grad-brand: linear-gradient(135deg, #22c55e, #00e676);
   --t-grad-strong: linear-gradient(160deg, #047857, #065f46);
-  --t-grad-menu: linear-gradient(135deg, #22c55e, #00ff88 55%, #38bdf8);
-  --t-grad-arena: linear-gradient(155deg, #0b1f33, #0f1c2e, #070d19);
-  --t-grad-factory: linear-gradient(180deg, rgba(15, 28, 46, 0.98), rgba(7, 13, 25, 0.98));
-  --t-grad-arena-btn: linear-gradient(135deg, #22c55e, #00ff88);
-  --t-on-arena-btn: #07110b;
-  --t-arena-btn-shadow: 0 8px 22px rgba(0, 255, 136, 0.3);
+  --t-grad-menu: linear-gradient(135deg, #22c55e, #00e676 55%, #38bdf8);
+  --t-grad-arena: linear-gradient(155deg, #0b1725, #12233a, #07111d);
+  --t-grad-factory: linear-gradient(180deg, rgba(18, 35, 58, 0.98), rgba(7, 17, 29, 0.98));
+  --t-grad-arena-btn: linear-gradient(135deg, #22c55e, #00e676);
+  --t-on-arena-btn: #03110a;
+  --t-arena-btn-shadow: 0 8px 22px rgba(0, 230, 118, 0.3);
   --t-arena-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 
-  --t-hero-btn: linear-gradient(135deg, #22c55e, #00ff88);
-  --t-hero-text: #07110b;
-  --t-hero-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
+  --t-hero-btn: linear-gradient(135deg, #22c55e, #00e676);
+  --t-hero-text: #03110a;
+  --t-hero-shadow: 0 10px 40px rgba(0, 230, 118, 0.3);
 
-  --t-glow: rgba(0, 255, 136, 0.45);
-  --t-mist: rgba(0, 255, 136, 0.12);
-  --t-brand-border: rgba(0, 255, 136, 0.35);
+  --t-glow: rgba(0, 230, 118, 0.45);
+  --t-mist: rgba(0, 230, 118, 0.12);
+  --t-brand-border: var(--t-border-subtle);  /* Borda de elementos internos de card */
   --t-mist-gray: rgba(255, 255, 255, 0.1);
-  --t-glow-card: rgba(0, 255, 136, 0.4);
+  --t-glow-card: rgba(0, 230, 118, 0.4);
   --t-island-shadow: rgba(0, 0, 0, 0.4);
   --t-wheel-slot: #22c55e;
   --t-wheel-stroke: #07110b;
-  --t-wheel-point: #00ff88;
+  --t-wheel-point: #00e676;
 
-  --t-slate-50: #0f0f1a;
-  --t-slate-100: #12121a;
-  --t-slate-200: #1e1e2c;
-  --t-slate-300: #2d2d3f;
-  --t-slate-400: #8e8ea0;
-  --t-slate-500: #aab3c2;
-  --t-slate-600: #c2cad6;
-  --t-slate-700: #dbe2ee;
-  --t-slate-800: #eef1f8;
-  --t-slate-900: #ffffff;
-  --t-slate-950: #ffffff;
+  --t-slate-50: #0b1725;
+  --t-slate-100: #0f1c2e;
+  --t-slate-200: #12233a;
+  --t-slate-300: #172b45;
+  --t-slate-400: #64748b;
+  --t-slate-500: #94a3b8;
+  --t-slate-600: #cbd5e1;
+  --t-slate-700: #cbd5e1;
+  --t-slate-800: #f8fafc;
+  --t-slate-900: #f8fafc;
+  --t-slate-950: #f8fafc;
 }
 
 @theme {
@@ -177,17 +116,19 @@
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
 
-  --font-brand: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  --font-serif-display: Georgia, 'Times New Roman', serif;
+  --font-brand: 'Manrope', 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-serif-display: 'Manrope', 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
 
   --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
   --animate-float: float 6s ease-in-out infinite;
   --animate-fut-shine: fut-shine 2.4s linear infinite;
   --animate-fut-hue: fut-hue 9s ease-in-out infinite;
+  --animate-holo-shine: holo-shine 6s linear infinite;
 
   --color-void: var(--t-void);
   --color-surface: var(--t-surface);
   --color-surface-2: var(--t-surface-2);
+  --color-surface-hover: var(--t-surface-hover);
   --color-frost: var(--t-text-base);
 
   --color-brand: var(--t-accent);
@@ -198,6 +139,13 @@
   --color-violet: var(--t-accent-5);
   --color-brand-soft: var(--t-accent-soft);
   --color-brand-soft-2: var(--t-accent-soft-2);
+
+  --color-collection: var(--t-collection);
+  --color-collection-bg: var(--t-collection-bg);
+  --color-collection-border: var(--t-collection-border);
+
+  --color-impact: var(--t-impact);
+  --color-impact-bg: var(--t-impact-bg);
 
   --color-gold: var(--t-gold);
   --color-gold-deep: var(--t-gold-deep);
@@ -262,6 +210,11 @@
     0%, 100% { filter: hue-rotate(0deg) saturate(1); }
     50% { filter: hue-rotate(14deg) saturate(1.15); }
   }
+
+  @keyframes holo-shine {
+    0% { --holo-angle: 220deg; }
+    100% { --holo-angle: 580deg; }
+  }
 }
 
 @layer base {
@@ -271,7 +224,7 @@
 
   body {
     margin: 0;
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Manrope', 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
@@ -279,6 +232,7 @@
 
   h1, h2, h3, h4 {
     font-family: var(--font-serif-display);
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 }

@@ -19,7 +19,7 @@ export default function SetColecao({ set }: Props) {
   const bloqueado = (data.pontosAcumulados ?? data.pontos) < set.pontosMin;
 
   return (
-    <section className="[background:var(--t-glass-strong)] border border-(--t-glass-strong-border) shadow-(--t-glass-strong-shadow) rounded-2xl p-4 sm:p-5" style={bloqueado ? { opacity: 0.85 } : undefined}>
+    <section className="shadow-(--t-glass-strong-shadow) rounded-2xl p-4 sm:p-5" style={bloqueado ? { opacity: 0.85, background: 'linear-gradient(168deg, #241b3d 0%, #12233a 100%)', border: '1px solid rgba(109,79,194,0.35)' } : { background: 'linear-gradient(168deg, #241b3d 0%, #12233a 100%)', border: '1px solid rgba(109,79,194,0.35)' }}>
       <header className="flex items-center gap-3 mb-4">
         <div
           className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
@@ -32,8 +32,8 @@ export default function SetColecao({ set }: Props) {
           <p className="text-slate-500 text-xs flex items-center gap-1.5 flex-wrap">
             {set.tema}
             {bloqueado && (
-              <span className="inline-flex items-center rounded-full px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-semibold">
-                Libera no nível {nomeNivelPorPontos(set.pontosMin)} · {set.pontosMin} pts
+              <span className="inline-flex items-center rounded-full px-2 py-0.5 bg-gold/15 text-gold text-[10px] font-semibold">
+                Libera no nível {nomeNivelPorPontos(set.pontosMin)} · {set.pontosMin} XP
               </span>
             )}
           </p>

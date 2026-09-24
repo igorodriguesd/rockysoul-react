@@ -16,7 +16,7 @@ export function Integrantes() {
             <img
               src={m.foto}
               alt={m.nome}
-              className="w-35 h-35 rounded-full object-cover mx-auto mb-4 border-4 border-brand/30"
+              className="w-35 h-35 rounded-full object-cover mx-auto mb-4 border-4 border-white/15"
             />
             <h3 className="font-bold  text-sm">{m.nome}</h3>
             <p className="text-xs text-brand font-medium mt-1 mb-4">{m.rm}</p>

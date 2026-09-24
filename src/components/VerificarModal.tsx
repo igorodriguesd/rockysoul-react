@@ -309,7 +309,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(250,204,21,0.15)' }}>
                           <img src={drop.carta.icone} className="w-6 h-6 drop-shadow-[0_0_6px_rgba(250,204,21,0.9)]" alt="" />
                         </div>
-                        <p className="text-slate-900 font-bold text-sm">{drop.carta.nome} ✨</p>
+                        <p className="text-slate-900 font-bold text-sm">{drop.carta.nome} {drop.foil ? '(brilhante)' : ''}</p>
                       </div>
                       <p className="text-slate-700 text-xs leading-snug">
                         <strong className="text-gold-deep">CARTA BRILHANTE!</strong> {drop.carta.nome} evoluiu para a versão

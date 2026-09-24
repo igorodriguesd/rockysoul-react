@@ -27,12 +27,12 @@ export default function SetProgress({ set }: Props) {
         )}
       </div>
 
-      <div className="relative h-2.5 rounded-full overflow-hidden" style={{ background: 'var(--t-slate-200)' }}>
+      <div className="relative h-2.5 rounded-full overflow-hidden" style={{ background: 'var(--t-collection-bg)' }}>
         <div
           className="h-full rounded-full transition-all duration-700"
           style={{
             width: `${percentual}%`,
-            background: `linear-gradient(90deg, ${set.cor}, var(--color-brand))`,
+            background: `linear-gradient(90deg, ${set.cor}, var(--t-collection))`,
           }}
         />
         {MARCOS.map(m => (
@@ -50,7 +50,7 @@ export default function SetProgress({ set }: Props) {
 
       <p className="text-[11px] mt-1.5 text-slate-600">
         {mensagem}
-        {setCompleto && ' · +150 pts'}
+        {setCompleto && ' · +150 créditos'}
       </p>
     </div>
   );
