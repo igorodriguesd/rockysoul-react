@@ -24,6 +24,16 @@ export interface Nivel {
   max: number;
 }
 
+export interface TrilhaEtapa {
+  nome: string;
+  icone: string;
+  emoji: string;
+  minXP: number;
+  recompensa: string;
+  desbloqueio: string;
+  explicacao: string;
+}
+
 export interface Recompensa {
   id: string;
   nome: string;
@@ -75,11 +85,6 @@ export interface Resgate {
   data: string;
 }
 
-export interface UsuarioSimulado {
-  nome: string;
-  pontos: number;
-}
-
 export interface ChatMessage {
   texto: string;
   remetente: 'user' | 'bot';
@@ -111,7 +116,6 @@ export interface Carta {
   setId: string;
   raridade: RaridadeCarta;
   descricao: string;
-  educativa: string;
   icone: string;
 }
 
