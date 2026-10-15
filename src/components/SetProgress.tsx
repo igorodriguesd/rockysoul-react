@@ -12,7 +12,10 @@ const MARCOS = [
 ];
 
 export default function SetProgress({ set }: Props) {
-  const { quimica, totalCartas, percentual, mensagem, setCompleto } = useChemistry(set.id);
+  const { quimica, totalCartas = 0, percentual = 0, mensagem = '', setCompleto = false } = useChemistry(set.id);
+
+  const levelAtual = quimica?.level ?? 0;
+  const totalMaximo = 4;
 
   return (
     <div>
@@ -38,7 +41,7 @@ export default function SetProgress({ set }: Props) {
         {MARCOS.map(m => (
           <span
             key={m.alvo}
-            className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full"
+            className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full transition-all z-10"
             style={{
               left: `calc(${(m.alvo / 4) * 100}% - 3px)`,
               background: quimica.level >= m.nivel ? set.cor : 'rgba(148,163,184,0.5)',

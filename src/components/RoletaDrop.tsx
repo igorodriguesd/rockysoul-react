@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Carta } from '../types';
 
 const SLOTS = 36;
@@ -52,14 +52,14 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
     const t1 = setTimeout(() => setRotacao(rotacaoFinal), 80);
     const t2 = setTimeout(() => {
       setGirando(false);
-      onTerminar?.();
+      onTerminarRef.current?.();
     }, DURACAO + 100);
+
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [slotVencedor, degPorSlot]);
 
   return (
     <div className="relative w-48 h-52 mx-auto mt-2 select-none" aria-label="Roleta de carta">
