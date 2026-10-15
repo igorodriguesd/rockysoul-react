@@ -7,6 +7,7 @@ export interface Missao {
   icone: string;
   comprovacao: Comprovacao;
   tempoTimer?: number;
+  admiteEcoponto?: boolean;
 }
 
 export interface Selo {
@@ -23,14 +24,53 @@ export interface Nivel {
   max: number;
 }
 
+export interface TrilhaEtapa {
+  nome: string;
+  icone: string;
+  emoji: string;
+  minXP: number;
+  recompensa: string;
+  desbloqueio: string;
+  explicacao: string;
+}
+
 export interface Recompensa {
   id: string;
   nome: string;
   descricao: string;
   pontos: number;
-  categoria: 'Energia' | 'Transporte' | 'Natureza' | 'Cupons';
+  valorReal: number;
+  categoria: 'Energia' | 'Transporte' | 'Natureza' | 'Cupons' | 'Parceiros';
   icone: string;
-  badge?: 'Novo' | 'Top 1';
+  badge?: 'Novo' | 'Top 1' | 'Cortesia';
+  parceiroId?: string;
+}
+
+export type TipoParceiro = 'ecoponto' | 'voucher' | 'patrocinador';
+
+export interface Parceiro {
+  id: string;
+  nome: string;
+  tipos: TipoParceiro[];
+  cor: string;
+  localizacao: string;
+  descricao: string;
+  temas?: string[];
+  impactoBase?: { creditos: number; cortesias: number };
+  valorCortesia?: number;
+}
+
+export interface ParceiroImpacto {
+  entregas: number;
+  resgates: number;
+  creditos: number;
+}
+
+export interface Amigo {
+  nome: string;
+  codigo: string;
+  pontos: number;
+  streak: number;
 }
 
 export interface HistoricoEntrada {
@@ -45,11 +85,6 @@ export interface Resgate {
   data: string;
 }
 
-export interface UsuarioSimulado {
-  nome: string;
-  pontos: number;
-}
-
 export interface ChatMessage {
   texto: string;
   remetente: 'user' | 'bot';
@@ -59,6 +94,7 @@ export interface UserData {
   nome: string;
   email: string;
   pontos: number;
+  pontosAcumulados: number;
   missoesCompletas: number;
   pontosHoje: number;
   dataHoje: string;
@@ -68,6 +104,8 @@ export interface UserData {
   historico: HistoricoEntrada[];
   selosDesbloqueados: string[];
   resgates: Resgate[];
+  impactoParceiros: Record<string, ParceiroImpacto>;
+  amigos: string[];
 }
 
 export type RaridadeCarta = 'comum' | 'incomum' | 'rara' | 'epica' | 'lendaria';
@@ -78,7 +116,6 @@ export interface Carta {
   setId: string;
   raridade: RaridadeCarta;
   descricao: string;
-  educativa: string;
   icone: string;
 }
 
@@ -89,6 +126,7 @@ export interface SetCarta {
   tema: string;
   descricao: string;
   cor: string;
+  pontosMin: number;
 }
 
 export type NivelQuimica = 0 | 1 | 2 | 3;

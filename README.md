@@ -270,6 +270,143 @@ Todas as informações do usuário são salvas no **localStorage**, via hook `us
 
 ---
 
+## Estrutura do Backlog
+
+O projeto utiliza um **backlog Kanban** com 4 colunas para organizar as tarefas por status, seguindo as melhores práticas de gestão visual ágil. Cada item possui **etiquetas** para identificação rápida do tipo de trabalho, módulo e prioridade.
+
+### Colunas do Backlog
+
+| Coluna | Descrição |
+|--------|-----------|
+| 📋 **Backlogs** | Itens planejados para desenvolvimento futuro, aguardando priorização |
+| 📝 **A Fazer** | Itens a serem iniciados no próximo ciclo, já priorizados |
+| 🔄 **Em Andamento** | Itens em desenvolvimento ativo pela equipe |
+| ✅ **Concluído** | Itens finalizados e entregues com sucesso |
+
+### Sistema de Etiquetas
+
+O projeto utiliza **etiquetas coloridas** no estilo Trello, onde cada card pode ter **múltiplas etiquetas** para identificar diferentes aspectos. As etiquetas são barras coloridas sem texto, permitindo visualização rápida.
+
+#### Cores e Significados
+
+| Cor | Significado | Uso |
+|-----|-------------|-----|
+| <span style="background:#22c55e;padding:2px 8px;border-radius:4px;color:white">**Verde**</span> | Feature | Nova funcionalidade ou melhoria significativa |
+| <span style="background:#3b82f6;padding:2px 8px;border-radius:4px;color:white">**Azul**</span> | Frontend | Tarefas de interface React (componentes, páginas, estilos) |
+| <span style="background:#f59e0b;padding:2px 8px;border-radius:4px;color:white">**Amarelo**</span> | Backend | Tarefas de backend Java/Python (APIs, banco, lógica) |
+| <span style="background:#a855f7;padding:2px 8px;border-radius:4px;color:white">**Roxo**</span> | IA | Inteligência artificial, machine learning e NLP |
+| <span style="background:#ef4444;padding:2px 8px;border-radius:4px;color:white">**Vermelho**</span> | Gamificação | Sistemas de pontos, níveis, cartas e mini-jogos |
+| <span style="background:#6b7280;padding:2px 8px;border-radius:4px;color:white">**Cinza**</span> | Docs | Documentação técnica, acadêmica ou de processos |
+| <span style="background:#f97316;padding:2px 8px;border-radius:4px;color:white">**Laranja**</span> | Entrega | Tarefas de entrega final (PDF, vídeo, Trello, deploy) |
+| <span style="background:#14b8a6;padding:2px 8px;border-radius:4px;color:white">**Teal**</span> | Dados | Datasets e dados para treinamento de IA |
+| <span style="background:#ec4899;padding:2px 8px;border-radius:4px;color:white">**Rosa**</span> | Qualidade | Testes, acessibilidade, revisões e validações |
+| <span style="background:#ef4444;padding:2px 8px;border-radius:4px;color:white">**Vermelho escuro**</span> | Prioridade Alta | Tarefas críticas que exigem atenção imediata |
+
+#### Como Aplicar
+
+Cada card no Trello deve ter **2 a 4 etiquetas** combinando:
+- **1 cor de tipo** (feature, melhoria, bug)
+- **1 cor de módulo** (frontend, backend, ia, gamificação)
+- **1 cor de prioridade** (vermelho escuro = alta)
+- **1 cor opcional** (docs, entrega, qualidade, responsável)
+
+**Exemplo:** Um card "Integrar IA ao Dashboard" teria:
+- 🟢 Verde (feature)
+- 🟣 Roxo (IA)
+- 🔴 Vermelho escuro (prioridade alta)
+
+**Exemplo:** Um card "Compilar PDF Final" teria:
+- ⚪ Cinza (docs)
+- 🟠 Laranja (entrega)
+- 🔴 Vermelho escuro (prioridade alta)
+
+---
+
+## Descrição dos Componentes
+
+### Componentes React (`src/components/`)
+
+| Componente | Arquivo | Descrição |
+|------------|---------|-----------|
+| **Header** | `Header.tsx` | Navegação principal com 9 links, menu mobile, perfil do usuário com arco de progresso, vitrine de cartas, níveis, créditos e conversão. Inclui dropdown do usuário com opções entrar/sair. |
+| **Footer** | `Footer.tsx` | Rodapé com logo, slogan e copyright do projeto. |
+| **Chat** | `Chat.tsx` | Assistente virtual RockySoul com detecção de 18 intents de NLP por keywords. Suporta registro de ações, conversão de créditos, resgate de recompensas, dicas e curiosidades. Mantém estado da conversa (aguardando nome, ação, resgate, valor, chave Pix). ~608 linhas. |
+| **LoginModal** | `LoginModal.tsx` | Modal de cadastro/login com campos nome (obrigatório, min 3) e email (opcional). Validação em tempo real e persistência no localStorage. |
+| **VerificarModal** | `VerificarModal.tsx` | Modal completo de verificação de ação: upload de foto (JPG/PNG/WEBP, max 10MB), GPS opcional, timer countdown (5min), declaração (1x/dia com localStorage). Após confirmar: aciona RoletaDrop, exibe NovaCarta e feedback de drop. ~495 linhas. |
+| **ResgatarModal** | `ResgatarModal.tsx` | Modal de resgate de recompensa com validação de saldo, confirmação e feedback de sucesso. |
+| **RoletaDrop** | `RoletaDrop.tsx` | Roleta visual animada em SVG com 36 slots que gira por 4.2 segundos. Mostra chance de drop, cores por raridade e resultado predeterminado. |
+| **CardItem** | `CardItem.tsx` | Renderiza uma carta colecionável com visual estilo "FUT" (gols, brilho, foil, raridade, chance, valor). Mostra carta bloqueada/desbloqueada. |
+| **NovaCarta** | `NovaCarta.tsx` | Exibe animação de nova carta obtida após roleta, com informação de set, química e bônus. |
+| **SetColecao** | `SetColecao.tsx` | Renderiza um set de 4 cartas com header, progresso e grid de CardItem. |
+| **SetProgress** | `SetProgress.tsx` | Barra de progresso de um set com marcos (nível 1/2/3), texto descritivo e bônus. |
+| **CollectionChip** | `CollectionChip.tsx` | Chip lateral mostrando progresso da coleção (obtidas/total) e próximo set. Link para `/colecao`. |
+| **MiniJogoSeparacao** | `MiniJogoSeparacao.tsx` | Mini-jogo educativo de separação de lixo com 3 fases, 3 vidas, combo, drag-and-drop, 4 categorias (reciclável, orgânico, vidro, metal), 16 itens, recordes em localStorage e medalhas. ~518 linhas. Modo treino (não soma recompensa). |
+| **Toast** | `Toast.tsx` | Sistema global de notificações toast com auto-dismiss em 2.8 segundos. |
+
+### Páginas React (`src/pages/`)
+
+| Página | Arquivo | Descrição |
+|--------|---------|-----------|
+| **Home** | `Home.tsx` | Landing page com hero section, ilha flutuante animada, ranking mockado, desafio do dia, dica do dia, stats (12k+ usuários, 340t CO₂, 98% engajamento) e CTAs "Começar Agora" e "Saiba Mais". LoginModal integrado e sidebar com CollectionChip. |
+| **Dashboard** | `Dashboard.tsx` | Painel principal: desafio do dia com bônus, dica do dia (IA), grid de 20 missões para registrar, ranking global (com usuário real + 4 simulados), atividade recente (histórico + resgates + conversões) e MiniJogoSeparacao. Abre VerificarModal ao clicar em missão. ~445 linhas. |
+| **Coleção** | `Colecao.tsx` | Exibe coleção completa: progresso total, grid de 5 sets (SetColecao), Fábrica de Cartas (modal com cartas faltantes, fragmentos por raridade, custo de fabricação, dica interativa e botão fabricar). ~196 linhas. |
+| **Solução** | `Solucao.tsx` | Página institucional: problema, como funciona (5 passos), coleção de cartas (explicação visual com 5 raridades), sets e química, níveis e selos, diferenciais. |
+| **Recompensas** | `Recompensas.tsx` | Catálogo de 8 recompensas (card com badge, link para detalhe, botão resgatar), trilha de evolução (4 níveis), impacto ambiental (CO₂, árvores, streak) e conversor de créditos em dinheiro (Pix com validação, min 500 créditos). ResgatarModal integrado. ~304 linhas. |
+| **RecompensaDetalhe** | `RecompensaDetalhe.tsx` | Detalhe de uma recompensa com ícone, badge, categoria, descrição, saldo vs custo e botão resgatar. 404 caso não encontre. |
+| **Sobre** | `Sobre.tsx` | Página institucional: descrição do projeto e 8 tecnologias utilizadas (React, TS, Vite, Tailwind, HTML5, IBM Watson, Node-RED, Telegram Bot). |
+| **FAQ** | `Faq.tsx` | 7 perguntas frequentes com accordion animado. |
+| **Integrantes** | `Integrantes.tsx` | 4 membros da equipe com foto, nome, RM, GitHub e LinkedIn. |
+| **Contato** | `Contato.tsx` | Formulário de contato (nome, email, mensagem) com validação e feedback de envio. |
+| **404** | `PaginaNaoEncontrada.tsx` | Página de erro para rotas não encontradas com link para home. |
+
+### Contextos React (`src/context/`)
+
+| Contexto | Arquivo | Descrição |
+|----------|---------|-----------|
+| **DataContext** | `DataContext.tsx` | Gerencia dados do usuário: nome, email, pontos, histórico, resgates, selos, streak, desafio do dia e bônus. Persiste automaticamente no localStorage. |
+| **CollectionContext** | `CollectionContext.tsx` | Gerencia coleção de cartas: adquirir carta, drop por missão, fragmentos, fabricar carta, química de sets, progresso e valor total. Persiste no localStorage. |
+| **ChatContext** | `ChatContext.tsx` | Controla estado aberto/fechado do chatbot. |
+
+### Hooks React (`src/hooks/`)
+
+| Hook | Arquivo | Descrição |
+|------|---------|-----------|
+| **useChemistry** | `useChemistry.ts` | Calcula química de um set: nível (0-3), percentual, mensagem descritiva e se set está completo. |
+| **useLocalStorage** | `useLocalStorage.ts` | Hook genérico de persistência em localStorage com serialização JSON. |
+
+### Dados React (`src/data/`)
+
+| Arquivo | Descrição |
+|---------|-----------|
+| **constants.ts** | 20 missões sustentáveis (id, nome, pontos, ícone, tipo de comprovação), CO₂ por missão (20 valores), 4 selos/níveis, 8 recompensas, 4 usuários simulados (ranking), 5 curiosidades, 7 perguntas FAQ, 4 integrantes e taxa de conversão (100 créditos = R$1). |
+| **cartas.ts** | 20 cartas em 5 sets (4 cartas cada), 5 raridades com chances (75/55/35/20/10%), chance foil (8%), valores por raridade, fragmentos por duplicada, custo de fabricação e função calcularQuímica (nível 1/2/3). |
+| **cartasStyle.ts** | Estilos visuais das cartas: backgrounds por raridade (gradientes), glows, tiers (border, glow, texto), funções getCardBackground, getCardLabel, getIniciaisSet e efeito foil. |
+
+### Utils React (`src/utils/`)
+
+| Arquivo | Descrição |
+|---------|-----------|
+| **validation.ts** | Funções de validação: validateName (min 3, max 50, apenas letras), validateEmail (regex), validateMessage (min 10), normalizeName (trim + lowercase) e normalizeEmail (trim + lowercase). |
+
+### Tipos React (`src/types/`)
+
+| Tipo | Descrição |
+|------|-----------|
+| `Comprovacao` | Union type: foto, foto-gps, timer, declaracao |
+| `Missao` | Interface de missão sustentável (id, nome, pontos, ícone, comprovacao, tempoTimer) |
+| `Selo`, `Nivel` | Interfaces de selos e níveis |
+| `Recompensa` | Interface de recompensa (id, nome, descricao, pontos, categoria, icone, badge) |
+| `HistoricoEntrada`, `Resgate` | Interfaces de histórico e resgates |
+| `UsuarioSimulado` | Interface de usuários simulados para ranking |
+| `ChatMessage` | Mensagem do chat (user/bot) |
+| `UserData` | Dados completos do usuário (nome, email, pontos, missoes, streak, etc.) |
+| `RaridadeCarta` | Union type: comum, incomum, rara, epica, lendaria |
+| `Carta`, `SetCarta`, `Quimica` | Interfaces do sistema de cartas |
+| `SetColecaoUsuario`, `ColecaoData` | Interfaces da coleção do usuário |
+| `NovaCartaInfo`, `ResultadoDrop` | Tipos para drops e fabricação |
+
+---
+
 ## Contato
 
 Para entrar em contato com a equipe RockySoulUp:

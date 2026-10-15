@@ -20,51 +20,40 @@ export default function SetProgress({ set }: Props) {
   return (
     <div>
       <div className="flex items-center justify-between text-xs mb-1.5">
-        <span className="text-white/60 font-medium">{totalCartas}/{totalMaximo} cartas</span>
-        {levelAtual > 0 ? (
-          <span className="font-bold" style={{ color: set.cor || '#20d968' }}>
-            Química Nível {levelAtual}
+        <span className="text-slate-600 font-medium">{totalCartas}/4 cartas</span>
+        {quimica.level > 0 ? (
+          <span className="font-bold" style={{ color: set.cor }}>
+            Química Nível {quimica.level}
           </span>
         ) : (
-          <span className="text-white/40">Sem química</span>
+          <span className="text-slate-500">Sem química</span>
         )}
       </div>
 
-      <div 
-        role="progressbar"
-        aria-valuenow={percentual}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={`Progresso da coleção ${set.nome}`}
-        className="relative h-2.5 rounded-full" 
-        style={{ background: 'rgba(82,232,138,0.12)' }}
-      >
-        <div className="w-full h-full rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-700"
-            style={{
-              width: `${percentual}%`,
-              background: `linear-gradient(90deg, ${set.cor || '#20d968'}, #20d968)`,
-            }}
-          />
-        </div>
-
+      <div className="relative h-2.5 rounded-full overflow-hidden" style={{ background: 'var(--t-collection-bg)' }}>
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{
+            width: `${percentual}%`,
+            background: `linear-gradient(90deg, ${set.cor}, var(--t-collection))`,
+          }}
+        />
         {MARCOS.map(m => (
           <span
             key={m.alvo}
             className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full transition-all z-10"
             style={{
-              left: `calc(${(m.alvo / totalMaximo) * 100}% - 3px)`,
-              background: levelAtual >= m.nivel ? (set.cor || '#20d968') : 'rgba(255,255,255,0.3)',
-              boxShadow: levelAtual >= m.nivel ? `0 0 6px ${set.cor || '#20d968'}` : 'none',
+              left: `calc(${(m.alvo / 4) * 100}% - 3px)`,
+              background: quimica.level >= m.nivel ? set.cor : 'rgba(148,163,184,0.5)',
+              boxShadow: quimica.level >= m.nivel ? `0 0 6px ${set.cor}` : 'none',
             }}
           />
         ))}
       </div>
 
-      <p className="text-[11px] mt-1.5 text-white/50">
+      <p className="text-[11px] mt-1.5 text-slate-600">
         {mensagem}
-        {setCompleto && ' · +150 pts'}
+        {setCompleto && ' · +150 créditos'}
       </p>
     </div>
   );

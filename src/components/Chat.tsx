@@ -132,13 +132,13 @@ export default function Chat() {
 
   function textoDrop(drop: ResultadoDrop, prefixo: string): string {
     if ('novaCarta' in drop) {
-      return `${prefixo}\n\n🎉 **Nova carta obtida: ${drop.novaCarta.carta.nome}**${drop.foil ? ' ✨ (versão BRILHANTE!)' : ''}`;
+      return `${prefixo}\n\n**Nova carta obtida: ${drop.novaCarta.carta.nome}**${drop.foil ? ' (versão BRILHANTE!)' : ''}`;
     }
     if ('foil' in drop) {
-      return `${prefixo}\n\n✨ **CARTA BRILHANTE!** Sua ${drop.carta.nome} evoluiu para a versão premium (valor ×3) e está destacada na sua vitrine!`;
+      return `${prefixo}\n\n**CARTA BRILHANTE!** Sua ${drop.carta.nome} evoluiu para a versão premium (valor ×3) e está destacada na sua vitrine!`;
     }
     if ('duplicada' in drop) {
-      return `${prefixo}\n\n💜 Carta repetida: **${drop.carta.nome}** virou **+${drop.fragmentosGanhos} fragmentos** de ${drop.carta.raridade.toLowerCase()}. Monte as cartas que faltam na Fábrica de Cartas.`;
+      return `${prefixo}\n\nCarta repetida: **${drop.carta.nome}** virou **+${drop.fragmentosGanhos} fragmentos** de ${drop.carta.raridade.toLowerCase()}. Monte as cartas que faltam na Fábrica de Cartas.`;
     }
     return `${prefixo}\n\nA carta **${drop.carta.nome}** escapou desta vez! Chance de ganhar carta: ${drop.chance}%. Tente novamente.`;
   }
@@ -289,13 +289,13 @@ export default function Chat() {
       case 'nivel': {
         const nivel = getNivel();
         const proximoNivel =
-          nivel === 'Semente' ? 'Broto (100 créditos)' :
-            nivel === 'Broto' ? 'Árvore (300 créditos)' :
-              nivel === 'Árvore' ? 'Expert (1000 créditos)' :
+          nivel === 'Broto' ? 'Semente (500 XP)' :
+            nivel === 'Semente' ? 'Árvore (1200 XP)' :
+              nivel === 'Árvore' ? 'Floresta (2000 XP)' :
                 'Nível máximo atingido!';
         responder(
           '**Seu nível atual:** ' + nivel + '\n\n' +
-          '**' + data.pontos + ' créditos acumulados**\n\n' +
+          '**' + (data.pontosAcumulados ?? data.pontos) + ' XP acumulados**\n\n' +
           'Próximo nível: **' + proximoNivel + '**\n\n' +
           'Continue realizando ações sustentáveis para evoluir!'
         );
@@ -349,7 +349,7 @@ export default function Chat() {
           '- Conquiste cartas por raridade com chance de ganhar carta (roleta)\n' +
           '- Complete sets de cartas e ganhe bônus de química\n' +
           '- Converta créditos em dinheiro via Pix\n' +
-          '- Evolua de Semente a Expert\n' +
+          '- Evolua de Broto a Floresta\n' +
           '- Desbloqueie selos e resgate recompensas\n\n' +
           'Junte-se a nós e faça a diferença!'
         );
@@ -391,12 +391,13 @@ export default function Chat() {
           .join(' · ');
         responder(
           '**Sua coleção de cartas**\n\n' +
-          `**${obtidas}/${total}** cartas conquistadas${foils > 0 ? ` · **${foils} brilhante(s)** ✨` : ''}\n` +
+          `**${obtidas}/${total}** cartas conquistadas${foils > 0 ? ` · **${foils} brilhante(s)**` : ''}\n` +
           `Valor da coleção: **${valorTotal} créditos**\n\n` +
           '**Sets e química:**\n' + linhasSets + '\n\n' +
           (proximo ? `Próximo objetivo: complete o set **${proximo.set.nome}** (faltam ${proximo.faltam} carta(s)) para ativar a química.\n\n` : 'Set completo em todos! Você domina a coleção 😄\n\n') +
           '**Chance de ganhar carta por raridade:**\n' + chances + '\n\n' +
           'Complete um set (4/4) para ganhar **+150 créditos** de bônus!\n\n' +
+          '**Sets por nível:** Recursos e Cidade Verde já no início · Guardiões da Água no Semente (500 XP) · Energia Limpa na Árvore (1200 XP) · Cultivo na Floresta (2000 XP).\n\n' +
           '**Dica:** cartas repetidas viram fragmentos — use-os na **Fábrica de Cartas** da sua Coleção para montar as que faltam!'
         );
         break;
@@ -493,20 +494,20 @@ export default function Chat() {
               tabIndex={0}
               onClick={abrirComTeaser}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirComTeaser(); } }}
-              className="relative max-w-65 card-secondary rounded-2xl rounded-br-sm shadow-2xl border border-[#20d968]/25 p-4 text-left cursor-pointer"
+              className="relative max-w-65 bg-card-secondary border border-card-secondary-border rounded-2xl rounded-br-sm shadow-2xl border border-brand/25 p-4 text-left cursor-pointer"
             >
               <button
                 onClick={(e) => { e.stopPropagation(); marcarTeaserVisto(); }}
-                className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-white/50 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+                className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-slate-500 hover:text-slate-800 rounded-full hover:bg-surface-hover transition-colors"
                 aria-label="Dispensar dica"
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
               </button>
               <div className="flex items-start gap-3">
                 <img src="/imagens/logo.png" alt="" className="h-9 w-auto opacity-90 shrink-0" />
                 <div>
                   <p className="text-xs font-bold text-leaf">RockySoul</p>
-                  <p className="text-sm text-white/85 mt-0.5 leading-snug">
+                  <p className="text-sm text-slate-700 mt-0.5 leading-snug">
                     Oi! Sou seu assistente de sustentabilidade. Digite "dica" ou "registrar" pra começar.
                   </p>
                 </div>
@@ -517,10 +518,10 @@ export default function Chat() {
           <div className="relative">
             <button
               onClick={abrirChat}
-              className="relative flex items-center gap-2.5 rounded-full bg-leaf hover:bg-leaf-soft hover:shadow-[0_0_30px_rgba(32,217,104,0.5)] transition-all px-4 py-3.5 text-[#063d25] font-semibold shadow-xl cursor-pointer"
+              className="relative flex items-center justify-center rounded-full bg-brand hover:bg-brand-2 hover:shadow-[0_0_30px_var(--t-glow)] transition-all w-13 h-13 text-(--t-onaccent) font-semibold shadow-xl cursor-pointer"
               aria-label="Abrir chat"
             >
-              <svg className="shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg aria-hidden="true" className="shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
             </button>
@@ -529,8 +530,8 @@ export default function Chat() {
       )}
 
       {aberto && (
-        <div className="fixed bottom-6 right-6 z-50 card-secondary rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] h-110 max-h-[80vh] border border-[#20d968]/25">
-          <div className="text-white p-4 flex items-center gap-3 shrink-0" style={{ background: 'linear-gradient(135deg, #063d25, #0b4a2c)' }}>
+        <div className="fixed bottom-6 right-6 z-50 bg-card-secondary border border-card-secondary-border rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] max-h-[calc(100vh-3rem)] border border-brand/25">
+          <div className="text-white p-4 flex items-center gap-3 shrink-0" style={{ background: 'var(--t-grad-strong)' }}>
             <div className="w-10 h-10 rounded-full bg-leaf/25 flex items-center justify-center shrink-0">
               <img src="/imagens/logo.png" alt="" className="h-6 w-auto opacity-90" />
             </div>
@@ -543,11 +544,11 @@ export default function Chat() {
               className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors shrink-0 cursor-pointer"
               aria-label="Fechar chat"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto flex flex-col gap-2 p-4 bg-[#063d25]/35">
+          <div className="flex-1 overflow-y-auto flex flex-col gap-2 p-4 bg-surface-2">
             {mensagens.map((msg, i) => (
               <div
                 key={i}
@@ -555,8 +556,8 @@ export default function Chat() {
               >
                 <div
                   className={`px-4 py-2 max-w-[80%] text-sm leading-relaxed whitespace-pre-line ${msg.remetente === 'user'
-                    ? 'bg-leaf text-[#063d25] rounded-2xl rounded-tr-sm font-medium'
-                    : 'card-primary text-white/90 rounded-2xl rounded-tl-sm'
+                    ? 'bg-brand text-(--t-onaccent) rounded-2xl rounded-tr-sm font-medium'
+                    : 'bg-card-primary border border-card-primary-border text-slate-800 rounded-2xl rounded-tl-sm'
                     }`}
                 >
                   {msg.texto.split('**').map((part, idx) =>
@@ -569,7 +570,7 @@ export default function Chat() {
           </div>
 
           {!aguardandoEntrada && (
-            <div className="flex flex-wrap gap-1.5 px-3 pt-2 bg-[#063d25]/35 shrink-0">
+            <div className="flex flex-wrap gap-1.5 px-3 pt-2 bg-surface-2 shrink-0">
               {SUGESTOES_RAPIDAS.map(s => (
                 <button
                   key={s.comando}
@@ -582,20 +583,20 @@ export default function Chat() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="flex border-t border-[#0b4a2c] bg-[#0b4a2c]/60 shrink-0">
+          <form onSubmit={handleSubmit} className="flex border-t border-brand/15 bg-(--t-surface) shrink-0">
             <input
               type="text"
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder="Digite sua mensagem..."
-              className="flex-1 outline-none px-4 py-3 text-sm text-white placeholder-white/35 bg-transparent"
+              className="flex-1 outline-none px-4 py-3 text-sm text-slate-800 placeholder-slate-400 bg-transparent"
             />
             <button
               type="submit"
               className="px-4 py-3 text-leaf hover:text-leaf-soft transition-colors cursor-pointer"
               aria-label="Enviar mensagem"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
             </button>

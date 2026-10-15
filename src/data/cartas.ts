@@ -10,7 +10,7 @@ export const CHANCE_DROP_POR_RARIDADE: Record<RaridadeCarta, number> = {
 
 export const CHANCE_FOIL = 8;
 
-export const VALOR_POR_RARIDADE: Record<RaridadeCarta, number> = {
+const VALOR_POR_RARIDADE: Record<RaridadeCarta, number> = {
   comum: 8,
   incomum: 15,
   rara: 30,
@@ -24,6 +24,15 @@ export const FRAGMENTOS_POR_DUPLICADA: Record<RaridadeCarta, number> = {
   rara: 10,
   epica: 20,
   lendaria: 40,
+};
+
+// Créditos para girar a roleta de novo depois de perder (cara rara = giro caro)
+export const CUSTO_REGIRAR_POR_RARIDADE: Record<RaridadeCarta, number> = {
+  comum: 5,
+  incomum: 8,
+  rara: 12,
+  epica: 20,
+  lendaria: 30,
 };
 
 export const CUSTO_FABRICACAO: Record<RaridadeCarta, number> = {
@@ -61,7 +70,8 @@ export const SETS_CARTAS: SetCarta[] = [
     icone: '/icons/reciclagem.svg',
     tema: 'Consumo consciente',
     descricao: 'Reciclagem, reutilização, sacola ecológica e redução de desperdício.',
-    cor: '#20d968',
+    cor: 'var(--color-brand)',
+    pontosMin: 0,
   },
   {
     id: 'agua',
@@ -69,7 +79,8 @@ export const SETS_CARTAS: SetCarta[] = [
     icone: '/icons/agua.svg',
     tema: 'Preservação hídrica',
     descricao: 'Economia de água, banho rápido, garrafa reutilizável e captação de chuva.',
-    cor: '#38bdf8',
+    cor: 'var(--color-brand-3)',
+    pontosMin: 500,
   },
   {
     id: 'cidade-verde',
@@ -77,7 +88,8 @@ export const SETS_CARTAS: SetCarta[] = [
     icone: '/icons/transporte.svg',
     tema: 'Sustentabilidade urbana',
     descricao: 'Bicicleta, transporte público, mobilidade elétrica e ciclovias.',
-    cor: '#4ade80',
+    cor: 'var(--color-brand-2)',
+    pontosMin: 0,
   },
   {
     id: 'energia-limpa',
@@ -86,14 +98,16 @@ export const SETS_CARTAS: SetCarta[] = [
     tema: 'Fontes renováveis',
     descricao: 'Economia de energia, solar, eólica e iluminação eficiente.',
     cor: '#f5c451',
+    pontosMin: 1200,
   },
   {
     id: 'cultivo',
     nome: 'Cultivo',
-    icone: '/icons/muda.svg',
+    icone: '/icons/arvore.svg',
     tema: 'Agricultura sustentável',
     descricao: 'Plantio, compostagem, horta doméstica e agrofloresta.',
-    cor: '#8be28b',
+    cor: 'var(--color-violet)',
+    pontosMin: 2000,
   },
 ];
 
@@ -105,7 +119,6 @@ export const CARTAS: Carta[] = [
     setId: 'recursos',
     raridade: 'comum',
     descricao: 'Separar corretamente seus resíduos.',
-    educativa: 'A reciclagem reduz o volume de lixo em aterros e economiza matéria-prima e energia.',
     icone: '/icons/reciclagem.svg',
   },
   {
@@ -114,8 +127,7 @@ export const CARTAS: Carta[] = [
     setId: 'recursos',
     raridade: 'incomum',
     descricao: 'Dar nova vida a objetos e compartilhar dicas.',
-    educativa: 'Reutilizar prolonga a vida útil dos produtos e reduz a necessidade de fabricar novos.',
-    icone: '/icons/folha.svg',
+    icone: '/icons/reutilizar.svg',
   },
   {
     id: 'card-sacola',
@@ -123,8 +135,7 @@ export const CARTAS: Carta[] = [
     setId: 'recursos',
     raridade: 'rara',
     descricao: 'Usar sacolas ecológicas no lugar das descartáveis.',
-    educativa: 'Uma sacola reutilizável pode substituir centenas de sacolas plásticas ao longo da vida.',
-    icone: '/icons/folha.svg',
+    icone: '/icons/sacola.svg',
   },
   {
     id: 'card-consumo',
@@ -132,7 +143,6 @@ export const CARTAS: Carta[] = [
     setId: 'recursos',
     raridade: 'epica',
     descricao: 'Consumo consciente com menos desperdício.',
-    educativa: 'Cerca de 1/3 de toda a comida produzida no mundo é desperdiçada. Comprar só o necessário evita esse impacto.',
     icone: '/icons/carrinho.svg',
   },
 
@@ -143,7 +153,6 @@ export const CARTAS: Carta[] = [
     setId: 'agua',
     raridade: 'comum',
     descricao: 'Reduzir o consumo diário de água.',
-    educativa: 'Fechar a torneira ao escovar os dentes economiza até 12 litros de água por minuto.',
     icone: '/icons/agua.svg',
   },
   {
@@ -152,7 +161,6 @@ export const CARTAS: Carta[] = [
     setId: 'agua',
     raridade: 'incomum',
     descricao: 'Tomar banhos curtos e conscientes.',
-    educativa: 'Um banho de 5 minutos pode economizar até 40 litros de água por dia.',
     icone: '/icons/banho.svg',
   },
   {
@@ -161,8 +169,7 @@ export const CARTAS: Carta[] = [
     setId: 'agua',
     raridade: 'rara',
     descricao: 'Adotar garrafa própria no lugar de descartáveis.',
-    educativa: 'Garrafas reutilizáveis evitam toneladas de plástico e mantêm a hidratação sustentável.',
-    icone: '/icons/agua.svg',
+    icone: '/icons/garrafa.svg',
   },
   {
     id: 'card-captacao',
@@ -170,7 +177,6 @@ export const CARTAS: Carta[] = [
     setId: 'agua',
     raridade: 'epica',
     descricao: 'Aproveitar a água da chuva.',
-    educativa: 'Sistemas simples de captação podem abastecer até 50% do consumo de água da casa.',
     icone: '/icons/agua.svg',
   },
 
@@ -181,7 +187,6 @@ export const CARTAS: Carta[] = [
     setId: 'cidade-verde',
     raridade: 'comum',
     descricao: 'Pedalar no lugar de usar o carro.',
-    educativa: 'Cada km pedalado evita cerca de 150g de CO2 se comparado ao carro.',
     icone: '/icons/bicicleta.svg',
   },
   {
@@ -190,7 +195,6 @@ export const CARTAS: Carta[] = [
     setId: 'cidade-verde',
     raridade: 'incomum',
     descricao: 'Priorizar ônibus e metrô.',
-    educativa: 'Transporte coletivo emite até 5x menos CO2 por passageiro do que o carro individual.',
     icone: '/icons/transporte.svg',
   },
   {
@@ -199,7 +203,6 @@ export const CARTAS: Carta[] = [
     setId: 'cidade-verde',
     raridade: 'rara',
     descricao: 'Optar por veículos e patinetes elétricos.',
-    educativa: 'Veículos elétricos não emitem poluentes locais e são mais eficientes energeticamente.',
     icone: '/icons/bateria.svg',
   },
   {
@@ -208,8 +211,7 @@ export const CARTAS: Carta[] = [
     setId: 'cidade-verde',
     raridade: 'epica',
     descricao: 'Apoiar e usar infraestrutura cicloviária.',
-    educativa: 'Cidades com boas ciclovias têm menos congestionamento, ruas mais seguras e ar mais limpo.',
-    icone: '/icons/transporte.svg',
+    icone: '/icons/bicicleta.svg',
   },
 
   // SET ENERGIA LIMPA (4 cartas)
@@ -219,7 +221,6 @@ export const CARTAS: Carta[] = [
     setId: 'energia-limpa',
     raridade: 'comum',
     descricao: 'Reduzir o consumo de eletricidade em casa.',
-    educativa: 'Desligar aparelhos da tomada pode reduzir a conta de energia em até 10%.',
     icone: '/icons/energia.svg',
   },
   {
@@ -228,8 +229,7 @@ export const CARTAS: Carta[] = [
     setId: 'energia-limpa',
     raridade: 'rara',
     descricao: 'Gerar energia a partir do sol.',
-    educativa: 'Uma placa solar residencial pode zerar a conta de luz e evitar centenas de kg de CO2 por ano.',
-    icone: '/icons/energia.svg',
+    icone: '/icons/solar.svg',
   },
   {
     id: 'card-eolica',
@@ -237,8 +237,7 @@ export const CARTAS: Carta[] = [
     setId: 'energia-limpa',
     raridade: 'epica',
     descricao: 'Aproveitar a força dos ventos.',
-    educativa: 'A energia eólica já é uma das fontes mais baratas e limpas do mundo.',
-    icone: '/icons/energia.svg',
+    icone: '/icons/vento.svg',
   },
   {
     id: 'card-led',
@@ -246,8 +245,7 @@ export const CARTAS: Carta[] = [
     setId: 'energia-limpa',
     raridade: 'incomum',
     descricao: 'Trocar lâmpadas por modelos eficientes.',
-    educativa: 'Lâmpadas de LED consomem até 80% menos energia e duram muito mais.',
-    icone: '/icons/bateria.svg',
+    icone: '/icons/lampada.svg',
   },
 
   // SET CULTIVO (4 cartas)
@@ -257,7 +255,6 @@ export const CARTAS: Carta[] = [
     setId: 'cultivo',
     raridade: 'comum',
     descricao: 'Plantar árvores e espécies nativas.',
-    educativa: 'Uma árvore jovem absorve cerca de 22kg de CO2 por ano.',
     icone: '/icons/arvore.svg',
   },
   {
@@ -266,8 +263,7 @@ export const CARTAS: Carta[] = [
     setId: 'cultivo',
     raridade: 'incomum',
     descricao: 'Transformar resíduos orgânicos em adubo.',
-    educativa: 'A compostagem devolve nutrientes ao solo e reduz em até 50% o lixo orgânico doméstico.',
-    icone: '/icons/muda.svg',
+    icone: '/icons/compostagem.svg',
   },
   {
     id: 'card-horta',
@@ -275,8 +271,7 @@ export const CARTAS: Carta[] = [
     setId: 'cultivo',
     raridade: 'rara',
     descricao: 'Cultivar alimentos em casa.',
-    educativa: 'Hortas caseiras produzem alimento limpo e reduzem a distância entre produção e consumo.',
-    icone: '/icons/muda.svg',
+    icone: '/icons/vaso.svg',
   },
   {
     id: 'card-agrofloresta',
@@ -284,7 +279,6 @@ export const CARTAS: Carta[] = [
     setId: 'cultivo',
     raridade: 'lendaria',
     descricao: 'Sistema integrado de cultivo com a floresta.',
-    educativa: 'Agroflorestas combinam produção de alimentos com conservação da biodiversidade e do solo.',
     icone: '/icons/arvore.svg',
   },
 ];
@@ -317,9 +311,9 @@ export function calcularQuimica(totalCartas: number): Quimica {
     case 2:
       return { level: 1, bonusPontos: 0, descricao: 'Nível 1 · Química ativa' };
     case 3:
-      return { level: 2, bonusPontos: 30, descricao: 'Nível 2 · +30 pontos de bônus' };
+      return { level: 2, bonusPontos: 30, descricao: 'Nível 2 · +30 créditos de bônus' };
     case 4:
-      return { level: 3, bonusPontos: 150, descricao: 'Nível 3 · Set completo · +150 pontos' };
+      return { level: 3, bonusPontos: 150, descricao: 'Nível 3 · Set completo · +150 créditos' };
     default:
       return { level: 0, bonusPontos: 0, descricao: 'Sem química ativa' };
   }

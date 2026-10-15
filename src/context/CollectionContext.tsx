@@ -15,6 +15,7 @@ import {
   getValorCarta,
 } from '../data/cartas';
 import { showToast } from '../components/Toast';
+import { nomeNivelPorPontos } from '../data/constants';
 
 const STORAGE_KEY = 'rocky_colecao';
 
@@ -39,6 +40,7 @@ interface CollectionContextType {
   adquirirPorMissao: (missaoId: string, semToast?: boolean) => ResultadoDrop | null;
   adicionarFragmentos: (raridade: RaridadeCarta, quantidade: number) => void;
   fabricarCarta: (cardId: string) => NovaCartaInfo | null;
+  setDesbloqueado: (setId: string) => boolean;
   getChanceDrop: (carta: Carta) => number;
   getCartasDoSet: (setId: string) => Carta[];
   getQuimica: (setId: string) => Quimica;
@@ -59,7 +61,7 @@ function getSetDeCarta(setId: string): SetCarta {
 
 export function CollectionProvider({ children }: { children: ReactNode }) {
   const [colecao, setColecao] = useLocalStorage<ColecaoData>(STORAGE_KEY, defaultColecao);
-  const { adicionarBonus } = useData();
+  const { data, adicionarBonus } = useData();
 
   const adquirirCarta = useCallback((cardId: string, foil = false, semToast = false): NovaCartaInfo | null => {
     const carta = CARTAS.find(c => c.id === cardId);
@@ -151,6 +153,12 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
     if (!carta) return null;
     if (colecao.cartasObtidas.includes(cardId)) return null;
 
+    const set = getSetDeCarta(carta.setId);
+    if ((data.pontosAcumulados ?? data.pontos) < set.pontosMin) {
+      showToast(`Set "${set.nome}" desbloqueia no nível ${nomeNivelPorPontos(set.pontosMin)} (${set.pontosMin} XP)`);
+      return null;
+    }
+
     const custo = CUSTO_FABRICACAO[carta.raridade];
     const tem = (colecao.fragmentos?.[carta.raridade] ?? 0) >= custo;
     if (!tem) return null;
@@ -165,7 +173,11 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
     }));
 
     return adquirirCarta(cardId, false);
-  }, [colecao, adquirirCarta, setColecao]);
+  }, [colecao, adquirirCarta, setColecao, data.pontosAcumulados, data.pontos]);
+
+  const setDesbloqueado = useCallback((setId: string): boolean => {
+    return (data.pontosAcumulados ?? data.pontos) >= getSetDeCarta(setId).pontosMin;
+  }, [data.pontosAcumulados, data.pontos]);
 
   const getChanceDrop = useCallback((carta: Carta): number => {
     return CHANCE_DROP_POR_RARIDADE[carta.raridade];
@@ -200,12 +212,12 @@ const getValorTotal = useCallback(() => {
         const obtidas = setUsuario(set.id, colecao).cartas.length;
         return { set, obtidas, faltam: 4 - obtidas };
       })
-      .filter(s => s.faltam > 0)
+      .filter(s => s.faltam > 0 && (data.pontosAcumulados ?? data.pontos) >= s.set.pontosMin)
       .sort((a, b) => a.faltam - b.faltam);
 
     if (ordenados.length === 0) return null;
     return { set: ordenados[0].set, faltam: ordenados[0].faltam };
-  }, [colecao]);
+  }, [colecao, data.pontosAcumulados, data.pontos]);
 
   return (
     <CollectionContext.Provider value={{
@@ -214,6 +226,7 @@ const getValorTotal = useCallback(() => {
       adquirirPorMissao,
       adicionarFragmentos,
       fabricarCarta,
+      setDesbloqueado,
       getChanceDrop,
       getCartasDoSet,
       getQuimica,
