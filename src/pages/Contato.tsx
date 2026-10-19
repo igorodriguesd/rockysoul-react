@@ -1,14 +1,20 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { validateName, validateEmail, validateMessage } from '../utils/validation';
 
 export function Contato() {
-  useEffect(() => { document.title = 'Contato - RockySoulUp'; }, []);
-
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [mensagem, setMensagem] = useState('');
   const [erros, setErros] = useState<{ nome?: string; email?: string; mensagem?: string }>({});
   const [enviado, setEnviado] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    document.title = 'Contato - RockySoulUp';
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +24,11 @@ export function Contato() {
     const mensagemErro = validateMessage(mensagem);
 
     if (nomeErro || emailErro || mensagemErro) {
-      setErros({ nome: nomeErro ?? undefined, email: emailErro ?? undefined, mensagem: mensagemErro ?? undefined });
+      setErros({
+        nome: nomeErro ?? undefined,
+        email: emailErro ?? undefined,
+        mensagem: mensagemErro ?? undefined,
+      });
       return;
     }
 
@@ -27,11 +37,13 @@ export function Contato() {
     setEmail('');
     setMensagem('');
     setErros({});
-    setTimeout(() => setEnviado(false), 4000);
+
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setEnviado(false), 4000);
   };
 
   return (
-    <div className="max-w-150 mx-auto px-6 py-12">
+    <div className="max-w-xl mx-auto px-6 py-12">
       <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Contato</h1>
       <p className="text-center text-white/70 mb-10">Entre em contato com a equipe RockySoulUp</p>
 
@@ -43,7 +55,7 @@ export function Contato() {
             <p className="text-slate-500">Obrigado pelo contato. Responderemos em breve.</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
             <div>
               <label htmlFor="contato-nome" className="block text-sm font-medium text-slate-700 mb-1">
                 Nome *
@@ -95,7 +107,12 @@ export function Contato() {
               <textarea
                 id="contato-mensagem"
                 value={mensagem}
-                onChange={e => setMensagem(e.target.value)}
+                onChange={e => {
+                  setMensagem(e.target.value);
+                  if (erros.mensagem) setErros(prev => ({ ...prev, mensagem: undefined }));
+                }}
+                aria-invalid={!!erros.mensagem}
+                aria-describedby={erros.mensagem ? 'erro-mensagem' : undefined}
                 rows={5}
                 className={`w-full border rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors resize-none ${erros.mensagem ? 'border-red-400' : 'border-slate-300'
                   }`}

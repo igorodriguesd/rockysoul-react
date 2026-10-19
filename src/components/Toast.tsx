@@ -18,6 +18,7 @@ export function ToastContainer() {
   const addToast = useCallback((mensagem: string) => {
     const id = ++toastId;
     setToasts(prev => [...prev, { id, mensagem }]);
+
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
     }, 2800);
@@ -25,18 +26,24 @@ export function ToastContainer() {
 
   useEffect(() => {
     listeners.push(addToast);
-    return () => { listeners = listeners.filter(fn => fn !== addToast); };
+    return () => {
+      listeners = listeners.filter(fn => fn !== addToast);
+    };
   }, [addToast]);
 
   return (
-    <div className="fixed top-20 right-4 z-9999 flex flex-col gap-3">
+    <div 
+      className="fixed top-20 right-4 z-[9999] flex flex-col gap-3 pointer-events-none max-w-xs w-full px-4 sm:px-0"
+      role="status"
+      aria-live="polite"
+    >
       {toasts.map(t => (
         <div
           key={t.id}
           className="bg-(--t-surface) text-slate-800 px-5 py-3 rounded-xl shadow-lg text-sm font-medium border border-brand/30 animate-[slideIn_0.3s_ease] max-w-xs flex items-center gap-2"
         >
-          <img src="/icons/check.svg" alt="" className="w-4 h-4 shrink-0" />
-          {t.mensagem}
+          <img src="/icons/check.svg" alt="" className="w-4 h-4 shrink-0" aria-hidden="true" />
+          <span>{t.mensagem}</span>
         </div>
       ))}
     </div>

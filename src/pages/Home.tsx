@@ -36,6 +36,7 @@ export function Home() {
 
         <div className="relative z-10 pt-2 w-full max-w-[1900px] mx-auto flex items-center justify-center px-6 flex-1 min-h-0">
 
+          {/* HERO CENTRAL */}
           <div
             className="[background:var(--t-glass-hero)] border border-[var(--t-glass-hero-border)] shadow-glass-hero rounded-3xl flex flex-col lg:flex-row items-center gap-8 lg:gap-0 relative overflow-hidden flex-1 min-w-0 max-w-[1200px]"
             style={{ padding: 'clamp(38px, 5vw, 56px) clamp(20px, 5vw, 56px)', minHeight: 420 }}

@@ -7,7 +7,7 @@ import type { Recompensa } from '../types';
 interface Props {
   aberto: boolean;
   onFechar: () => void;
-  recompensa: Recompensa;
+  recompensa?: Recompensa | null;
 }
 
 export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
@@ -21,7 +21,11 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
   }, [onFechar]);
 
   useEffect(() => {
-    if (!aberto) return;
+    if (!aberto) {
+      setSucesso(false);
+      return;
+    }
+
     function handleKey(e: KeyboardEvent) {
       if (e.key === 'Escape') fechar();
     }
@@ -29,16 +33,18 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
     return () => window.removeEventListener('keydown', handleKey);
   }, [aberto, fechar]);
 
-  if (!aberto) return null;
+  if (!aberto || !recompensa) return null;
 
   const podeResgatar = data.pontos >= recompensa.pontos;
   const parceiro = recompensa.parceiroId ? getParceiro(recompensa.parceiroId) : null;
 
   function confirmarResgate() {
-    if (!podeResgatar) return;
+    if (!recompensa || !podeResgatar) return;
+    
     subtrairPontos(recompensa.pontos);
-    const novoSaldo = data.pontos - recompensa.pontos;
+    const novoSaldo = pontosAtuais - recompensa.pontos;
     setSaldoRestante(novoSaldo);
+    
     addResgate({
       nome: recompensa.nome,
       pontos: recompensa.pontos,
@@ -50,7 +56,10 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-9998 flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/60" onClick={fechar}>
+    <div 
+      className="fixed inset-0 z-[9998] flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/60" 
+      onClick={fechar}
+    >
       <div
         role="dialog"
         aria-modal="true"
@@ -87,7 +96,7 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
         ) : (
           <>
             <div className="flex items-center gap-3 mb-5">
-              <img src={recompensa.icone} alt="" className="w-10 h-10" />
+              <img src={recompensa.icone} alt={recompensa.nome} className="w-10 h-10 object-contain" />
               <div>
                 <h2 className="text-lg font-bold text-slate-900">{recompensa.nome}</h2>
                 <p className="text-xs text-slate-500">{recompensa.descricao}</p>
