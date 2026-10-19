@@ -5,14 +5,6 @@ const SLOTS = 36;
 const VOLTAS = 5;
 const DURACAO = 4200;
 
-const CORES_RARIDADE: Record<Carta['raridade'], string> = {
-  comum: '#9ca3af',
-  incomum: '#38bdf8',
-  rara: '#a855f7',
-  epica: '#ff4d9e',
-  lendaria: '#fbbf24',
-};
-
 interface Props {
   carta: Carta;
   chance: number;
@@ -80,7 +72,7 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
             <path
               key={k}
               d={pathArco(centro - degPorSlot / 2, centro + degPorSlot / 2)}
-              fill={ganhou ? CORES_RARIDADE[carta.raridade] : '#ffffff'}
+              fill={ganhou ? 'var(--color-brand)' : '#1f2937'}
               stroke="var(--t-wheel-stroke)"
               strokeWidth="0.6"
             />

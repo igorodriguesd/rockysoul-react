@@ -35,7 +35,7 @@ export default function IlhaRockySoul() {
             src="/imagens/Ilha.png"
             alt="Ilha RockySoul"
             className="absolute inset-0 w-full h-full object-contain scale-[2]"
-            style={{ filter: estagio.filtro, transition: 'filter 1.2s ease' }}
+            style={{ transition: 'opacity 1.2s ease' }}
           />
         </div>
       </div>
