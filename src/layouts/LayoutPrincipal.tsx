@@ -14,6 +14,6 @@ export function LayoutPrincipal() {
       </main>
       {!ehHome && <Footer />}
       <OnboardingTutorial />
-    </>
+    </div>
   );
 }

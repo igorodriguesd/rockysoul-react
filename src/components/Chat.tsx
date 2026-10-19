@@ -545,7 +545,7 @@ export default function Chat() {
           <div className="relative">
             <button
               onClick={abrirChat}
-              className="relative flex items-center justify-center rounded-full bg-brand hover:bg-brand-2 hover:shadow-[0_0_30px_var(--t-glow)] transition-all w-13 h-13 text-(--t-onaccent) font-semibold shadow-xl cursor-pointer"
+              className="relative flex items-center justify-center rounded-full bg-brand hover:bg-brand-2 hover:shadow-[0_0_30px_var(--t-glow)] transition-all w-13 h-13 text-(--t-onaccent) font-semibold shadow-xl cursor-pointer sm:w-14 sm:h-14"
               aria-label="Abrir chat"
             >
               <svg aria-hidden="true" className="shrink-0" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

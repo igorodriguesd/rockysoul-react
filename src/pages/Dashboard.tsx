@@ -474,22 +474,24 @@ export function Dashboard() {
         </div>
 
         {/* ===================== REGISTRAR AÇÃO (CTA) ===================== */}
-        <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-3">
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
-              <img src="/icons/folha.svg" className="w-5 h-5" alt="" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center shrink-0" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
+              <img src="/icons/folha.svg" className="w-5 h-5 sm:w-6 sm:h-6" alt="" />
             </div>
             <div className="min-w-0">
-              <p className="text-slate-900 font-semibold text-sm">O que você fez hoje?</p>
-              <p className="text-slate-500 text-xs">Registre uma ação sustentável e some XP + créditos</p>
+              <p className="text-slate-900 font-semibold text-sm sm:text-base">O que você fez hoje?</p>
+              <p className="text-slate-500 text-xs sm:text-sm">Registre uma ação sustentável e some XP + créditos</p>
             </div>
           </div>
           <button
             onClick={() => missoesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-            className="shrink-0 rounded-full font-semibold text-[13px] py-2 px-5 flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer animate-pulse-glow"
+            className="shrink-0 rounded-full font-semibold text-[13px] py-2.5 sm:py-3 px-5 sm:px-7 flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer animate-pulse-glow"
             style={{ background: 'var(--t-grad-strong)', color: '#FFFFFF', boxShadow: '0 8px 24px rgba(0,230,118,0.3)' }}
           >
-            + Registrar ação
+            <span className="flex items-center gap-1.5">
+              + Registrar ação
+            </span>
           </button>
         </div>
 
