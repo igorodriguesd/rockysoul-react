@@ -25,11 +25,10 @@ function pathArco(degInicio: number, degFim: number): string {
   return `M ${cx} ${cy} L ${sx} ${sy} A ${r} ${r} 0 ${grande} 1 ${ex} ${ey} Z`;
 }
 
-export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
+export default function RoletaDrop({chance,caiu,onTerminar,}: Props) {
   const degPorSlot = 360 / SLOTS;
-  const winSlots = Math.max(1, Math.min(SLOTS - 1, Math.round((chance / 100) * SLOTS)));
+  const winSlots = Math.max(1,Math.min(SLOTS - 1, Math.round((chance / 100) * SLOTS)));
 
-  // Slot que vai parar sob o ponteiro: zona vencedora (colorida) se caiu, senão zona cinza.
   const [girando, setGirando] = useState(true);
   const [rotacao, setRotacao] = useState<number>(() => Math.random() * 360);
   const [slotFinal] = useState<number>(() =>
@@ -38,10 +37,17 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
       : winSlots + Math.floor(Math.random() * (SLOTS - winSlots))
   );
 
-  // Rotação final: alinha o centro do slotFinal com o ponteiro (norte).
+  const onTerminarRef = useRef(onTerminar);
+
+  useEffect(() => {
+    onTerminarRef.current = onTerminar;
+  }, [onTerminar]);
+
   useEffect(() => {
     const rotacaoFinal = VOLTAS * 360 - slotFinal * degPorSlot;
-    const t1 = setTimeout(() => setRotacao(rotacaoFinal), 80);
+
+    const t1 = setTimeout(() => {setRotacao(rotacaoFinal);}, 80);
+
     const t2 = setTimeout(() => {
       setGirando(false);
       onTerminarRef.current?.();
@@ -51,11 +57,15 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [slotVencedor, degPorSlot]);
+  }, [slotFinal, degPorSlot]);
 
   return (
-    <div className="relative w-48 h-52 mx-auto mt-2 select-none" aria-label="Roleta de carta">
-      <svg aria-hidden="true"
+    <div
+      className="relative w-48 h-52 mx-auto mt-2 select-none"
+      aria-label="Roleta de carta"
+    >
+      <svg
+        aria-hidden="true"
         className="w-full h-48"
         viewBox="0 0 100 100"
         style={{
@@ -71,7 +81,10 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
           return (
             <path
               key={k}
-              d={pathArco(centro - degPorSlot / 2, centro + degPorSlot / 2)}
+              d={pathArco(
+                centro - degPorSlot / 2,
+                centro + degPorSlot / 2
+              )}
               fill={ganhou ? 'var(--color-brand)' : '#1f2937'}
               stroke="var(--t-wheel-stroke)"
               strokeWidth="0.6"
@@ -88,15 +101,26 @@ export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
         style={{ filter: 'drop-shadow(0 0 6px var(--t-glow))' }}
         aria-hidden="true"
       >
-        <polygon points="0,0 18,0 9,16" fill="var(--t-wheel-point)" />
+        <polygon
+          points="0,0 18,0 9,16"
+          fill="var(--t-wheel-point)"
+        />
       </svg>
 
       <div
         className="absolute left-1/2 top-24 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex flex-col items-center justify-center"
-        style={{ background: 'var(--t-surface)', border: '2px solid var(--t-glow)', boxShadow: '0 0 24px var(--t-glow)' }}
+        style={{
+          background: 'var(--t-surface)',
+          border: '2px solid var(--t-glow)',
+          boxShadow: '0 0 24px var(--t-glow)',
+        }}
       >
-        <span className="text-brand text-lg font-bold leading-none">{chance}%</span>
-        <span className="text-slate-500 text-[8px] mt-1">de chance</span>
+        <span className="text-brand text-lg font-bold leading-none">
+          {chance}%
+        </span>
+        <span className="text-slate-500 text-[8px] mt-1">
+          de chance
+        </span>
       </div>
 
       {girando && (

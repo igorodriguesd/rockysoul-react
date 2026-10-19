@@ -4,7 +4,7 @@ import { useColecao } from '../context/CollectionContext';
 import { useChat } from '../context/ChatContext';
 import { MISSOES, RECOMPENSAS, CURIOSIDADES, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO } from '../data/constants';
 import { SETS_CARTAS, CHANCE_DROP_POR_RARIDADE, LABEL_RARIDADE } from '../data/cartas';
-import type { ChatMessage, ResultadoDrop } from '../types';
+import type { Carta, ChatMessage, ResultadoDrop } from '../types';
 import RoletaDrop from './RoletaDrop';
 
 type BotState = 'normal' | 'aguardandoNome' | 'aguardandoAcao' | 'aguardandoResgate' | 'aguardandoValorConversao' | 'aguardandoChavePix';
@@ -74,8 +74,6 @@ export default function Chat() {
   const [dropChat, setDropChat] = useState<ResultadoDrop | null>(null);
   const [cartaDropChat, setCartaDropChat] = useState<Carta | null>(null);
   const [chanceDropChat, setChanceDropChat] = useState(50);
-  const [roletaProntaChat, setRoletaProntaChat] = useState(false);
-  const [tentativaChat, setTentativaChat] = useState(0);
   const estadoRef = useRef<BotState>('normal');
   const conversaoRef = useRef(0);
   const initRef = useRef(false);
@@ -100,7 +98,6 @@ export default function Chat() {
     if (!aberto) {
       setDropChat(null);
       setCartaDropChat(null);
-      setRoletaProntaChat(false);
     }
   }, [aberto]);
 
@@ -159,8 +156,6 @@ export default function Chat() {
     const drop = adquirirPorMissao(missaoId);
     if (drop) {
       setDropChat(drop);
-      setRoletaProntaChat(false);
-      setTentativaChat(t => t + 1);
       if ('carta' in drop) {
         setCartaDropChat(drop.carta);
         setChanceDropChat('chance' in drop ? drop.chance : CHANCE_DROP_POR_RARIDADE[drop.carta.raridade] ?? 50);
@@ -171,7 +166,6 @@ export default function Chat() {
   }
 
   function terminarGiroChat() {
-    setRoletaProntaChat(true);
   }
 
   function ProcessarMensagem(userText: string) {
@@ -502,7 +496,6 @@ export default function Chat() {
     setInput('');
     setDropChat(null);
     setCartaDropChat(null);
-    setRoletaProntaChat(false);
     ProcessarMensagem(texto);
   }
 

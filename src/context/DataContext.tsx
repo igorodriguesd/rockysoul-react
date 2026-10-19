@@ -105,11 +105,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
       const novosPontos = dataAtualizada.pontos + pontos;
       const novosPontosHoje = dataAtualizada.pontosHoje + pontos;
-      const novosAcumulados = (dataAtualizada.pontosAcumulados ?? dataAtualizada.pontos) + pontos;
-      const novoHistorico = [entrada, ...dataAtualizada.historico].slice(0, 50);
+      const novosAcumulados =
+        (dataAtualizada.pontosAcumulados ?? dataAtualizada.pontos) + pontos;
+
+      const novoHistorico = [entrada, ...prevHistorico].slice(0, 50);
 
       const novosSelos = SELOS
-        .filter(s => novosAcumulados >= s.minPontos && !dataAtualizada.selosDesbloqueados.includes(s.id))
+        .filter(
+          s => novosAcumulados >= s.minPontos && !prevSelos.includes(s.id)
+        )
         .map(s => s.id);
 
       return {
@@ -178,7 +182,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const streak = ehNovoDia
         ? (prev.ultimoDia === ontemStr() ? prev.streak + 1 : 1)
         : prev.streak;
-      const ultimoDia = ehNovoDia ? hoje : (prev.ultimoDia || hoje);
+      const ultimoDia = ehNovoDia
+        ? hoje
+        : (prev.ultimoDia || hoje);
+
       const pontosHojeBase = ehNovoDia ? 0 : prev.pontosHoje;
 
       const prevHistorico = prev.historico ?? [];
@@ -191,19 +198,25 @@ export function DataProvider({ children }: { children: ReactNode }) {
       };
 
       const novosPontos = prev.pontos + BONUS_DESAFIO;
-      const novosAcumulados = (prev.pontosAcumulados ?? prev.pontos) + BONUS_DESAFIO;
+      const novosAcumulados =
+        (prev.pontosAcumulados ?? prev.pontos) + BONUS_DESAFIO;
       const novosSelos = SELOS
-        .filter(s => novosAcumulados >= s.minPontos && !prev.selosDesbloqueados.includes(s.id))
+        .filter(
+          s => novosAcumulados >= s.minPontos && !prevSelos.includes(s.id)
+        )
         .map(s => s.id);
 
       return {
         ...prev,
+        dataHoje: hoje,
+        ultimoDia,
+        streak,
         pontos: novosPontos,
         pontosAcumulados: novosAcumulados,
-        pontosHoje: prev.pontosHoje + BONUS_DESAFIO,
-        ultimoDesafio: hojeStr(),
-        historico: [entrada, ...prev.historico].slice(0, 50),
-        selosDesbloqueados: [...prev.selosDesbloqueados, ...novosSelos],
+        pontosHoje: pontosHojeBase + BONUS_DESAFIO,
+        ultimoDesafio: hoje,
+        historico: [entrada, ...prevHistorico].slice(0, 50),
+        selosDesbloqueados: [...prevSelos, ...novosSelos],
       };
     });
     showToast(`+${BONUS_DESAFIO} créditos - Bônus do Desafio do Dia`);

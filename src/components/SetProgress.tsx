@@ -14,9 +14,6 @@ const MARCOS = [
 export default function SetProgress({ set }: Props) {
   const { quimica, totalCartas = 0, percentual = 0, mensagem = '', setCompleto = false } = useChemistry(set.id);
 
-  const levelAtual = quimica?.level ?? 0;
-  const totalMaximo = 4;
-
   return (
     <div>
       <div className="flex items-center justify-between text-xs mb-1.5">
