@@ -64,7 +64,7 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
           <div className="flex-1 min-w-0">
             <p className="text-slate-900 font-semibold text-sm">Suas cartas vão aparecer aqui.</p>
             <p className="text-slate-500 text-xs mt-0.5">
-              Registre uma ação sustentável no Dashboard para ganhar suas primeiras cartas — cada missão pode soltar uma das 28 disponíveis.
+              Registre uma ação sustentável no Dashboard para ganhar suas primeiras cartas — cada missão pode soltar uma das 16 disponíveis.
             </p>
           </div>
           <button

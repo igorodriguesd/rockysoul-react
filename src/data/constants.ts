@@ -116,12 +116,9 @@ export const RECOMPENSAS: Recompensa[] = [
   { id: 'r3', nome: 'Muda de Árvore', descricao: 'Receba uma muda para plantar', pontos: 2000, valorReal: 20, categoria: 'Natureza', icone: '/icons/arvore.svg', badge: 'Top 1' },
   { id: 'r4', nome: 'Cupom Reciclagem', descricao: 'Cupom de desconto em lojas parceiras', pontos: 1000, valorReal: 10, categoria: 'Cupons', icone: '/icons/carrinho.svg' },
   { id: 'r5', nome: 'Kit Sustentável', descricao: 'Kit com canudo reutilizável e sacola ecológica', pontos: 2000, valorReal: 20, categoria: 'Natureza', icone: '/icons/sacola.svg' },
-  { id: 'r6', nome: 'Desconto Água', descricao: '5% de desconto na conta de água', pontos: 800, valorReal: 8, categoria: 'Energia', icone: '/icons/agua.svg' },
+  { id: 'r6', nome: 'Desconto Água', descricao: '5% de desconto na conta de água', pontos: 800, valorReal: 8, categoria: 'Natureza', icone: '/icons/agua.svg' },
   { id: 'r7', nome: 'Cupom Bicicleta', descricao: 'Cupom de desconto em bicicletarias', pontos: 2000, valorReal: 20, categoria: 'Transporte', icone: '/icons/bicicleta.svg' },
   { id: 'r8', nome: 'Adoção de Árvore', descricao: 'Adote uma árvore real por 3 meses', pontos: 2500, valorReal: 25, categoria: 'Natureza', icone: '/icons/arvore.svg', badge: 'Top 1' },
-  recompensaCortesia('p-cafe', { id: 'r9', nome: 'Café Cortesia', descricao: 'Um café grátis na Cafeteria do Vale', categoria: 'Parceiros', icone: '/icons/cafe.svg', badge: 'Cortesia' }),
-  recompensaCortesia('p-doce', { id: 'r10', nome: 'Doce Artesanal', descricao: 'Doce da Dona Neide para alegrar o dia', categoria: 'Parceiros', icone: '/icons/doce.svg', badge: 'Cortesia' }),
-  recompensaCortesia('p-adega', { id: 'r11', nome: 'Cupom Adega do Zé', descricao: '10% off em garrafas retornáveis e vidros', categoria: 'Parceiros', icone: '/icons/garrafa.svg', badge: 'Cortesia' }),
 ];
 
 export function getParceiro(id: string): Parceiro | undefined {
@@ -180,7 +177,7 @@ export const INTEGRANTES = [
   { nome: 'Diego Gomes Goncalves de Lima', rm: 'RM570335', foto: '/imagens/diego.jpg', github: 'https://github.com/dgxls', linkedin: 'https://www.linkedin.com/in/diego-gomes-65339b408/' },
   { nome: 'Miguel Silva', rm: 'RM572019', foto: '/imagens/miguel.jpg', github: 'https://github.com/miguelsilva71', linkedin: 'https://www.linkedin.com/in/miguel-silva-0a20073a9/' },
   { nome: 'Rafael Santos Mendonça Costa', rm: 'RM572368', foto: '/imagens/rafael.jpg', github: 'https://github.com/rafaelSantos56', linkedin: 'https://www.linkedin.com/in/rafael-santos-b09bba237/' },
-  { nome: 'Pedro Henrique Salvatore', rm: 'RM572368', foto: '/imagens/pedro.jpg', github: 'https://github.com/Pedro-H-Salvatore', linkedin: 'https://www.linkedin.com/in/pedro-salvatore-a4a2763b7' },
+  { nome: 'Pedro Henrique Salvatore', rm: 'RM572999', foto: '/imagens/pedro.jpg', github: 'https://github.com/Pedro-H-Salvatore', linkedin: 'https://www.linkedin.com/in/pedro-salvatore-a4a2763b7' },
 ];
 
 export const MIN_CREDITOS_CONVERSAO = 500;
