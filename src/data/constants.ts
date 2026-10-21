@@ -374,25 +374,6 @@ export const PARCEIROS: Parceiro[] = [
   { id: 'p-consciente', nome: 'Mercado Consciente', tipos: ['patrocinador'], cor: '#f5c451', localizacao: 'Zona Leste', descricao: 'Patrocina consumo consciente e hábitos do dia a dia.', temas: ['consumo', 'educar', 'sacola'] },
 ];
 
-type CamposCortesia = {
-  id: string;
-  nome: string;
-  descricao: string;
-  categoria: Recompensa['categoria'];
-  icone: string;
-  badge?: Recompensa['badge'];
-};
-
-function recompensaCortesia(parceiroId: string, campos: CamposCortesia): Recompensa {
-  const valorReal = PARCEIROS.find(p => p.id === parceiroId)?.valorCortesia ?? 0;
-  return {
-    ...campos,
-    pontos: Math.round(valorReal * CREDITOS_POR_REAL),
-    valorReal,
-    parceiroId,
-  };
-}
-
 export const RECOMPENSAS: Recompensa[] = [
   { id: 'r1', nome: 'Desconto Energia', descricao: '10% de desconto na conta de energia', pontos: 2000, valorReal: 20, categoria: 'Energia', icone: '/icons/lampada.svg', badge: 'Novo' },
   { id: 'r2', nome: 'Passe de Transporte', descricao: 'Um passe livre de transporte público', pontos: 540, valorReal: 5.4, categoria: 'Transporte', icone: '/icons/transporte.svg' },
