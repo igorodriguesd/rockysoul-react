@@ -1,10 +1,11 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { MISSOES, CURIOSIDADES, RECOMPENSAS, PARCEIROS, CO2_POR_MISSAO, AMIGOS_SIMULADOS, NIVEIS, TRILHA_EVOLUCAO } from '../data/constants';
+import { MISSOES, CURIOSIDADES, RECOMPENSAS, PARCEIROS, CO2_POR_MISSAO, AMIGOS_SIMULADOS, NIVEIS, TRILHA_EVOLUCAO, GRUPOS_MISSAO, grupoDaMissao } from '../data/constants';
 import VerificarModal from '../components/VerificarModal';
 import TrilhaEvolucaoModal from '../components/TrilhaEvolucaoModal';
 import MiniJogoSeparacao from '../components/MiniJogoSeparacao';
+import IconeMissao from '../components/IconeMissao';
 import { useColecao } from '../context/CollectionContext';
 import { showToast } from '../components/Toast';
 
@@ -41,43 +42,11 @@ const MISSAO_ICONE_MAP: Record<string, string> = {
   agrofloresta: '/icons/arvore.svg',
 };
 
-const MISSAO_COR_MAP: Record<string, string> = {
-  reciclagem: 'var(--color-brand-2)',
-  transporte: '#7dd3fc',
-  energia: 'var(--color-brand-3)',
-  agua: '#7dd3fc',
-  bicicleta: 'var(--color-brand-2)',
-  plantio: 'var(--color-brand)',
-  banho: '#7dd3fc',
-  compostagem: 'var(--color-brand-3)',
-  consumo: '#c4b5fd',
-  garrafa: '#7dd3fc',
-  educar: '#c4b5fd',
-  sacola: 'var(--color-brand)',
-  captacao: '#7dd3fc',
-  mobilidade: '#eab308',
-  ciclovia: '#7dd3fc',
-  solar: '#eab308',
-  eolica: '#eab308',
-  led: '#f5c451',
-  horta: 'var(--color-brand-3)',
-  agrofloresta: 'var(--color-brand)',
-};
-
-const CATEGORIA_CASA = ['energia', 'agua', 'banho', 'captacao', 'compostagem', 'led', 'horta'];
-const CATEGORIA_MOBILIDADE = ['transporte', 'bicicleta', 'mobilidade', 'ciclovia'];
-const CATEGORIA_ENERGIA = ['energia', 'solar', 'eolica', 'led', 'mobilidade'];
-const CATEGORIA_NATUREZA = ['plantio', 'horta', 'agrofloresta', 'captacao', 'compostagem'];
-
 const FILTROS_MISSOES = [
   { id: 'todas', label: 'Todas', matcher: () => true },
-  { id: 'casa', label: 'Casa', matcher: (id: string) => CATEGORIA_CASA.includes(id) },
-  { id: 'mobilidade', label: 'Mobilidade', matcher: (id: string) => CATEGORIA_MOBILIDADE.includes(id) },
-  { id: 'energia', label: 'Energia', matcher: (id: string) => CATEGORIA_ENERGIA.includes(id) },
-  { id: 'natureza', label: 'Natureza', matcher: (id: string) => CATEGORIA_NATUREZA.includes(id) },
+  ...GRUPOS_MISSAO.map(g => ({ id: g.id, label: g.label, matcher: (id: string) => g.ids.includes(id) })),
 ];
 
-const MISSOES_DESTAQUE = ['reciclagem', 'bicicleta', 'agua', 'energia', 'plantio', 'consumo'];
 const INICIAIS_VISIVEIS = 9;
 const META_ACOES_MES = 50;
 
@@ -234,18 +203,7 @@ export function Dashboard() {
 
   const missoesFiltradas = useMemo(() => {
     const matcher = FILTROS_MISSOES.find(f => f.id === filtroMissoes) ?? FILTROS_MISSOES[0];
-    const lista = MISSOES.filter(m => matcher.matcher(m.id));
-    if (filtroMissoes === 'todas') {
-      lista.sort((a, b) => {
-        const ia = MISSOES_DESTAQUE.indexOf(a.id);
-        const ib = MISSOES_DESTAQUE.indexOf(b.id);
-        if (ia === -1 && ib === -1) return 0;
-        if (ia === -1) return 1;
-        if (ib === -1) return -1;
-        return ia - ib;
-      });
-    }
-    return lista;
+    return MISSOES.filter(m => matcher.matcher(m.id)).sort((a, b) => a.pontos - b.pontos);
   }, [filtroMissoes]);
 
   const missoesVisiveis = verTodas ? missoesFiltradas : missoesFiltradas.slice(0, INICIAIS_VISIVEIS);
@@ -346,7 +304,7 @@ export function Dashboard() {
   }
 
   const chips = [
-    { rotulo: 'Créditos', valor: data.pontos.toLocaleString('pt-BR'), icone: '/icons/trofeu.svg' },
+    { rotulo: 'Saldo disponível', valor: data.pontos.toLocaleString('pt-BR'), icone: '/icons/trofeu.svg' },
     { rotulo: 'Sequência', valor: `${data.streak}d`, icone: '/icons/folha.svg' },
     { rotulo: 'Cartas', valor: `${cartasObtidas}/${totalCartas}`, icone: '/icons/coringa.svg' },
   ];
@@ -400,10 +358,15 @@ export function Dashboard() {
                 <p className="text-white/70 text-[11px] font-bold uppercase tracking-widest">{nivelAtual.nome}</p>
                 <p className="text-white font-serif-display leading-none mt-1 tabular-nums" style={{ fontSize: 'clamp(36px, 4.5vw, 52px)' }}>
                   {pontos.toLocaleString('pt-BR')}
-                  <span className="text-white/65 text-lg font-bold ml-1.5">/ {nivelProx ? nivelProx.min.toLocaleString('pt-BR') : 'máx'} XP</span>
+                  <span className="text-white/65 text-lg font-bold ml-1.5">créditos</span>
                 </p>
                 <p className="text-white/75 text-sm font-medium mt-1.5">
-                  {xpFaltando > 0 ? `Faltam ${xpFaltando.toLocaleString('pt-BR')} XP para ${nivelProx?.nome ?? 'o topo'}` : 'Você atingiu o nível máximo!'}
+                  {xpFaltando > 0
+                    ? `Faltam ${xpFaltando.toLocaleString('pt-BR')} créditos para ${nivelProx?.nome ?? 'o topo'}`
+                    : 'Você atingiu o nível máximo!'}
+                </p>
+                <p className="text-white/50 text-[11px] mt-0.5">
+                  Total acumulado de créditos — seu saldo disponível está no card abaixo.
                 </p>
               </div>
 
@@ -431,7 +394,7 @@ export function Dashboard() {
                 <div className="flex items-center gap-2 mt-4">
                   {TRILHA_EVOLUCAO.map((etapa, i) => {
                     const ehAlvo = !!nivelProx && i === idxNivel + 1;
-                    const chegado = i < idxNivel || i === idxNivel;
+                    const chegado = i <= idxNivel;
                     const visivel = i <= idxNivel || ehAlvo;
                     return (
                       <Fragment key={etapa.nome}>
@@ -481,7 +444,7 @@ export function Dashboard() {
             </div>
             <div className="min-w-0">
               <p className="text-slate-900 font-semibold text-sm sm:text-base">O que você fez hoje?</p>
-              <p className="text-slate-500 text-xs sm:text-sm">Registre uma ação sustentável e some XP + créditos</p>
+              <p className="text-slate-500 text-xs sm:text-sm">Registre uma ação sustentável e ganhe créditos</p>
             </div>
           </div>
           <button
@@ -496,7 +459,7 @@ export function Dashboard() {
         </div>
 
         {/* ===================== MISSÕES + IMPACTO ===================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
 
           <div ref={missoesRef} className="lg:col-span-2 bg-card-secondary border border-card-secondary-border rounded-2xl p-4 flex flex-col scroll-mt-28">
             <div className="flex items-center justify-between mb-3">
@@ -521,47 +484,51 @@ export function Dashboard() {
               ))}
             </div>
 
-            <div id="lista-missoes" className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 auto-rows-min flex-1 content-start">
-              {missoesVisiveis.map(missao => {
-                const cor = MISSAO_COR_MAP[missao.id] || 'var(--color-brand-2)';
-                const checked = feitasHoje.has(missao.nome);
-                return (
-                  <button
-                    key={missao.id}
-                    onClick={() => handleMissao(missao)}
-                    title={`${missao.nome} · +${missao.pontos} créditos`}
-                    aria-label={`${checked ? 'Feita hoje · ' : ''}${missao.nome}, +${missao.pontos} créditos. Toque para registrar.`}
-                    className="rounded-xl p-3 h-full flex flex-col gap-1.5 text-left transition-all group active:scale-95 relative overflow-hidden cursor-pointer"
-                    style={{
-                      background: checked ? `color-mix(in srgb, ${cor} 12%, transparent)` : 'var(--t-surface-2)',
-                      border: checked ? `1px solid color-mix(in srgb, ${cor} 45%, transparent)` : '1px solid var(--t-border-subtle)',
-                    }}
-                  >
-                    {checked && (
-                      <div className="absolute top-2 right-2 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: 'var(--t-mist)' }}>
-                        <img src="/icons/check.svg" className="w-2.5 h-2.5" alt="feito" />
-                      </div>
-                    )}
-                    <img
-                      src={MISSAO_ICONE_MAP[missao.id]}
-                      className="w-8 h-8 group-hover:scale-110 transition-transform"
-                      alt=""
-                    />
-                    <div className="mt-auto">
-                      <p className="text-slate-800 text-sm font-medium leading-snug">{missao.nome}</p>
-                      <div className="flex items-center justify-between gap-1 mt-1.5">
-                        <p className="font-semibold text-sm tabular-nums" style={{ color: cor }}>+{missao.pontos} créditos</p>
-                        <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${checked ? 'text-brand bg-brand-soft' : 'text-white'}`}
-                          style={checked ? {} : { background: cor }}
+            <div id="lista-missoes" className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 auto-rows-min content-start">
+                    {missoesVisiveis.map(missao => {
+                      const grupo = grupoDaMissao(missao.id);
+                      const cor = grupo.cor;
+                      const checked = feitasHoje.has(missao.nome);
+                      return (
+                        <button
+                          key={missao.id}
+                          onClick={() => handleMissao(missao)}
+                          title={`${missao.nome} · ${grupo.label} · +${missao.pontos} créditos — ${missao.descricao}`}
+                          aria-label={`${checked ? 'Feita hoje · ' : ''}${missao.nome}, ${grupo.label}, +${missao.pontos} créditos. Toque para registrar.`}
+                          className="rounded-xl p-3 h-full flex flex-col gap-1.5 text-left transition-all group active:scale-95 relative overflow-hidden cursor-pointer"
+                          style={{
+                            background: checked ? `color-mix(in srgb, ${cor} 12%, transparent)` : 'var(--t-surface-2)',
+                            border: checked ? `1px solid color-mix(in srgb, ${cor} 45%, transparent)` : '1px solid var(--t-border-subtle)',
+                          }}
                         >
-                          {checked ? 'Feita' : 'Registrar'}
-                        </span>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
+                          {checked && (
+                            <div className="absolute top-2 right-2 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: 'var(--t-mist)' }}>
+                              <img src="/icons/check.svg" className="w-2.5 h-2.5" alt="feito" />
+                            </div>
+                          )}
+                          <IconeMissao
+                            src={MISSAO_ICONE_MAP[missao.id]}
+                            cor={cor}
+                            className="w-8 h-8 group-hover:scale-110 transition-transform"
+                          />
+                          <p className="text-[11px] leading-snug text-slate-500 line-clamp-2">{missao.descricao}</p>
+                          <div className="mt-auto">
+                            <p className="text-slate-800 text-sm font-medium leading-snug">{missao.nome}</p>
+                            <div className="flex items-center justify-between gap-1 mt-1.5">
+                              <p className="font-semibold text-sm tabular-nums" style={{ color: grupo.texto }}>+{missao.pontos} créditos</p>
+                              <span
+                                className="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                                style={checked
+                                  ? { background: `color-mix(in srgb, ${cor} 20%, transparent)`, color: grupo.texto, border: `1px solid color-mix(in srgb, ${cor} 45%, transparent)` }
+                                  : { background: cor, color: '#0f172a' }}
+                              >
+                                {checked ? 'Feita' : 'Registrar'}
+                              </span>
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
             </div>
 
             {totalFiltro > INICIAIS_VISIVEIS && (
@@ -705,9 +672,9 @@ export function Dashboard() {
         </div>
 
         {/* ===================== ATIVIDADE + AMIGOS ===================== */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
 
-          <div className="lg:col-span-2 bg-card-tertiary border border-card-secondary-border rounded-2xl p-4">
+          <div className="lg:col-span-2 self-start bg-card-tertiary border border-card-secondary-border rounded-2xl p-4">
             <div className="flex items-center justify-between mb-1">
               <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Atividade recente</p>
               <span className="text-slate-400 text-[11px] font-semibold">Ver histórico →</span>

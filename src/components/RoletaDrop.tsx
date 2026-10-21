@@ -6,7 +6,7 @@ const VOLTAS = 5;
 const DURACAO = 4200;
 
 interface Props {
-  carta: Carta;
+  carta: Carta | null;
   chance: number;
   caiu: boolean;
   onTerminar?: () => void;
@@ -27,7 +27,12 @@ function pathArco(degInicio: number, degFim: number): string {
 
 export default function RoletaDrop({chance,caiu,onTerminar,}: Props) {
   const degPorSlot = 360 / SLOTS;
-  const winSlots = Math.max(1,Math.min(SLOTS - 1, Math.round((chance / 100) * SLOTS)));
+  const winSlots = Math.max(1, Math.min(SLOTS - 1, Math.round((chance / 100) * SLOTS)));
+  const onTerminarRef = useRef(onTerminar);
+
+  useEffect(() => {
+    onTerminarRef.current = onTerminar;
+  }, [onTerminar]);
 
   const [girando, setGirando] = useState(true);
   const [rotacao, setRotacao] = useState<number>(() => Math.random() * 360);
@@ -62,10 +67,10 @@ export default function RoletaDrop({chance,caiu,onTerminar,}: Props) {
   return (
     <div
       className="relative w-48 h-52 mx-auto mt-2 select-none"
-      aria-label="Roleta de carta"
+      aria-label={`Roleta de carta: ${carta?.nome ?? 'carta desconhecida'}, ${chance}% de chance`}
+      title={carta ? `${carta.nome} · ${chance}% de chance` : `${chance}% de chance`}
     >
-      <svg
-        aria-hidden="true"
+      <svg aria-hidden="true"
         className="w-full h-48"
         viewBox="0 0 100 100"
         style={{
@@ -98,13 +103,10 @@ export default function RoletaDrop({chance,caiu,onTerminar,}: Props) {
         height="16"
         viewBox="0 0 18 16"
         className="absolute left-1/2 top-0 -translate-x-1/2 z-10"
-        style={{ filter: 'drop-shadow(0 0 6px var(--t-glow))' }}
+        style={{ filter: 'drop-shadow(0 0 6px rgba(255,201,40,0.65))' }}
         aria-hidden="true"
       >
-        <polygon
-          points="0,0 18,0 9,16"
-          fill="var(--t-wheel-point)"
-        />
+        <polygon points="0,0 18,0 9,16" fill="#ffc928" stroke="#0b1725" strokeWidth="1" />
       </svg>
 
       <div

@@ -4,8 +4,10 @@ import { CARTAS, SETS_CARTAS, FRAGMENTOS_POR_DUPLICADA, CUSTO_FABRICACAO, PESO_R
 import SetColecao from '../components/SetColecao';
 import { useColecao } from '../context/CollectionContext';
 import { useData } from '../context/DataContext';
-import { nomeNivelPorPontos } from '../data/constants';
+import { nomeNivelPorPontos, grupoDaCarta } from '../data/constants';
 import { TermoAjuda } from '../components/TermoAjuda';
+import IconeMissao from '../components/IconeMissao';
+import PainelValorColecao from '../components/PainelValorColecao';
 import type { Carta } from '../types';
 
 type ModoColecao = 'cartas' | 'fabrica';
@@ -37,18 +39,21 @@ export function Colecao() {
 
   return (
     <div className="max-w-[90rem] mx-auto px-4 sm:px-6 py-6">
-      <header className="mb-6 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4">
+      <header className="mb-4 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4">
         <div className="text-center sm:text-left">
           <h1 className="text-white text-3xl font-bold mb-1">Minha Coleção</h1>
-          <p className="text-gold text-sm font-semibold mt-1">
-            Valor da coleção: {valorTotal} créditos{foils.length > 0 && ` · ${foils.length} brilhante${foils.length > 1 ? 's' : ''}`}
+          <p className="text-slate-400 text-sm font-medium mt-1 max-w-2xl">
+            Cada carta conquistada vira <strong className="text-gold">créditos no seu saldo</strong> — quanto mais rara a
+            carta, maior o valor. Completar um set ainda rende um bônus de química.
             <TermoAjuda
-              termo="O que vale mais?"
-              dica="Cada carta obtida soma créditos à sua coleção. Cartas 'brilhantes' (foil) valem mais que as comuns, e completar cartas de um mesmo influenciador ativa a química, que multiplica o valor do conjunto."
+              termo="Por que carta rara vale mais?"
+              dica="O valor da carta é creditado no seu saldo assim que você a obtém: Comum 8, Incomum 15, Rara 30, Épica 60 e Lendária 120 créditos. A versão brilhante vale 3x. E cada set completo paga +180 créditos de química (30 na 3ª carta, 150 na 4ª)."
             />
           </p>
         </div>
       </header>
+
+      <PainelValorColecao valorTotal={valorTotal} obtidas={obtidas} total={total} foils={foils.length} />
 
       {obtidas === 0 && (
         <div
@@ -142,6 +147,8 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
                 fragmentos da raridade dela, e juntando a quantidade certa você monta a que falta — sem sorte.
                 No chip fica seu total; no botão da carta, quanto falta (ex.: <strong className="text-slate-900">3/10</strong> = tem 3, precisa de 10).
                 Cada repetida rende: comum <strong className="text-[#38bdf8]">+3</strong>, incomum <strong className="text-[#38bdf8]">+5</strong>, rara <strong className="text-[#38bdf8]">+10</strong>, épica <strong className="text-[#38bdf8]">+20</strong>, lendária <strong className="text-[#38bdf8]">+40</strong>.
+                Cartas repetidas <strong className="text-slate-900">não</strong> dão créditos; fabricar a que falta dá — o valor
+                da carta entra no seu saldo.
               </p>
             </div>
           )}
@@ -184,7 +191,7 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
                       className="bg-(--t-mist) w-11 h-11 rounded-xl flex items-center justify-center mb-1.5"
                       style={{ border: `1px solid ${{ comum: '#9ca3af', incomum: '#38bdf8', rara: '#a855f7', epica: '#ff4d9e', lendaria: '#fbbf24' }[carta.raridade]}44` }}
                     >
-                      <img src={carta.icone} alt="" className="w-6 h-6" />
+                      <IconeMissao src={carta.icone} cor={grupoDaCarta(carta.id)?.cor ?? '#94a3b8'} className="w-6 h-6" />
                     </div>
                     <p className="text-slate-900 text-[11px] font-semibold mt-1 leading-tight">{carta.nome}</p>
                     <p className="text-slate-600 text-[9px] uppercase tracking-widest mb-2">{carta.raridade}</p>
@@ -217,8 +224,8 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
           {fabricada && (
             <div className="mt-4 rounded-xl p-3 text-center" style={{ background: 'rgba(109,79,194,0.15)', border: `1px solid ${BORDA_COLECAO}` }}>
               <p className="text-slate-800 text-sm">
-                Carta fabricada: <strong className="text-brand">{fabricada.nome}</strong> · {' '}
-                <span className="text-brand-2 font-semibold">+{getValorCarta(fabricada)} créditos</span> na coleção!
+                Carta fabricada: <strong className="text-brand">{fabricada.nome}</strong> ·{' '}
+                <span className="text-brand-2 font-semibold">+{getValorCarta(fabricada)} créditos no seu saldo</span>
               </p>
             </div>
           )}

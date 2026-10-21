@@ -1,6 +1,8 @@
 import type { Carta } from '../types';
 import { CHANCE_DROP_POR_RARIDADE, getValorCarta, SETS_CARTAS } from '../data/cartas';
 import { getCardLabel, getIniciaisSet, getCardBackgroundComBorda, TIER, usaBordaGradiente } from '../data/cartasStyle';
+import { grupoDaCarta } from '../data/constants';
+import IconeMissao from './IconeMissao';
 
 interface Props {
   carta: Carta;
@@ -88,9 +90,9 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
               border: `1px solid ${bloqueada ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.35)'}`,
             }}
           >
-            <img
+            <IconeMissao
               src={carta.icone}
-              alt=""
+              cor={grupoDaCarta(carta.id)?.cor ?? '#94a3b8'}
               className={`w-9 h-9 ${bloqueada ? 'grayscale opacity-35' : ''} ${
                 foil ? 'drop-shadow-[0_0_7px_rgba(250,204,21,0.95)]' : 'drop-shadow-[0_2px_3px_rgba(0,0,0,0.45)]'
               }`}

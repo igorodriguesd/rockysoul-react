@@ -1,4 +1,4 @@
-import { createContext, useContext, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useCallback, useEffect, type ReactNode } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useData } from './DataContext';
 import type { Carta, ColecaoData, NovaCartaInfo, Quimica, RaridadeCarta, ResultadoDrop, SetCarta } from '../types';
@@ -13,6 +13,7 @@ import {
   CUSTO_FABRICACAO,
   PESO_RARIDADE,
   getValorCarta,
+  MULTIPLICADOR_FOIL,
 } from '../data/cartas';
 import { showToast } from '../components/Toast';
 import { nomeNivelPorPontos } from '../data/constants';
@@ -32,7 +33,17 @@ const defaultColecao: ColecaoData = {
   cartasFoil: [],
   fragmentos: fragmentosZero,
   sets: {},
+  valorCreditado: 0,
 };
+
+/** Valor total em créditos da carteira de cartas (com a versão brilhante). */
+function calcularValorCarteira(colecao: ColecaoData): number {
+  const foils = new Set(colecao.cartasFoil ?? []);
+  return CARTAS.reduce((acc, carta) => {
+    if (!colecao.cartasObtidas.includes(carta.id)) return acc;
+    return acc + getValorCarta(carta, foils.has(carta.id));
+  }, 0);
+}
 
 interface CollectionContextType {
   colecao: ColecaoData;
@@ -63,6 +74,18 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
   const [colecao, setColecao] = useLocalStorage<ColecaoData>(STORAGE_KEY, defaultColecao);
   const { data, adicionarBonus } = useData();
 
+  // Regulariza o saldo: cartas obtidas antes do valor virar crédito são creditadas uma única vez.
+  useEffect(() => {
+    const esperado = calcularValorCarteira(colecao);
+    const creditado = colecao.valorCreditado ?? 0;
+    if (esperado > creditado) {
+      const diff = esperado - creditado;
+      setColecao(prev => ({ ...prev, valorCreditado: esperado }));
+      adicionarBonus(diff, 'Valor da sua coleção de cartas');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const adquirirCarta = useCallback((cardId: string, foil = false, semToast = false): NovaCartaInfo | null => {
     const carta = CARTAS.find(c => c.id === cardId);
     if (!carta) return null;
@@ -73,6 +96,8 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
     const quimicaNova = calcularQuimica(totalNovo);
     const quimicaAntes = calcularQuimica(setAtual.cartas.length);
 
+    const valorCarta = getValorCarta(carta, foil);
+
     setColecao(prev => {
       const setAntes = setUsuario(carta.setId, prev);
       return {
@@ -80,6 +105,7 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
         cartasObtidas: [...prev.cartasObtidas, cardId],
         cartasFoil: foil ? [...prev.cartasFoil, cardId] : prev.cartasFoil,
         fragmentos: { ...fragmentosZero, ...prev.fragmentos },
+        valorCreditado: (prev.valorCreditado ?? 0) + valorCarta,
         sets: {
           ...prev.sets,
           [carta.setId]: {
@@ -96,11 +122,15 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
       showToast(`${foil ? 'Carta BRILHANTE obtida: ' : 'Nova carta obtida: '}${carta.nome} (${getSetDeCarta(carta.setId).nome})`);
     }
 
+    if (valorCarta > 0) {
+      adicionarBonus(valorCarta, `Valor da carta: ${carta.nome}${foil ? ' (brilhante)' : ''}`, semToast);
+    }
+
     if (bonusGanho > 0) {
       adicionarBonus(bonusGanho, `Bônus de Química - ${getSetDeCarta(carta.setId).nome} Nível ${quimicaNova.level}`, semToast);
     }
 
-    return { carta, set: getSetDeCarta(carta.setId), quimicaAntes, quimicaNova, bonusGanho };
+    return { carta, set: getSetDeCarta(carta.setId), quimicaAntes, quimicaNova, bonusGanho, valorCarta };
   }, [colecao, setColecao, adicionarBonus]);
 
   const adicionarFragmentos = useCallback((raridade: RaridadeCarta, quantidade: number) => {
@@ -132,11 +162,16 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
     }
 
     if (!jaEhFoil && Math.random() * 100 < CHANCE_FOIL) {
+      const valorExtra = getValorCarta(carta) * (MULTIPLICADOR_FOIL - 1);
       setColecao(prev => ({
         ...prev,
         cartasFoil: [...(prev.cartasFoil ?? []), cardId],
         fragmentos: { ...fragmentosZero, ...prev.fragmentos },
+        valorCreditado: (prev.valorCreditado ?? 0) + valorExtra,
       }));
+      if (valorExtra > 0) {
+        adicionarBonus(valorExtra, `Carta brilhante: ${carta.nome} (valor ×${MULTIPLICADOR_FOIL})`, semToast);
+      }
       if (!semToast) {
         showToast(`CARTA BRILHANTE! ${carta.nome} evoluiu para a versão premium`);
       }
@@ -146,7 +181,7 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
     const fragmentosGanhos = FRAGMENTOS_POR_DUPLICADA[carta.raridade];
     adicionarFragmentos(carta.raridade, fragmentosGanhos);
     return { caiu: true, duplicada: true, carta, fragmentosGanhos };
-  }, [colecao, adquirirCarta, setColecao, adicionarFragmentos]);
+  }, [colecao, adquirirCarta, setColecao, adicionarFragmentos, adicionarBonus]);
 
   const fabricarCarta = useCallback((cardId: string): NovaCartaInfo | null => {
     const carta = CARTAS.find(c => c.id === cardId);
@@ -155,7 +190,7 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
 
     const set = getSetDeCarta(carta.setId);
     if ((data.pontosAcumulados ?? data.pontos) < set.pontosMin) {
-      showToast(`Set "${set.nome}" desbloqueia no nível ${nomeNivelPorPontos(set.pontosMin)} (${set.pontosMin} XP)`);
+      showToast(`Set "${set.nome}" desbloqueia no nível ${nomeNivelPorPontos(set.pontosMin)} (${set.pontosMin} créditos)`);
       return null;
     }
 
@@ -199,12 +234,8 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
   }, [colecao]);
 
 const getValorTotal = useCallback(() => {
-    const foils = new Set(colecao.cartasFoil ?? []);
-    return CARTAS.reduce((acc, carta) => {
-      if (!colecao.cartasObtidas.includes(carta.id)) return acc;
-      return acc + getValorCarta(carta, foils.has(carta.id));
-    }, 0);
-  }, [colecao]);
+  return calcularValorCarteira(colecao);
+}, [colecao]);
 
   const getProximoObjetivo = useCallback(() => {
     const ordenados = SETS_CARTAS

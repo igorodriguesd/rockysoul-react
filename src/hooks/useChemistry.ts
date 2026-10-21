@@ -1,4 +1,5 @@
 import { useColecao } from '../context/CollectionContext';
+import { BONUS_QUIMICA_N2, BONUS_QUIMICA_N3 } from '../data/cartas';
 
 const CARTAS_POR_SET = 4;
 
@@ -14,11 +15,11 @@ export function useChemistry(setId: string) {
 
   const mensagem = quimica.level === 0
     ? `Faltam ${faltam} carta(s) para ativar a química`
-    : quimica.level === 3
-      ? 'Set completo · Química Nível 3'
+    : quimica.level === 1
+      ? `Química Nível 1 ativa · +${BONUS_QUIMICA_N2} créditos na 3ª carta`
       : quimica.level === 2
-        ? 'Química Nível 2 · +30 créditos de bônus'
-        : 'Química Nível 1 ativa';
+        ? `Química Nível 2 · +${BONUS_QUIMICA_N3} créditos na 4ª carta`
+        : 'Set completo · Química Nível 3';
 
   return {
     quimica,

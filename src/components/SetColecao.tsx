@@ -2,6 +2,7 @@ import { useColecao } from '../context/CollectionContext';
 import { useChemistry } from '../hooks/useChemistry';
 import { useData } from '../context/DataContext';
 import { nomeNivelPorPontos } from '../data/constants';
+import { getValorSet, getValorSetCompleto, BONUS_QUIMICA_SET } from '../data/cartas';
 import type { SetCarta } from '../types';
 import CardItem from './CardItem';
 import SetProgress from './SetProgress';
@@ -17,6 +18,8 @@ export default function SetColecao({ set }: Props) {
   const cartas = getCartasDoSet(set.id);
   const obtidas = colecao.sets[set.id]?.cartas ?? [];
   const bloqueado = (data.pontosAcumulados ?? data.pontos) < set.pontosMin;
+  const valorSetCompleto = getValorSetCompleto(set.id);
+  const valorCartas = getValorSet(set.id);
 
   return (
     <section className="shadow-(--t-glass-strong-shadow) rounded-2xl p-4 sm:p-5" style={bloqueado ? { opacity: 0.85, background: 'linear-gradient(168deg, #241b3d 0%, #12233a 100%)', border: '1px solid rgba(109,79,194,0.35)' } : { background: 'linear-gradient(168deg, #241b3d 0%, #12233a 100%)', border: '1px solid rgba(109,79,194,0.35)' }}>
@@ -33,9 +36,15 @@ export default function SetColecao({ set }: Props) {
             {set.tema}
             {bloqueado && (
               <span className="inline-flex items-center rounded-full px-2 py-0.5 bg-gold/15 text-gold text-[10px] font-semibold">
-                Libera no nível {nomeNivelPorPontos(set.pontosMin)} · {set.pontosMin} XP
+                Libera no nível {nomeNivelPorPontos(set.pontosMin)} · {set.pontosMin} créditos
               </span>
             )}
+            <span
+              className="inline-flex items-center rounded-full px-2 py-0.5 bg-brand/15 text-brand text-[10px] font-semibold"
+              title={`${valorCartas} créditos das 4 cartas + ${BONUS_QUIMICA_SET} de química`}
+            >
+              Set completo: {valorSetCompleto} créditos
+            </span>
           </p>
         </div>
       </header>

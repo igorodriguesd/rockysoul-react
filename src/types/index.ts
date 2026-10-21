@@ -6,6 +6,12 @@ export interface Missao {
   pontos: number;
   icone: string;
   comprovacao: Comprovacao;
+  /** O que o usuário precisa fazer para concluir a missão. */
+  descricao: string;
+  /** Como a ação é validada — o que enviar como comprovante. */
+  comoValidar: string;
+  /** Comprovantes aceitos na foto: item, nota fiscal, recibo, protocolo... */
+  comprovantes: string[];
   tempoTimer?: number;
   admiteEcoponto?: boolean;
 }
@@ -147,6 +153,8 @@ export interface ColecaoData {
   cartasFoil: string[];
   fragmentos: Record<RaridadeCarta, number>;
   sets: Record<string, SetColecaoUsuario>;
+  /** Créditos já creditados no saldo por causa das cartas (evita contagem dupla). */
+  valorCreditado?: number;
 }
 
 export interface NovaCartaInfo {
@@ -155,6 +163,8 @@ export interface NovaCartaInfo {
   quimicaAntes: Quimica;
   quimicaNova: Quimica;
   bonusGanho: number;
+  /** Créditos creditados no saldo pelo valor da carta. */
+  valorCarta?: number;
 }
 
 export type ResultadoDrop =

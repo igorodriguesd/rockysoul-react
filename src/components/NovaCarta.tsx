@@ -2,6 +2,8 @@ import type { NovaCartaInfo } from '../types';
 import { useColecao } from '../context/CollectionContext';
 import { getCardBackgroundComBorda, getCardLabel, getIniciaisSet, TIER, usaBordaGradiente } from '../data/cartasStyle';
 import { LABEL_RARIDADE } from '../data/cartas';
+import { grupoDaCarta } from '../data/constants';
+import IconeMissao from './IconeMissao';
 
 interface Props {
   novaCarta: NovaCartaInfo;
@@ -10,6 +12,7 @@ interface Props {
 
 export default function NovaCarta({ novaCarta, foil = false }: Props) {
   const { carta, set, quimicaNova, bonusGanho } = novaCarta;
+  const valorCarta = novaCarta.valorCarta ?? 0;
   const { getProgressoTotal } = useColecao();
   const { obtidas, total } = getProgressoTotal();
   const tier = TIER[carta.raridade];
@@ -45,9 +48,9 @@ export default function NovaCarta({ novaCarta, foil = false }: Props) {
           className="relative z-10 flex items-center justify-center w-12 h-12 rounded-xl my-2"
           style={{ background: 'rgba(255,255,255,0.13)', border: '1px solid rgba(255,255,255,0.4)' }}
         >
-          <img
+          <IconeMissao
             src={carta.icone}
-            alt=""
+            cor={grupoDaCarta(carta.id)?.cor ?? '#94a3b8'}
             className={`w-8 h-8 ${foil ? 'drop-shadow-[0_0_8px_rgba(250,204,21,0.95)]' : ''}`}
           />
         </span>
@@ -61,8 +64,16 @@ export default function NovaCarta({ novaCarta, foil = false }: Props) {
         Coleção {obtidas}/{total} · {quimicaNova.level > 0 ? `Química Nível ${quimicaNova.level}` : 'Química não ativada'}
       </p>
 
+      {valorCarta > 0 && (
+        <p className="text-gold text-sm font-bold mt-1.5">
+          +{valorCarta} créditos no seu saldo
+        </p>
+      )}
+
       {bonusGanho > 0 && (
-        <p className="text-[#f5c451] text-sm font-semibold mt-1">+{bonusGanho} créditos de bônus</p>
+        <p className="text-[#f5c451] text-sm font-semibold mt-1">
+          +{bonusGanho} créditos de bônus de química
+        </p>
       )}
     </div>
   );
