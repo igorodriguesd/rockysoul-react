@@ -38,7 +38,16 @@ function ontemStr(): string {
 
 function getDesafioDoDia(): Missao {
   if (!MISSOES || MISSOES.length === 0) {
-    return { id: 'default', titulo: 'Desafio Diário', descricao: 'Complete suas tarefas diárias', pontos: 10 } as unknown as Missao;
+    return {
+      id: 'default',
+      nome: 'Desafio Diário',
+      pontos: 10,
+      icone: '/icons/folha.svg',
+      comprovacao: 'declaracao',
+      descricao: 'Complete suas tarefas diárias',
+      comoValidar: 'Declare que você praticou a ação hoje.',
+      comprovantes: ['Declaração de uso na caixa abaixo'],
+    };
   }
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
@@ -100,9 +109,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
         data: new Date().toISOString(),
       };
 
-      const prevHistorico = dataAtualizada.historico ?? [];
-      const prevSelos = dataAtualizada.selosDesbloqueados ?? [];
-
       const novosPontos = dataAtualizada.pontos + pontos;
       const novosPontosHoje = dataAtualizada.pontosHoje + pontos;
       const novosAcumulados = (dataAtualizada.pontosAcumulados ?? dataAtualizada.pontos) + pontos;
@@ -119,7 +125,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         missoesCompletas: contaMissao ? dataAtualizada.missoesCompletas + 1 : dataAtualizada.missoesCompletas,
         pontosHoje: novosPontosHoje,
         historico: novoHistorico,
-        selosDesbloqueados: [...prevSelos, ...novosSelos],
+        selosDesbloqueados: [...(dataAtualizada.selosDesbloqueados ?? []), ...novosSelos],
       };
     });
   }, [setData]);
@@ -181,9 +187,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const ultimoDia = ehNovoDia ? hoje : (prev.ultimoDia || hoje);
       const pontosHojeBase = ehNovoDia ? 0 : prev.pontosHoje;
 
-      const prevHistorico = prev.historico ?? [];
-      const prevSelos = prev.selosDesbloqueados ?? [];
-
       const entrada: HistoricoEntrada = {
         nome: `Bônus do Desafio do Dia (+${BONUS_DESAFIO})`,
         pontos: BONUS_DESAFIO,
@@ -200,7 +203,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
         ...prev,
         pontos: novosPontos,
         pontosAcumulados: novosAcumulados,
-        pontosHoje: prev.pontosHoje + BONUS_DESAFIO,
+        pontosHoje: pontosHojeBase + BONUS_DESAFIO,
+        dataHoje: hoje,
+        ultimoDia,
+        streak,
         ultimoDesafio: hojeStr(),
         historico: [entrada, ...prev.historico].slice(0, 50),
         selosDesbloqueados: [...prev.selosDesbloqueados, ...novosSelos],

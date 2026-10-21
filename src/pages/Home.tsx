@@ -57,7 +57,7 @@ export function Home() {
                 style={{ fontSize: 'clamp(38px, 4.2vw, 60px)', letterSpacing: '-0.01em', maxWidth: 560 }}
               >
                 Faça o bem.<br />
-                Veja seu <em className="not-italic" style={{ color: '#FACC15' }}>impacto</em> crescer.
+                Veja seu <em className="not-italic" style={{ color: '#00e676', textShadow: '0 0 12px rgba(0,230,118,0.6)' }}>impacto</em> crescer.
               </h1>
 
               <p className="text-white/70 leading-relaxed" style={{ fontSize: 18, maxWidth: 480 }}>

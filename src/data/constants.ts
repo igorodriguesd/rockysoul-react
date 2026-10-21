@@ -1,29 +1,312 @@
 import type { Missao, Selo, Nivel, Recompensa, Parceiro, Amigo, TrilhaEtapa } from '../types';
+import { CARD_TO_MISSION } from './cartas';
 
 // Créditos escalam por esforço/comprovação e impacto:
 // fácil (declaração/hábito) < leve (foto) < médio (timer/esforço) < alto (GPS/investimento) < máximo (alto impacto)
 export const MISSOES: Missao[] = [
-  { id: 'reciclagem', nome: 'Reciclagem', pontos: 20, icone: '/icons/reciclagem.svg', comprovacao: 'foto', admiteEcoponto: true },
-  { id: 'transporte', nome: 'Transporte Sustentável', pontos: 30, icone: '/icons/transporte.svg', comprovacao: 'foto-gps' },
-  { id: 'energia', nome: 'Economia de Energia', pontos: 15, icone: '/icons/energia.svg', comprovacao: 'foto' },
-  { id: 'agua', nome: 'Economia de Água', pontos: 15, icone: '/icons/agua.svg', comprovacao: 'foto' },
-  { id: 'bicicleta', nome: 'Bicicleta', pontos: 30, icone: '/icons/bicicleta.svg', comprovacao: 'foto-gps' },
-  { id: 'plantio', nome: 'Plantio', pontos: 50, icone: '/icons/arvore.svg', comprovacao: 'foto-gps' },
-  { id: 'banho', nome: 'Banho Rápido', pontos: 15, icone: '/icons/banho.svg', comprovacao: 'timer', tempoTimer: 300 },
-  { id: 'compostagem', nome: 'Compostagem', pontos: 20, icone: '/icons/compostagem.svg', comprovacao: 'foto', admiteEcoponto: true },
-  { id: 'consumo', nome: 'Consumo Consciente', pontos: 15, icone: '/icons/carrinho.svg', comprovacao: 'foto' },
-  { id: 'garrafa', nome: 'Garrafa Reutilizável', pontos: 5, icone: '/icons/garrafa.svg', comprovacao: 'declaracao' },
-  { id: 'educar', nome: 'Compartilhar Dicas', pontos: 5, icone: '/icons/comunidade.svg', comprovacao: 'declaracao' },
-  { id: 'sacola', nome: 'Sacola Reutilizável', pontos: 3, icone: '/icons/sacola.svg', comprovacao: 'declaracao' },
-  { id: 'captacao', nome: 'Captação de Água da Chuva', pontos: 25, icone: '/icons/agua.svg', comprovacao: 'foto' },
-  { id: 'mobilidade', nome: 'Mobilidade Elétrica', pontos: 30, icone: '/icons/bateria.svg', comprovacao: 'foto' },
-  { id: 'ciclovia', nome: 'Usar Ciclovia', pontos: 20, icone: '/icons/bicicleta.svg', comprovacao: 'foto-gps' },
-  { id: 'solar', nome: 'Energia Solar', pontos: 40, icone: '/icons/solar.svg', comprovacao: 'foto' },
-  { id: 'eolica', nome: 'Energia Eólica', pontos: 20, icone: '/icons/vento.svg', comprovacao: 'declaracao' },
-  { id: 'led', nome: 'Iluminação Eficiente', pontos: 10, icone: '/icons/lampada.svg', comprovacao: 'foto' },
-  { id: 'horta', nome: 'Horta Doméstica', pontos: 35, icone: '/icons/vaso.svg', comprovacao: 'foto' },
-  { id: 'agrofloresta', nome: 'Apoiar Agrofloresta', pontos: 70, icone: '/icons/arvore.svg', comprovacao: 'foto' },
+  {
+    id: 'reciclagem',
+    nome: 'Reciclagem',
+    pontos: 20,
+    icone: '/icons/reciclagem.svg',
+    comprovacao: 'foto',
+    descricao: 'Separe papel, plástico, metal e vidro do que você descartou e leve ao ecoponto parceiro ou à coleta seletiva.',
+    comoValidar: 'Envie uma foto dos materiais recicláveis já separados. Se entregou em um ecoponto, marque a entrega para ganhar o bônus de créditos.',
+    comprovantes: [
+      'Foto dos materiais recicláveis separados',
+      'Nota fiscal ou recibo de entrega no ecoponto (Ferro-Velho do João, Adega do Zé, Recicla Vale)',
+      'Comprovante de peso ou valor do material vendido',
+    ],
+    admiteEcoponto: true,
+  },
+  {
+    id: 'transporte',
+    nome: 'Transporte Sustentável',
+    pontos: 30,
+    icone: '/icons/transporte.svg',
+    comprovacao: 'foto-gps',
+    descricao: 'Use ônibus, metrô, trem ou van compartilhada no lugar do carro para o trajeto do dia.',
+    comoValidar: 'Fotografe o bilhete ou a tela do aplicativo de transporte e capture a localização do trajeto.',
+    comprovantes: [
+      'Foto do bilhete ou do app de transporte',
+      'Recibo da passagem ou da recarga',
+      'Print do QR Code com a data do bilhete',
+    ],
+  },
+  {
+    id: 'energia',
+    nome: 'Economia de Energia',
+    pontos: 15,
+    icone: '/icons/energia.svg',
+    comprovacao: 'foto',
+    descricao: 'Desligue aparelhos da tomada, use o ar-condicionado em 23 °C e apague as luzes dos cômodos sem uso.',
+    comoValidar: 'Fotografe o medidor de energia ou o aparelho desligado da tomada.',
+    comprovantes: [
+      'Foto do medidor de energia',
+      'Foto do aparelho ou da tomada desligada',
+      'Conta de luz antes e depois da ação',
+    ],
+  },
+  {
+    id: 'agua',
+    nome: 'Economia de Água',
+    pontos: 15,
+    icone: '/icons/agua.svg',
+    comprovacao: 'foto',
+    descricao: 'Feche a torneira enquanto escova os dentes, tome banho rápido e conserte vazamentos da casa.',
+    comoValidar: 'Fotografe o medidor de água ou a torneira fechada.',
+    comprovantes: [
+      'Foto do medidor de água',
+      'Foto da torneira fechada ou do vazimento reparado',
+      'Conta de água antes e depois da ação',
+    ],
+  },
+  {
+    id: 'bicicleta',
+    nome: 'Pedalar',
+    pontos: 30,
+    icone: '/icons/bicicleta.svg',
+    comprovacao: 'foto-gps',
+    descricao: 'Pedale até o trabalho, à faculdade ou ao mercado em vez de ir de carro.',
+    comoValidar: 'Fotografe a bicicleta em uso e registre a localização do percurso.',
+    comprovantes: [
+      'Foto da bicicleta em uso',
+      'Print do app de pedal (Strava, Uber Bike, entre outros)',
+      'Recibo de diária ou aluguel da bicicleta',
+    ],
+  },
+  {
+    id: 'plantio',
+    nome: 'Plantar Mudas',
+    pontos: 50,
+    icone: '/icons/arvore.svg',
+    comprovacao: 'foto-gps',
+    descricao: 'Plante uma muda nativa no quintal, em área verde da cidade ou em um viveiro parceiro.',
+    comoValidar: 'Fotografe a muda plantada e registre a localização do local do plantio.',
+    comprovantes: [
+      'Foto da muda plantada no local',
+      'Nota fiscal ou recibo da floricultura / casa de plantas',
+      'Comprovante de adoção ou doação da árvore',
+    ],
+  },
+  {
+    id: 'banho',
+    nome: 'Banho Rápido',
+    pontos: 15,
+    icone: '/icons/banho.svg',
+    comprovacao: 'timer',
+    descricao: 'Limite o banho a 5 minutos e feche a torneira enquanto se ensaboa.',
+    comoValidar: 'O cronômetro do app conta os 5 minutos: conclua o desafio dentro do tempo e confirme para validar.',
+    comprovantes: [
+      'Cronômetro do app concluído dentro do tempo',
+      'Print do cronômetro ao chegar a 00:00',
+    ],
+    tempoTimer: 300,
+  },
+  {
+    id: 'compostagem',
+    nome: 'Compostagem',
+    pontos: 20,
+    icone: '/icons/compostagem.svg',
+    comprovacao: 'foto',
+    descricao: 'Separe restos de comida, cascas e folhas e leve à composteira caseira ou a um ecoponto de orgânico.',
+    comoValidar: 'Fotografe a composteira com o material orgânico. Se entregou em um ecoponto, marque para ganhar o bônus.',
+    comprovantes: [
+      'Foto da composteira com o material orgânico',
+      'Nota fiscal de entrega de orgânico no Recicla Vale',
+      'Recibo do serviço de coleta de orgânico',
+    ],
+    admiteEcoponto: true,
+  },
+  {
+    id: 'consumo',
+    nome: 'Consumo Consciente',
+    pontos: 15,
+    icone: '/icons/carrinho.svg',
+    comprovacao: 'foto',
+    descricao: 'Compre produtos duráveis e com menos embalagem, e consuma primeiro o que já existe em casa.',
+    comoValidar: 'Fotografe o produto ou a nota fiscal da compra consciente.',
+    comprovantes: [
+      'Nota fiscal do mercado',
+      'Foto do produto ou da embalagem reduzida',
+      'Recibo de compra no Mercado Consciente',
+    ],
+  },
+  {
+    id: 'garrafa',
+    nome: 'Garrafa Reutilizável',
+    pontos: 5,
+    icone: '/icons/garrafa.svg',
+    comprovacao: 'declaracao',
+    descricao: 'Leve uma garrafa reutilizável para água ou bebida em vez de usar descartável.',
+    comoValidar: 'Confirme na caixa abaixo que você usou a garrafa hoje. Valida uma vez por dia.',
+    comprovantes: [
+      'Declaração de uso na caixa abaixo',
+      'Foto da garrafa ou do copo reutilizável',
+      'Nota fiscal do mercado com a recarga',
+    ],
+  },
+  {
+    id: 'educar',
+    nome: 'Compartilhar Dicas',
+    pontos: 5,
+    icone: '/icons/comunidade.svg',
+    comprovacao: 'declaracao',
+    descricao: 'Compartilhe uma dica de sustentabilidade com amigos, na escola ou nas redes sociais.',
+    comoValidar: 'Confirme na caixa abaixo que você compartilhou a dica hoje. Valida uma vez por dia.',
+    comprovantes: [
+      'Declaração de compartilhamento na caixa abaixo',
+      'Print da publicação ou do story',
+      'Print da conversa em que a dica foi enviada',
+    ],
+  },
+  {
+    id: 'sacola',
+    nome: 'Sacola Reutilizável',
+    pontos: 3,
+    icone: '/icons/sacola.svg',
+    comprovacao: 'declaracao',
+    descricao: 'Use sacola reutilizável na feira, no mercado e em qualquer compra do dia.',
+    comoValidar: 'Confirme na caixa abaixo que você usou a sacola hoje. Valida uma vez por dia.',
+    comprovantes: [
+      'Declaração de uso na caixa abaixo',
+      'Foto da sacola reutilizável na compra',
+      'Nota fiscal do mercado',
+    ],
+  },
+  {
+    id: 'captacao',
+    nome: 'Captação de Água da Chuva',
+    pontos: 25,
+    icone: '/icons/agua.svg',
+    comprovacao: 'foto',
+    descricao: 'Use a água da chuva para regar o jardim e limpar a casa, com calha ou cisterna.',
+    comoValidar: 'Fotografe o sistema de captação com a água acumulada.',
+    comprovantes: [
+      'Foto da calha, cisterna ou caixa d’água com a água acumulada',
+      'Nota fiscal da casa de materiais de construção',
+      'Recibo da instalação da calha ou do reservatório',
+    ],
+  },
+  {
+    id: 'mobilidade',
+    nome: 'Mobilidade Elétrica',
+    pontos: 30,
+    icone: '/icons/bateria.svg',
+    comprovacao: 'foto-gps',
+    descricao: 'Troque o carro a gasolina por veículo elétrico, patinete elétrico ou bicicleta elétrica.',
+    comoValidar: 'Fotografe o veículo elétrico e registre a localização do percurso ou da recarga.',
+    comprovantes: [
+      'Foto do veículo elétrico',
+      'Recibo ou comprovante da recarga',
+      'Nota fiscal do patinete, da bicicleta elétrica ou do carregador',
+    ],
+  },
+  {
+    id: 'ciclovia',
+    nome: 'Indicar Defeito em Ciclovia',
+    pontos: 20,
+    icone: '/icons/bicicleta.svg',
+    comprovacao: 'foto-gps',
+    descricao: 'Encontre um problema na ciclovia da sua rua (trancheira, buraco, sinalização) e reporte à prefeitura.',
+    comoValidar: 'Fotografe o defeito e registre a localização exata do problema na via.',
+    comprovantes: [
+      'Foto do defeito na ciclovia',
+      'Print do protocolo da solicitação aberta na prefeitura',
+      'Print do e-mail ou da mensagem enviada à cidade',
+    ],
+  },
+  {
+    id: 'solar',
+    nome: 'Energia Solar',
+    pontos: 40,
+    icone: '/icons/solar.svg',
+    comprovacao: 'foto',
+    descricao: 'Instale painéis solares ou use geração solar para parte da energia da sua casa.',
+    comoValidar: 'Fotografe a instalação solar ou a fatura de energia com a parcela solar.',
+    comprovantes: [
+      'Foto da instalação solar',
+      'Nota fiscal do kit solar ou do instalador',
+      'Conta de luz com a parcela solar',
+    ],
+  },
+  {
+    id: 'eolica',
+    nome: 'Energia Eólica',
+    pontos: 20,
+    icone: '/icons/vento.svg',
+    comprovacao: 'foto',
+    descricao: 'Contrate energia renovável de fonte eólica ou instale um pequeno gerador eólico.',
+    comoValidar: 'Fotografe a fatura de energia com a bandeira renovável ou o gerador em funcionamento.',
+    comprovantes: [
+      'Foto do gerador ou da turbina',
+      'Conta de luz com a bandeira renovável',
+      'Contrato de energia renovável',
+    ],
+  },
+  {
+    id: 'led',
+    nome: 'Iluminação Eficiente',
+    pontos: 10,
+    icone: '/icons/lampada.svg',
+    comprovacao: 'foto',
+    descricao: 'Troque as lâmpadas incandescentes por lâmpadas LED de alta eficiência energética.',
+    comoValidar: 'Fotografe a nova lâmpada LED já instalada no lugar da antiga.',
+    comprovantes: [
+      'Foto da lâmpada LED instalada',
+      'Nota fiscal da casa de materiais de construção',
+      'Recibo da loja de material elétrico',
+    ],
+  },
+  {
+    id: 'horta',
+    nome: 'Horta Doméstica',
+    pontos: 35,
+    icone: '/icons/vaso.svg',
+    comprovacao: 'foto',
+    descricao: 'Monte uma horta em vasos ou canteiro e cultive verduras, temperos ou legumes.',
+    comoValidar: 'Fotografe a horta com as plantas em crescimento.',
+    comprovantes: [
+      'Foto da horta com as plantas em crescimento',
+      'Nota fiscal da floricultura / casa de plantas (mudas, substrato)',
+      'Recibo de sementes e insumos',
+    ],
+  },
+  {
+    id: 'agrofloresta',
+    nome: 'Financiar Reflorestamento',
+    pontos: 70,
+    icone: '/icons/arvore.svg',
+    comprovacao: 'foto',
+    descricao: 'Financie ou plante uma área de reflorestamento com espécies nativas da região.',
+    comoValidar: 'Fotografe o comprovante da contribuição ou o local do plantio com as mudas nativas.',
+    comprovantes: [
+      'Comprovante da contribuição (doação, assinatura ou pagamento)',
+      'Nota fiscal ou recibo do viveiro / projeto de reflorestamento',
+      'Foto do local com as mudas nativas',
+    ],
+  },
 ];
+
+// Padrão visual por tema: mesma cor para ícone, "+x pontos" e status.
+// Os grupos reúnem os `temas` dos parceiros sponsors, então cor = tema.
+// `texto` é a variante escura da mesma cor, legível sobre fundo claro.
+export const GRUPOS_MISSAO: { id: string; label: string; cor: string; texto: string; ids: string[] }[] = [
+  { id: 'energia', label: 'Energia e Consumo', cor: '#f5c451', texto: '#a16207', ids: ['energia', 'solar', 'eolica', 'led', 'consumo', 'sacola', 'educar'] },
+  { id: 'agua', label: 'Água e Mobilidade', cor: '#38bdf8', texto: '#0369a1', ids: ['agua', 'captacao', 'banho', 'garrafa', 'transporte', 'bicicleta', 'mobilidade', 'ciclovia'] },
+  { id: 'natureza', label: 'Natureza', cor: '#22c55e', texto: '#15803d', ids: ['plantio', 'horta', 'agrofloresta', 'reciclagem', 'compostagem'] },
+];
+
+export function grupoDaMissao(missaoId: string) {
+  return GRUPOS_MISSAO.find(g => g.ids.includes(missaoId)) ?? GRUPOS_MISSAO[0];
+}
+
+// Cartas herdam a cor do grupo da missão que as origina.
+export function grupoDaCarta(cartaId: string) {
+  const missaoId = CARD_TO_MISSION[cartaId];
+  return missaoId ? grupoDaMissao(missaoId) : undefined;
+}
+
 
 export const CO2_POR_MISSAO: Record<string, number> = {
   reciclagem: 2.5,
@@ -64,9 +347,9 @@ export const NIVEIS: Nivel[] = [
 
 export const TRILHA_EVOLUCAO: TrilhaEtapa[] = [
   { nome: 'Broto', icone: '/icons/folha.svg', emoji: '🌱', minXP: 0, recompensa: '+50 créditos de boas-vindas', desbloqueio: 'Seus primeiros sets de cartas', explicacao: 'Todo impacto começa pequeno — a primeira ação já te coloca aqui.' },
-  { nome: 'Semente', icone: '/icons/semente.svg', emoji: '🌿', minXP: 500, recompensa: '+100 créditos', desbloqueio: 'Cartas novas e o set Guardiões da Água', explicacao: '500 XP acumulados: sua rotina já faz a ilha respirar melhor.' },
-  { nome: 'Árvore', icone: '/icons/arvore.svg', emoji: '🌳', minXP: 1200, recompensa: '+200 créditos', desbloqueio: 'Cartas raras e o set Energia Limpa', explicacao: '1.200 XP: o impacto real começa a proteger o planeta.' },
-  { nome: 'Floresta', icone: '/icons/floresta.svg', emoji: '🌎', minXP: 2000, recompensa: '+400 créditos e selo exclusivo', desbloqueio: 'Todas as cartas, o set Cultivo e o selo Floresta', explicacao: '2.000 XP: você é uma verdadeira guardiã do planeta.' },
+  { nome: 'Semente', icone: '/icons/semente.svg', emoji: '🌿', minXP: 500, recompensa: '+100 créditos', desbloqueio: 'Cartas novas e o set Guardiões da Água', explicacao: '500 créditos acumulados: sua rotina já faz a ilha respirar melhor.' },
+  { nome: 'Árvore', icone: '/icons/arvore.svg', emoji: '🌳', minXP: 1200, recompensa: '+200 créditos', desbloqueio: 'Cartas raras e o set Energia Limpa', explicacao: '1.200 créditos: o impacto real começa a proteger o planeta.' },
+  { nome: 'Floresta', icone: '/icons/floresta.svg', emoji: '🌎', minXP: 2000, recompensa: '+400 créditos e selo exclusivo', desbloqueio: 'Todas as cartas, o set Cultivo e o selo Floresta', explicacao: '2.000 créditos: você é uma verdadeira guardiã do planeta.' },
 ];
 
 export function nomeNivelPorPontos(pontos: number): string {
@@ -86,9 +369,9 @@ export const PARCEIROS: Parceiro[] = [
   { id: 'p-doce', nome: 'Doce da Dona Neide', tipos: ['voucher'], cor: '#db2777', localizacao: 'Zona Leste', descricao: 'Doce artesanal que premia o impacto.', impactoBase: { creditos: 27200, cortesias: 268 }, valorCortesia: 6 },
   { id: 'p-cicloverde', nome: 'CicloVerde Bikes', tipos: ['patrocinador', 'ecoponto'], cor: '#38bdf8', localizacao: 'Zona Oeste', descricao: 'Patrocina mobilidade e recebe baterias de e-bike e eletrônicos.', temas: ['bicicleta', 'transporte', 'mobilidade', 'ciclovia'], impactoBase: { creditos: 9200, cortesias: 0 } },
   { id: 'p-renova', nome: 'Renova Energia', tipos: ['patrocinador'], cor: '#f5c451', localizacao: 'Nacional', descricao: 'Patrocina as missões de eficiência energética.', temas: ['energia', 'solar', 'eolica', 'led'] },
-  { id: 'p-aguaviva', nome: 'Água Viva', tipos: ['patrocinador'], cor: '#60a5fa', localizacao: 'Nacional', descricao: 'Patrocina as missões de economia de água.', temas: ['agua', 'banho', 'captacao', 'garrafa'] },
+  { id: 'p-aguaviva', nome: 'Água Viva', tipos: ['patrocinador'], cor: '#38bdf8', localizacao: 'Nacional', descricao: 'Patrocina as missões de economia de água.', temas: ['agua', 'banho', 'captacao', 'garrafa'] },
   { id: 'p-verdecult', nome: 'Verde Cultivo', tipos: ['patrocinador'], cor: '#22c55e', localizacao: 'Rural', descricao: 'Patrocina plantio e agroflorestas.', temas: ['plantio', 'horta', 'agrofloresta'] },
-  { id: 'p-consciente', nome: 'Mercado Consciente', tipos: ['patrocinador'], cor: '#a78bfa', localizacao: 'Zona Leste', descricao: 'Patrocina consumo consciente e hábitos do dia a dia.', temas: ['consumo', 'educar', 'sacola'] },
+  { id: 'p-consciente', nome: 'Mercado Consciente', tipos: ['patrocinador'], cor: '#f5c451', localizacao: 'Zona Leste', descricao: 'Patrocina consumo consciente e hábitos do dia a dia.', temas: ['consumo', 'educar', 'sacola'] },
 ];
 
 type CamposCortesia = {
@@ -119,6 +402,9 @@ export const RECOMPENSAS: Recompensa[] = [
   { id: 'r6', nome: 'Desconto Água', descricao: '5% de desconto na conta de água', pontos: 800, valorReal: 8, categoria: 'Natureza', icone: '/icons/agua.svg' },
   { id: 'r7', nome: 'Cupom Bicicleta', descricao: 'Cupom de desconto em bicicletarias', pontos: 2000, valorReal: 20, categoria: 'Transporte', icone: '/icons/bicicleta.svg' },
   { id: 'r8', nome: 'Adoção de Árvore', descricao: 'Adote uma árvore real por 3 meses', pontos: 2500, valorReal: 25, categoria: 'Natureza', icone: '/icons/arvore.svg', badge: 'Top 1' },
+  recompensaCortesia('p-cafe', { id: 'r9', nome: 'Café Cortesia', descricao: 'Um café grátis na Cafeteria do Vale', categoria: 'Parceiros', icone: '/icons/cafe.svg', badge: 'Cortesia' }),
+  recompensaCortesia('p-doce', { id: 'r10', nome: 'Doce Artesanal', descricao: 'Doce da Dona Neide para alegrar o dia', categoria: 'Parceiros', icone: '/icons/doce.svg', badge: 'Cortesia' }),
+  recompensaCortesia('p-adega', { id: 'r11', nome: 'Cupom Adega do Zé', descricao: '10% off em garrafas retornáveis e vidros', categoria: 'Parceiros', icone: '/icons/garrafa.svg', badge: 'Cortesia' }),
 ];
 
 export function getParceiro(id: string): Parceiro | undefined {
@@ -157,14 +443,14 @@ export const CURIOSIDADES: string[] = [
 ];
 
 export const PERGUNTAS_FAQ: { pergunta: string; resposta: string }[] = [
-  { pergunta: 'Como ganhar créditos e XP?', resposta: 'Toda ação sustentável registrada (reciclar, usar transporte público, economizar água e energia, andar de bicicleta, plantar árvores) rende créditos — a moeda gasta em recompensas e Pix — e XP, o acumulado que evolui seu nível. Cada ação tem um valor diferente!' },
+  { pergunta: 'Como ganhar créditos?', resposta: 'Toda ação sustentável registrada (reciclar, usar transporte público, economizar água e energia, pedalar, plantar mudas) rende créditos — a moeda do app, gasta em recompensas e Pix. Cada ação tem um valor diferente!' },
   { pergunta: 'O que é o avatar inteligente?', resposta: 'O avatar inteligente é um assistente virtual que ajuda você a acompanhar seu progresso, sugere ações sustentáveis e responde dúvidas sobre sustentabilidade e gamificação.' },
   { pergunta: 'Como funciona o ranking?', resposta: 'Na sua comunidade, você adiciona amigos por código e cada um aparece com créditos, nível e sequência de dias — comparando quem faz mais diferença. Fora isso, um ranking de empresas parceiras mostra quem mais movimenta créditos e concede cortesias; suas entregas e resgates fazem essas empresas subirem de posição.' },
-  { pergunta: 'Preciso fazer a verificação por foto?', resposta: 'Sim! Para garantir a autenticidade das ações, solicitamos que você envie uma foto como comprovante. A verificação por GPS é opcional, mas ajuda a validar ainda mais sua ação.' },
-  { pergunta: 'Como funciona o sistema de níveis?', resposta: 'Seu nível evolui conforme o XP acumulado (ele nunca diminui): Broto (0-499), Semente (500-1199), Árvore (1200-1999) e Floresta (2000+). Cada nível desbloqueia novos sets de cartas, selos e recompensas!' },
+  { pergunta: 'Preciso fazer a verificação por foto?', resposta: 'Depende da missão. Ao tocar na missão você vê o que precisa fazer e como validar: algumas pedem foto, outras foto + GPS, algumas usam cronômetro e as mais simples pedem apenas uma declaração. A foto pode ser do item, da nota fiscal ou do recibo do estabelecimento (mercado, casa de materiais de construção, floricultura, ferro-velho, ecoponto) — a tela da missão lista os comprovantes aceitos. Nas missões marcadas com GPS a localização é obrigatória; nas demais ela é opcional e ajuda a fortalecer a validação.' },
+  { pergunta: 'Como funciona o sistema de níveis?', resposta: 'Seu nível evolui conforme os créditos acumulados (eles nunca diminuem): Broto (0-499), Semente (500-1199), Árvore (1200-1999) e Floresta (2000+). Cada nível desbloqueia novos sets de cartas, selos e recompensas!' },
   { pergunta: 'Como converter créditos em dinheiro?', resposta: 'Créditos são a moeda da plataforma. No conversor da página de Recompensas, você informa a quantidade de créditos (mínimo de 500) e sua chave Pix para receber o valor: a cada 100 créditos, você recebe R$1,00.' },
   { pergunta: 'Posso resgatar recompensas várias vezes?', resposta: 'Sim, desde que tenha créditos suficientes. Cada recompensa tem um custo em créditos. Ao resgatar, os créditos são descontados do seu saldo e o resgate fica registrado no seu histórico.' },
-  { pergunta: 'Qual a diferença entre créditos e XP?', resposta: 'Crédito é a moeda: toda ação registrada paga créditos, e você os gasta em recompensas, na roleta ou converta em dinheiro via Pix (100 créditos = R$1,00). XP é o seu histórico de evolução: ele só acumula e define seu nível (Semente → Floresta). Gastar créditos não reduz seu XP nem seu nível.' },
+  { pergunta: 'Qual a diferença entre créditos e XP?', resposta: 'Só existe uma unidade no app: o crédito. Você ganha créditos a cada ação e gasta em recompensas, na roleta ou converte em dinheiro via Pix (100 créditos = R$1,00). Para evoluir de nível, olhe o total de créditos que você já ganhou — ele só acumula e nunca diminui, mesmo que você gaste. Gastar créditos não reduz seu nível.' },
   { pergunta: 'O que são cartas, sets e "química"?', resposta: 'Cada ação registrada pode soltar uma carta colecionável dos influenciadores da plataforma. As cartas estão organizadas em 4 sets (Soluções, Siga a Ciência, Energia e Tecnologia). Quando você completa o conjunto de um mesmo influenciador no set, ativa a "química" entre elas, que aumenta o valor da coleção. Tudo isso acontece na página Coleção.' },
   { pergunta: 'O que é uma carta "brilhante" (foil)?', resposta: 'Uma carta foil é a versão especial e mais valiosa de uma carta comum. Ela aparece ao obter uma repetida — você ganha a normal e a brilhante vem junto — e vale mais créditos na sua coleção.' },
   { pergunta: 'O que são "fragmentos" e a "Fábrica de Cartas"?', resposta: 'Fragmentos são a moeda de montar cartas: cada carta repetida vira fragmentos da raridade dela (comum, incomum, rara, épica ou lendária). Na "Fábrica de Cartas" (botão "Cartas repetidas" na Coleção) você usa fragmentos para montar exatamente a carta que ainda não tem — sem depender de sorte. Carta repetida vira +3 a +40 fragmentos conforme a raridade.' },

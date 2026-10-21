@@ -3,8 +3,8 @@ import { useData } from '../context/DataContext';
 import { useColecao } from '../context/CollectionContext';
 import { useChat } from '../context/ChatContext';
 import { MISSOES, RECOMPENSAS, CURIOSIDADES, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO } from '../data/constants';
-import { SETS_CARTAS, CHANCE_DROP_POR_RARIDADE, LABEL_RARIDADE } from '../data/cartas';
-import type { ChatMessage, ResultadoDrop } from '../types';
+import { SETS_CARTAS, CHANCE_DROP_POR_RARIDADE, LABEL_RARIDADE, getValorCarta, VALOR_POR_RARIDADE, getValorSetCompleto, getValorColecaoCompleta, BONUS_QUIMICA_SET } from '../data/cartas';
+import type { ChatMessage, Carta, ResultadoDrop } from '../types';
 import RoletaDrop from './RoletaDrop';
 
 type BotState = 'normal' | 'aguardandoNome' | 'aguardandoAcao' | 'aguardandoResgate' | 'aguardandoValorConversao' | 'aguardandoChavePix';
@@ -74,8 +74,6 @@ export default function Chat() {
   const [dropChat, setDropChat] = useState<ResultadoDrop | null>(null);
   const [cartaDropChat, setCartaDropChat] = useState<Carta | null>(null);
   const [chanceDropChat, setChanceDropChat] = useState(50);
-  const [roletaProntaChat, setRoletaProntaChat] = useState(false);
-  const [tentativaChat, setTentativaChat] = useState(0);
   const estadoRef = useRef<BotState>('normal');
   const conversaoRef = useRef(0);
   const initRef = useRef(false);
@@ -100,7 +98,6 @@ export default function Chat() {
     if (!aberto) {
       setDropChat(null);
       setCartaDropChat(null);
-      setRoletaProntaChat(false);
     }
   }, [aberto]);
 
@@ -143,10 +140,12 @@ export default function Chat() {
 
   function textoDrop(drop: ResultadoDrop, prefixo: string): string {
     if ('novaCarta' in drop) {
-      return `${prefixo}\n\n**Nova carta obtida: ${drop.novaCarta.carta.nome}**${drop.foil ? ' (versão BRILHANTE!)' : ''}`;
+      const valor = drop.novaCarta.valorCarta ?? getValorCarta(drop.novaCarta.carta, drop.foil);
+      const quimica = drop.novaCarta.bonusGanho > 0 ? ` · +${drop.novaCarta.bonusGanho} créditos de química` : '';
+      return `${prefixo}\n\n**Nova carta obtida: ${drop.novaCarta.carta.nome}**${drop.foil ? ' (versão BRILHANTE!)' : ''}\nValor da carta: **+${valor} créditos** no seu saldo${quimica}`;
     }
     if ('foil' in drop) {
-      return `${prefixo}\n\n**CARTA BRILHANTE!** Sua ${drop.carta.nome} evoluiu para a versão premium (valor ×3) e está destacada na sua vitrine!`;
+      return `${prefixo}\n\n**CARTA BRILHANTE!** Sua ${drop.carta.nome} evoluiu para a versão premium (valor ×3) e está destacada na sua vitrine!\nValor da carta: **+${getValorCarta(drop.carta) * 2} créditos** no seu saldo`;
     }
     if ('duplicada' in drop) {
       return `${prefixo}\n\nCarta repetida: **${drop.carta.nome}** virou **+${drop.fragmentosGanhos} fragmentos** de ${drop.carta.raridade.toLowerCase()}. Monte as cartas que faltam na Fábrica de Cartas.`;
@@ -155,23 +154,18 @@ export default function Chat() {
   }
 
   function registrarAcao(missaoId: string, nome: string, pontos: number): string {
-    adicionarPontos(pontos, nome);
+    const creditos = MISSOES.find(m => m.id === missaoId)?.pontos ?? pontos;
+    adicionarPontos(creditos, nome);
     const drop = adquirirPorMissao(missaoId);
     if (drop) {
       setDropChat(drop);
-      setRoletaProntaChat(false);
-      setTentativaChat(t => t + 1);
       if ('carta' in drop) {
         setCartaDropChat(drop.carta);
         setChanceDropChat('chance' in drop ? drop.chance : CHANCE_DROP_POR_RARIDADE[drop.carta.raridade] ?? 50);
       }
     }
-    const prefixo = `**Ação registrada: ${nome}!**\n\n+${pontos} créditos`;
+    const prefixo = `**Ação registrada: ${nome}!**\n\n+${creditos} créditos`;
     return drop ? textoDrop(drop, prefixo) : prefixo;
-  }
-
-  function terminarGiroChat() {
-    setRoletaProntaChat(true);
   }
 
   function ProcessarMensagem(userText: string) {
@@ -313,13 +307,13 @@ export default function Chat() {
       case 'nivel': {
         const nivel = getNivel();
         const proximoNivel =
-          nivel === 'Broto' ? 'Semente (500 XP)' :
-            nivel === 'Semente' ? 'Árvore (1200 XP)' :
-              nivel === 'Árvore' ? 'Floresta (2000 XP)' :
+          nivel === 'Broto' ? 'Semente (500 créditos)' :
+            nivel === 'Semente' ? 'Árvore (1200 créditos)' :
+              nivel === 'Árvore' ? 'Floresta (2000 créditos)' :
                 'Nível máximo atingido!';
         responder(
           '**Seu nível atual:** ' + nivel + '\n\n' +
-          '**' + (data.pontosAcumulados ?? data.pontos) + ' XP acumulados**\n\n' +
+          '**' + (data.pontosAcumulados ?? data.pontos) + ' créditos acumulados**\n\n' +
           'Próximo nível: **' + proximoNivel + '**\n\n' +
           'Continue realizando ações sustentáveis para evoluir!'
         );
@@ -407,21 +401,26 @@ export default function Chat() {
           const quimica = getQuimica(set.id);
           const cartasSet = colecao.sets[set.id]?.cartas.length ?? 0;
           const nivel = quimica.level === 3 ? 'Química Nível 3 · Set completo' : quimica.level > 0 ? `Química Nível ${quimica.level}` : 'Sem química';
-          return `- **${set.nome}** (${cartasSet}/4) · ${nivel}`;
+          return `- **${set.nome}** (${cartasSet}/4) · ${nivel} · set completo: **${getValorSetCompleto(set.id)} créditos**`;
         }).join('\n');
         const proximo = getProximoObjetivo();
         const chances = (Object.entries(CHANCE_DROP_POR_RARIDADE) as [keyof typeof CHANCE_DROP_POR_RARIDADE, number][])
           .map(([r, c]) => `${LABEL_RARIDADE[r]} ${c}%`)
           .join(' · ');
+        const valores = (Object.keys(VALOR_POR_RARIDADE) as Array<keyof typeof VALOR_POR_RARIDADE>)
+          .map(r => `${LABEL_RARIDADE[r]} **${VALOR_POR_RARIDADE[r]}**`)
+          .join(' · ');
         responder(
           '**Sua coleção de cartas**\n\n' +
           `**${obtidas}/${total}** cartas conquistadas${foils > 0 ? ` · **${foils} brilhante(s)**` : ''}\n` +
-          `Valor da coleção: **${valorTotal} créditos**\n\n` +
+          `Valor da coleção: **${valorTotal} créditos** (já creditados no seu saldo)\n` +
+          `Coleção completa, com todas as cartas e a química: **${getValorColecaoCompleta()} créditos**\n\n` +
+          '**Valor por raridade (entra no saldo na hora):**\n' + valores + ' · Brilhante = **×3**\n\n' +
           '**Sets e química:**\n' + linhasSets + '\n\n' +
           (proximo ? `Próximo objetivo: complete o set **${proximo.set.nome}** (faltam ${proximo.faltam} carta(s)) para ativar a química.\n\n` : 'Set completo em todos! Você domina a coleção 😄\n\n') +
           '**Chance de ganhar carta por raridade:**\n' + chances + '\n\n' +
-          'Complete um set (4/4) para ganhar **+150 créditos** de bônus!\n\n' +
-          '**Sets por nível:** Recursos e Cidade Verde já no início · Guardiões da Água no Semente (500 XP) · Energia Limpa na Árvore (1200 XP) · Cultivo na Floresta (2000 XP).\n\n' +
+          `Cada set completo paga **+${BONUS_QUIMICA_SET} créditos** de química (+30 na 3ª carta, +150 na 4ª) — e as 4 cartas do set creditam o valor delas.\n\n` +
+          '**Sets por nível:** Recursos e Cidade Verde já no início · Guardiões da Água no Semente (500 créditos) · Energia Limpa na Árvore (1200 créditos) · Cultivo na Floresta (2000 créditos).\n\n' +
           '**Dica:** cartas repetidas viram fragmentos — use-os na **Fábrica de Cartas** da sua Coleção para montar as que faltam!'
         );
         break;
@@ -456,12 +455,12 @@ export default function Chat() {
       }
 
       case 'bicicleta': {
-        responder(registrarAcao('bicicleta', 'Bicicleta', 40));
+        responder(registrarAcao('bicicleta', 'Pedalar', 40));
         break;
       }
 
       case 'arvore': {
-        responder(registrarAcao('plantio', 'Plantio', 100));
+        responder(registrarAcao('plantio', 'Plantar Mudas', 100));
         break;
       }
 
@@ -502,7 +501,6 @@ export default function Chat() {
     setInput('');
     setDropChat(null);
     setCartaDropChat(null);
-    setRoletaProntaChat(false);
     ProcessarMensagem(texto);
   }
 
@@ -600,7 +598,6 @@ export default function Chat() {
                   carta={cartaDropChat}
                   chance={chanceDropChat}
                   caiu={dropChat.caiu}
-                  onTerminar={terminarGiroChat}
                 />
               </div>
             )}

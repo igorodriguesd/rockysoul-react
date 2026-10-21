@@ -6,8 +6,8 @@ import type { RaridadeCarta } from '../types';
 
 const PASSOS = [
   { icon: '/icons/reciclagem.svg', titulo: 'Registre sua ação', texto: 'Escolha uma das ações sustentáveis no Dashboard e informe o que você realizou hoje.' },
-  { icon: '/icons/camera.svg', titulo: 'Verificação por foto', texto: 'Envie uma foto como comprovante da ação. A localização GPS é opcional e reforça a validação.' },
-  { icon: '/icons/trofeu.svg', titulo: 'Ganhe XP e níveis', texto: 'Cada ação vale XP. Acumule para evoluir de Broto até Floresta e desbloquear sets de cartas e selos.' },
+  { icon: '/icons/camera.svg', titulo: 'Verificação por foto', texto: 'Envie uma foto do comprovante: item, nota fiscal ou recibo (mercado, casa de materiais, floricultura, ferro-velho, ecoponto). Em missões com GPS a localização é obrigatória; nas demais ela é opcional e reforça a validação.' },
+  { icon: '/icons/trofeu.svg', titulo: 'Ganhe créditos e níveis', texto: 'Cada ação vale créditos. Acumule para evoluir de Broto até Floresta e desbloquear sets de cartas e selos.' },
   { icon: '/icons/carrinho.svg', titulo: 'Resgate recompensas', texto: `Troque seus créditos por recompensas reais em um catálogo com ${RECOMPENSAS.length} opções.` },
   { icon: '/icons/arvore.svg', titulo: 'Acompanhe o impacto', texto: 'Visualize o CO₂ evitado, as árvores equivalentes e sua posição no ranking da comunidade.' },
 ];
@@ -123,7 +123,7 @@ export function Solucao() {
               <div key={selo.id} className="flex flex-col items-center gap-1.5 flex-1">
                 <img src={selo.icone} alt="" className="w-9 h-9" />
                 <span className="text-[10px] text-slate-500 text-center leading-tight">{selo.nome}</span>
-                <span className="text-[9px] text-brand font-semibold">{selo.minPontos > 0 ? `${selo.minPontos} XP` : 'desde o início'}</span>
+                <span className="text-[9px] text-brand font-semibold">{selo.minPontos > 0 ? `${selo.minPontos} créditos` : 'desde o início'}</span>
                 {i < SELOS.length - 1 && <div className="hidden" aria-hidden="true" />}
               </div>
             ))}

@@ -29,7 +29,7 @@ const PASSOS: Passo[] = [
   {
     icone: '/icons/folha.svg',
     titulo: 'Evolua e dispute com amigos',
-    texto: 'Cada ação soma XP e eleva seu nível: Broto → Semente → Árvore → Floresta. Adicione amigos pela comunidade, compare XP e sequência, e veja seu impacto nas empresas parceiras.',
+    texto: 'Cada ação soma créditos e eleva seu nível: Broto → Semente → Árvore → Floresta. Adicione amigos pela comunidade, compare créditos e sequência, e veja seu impacto nas empresas parceiras.',
     acao: 'Ver Dashboard',
     rota: '/dashboard',
   },

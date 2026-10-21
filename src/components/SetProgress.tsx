@@ -1,4 +1,5 @@
 import { useChemistry } from '../hooks/useChemistry';
+import { BONUS_QUIMICA_N3 } from '../data/cartas';
 import type { SetCarta } from '../types';
 
 interface Props {
@@ -13,9 +14,6 @@ const MARCOS = [
 
 export default function SetProgress({ set }: Props) {
   const { quimica, totalCartas = 0, percentual = 0, mensagem = '', setCompleto = false } = useChemistry(set.id);
-
-  const levelAtual = quimica?.level ?? 0;
-  const totalMaximo = 4;
 
   return (
     <div>
@@ -53,7 +51,7 @@ export default function SetProgress({ set }: Props) {
 
       <p className="text-[11px] mt-1.5 text-slate-600">
         {mensagem}
-        {setCompleto && ' · +150 créditos'}
+        {setCompleto && ` · +${BONUS_QUIMICA_N3} créditos`}
       </p>
     </div>
   );

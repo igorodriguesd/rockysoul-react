@@ -10,13 +10,23 @@ export const CHANCE_DROP_POR_RARIDADE: Record<RaridadeCarta, number> = {
 
 export const CHANCE_FOIL = 8;
 
-const VALOR_POR_RARIDADE: Record<RaridadeCarta, number> = {
+/** Créditos creditados no saldo ao obter a carta (a brilhante vale 3x). */
+export const VALOR_POR_RARIDADE: Record<RaridadeCarta, number> = {
   comum: 8,
   incomum: 15,
   rara: 30,
   epica: 60,
   lendaria: 120,
 };
+
+/** Multiplicador do valor na versão brilhante (foil). */
+export const MULTIPLICADOR_FOIL = 3;
+
+/** Bônus de química creditados ao alcançar cada nível do set. */
+export const BONUS_QUIMICA_N2 = 30;
+export const BONUS_QUIMICA_N3 = 150;
+/** Química total de um set completo (nível 2 + nível 3). */
+export const BONUS_QUIMICA_SET = BONUS_QUIMICA_N2 + BONUS_QUIMICA_N3;
 
 export const FRAGMENTOS_POR_DUPLICADA: Record<RaridadeCarta, number> = {
   comum: 3,
@@ -52,7 +62,25 @@ export const PESO_RARIDADE: Record<RaridadeCarta, number> = {
 };
 
 export function getValorCarta(carta: Carta, foil = false): number {
-  return VALOR_POR_RARIDADE[carta.raridade] * (foil ? 3 : 1);
+  return VALOR_POR_RARIDADE[carta.raridade] * (foil ? MULTIPLICADOR_FOIL : 1);
+}
+
+/** Soma do valor das 4 cartas de um set (sem a química). */
+export function getValorSet(setId: string): number {
+  return CARTAS
+    .filter(c => c.setId === setId)
+    .reduce((acc, c) => acc + VALOR_POR_RARIDADE[c.raridade], 0);
+}
+
+/** Quanto rende o set completo: valor das 4 cartas + química (nível 2 + nível 3). */
+export function getValorSetCompleto(setId: string): number {
+  return getValorSet(setId) + BONUS_QUIMICA_SET;
+}
+
+/** Quanto rende a coleção inteira (todas as cartas + química de todos os sets). */
+export function getValorColecaoCompleta(): number {
+  const cartas = CARTAS.reduce((acc, c) => acc + VALOR_POR_RARIDADE[c.raridade], 0);
+  return cartas + BONUS_QUIMICA_SET * SETS_CARTAS.length;
 }
 
 export const LABEL_RARIDADE: Record<RaridadeCarta, string> = {
@@ -306,14 +334,19 @@ export const MISSION_TO_CARD: Record<string, string> = {
   agrofloresta: 'card-agrofloresta',
 };
 
+// Caminho inverso: carta -> missão, para herdar a cor do grupo da missão.
+export const CARD_TO_MISSION: Record<string, string> = Object.fromEntries(
+  Object.entries(MISSION_TO_CARD).map(([missaoId, cartaId]) => [cartaId, missaoId]),
+);
+
 export function calcularQuimica(totalCartas: number): Quimica {
   switch (totalCartas) {
     case 2:
       return { level: 1, bonusPontos: 0, descricao: 'Nível 1 · Química ativa' };
     case 3:
-      return { level: 2, bonusPontos: 30, descricao: 'Nível 2 · +30 créditos de bônus' };
+      return { level: 2, bonusPontos: BONUS_QUIMICA_N2, descricao: `Nível 2 · +${BONUS_QUIMICA_N2} créditos` };
     case 4:
-      return { level: 3, bonusPontos: 150, descricao: 'Nível 3 · Set completo · +150 créditos' };
+      return { level: 3, bonusPontos: BONUS_QUIMICA_N3, descricao: `Nível 3 · Set completo · +${BONUS_QUIMICA_N3} créditos` };
     default:
       return { level: 0, bonusPontos: 0, descricao: 'Sem química ativa' };
   }

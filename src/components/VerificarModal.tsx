@@ -4,9 +4,10 @@ import { useColecao } from '../context/CollectionContext';
 import { showToast } from './Toast';
 import NovaCarta from './NovaCarta';
 import RoletaDrop from './RoletaDrop';
+import IconeMissao from './IconeMissao';
 import type { Missao, ResultadoDrop } from '../types';
-import { MISSION_TO_CARD, CARTAS, LABEL_RARIDADE, CHANCE_DROP_POR_RARIDADE, CUSTO_REGIRAR_POR_RARIDADE } from '../data/cartas';
-import { PARCEIROS, BONUS_ECOPONTO } from '../data/constants';
+import { MISSION_TO_CARD, CARTAS, LABEL_RARIDADE, CHANCE_DROP_POR_RARIDADE, CUSTO_REGIRAR_POR_RARIDADE, getValorCarta } from '../data/cartas';
+import { PARCEIROS, BONUS_ECOPONTO, grupoDaMissao, grupoDaCarta } from '../data/constants';
 
 interface Props {
   aberto: boolean;
@@ -40,11 +41,11 @@ function declaracaoFeitaHoje(missaoId: string): boolean {
   }
 }
 
-const DESCRICAO_COMPROVACAO: Record<string, string> = {
-  foto: 'Tire uma foto da sua ação para comprovar.',
-  'foto-gps': 'Tire uma foto da sua ação. A localização ajuda a validar (opcional).',
-  timer: 'Conclua o desafio no tempo. O timer registra sua ação.',
-  declaracao: 'Declare que você praticou o hábito hoje (uma vez por dia).',
+const ROTULO_COMPROVACAO: Record<string, string> = {
+  foto: 'Foto',
+  'foto-gps': 'Foto + GPS',
+  timer: 'Timer',
+  declaracao: 'Declaração',
 };
 
 export default function VerificarModal({ aberto, onFechar, missao, onVerificado }: Props) {
@@ -56,6 +57,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
   const [sucesso, setSucesso] = useState(false);
   const [pontosGanhos, setPontosGanhos] = useState(0);
   const [fotoErro, setFotoErro] = useState(false);
+  const [gpsErro, setGpsErro] = useState(false);
   const [drop, setDrop] = useState<ResultadoDrop | null>(null);
   const [roletaPronta, setRoletaPronta] = useState(false);
   const [declaracaoConfirmada, setDeclaracaoConfirmada] = useState(false);
@@ -133,6 +135,8 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
     ? CARTAS.find(c => c.id === MISSION_TO_CARD[missao.id]) ?? null
     : null;
 
+  const grupo = grupoDaMissao(missao.id);
+
   const ecopontos = PARCEIROS.filter(p => p.tipos.includes('ecoponto'));
 
   function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
@@ -141,22 +145,27 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
     const reader = new FileReader();
     reader.onload = (ev) => {
       setFoto(ev.target?.result as string);
-      setFotoErro(false);
+    setFotoErro(false);
+    setGpsErro(false);
     };
     reader.readAsDataURL(file);
   }
 
   function obterGPS() {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      showToast('GPS indisponível neste dispositivo');
+      return;
+    }
     setGpsStatus('capturando');
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLocalizacao(`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
         setGpsStatus('ok');
+        setGpsErro(false);
       },
       () => {
-        setLocalizacao('Permissão negada');
         setGpsStatus('erro');
+        showToast('Não foi possível capturar a localização — digite as coordenadas');
       }
     );
   }
@@ -214,6 +223,11 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
       showToast('Envie uma foto para confirmar a ação');
       return;
     }
+    if (missao.comprovacao === 'foto-gps' && !temLocalizacao) {
+      setGpsErro(true);
+      showToast('Capture a localização para validar esta ação');
+      return;
+    }
     adicionarPontos(missao.pontos, missao.nome);
     if (parceiroSelecionado) {
       adicionarBonus(BONUS_ECOPONTO, `Entrega no ecoponto ${parceiroSelecionado.nome}`);
@@ -227,6 +241,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
   }
 
   const exigeFoto = missao.comprovacao === 'foto' || missao.comprovacao === 'foto-gps';
+  const temLocalizacao = localizacao.trim().length > 0 && localizacao.trim() !== 'Permissão negada';
   const chanceDrop = cartaDaMissao ? CHANCE_DROP_POR_RARIDADE[cartaDaMissao.raridade] : 0;
   const custoRegirar = cartaDaMissao ? CUSTO_REGIRAR_POR_RARIDADE[cartaDaMissao.raridade] : 0;
 
@@ -250,12 +265,12 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
   }
 
   return (
-    <div className="fixed inset-0 z-9998 flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/60" onClick={fechar}>
+    <div className="fixed inset-0 z-9998 flex items-start sm:items-center justify-center px-3 sm:px-6 pt-28 sm:pt-28 pb-3 sm:pb-6 bg-black/60" onClick={fechar}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label={sucesso ? 'Resultado da ação' : missao.nome}
-        className="[background:var(--t-glass-strong)] border border-(--t-glass-strong-border) shadow-(--t-glass-strong-shadow) rounded-2xl shadow-2xl w-[90vw] max-w-[620px] p-4 sm:p-5 relative max-h-[90vh] overflow-y-auto"
+        className="[background:var(--t-glass-strong)] border border-(--t-glass-strong-border) shadow-(--t-glass-strong-shadow) rounded-2xl shadow-2xl w-[90vw] max-w-[620px] p-4 sm:p-5 relative max-h-[calc(100vh-9.5rem)] supports-[height:100dvh]:max-h-[calc(100dvh-9.5rem)] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         <button onClick={fechar} className="absolute top-3 right-3 text-slate-400 hover:text-slate-600 transition-colors z-10" aria-label="Fechar">
@@ -289,7 +304,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                     <div className="mt-4 mx-auto max-w-[300px] rounded-2xl p-4" style={{ background: 'var(--t-surface-2)', border: '1px solid rgba(59,130,246,0.4)' }}>
                       <div className="flex items-center justify-center gap-2.5 mb-1.5">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(59,130,246,0.15)' }}>
-                          <img src={cartaDaMissao.icone} className="w-6 h-6" alt="" />
+                          <IconeMissao src={cartaDaMissao.icone} cor={grupoDaCarta(cartaDaMissao.id)?.cor ?? '#94a3b8'} className="w-6 h-6" />
                         </div>
                         <p className="text-slate-900 font-bold text-sm">{cartaDaMissao.nome}</p>
                       </div>
@@ -307,20 +322,24 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                     <div className="mt-4 mx-auto max-w-[300px] rounded-2xl p-4" style={{ background: 'color-mix(in srgb, #FACC15 10%, var(--t-surface-2))', border: '1px solid rgba(250,204,21,0.7)' }}>
                       <div className="flex items-center justify-center gap-2.5 mb-1.5">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(250,204,21,0.15)' }}>
-                          <img src={drop.carta.icone} className="w-6 h-6 drop-shadow-[0_0_6px_rgba(250,204,21,0.9)]" alt="" />
+                          <IconeMissao src={drop.carta.icone} cor={grupoDaCarta(drop.carta.id)?.cor ?? '#94a3b8'} className="w-6 h-6 drop-shadow-[0_0_6px_rgba(250,204,21,0.9)]" />
                         </div>
                         <p className="text-slate-900 font-bold text-sm">{drop.carta.nome} {drop.foil ? '(brilhante)' : ''}</p>
                       </div>
                       <p className="text-slate-700 text-xs leading-snug">
                         <strong className="text-gold-deep">CARTA BRILHANTE!</strong> {drop.carta.nome} evoluiu para a versão
                         premium (valor ×3) e ficou destacada na sua vitrine.
+                        <span className="block mt-0.5">
+                          <strong className="text-gold">+{getValorCarta(drop.carta) * 2} créditos</strong> no seu saldo
+                          (o valor da carta dobrou de {getValorCarta(drop.carta)} para {getValorCarta(drop.carta) * 3}).
+                        </span>
                       </p>
                     </div>
                   ) : drop.caiu && 'duplicada' in drop ? (
                     <div className="mt-4 mx-auto max-w-[300px] rounded-2xl p-4" style={{ background: 'var(--t-surface-2)', border: '1px solid rgba(166,108,255,0.5)' }}>
                       <div className="flex items-center justify-center gap-2.5 mb-1.5">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'rgba(166,108,255,0.15)' }}>
-                          <img src={drop.carta.icone} className="w-6 h-6" alt="" />
+                          <IconeMissao src={drop.carta.icone} cor={grupoDaCarta(drop.carta.id)?.cor ?? '#94a3b8'} className="w-6 h-6" />
                         </div>
                         <p className="text-slate-900 font-bold text-sm">Carta repetida</p>
                       </div>
@@ -334,7 +353,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                     <div className="mt-4 mx-auto max-w-[300px] rounded-2xl p-4" style={{ background: 'var(--t-surface-2)', border: '1px solid var(--t-brand-border)' }}>
                       <div className="flex items-center justify-center gap-2.5 mb-1.5">
                         <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'var(--t-mist)' }}>
-                          <img src={drop.carta.icone} className="w-6 h-6 grayscale opacity-60" alt="" />
+                          <IconeMissao src={drop.carta.icone} cor={grupoDaCarta(drop.carta.id)?.cor ?? '#94a3b8'} className="w-6 h-6 grayscale opacity-60" />
                         </div>
                         <p className="text-slate-900 font-bold text-sm">{drop.carta.nome}</p>
                       </div>
@@ -369,6 +388,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
             )}
 
             <p className="text-gold-deep text-2xl font-bold mt-4">+{pontosGanhos} créditos</p>
+            <p className="text-slate-500 text-[11px] mt-0.5">créditos da ação · cartas ganhas creditam o valor delas à parte</p>
             <button
               onClick={fechar}
               className="w-full py-2.5 mt-4 bg-brand text-(--t-onaccent) font-bold rounded-xl hover:bg-brand-hover transition-all"
@@ -379,23 +399,58 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
         ) : (
           <>
             <div className="flex items-center gap-3 mb-4">
-              <img src={missao.icone} alt="" className="w-8 h-8" />
+              <IconeMissao src={missao.icone} cor={grupo.texto} className="w-8 h-8" />
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-slate-900">{missao.nome}</h2>
-                <p className="text-[11px] text-brand font-semibold">+{missao.pontos} créditos</p>
+                <p className="text-[11px] font-semibold" style={{ color: grupo.texto }}>
+                  {grupo.label} · +{missao.pontos} créditos
+                </p>
               </div>
               <div className="flex-1" />
-              <span className="text-[10px] text-slate-500 text-right max-w-[140px] leading-tight">
-                {DESCRICAO_COMPROVACAO[missao.comprovacao]}
+              <span
+                className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide whitespace-nowrap"
+                style={{ background: `${grupo.cor}2e`, color: grupo.texto }}
+              >
+                {ROTULO_COMPROVACAO[missao.comprovacao]}
               </span>
+            </div>
+
+            <div className="rounded-xl px-3.5 py-3 mb-4" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
+              <p className="text-[10px] font-bold uppercase tracking-wide mb-0.5" style={{ color: grupo.texto }}>
+                Como fazer
+              </p>
+              <p className="text-sm text-slate-700 leading-snug mb-2.5">{missao.descricao}</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide mb-0.5" style={{ color: grupo.texto }}>
+                Como validar
+              </p>
+              <p className="text-sm text-slate-700 leading-snug">{missao.comoValidar}</p>
+              {missao.comprovantes.length > 0 && (
+                <>
+                  <p className="text-[10px] font-bold uppercase tracking-wide mt-2.5 mb-1" style={{ color: grupo.texto }}>
+                    Comprovantes aceitos
+                  </p>
+                  <ul className="space-y-1">
+                    {missao.comprovantes.map(c => (
+                      <li key={c} className="flex items-start gap-1.5 text-[12px] text-slate-600 leading-snug">
+                        <span className="mt-1 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: grupo.cor }} />
+                        <span>{c}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
 
             {cartaDaMissao && (
               <div className="flex items-center gap-2.5 rounded-xl px-3 py-2 mb-4" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
-                <img src={cartaDaMissao.icone} className="w-5 h-5 shrink-0" alt="" />
+                <IconeMissao src={cartaDaMissao.icone} cor={grupoDaCarta(cartaDaMissao.id)?.cor ?? '#94a3b8'} className="w-5 h-5 shrink-0" />
                 <p className="text-[11px] text-slate-700 leading-snug">
                   Ao concluir: carta <b className="text-slate-900">{cartaDaMissao.nome}</b> · {LABEL_RARIDADE[cartaDaMissao.raridade]} ·{' '}
                   <b className="text-brand">{chanceDrop}%</b> de chance de ganhar carta
+                  <span className="block mt-0.5 text-slate-600">
+                    Se cair, ela vale <b className="text-gold">{getValorCarta(cartaDaMissao)} créditos</b> no seu saldo
+                    (×3 se vier brilhante).
+                  </span>
                 </p>
               </div>
             )}
@@ -403,7 +458,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
             <div className="space-y-3">
               {exigeFoto && (
                 <div>
-                  <p className="text-sm font-medium text-slate-700 mb-2">Envie uma foto como comprovante *</p>
+                  <p className="text-sm font-medium text-slate-700 mb-2">Envie uma foto do comprovante (item, nota fiscal ou recibo) *</p>
                   <input ref={fileRef} type="file" accept="image/*" onChange={handleFoto} className="hidden" aria-label="Enviar foto" />
                   {foto ? (
                     <div className="relative">
@@ -512,13 +567,13 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
               {(missao.comprovacao === 'foto' || missao.comprovacao === 'foto-gps') && (
                 <div>
                   <p className="text-sm font-medium text-slate-700 mb-2">
-                    Localização {missao.comprovacao === 'foto-gps' ? '(recomendada para validar)' : '(opcional)'}
+                    Localização {missao.comprovacao === 'foto-gps' ? '(obrigatória)' : '(opcional)'}
                   </p>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={localizacao}
-                      onChange={e => setLocalizacao(e.target.value)}
+                      onChange={e => { setLocalizacao(e.target.value); setGpsErro(false); }}
                       placeholder="Latitude, Longitude"
                       className="flex-1 rounded-xl px-3 py-2.5 text-sm outline-none text-slate-900 placeholder-slate-400 focus:border-brand focus:ring-1 focus:ring-brand"
                       style={{ background: 'var(--t-surface)', border: '1px solid var(--t-slate-300)' }}
@@ -534,6 +589,9 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                       {gpsStatus === 'capturando' ? 'Capturando...' : gpsStatus === 'ok' ? 'Capturado' : 'GPS'}
                     </button>
                   </div>
+                  {gpsErro && !temLocalizacao && (
+                    <p className="text-xs text-red-500 mt-1.5">A localização é obrigatória para validar esta ação.</p>
+                  )}
                 </div>
               )}
 

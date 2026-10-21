@@ -58,7 +58,7 @@ function Etapa({ etapa, status, ultima }: { etapa: TrilhaEtapa; status: 'atual' 
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline gap-1.5">
             <p className={`text-[13px] font-bold leading-tight ${bloqueado ? 'text-slate-400' : 'text-slate-900'}`}>{etapa.nome}</p>
-            <p className="text-[10px] text-slate-500 tabular-nums shrink-0">{etapa.minXP > 0 ? `${etapa.minXP.toLocaleString('pt-BR')} XP` : 'início'}</p>
+            <p className="text-[10px] text-slate-500 tabular-nums shrink-0">{etapa.minXP > 0 ? `${etapa.minXP.toLocaleString('pt-BR')} créditos` : 'início'}</p>
           </div>
           <p className={`text-[11px] leading-snug mt-0.5 truncate ${bloqueado ? 'text-slate-400' : 'text-slate-500'}`}>{etapa.explicacao}</p>
         </div>
