@@ -36,6 +36,7 @@ export interface TrilhaEtapa {
   emoji: string;
   minXP: number;
   recompensa: string;
+  bonusCreditos: number;
   desbloqueio: string;
   explicacao: string;
 }
@@ -63,13 +64,15 @@ export interface Parceiro {
   descricao: string;
   temas?: string[];
   impactoBase?: { creditos: number; cortesias: number };
-  valorCortesia?: number;
+  /** Valor da cortesia em reais (R$). Os créditos = valor × CREDITOS_POR_REAL. */
+  valorCortesiaReal?: number;
 }
 
 export interface ParceiroImpacto {
   entregas: number;
   resgates: number;
   creditos: number;
+  acoes?: number;
 }
 
 export interface Amigo {
@@ -112,6 +115,7 @@ export interface UserData {
   resgates: Resgate[];
   impactoParceiros: Record<string, ParceiroImpacto>;
   amigos: string[];
+  bonusBoasVindasRecebido?: boolean;
 }
 
 export type RaridadeCarta = 'comum' | 'incomum' | 'rara' | 'epica' | 'lendaria';

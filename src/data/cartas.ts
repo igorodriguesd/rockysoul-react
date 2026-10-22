@@ -339,6 +339,17 @@ export const CARD_TO_MISSION: Record<string, string> = Object.fromEntries(
   Object.entries(MISSION_TO_CARD).map(([missaoId, cartaId]) => [cartaId, missaoId]),
 );
 
+/**
+ * Missões cujas cartas têm a raridade informada.
+ * Repetir uma delas é a forma de conseguir fragmentos dessa raridade:
+ * a carta repetida vira fragmentos.
+ */
+export function missoesPorRaridade(raridade: RaridadeCarta): string[] {
+  return Object.entries(MISSION_TO_CARD)
+    .filter(([, cardId]) => CARTAS.find(c => c.id === cardId)?.raridade === raridade)
+    .map(([missaoId]) => missaoId);
+}
+
 export function calcularQuimica(totalCartas: number): Quimica {
   switch (totalCartas) {
     case 2:

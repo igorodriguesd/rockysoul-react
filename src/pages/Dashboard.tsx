@@ -7,6 +7,7 @@ import TrilhaEvolucaoModal from '../components/TrilhaEvolucaoModal';
 import MiniJogoSeparacao from '../components/MiniJogoSeparacao';
 import IconeMissao from '../components/IconeMissao';
 import { useColecao } from '../context/CollectionContext';
+import { useLoginGate } from '../hooks/useLoginGate';
 import { showToast } from '../components/Toast';
 
 interface AtividadeItem {
@@ -43,8 +44,8 @@ const MISSAO_ICONE_MAP: Record<string, string> = {
 };
 
 const FILTROS_MISSOES = [
-  { id: 'todas', label: 'Todas', matcher: () => true },
   ...GRUPOS_MISSAO.map(g => ({ id: g.id, label: g.label, matcher: (id: string) => g.ids.includes(id) })),
+  { id: 'todas', label: 'Todas', matcher: () => true },
 ];
 
 const INICIAIS_VISIVEIS = 9;
@@ -118,6 +119,7 @@ function inicioDoDia(data: Date): Date {
 export function Dashboard() {
   const { data, getNivel, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio, addAmigo, codigoAmigo, amigos } = useData();
   const { getProgressoTotal } = useColecao();
+  const exigirLogin = useLoginGate();
   const [missaoSelecionada, setMissaoSelecionada] = useState<(typeof MISSOES)[0] | null>(null);
   const [codigoInput, setCodigoInput] = useState('');
   const [filtroMissoes, setFiltroMissoes] = useState('todas');
@@ -202,7 +204,7 @@ export function Dashboard() {
   const { obtidas: cartasObtidas, total: totalCartas } = getProgressoTotal();
 
   const missoesFiltradas = useMemo(() => {
-    const matcher = FILTROS_MISSOES.find(f => f.id === filtroMissoes) ?? FILTROS_MISSOES[0];
+    const matcher = FILTROS_MISSOES.find(f => f.id === filtroMissoes) ?? FILTROS_MISSOES.find(f => f.id === 'todas')!;
     return MISSOES.filter(m => matcher.matcher(m.id)).sort((a, b) => a.pontos - b.pontos);
   }, [filtroMissoes]);
 
@@ -289,6 +291,7 @@ export function Dashboard() {
   const totalPeriodo = graficoImpacto.dias.reduce((s, d) => s + d.valor, 0);
 
   function handleMissao(missao: (typeof MISSOES)[0]) {
+    if (!exigirLogin()) return;
     setMissaoSelecionada(missao);
   }
 
@@ -424,8 +427,8 @@ export function Dashboard() {
 
             <div className="grid grid-cols-3 gap-2">
               {chips.map(s => (
-                <div key={s.rotulo} className="rounded-xl px-3 py-3 flex items-center gap-2.5 bg-white/12 border border-white/20 backdrop-blur">
-                  <img src={s.icone} className="w-4.5 h-4.5 shrink-0 opacity-90" alt="" />
+                <div key={s.rotulo} className="rounded-xl px-2.5 sm:px-3 py-3 flex items-center justify-center sm:justify-start gap-2.5 bg-white/12 border border-white/20 backdrop-blur">
+                  <img src={s.icone} className="hidden sm:block w-4.5 h-4.5 shrink-0 opacity-90" alt="" />
                   <div className="min-w-0">
                     <p className="text-white font-extrabold text-sm leading-tight tabular-nums truncate">{s.valor}</p>
                     <p className="text-white/70 text-[10px]">{s.rotulo}</p>

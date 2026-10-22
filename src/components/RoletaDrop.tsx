@@ -25,7 +25,7 @@ function pathArco(degInicio: number, degFim: number): string {
   return `M ${cx} ${cy} L ${sx} ${sy} A ${r} ${r} 0 ${grande} 1 ${ex} ${ey} Z`;
 }
 
-export default function RoletaDrop({chance,caiu,onTerminar,}: Props) {
+export default function RoletaDrop({ carta, chance, caiu, onTerminar }: Props) {
   const degPorSlot = 360 / SLOTS;
   const winSlots = Math.max(1, Math.min(SLOTS - 1, Math.round((chance / 100) * SLOTS)));
   const onTerminarRef = useRef(onTerminar);
@@ -41,12 +41,6 @@ export default function RoletaDrop({chance,caiu,onTerminar,}: Props) {
       ? Math.floor(Math.random() * winSlots)
       : winSlots + Math.floor(Math.random() * (SLOTS - winSlots))
   );
-
-  const onTerminarRef = useRef(onTerminar);
-
-  useEffect(() => {
-    onTerminarRef.current = onTerminar;
-  }, [onTerminar]);
 
   useEffect(() => {
     const rotacaoFinal = VOLTAS * 360 - slotFinal * degPorSlot;

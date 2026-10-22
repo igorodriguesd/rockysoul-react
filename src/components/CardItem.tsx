@@ -10,9 +10,10 @@ interface Props {
   ativa: boolean;
   foil?: boolean;
   semHover?: boolean;
+  onClick?: () => void;
 }
 
-export default function CardItem({ carta, bloqueada, ativa, foil = false, semHover = false }: Props) {
+export default function CardItem({ carta, bloqueada, ativa, foil = false, semHover = false, onClick }: Props) {
   const set = SETS_CARTAS.find(s => s.id === carta.setId);
   const tier = TIER[carta.raridade];
   const comGradiente = usaBordaGradiente(carta.raridade);
@@ -28,7 +29,9 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
 
   return (
     <div
-      className={`relative overflow-hidden rounded-xl border p-1.5 pt-2 flex flex-col items-center w-full aspect-[2/3] ${
+      className={`relative overflow-hidden rounded-xl border p-1.5 pt-2 flex flex-col items-center w-full aspect-[4/5] sm:aspect-[2/3] ${
+        onClick ? 'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38bdf8]' : ''
+      } ${
         habilitarHover
           ? 'transition-[transform_0.4s_cubic-bezier(0.22,1,0.36,1),box-shadow_0.4s_ease,filter_0.3s_ease] hover:z-[60] hover:[transform:perspective(800px)_translateY(-58px)_rotateZ(-7deg)_rotateX(14deg)_scale(1.16)] hover:[filter:brightness(1.12)_saturate(1.12)] hover:[box-shadow:0_34px_70px_rgba(0,0,0,0.4),0_0_34px_var(--fut-glow,var(--t-glow-card))]'
           : ''
@@ -51,8 +54,18 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
           : getCardBackgroundComBorda(carta.raridade, foil),
       }}
       title={bloqueada
-        ? `${set ? set.nome : ''} · Carta desconhecida — realize ações deste set para descobri-la (chance ${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%).`
+        ? `${set ? set.nome : ''} · Carta desconhecida — realize ações deste set para descobri-la (chance ${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%).${onClick ? ' Clique para fabricar com fragmentos.' : ''}`
         : `${carta.nome}${foil ? ' · brilhante' : ''}`}
+      onClick={onClick}
+      onKeyDown={e => {
+        if (!onClick) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
     >
       <div className="relative z-10 flex items-center justify-between w-full gap-1">
         <span className="bg-[rgba(0,0,0,0.35)] border border-white/30 backdrop-blur-[2px] rounded-md px-1.5 py-1 text-[9px] leading-none font-bold tracking-wide text-white/95">
@@ -103,7 +116,7 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
 
       <div className="relative z-10 bg-[linear-gradient(180deg,rgba(0,0,0,0.28),rgba(0,0,0,0.42))] backdrop-blur-[2px] rounded-lg w-full px-1 py-1 text-center">
         <p
-          className="text-xs font-semibold leading-tight text-white line-clamp-1"
+          className="text-xs font-semibold leading-tight text-white line-clamp-2 sm:line-clamp-1"
           style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}
         >
           {carta.nome}
@@ -127,6 +140,11 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
             </span>
           )}
         </div>
+        {bloqueada && onClick && (
+          <p className="mt-1 text-[9px] leading-tight text-white/55 text-center">
+            Clique para <span className="text-[#38bdf8] font-bold">usar fragmentos</span>
+          </p>
+        )}
       </div>
     </div>
   );

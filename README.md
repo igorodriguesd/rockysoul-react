@@ -45,9 +45,9 @@ O coração do projeto é a combinação de **gamificação** com um **avatar/as
 
 - **Avatar RockySoul** — assistente virtual integrado ao site. Ele conversa em português, entende comandos de linguagem natural ("reciclei", "usei bicicleta", "economizei água") e executa ações reais na aplicação: registra ações, mostra saldo/nível, sugere missões, ensina curiosidades e até resgata recompensas para o usuário.
 - **Pontos** — cada ação sustentável gera pontos que alimentam o avatar e o perfil do usuário.
-- **Níveis de evolução** — Semente → Broto → Árvore → Expert, com progresso visual em anel de progresso e barra de XP.
+- **Níveis de evolução** — Broto → Semente → Árvore → Floresta, com progresso visual em anel de progresso e barra de XP.
 - **Selos desbloqueáveis** — conquistas automáticas ao acumular pontos.
-- **Coleção de Cartinhas** — ao concluir missões, uma **roleta** sorteia **cartinhas colecionáveis** de 5 sets temáticos e 5 raridades (Comum a Lendária), com chance de versão **brilhante** ✨. Cartas repetidas viram **fragmentos** para a **Fábrica de Cartas**, e completar um set (4/4) ativa a **química** com bônus de +150 créditos.
+- **Coleção de Cartinhas** — ao concluir missões, uma **roleta** sorteia **cartinhas colecionáveis** de 5 sets temáticos e 5 raridades (Comum a Lendária), com chance de versão **brilhante** ✨. Cartas repetidas viram **fragmentos** para a **Fábrica de Cartas**, e completar um set (4/4) ativa a **química** com bônus de até +180 créditos (+30 na 3ª carta e +150 na 4ª).
 - **Mini-jogo "Separe o Lixo"** — gamificação extra por meio de um jogo de separação de recicláveis (3 fases, vidas, combos e recordes), em modo treino: a pontuação não vira recompensa, serve para praticar e se divertir.
 - **Desafio do Dia** — missão diária com bônus por streak (dias seguidos).
 - **Ranking global** — posição do usuário entre os participantes da comunidade.
@@ -82,6 +82,7 @@ O assistente **RockySoul** funciona como um "avatar" que representa o site: ele 
 | `/solucao` | Solução do Projeto | Estática |
 | `/recompensas` | Recompensas | Estática |
 | `/recompensas/:id` | Detalhe da Recompensa | **Dinâmica (useParams)** |
+| `/parceiros` | Parceiros e Ecopontos | Estática |
 | `/sobre` | Sobre | Estática |
 | `/faq` | FAQ | Estática |
 | `/integrantes` | Equipe | Estática |
@@ -112,7 +113,13 @@ rockysoul-react/
 │   │   ├── RoletaDrop.tsx      # Roleta de sorteio da cartinha
 │   │   ├── SetColecao.tsx      # Set de cartinhas com quimica
 │   │   ├── SetProgress.tsx     # Barra de progresso do set
-│   │   └── CollectionChip.tsx  # Chip da colecao (header/dashboard)
+│   │   ├── CartaFabricarModal.tsx # Fabricacao de carta com fragmentos
+│   │   ├── PainelValorColecao.tsx # Resumo e guia de valores da colecao
+│   │   ├── TrilhaEvolucaoModal.tsx # Trilha de niveis e bonus
+│   │   ├── TermoAjuda.tsx      # Tooltip de ajuda
+│   │   ├── IconeMissao.tsx    # Icone de missao/carta
+│   │   ├── IlhaRockySoul.tsx  # Ilha animada da Home
+│   │   └── OnboardingTutorial.tsx # Tutorial inicial
 │   ├── pages/                  # Paginas da aplicacao (componentes React)
 │   │   ├── Home.tsx
 │   │   ├── Dashboard.tsx
@@ -125,11 +132,11 @@ rockysoul-react/
 │   │   ├── Integrantes.tsx
 │   │   └── Contato.tsx
 │   ├── context/        # Estado global (DataContext, CollectionContext, ChatContext)
-│   ├── hooks/          # Hooks personalizados (useLocalStorage)
+│   ├── hooks/          # Hooks personalizados (useLocalStorage, useChemistry, useLoginGate)
 │   ├── data/           # Dados e constantes (missoes, selos, niveis, recompensas, cartas, integrantes)
 │   ├── types/          # Interfaces TypeScript
 │   ├── layouts/        # LayoutPrincipal (Header + Outlet + Footer)
-│   ├── utils/          # Formatacao e validacao de formulario
+│   ├── utils/          # Formatacao, validacao, limpeza de dados e login
 │   ├── App.tsx         # Rotas e layout principal
 │   ├── main.tsx        # Ponto de entrada
 │   └── index.css       # Tailwind + tema (cores, fontes) + animacoes
@@ -143,10 +150,10 @@ rockysoul-react/
 
 | Nível | Faixa de Pontos | Selo correspondente |
 | --- | --- | --- |
-| Semente | 0 – 99 | Semente (100 pts) |
-| Broto | 100 – 299 | Broto (300 pts) |
-| Árvore | 300 – 999 | Árvore (600 pts) |
-| Expert | 1000+ | Expert (1000 pts) |
+| Broto | 0 – 499 | Broto (0 pts) |
+| Semente | 500 – 1.199 | Semente (500 pts) |
+| Árvore | 1.200 – 1.999 | Árvore (1.200 pts) |
+| Floresta | 2000+ | Floresta (2.000 pts) |
 
 ### Missoes (ações sustentáveis)
 
@@ -154,7 +161,7 @@ São **20 missões** — Reciclagem, Transporte Sustentável, Economia de Energi
 
 ### Coleção de Cartinhas
 
-Ao concluir uma missão, o Dashboard aciona a **roleta** e pode premiar você com uma cartinha. São **20 cartinhas** divididas em **5 sets temáticos** — Recursos, Guardiões da Água, Cidade Verde, Energia Limpa e Cultivo — com **Química** de set: complete 4 cartinhas de um set para ganhar **+150 créditos**. Cada raridade tem sua própria chance de ser sorteada e rende fragmentos diferentes quando repetida:
+Ao concluir uma missão, o Dashboard aciona a **roleta** e pode premiar você com uma cartinha. São **20 cartinhas** divididas em **5 sets temáticos** — Recursos, Guardiões da Água, Cidade Verde, Energia Limpa e Cultivo — com **Química** de set: complete 4 cartinhas de um set para ganhar **+180 créditos** (+30 na 3ª e +150 na 4ª). Cada raridade tem sua própria chance de ser sorteada e rende fragmentos diferentes quando repetida:
 
 | Raridade | Chance de encontrar | Fragmentos por repetida |
 | --- | --- | --- |
@@ -164,11 +171,11 @@ Ao concluir uma missão, o Dashboard aciona a **roleta** e pode premiar você co
 | Épica | 20% | +20 |
 | Lendária | 10% | +40 |
 
-Há ainda **8% de chance** de a cartinha vir na versão **brilhante** (✨). Na **Fábrica de Cartas** (dentro do popup de "Cartas repetidas" na página Coleção), fragmentos são usados para montar cartinhas que faltam — custo de 10/16/32/70/140 fragmentos por raridade (Comum/Incomum/Rara/Épica/Lendária).
+Há ainda **8% de chance** de a cartinha vir na versão **brilhante** (✨). Na **Fábrica de Cartas** (aba dentro da página Coleção), fragmentos são usados para montar cartinhas que faltam — custo de 10/16/32/70/140 fragmentos por raridade (Comum/Incomum/Rara/Épica/Lendária).
 
 ### Recompensas
 
-**8 recompensas** — descontos de energia/água, passes de transporte, mudas, adoção de árvores, cupons e kits sustentáveis — resgatáveis conforme o saldo de créditos. A página também traz o **Conversor de Créditos** (100 créditos = R$ 1,00, mínimo de 500, pagamento via **chave Pix**) e os painéis de **Trilha de Evolução** e **Impacto Ambiental** (CO₂ evitado e árvores equivalentes).
+**12 recompensas** — descontos de energia/água, passes de transporte, mudas, adoção de árvores, cupons e kits sustentáveis — resgatáveis conforme o saldo de créditos. A página também traz o **Conversor de Créditos** (100 créditos = R$ 1,00, mínimo de 500, pagamento via **chave Pix**) e os painéis de **Trilha de Evolução** e **Impacto Ambiental** (CO₂ evitado e árvores equivalentes).
 
 ### Ranking global
 
@@ -216,12 +223,12 @@ Acesse `http://localhost:5173` no navegador (porta padrão do Vite).
 
 1. Na **Home**, clique em **"Começar Agora"** e informe seu nome/email.
 2. No **Dashboard**, registre uma ação sustentável (reciclar, economizar energia/água, usar transporte etc.), envie a foto como comprovação e acumule **pontos**.
-3. Cada missão concluída aciona a **roleta**: conquiste **cartinhas colecionáveis** e monte sua coleção na página **Coleção** — completando sets você ativa a **química** (+150 créditos).
+3. Cada missão concluída aciona a **roleta**: conquiste **cartinhas colecionáveis** e monte sua coleção na página **Coleção** — completando sets você ativa a **química** (+180 créditos).
 4. Complete o **Desafio do Dia** para ganhar bônus e mantenha o **streak** (dias seguidos).
 5. Treine no **Mini-jogo "Separe o Lixo"** para praticar a separação de recicláveis e bater seus recordes (modo treino, sem valer recompensa).
-6. Evolua nos **níveis** (Semente → Broto → Árvore → Expert), desbloqueie **selos** e veja sua posição no **ranking**.
+6. Evolua nos **níveis** (Broto → Semente → Árvore → Floresta), desbloqueie **selos** e veja sua posição no **ranking**.
 7. Troque seus créditos por **recompensas reais** ou **converta em dinheiro via Pix** na página Recompensas.
-8. Converse com o **avatar RockySoul** (canto inferior direito) — ele registra ações, mostra saldo e resgata recompensas por voz/texto.
+8. Converse com o **avatar RockySoul** (canto inferior direito) — ele registra ações, mostra saldo e resgata recompensas por texto.
 
 ---
 
@@ -249,6 +256,8 @@ Todas as informações do usuário são salvas no **localStorage**, via hook `us
 - **Coleção de cartinhas** (cartas obtidas, brilhantes, fragmentos e sets)
 - Recordes do mini-jogo
 
+Ações de registro de missão, resgate e conversão só são permitidas após informar ao menos o **nome**. Ao sair, o app remove **todas** as chaves `rocky_*` do localStorage e volta ao estado inicial (pontos, cartas, fragmentos, histórico, onboarding e recordes).
+
 ---
 
 ## Repositório
@@ -265,6 +274,7 @@ Todas as informações do usuário são salvas no **localStorage**, via hook `us
 | <img src="public/imagens/diego.jpg" alt="Diego" width="48" style="border-radius:50%"> | Diego Gomes Goncalves de Lima | RM570335 | 1TDSPK | [dgxls](https://github.com/dgxls) | [LinkedIn](https://www.linkedin.com/in/diego-gomes-65339b408/) |
 | <img src="public/imagens/miguel.jpg" alt="Miguel" width="48" style="border-radius:50%"> | Miguel Silva | RM572019 | 1TDSPK | [miguelsilva71](https://github.com/miguelsilva71) | [LinkedIn](https://www.linkedin.com/in/miguel-silva-0a20073a9/) |
 | <img src="public/imagens/rafael.jpg" alt="Rafael" width="48" style="border-radius:50%"> | Rafael Santos Mendonca Costa | RM572368 | 1TDSPK | [RafaelSantos56](https://github.com/RafaelSantos56) | [LinkedIn](https://www.linkedin.com/in/rafael-santos-b09bba237/) |
+| <img src="public/imagens/pedro.jpg" alt="Pedro" width="48" style="border-radius:50%"> | Pedro Henrique Salvatore | RM572999 | 1TDSPK | [Pedro-H-Salvatore](https://github.com/Pedro-H-Salvatore) | [LinkedIn](https://www.linkedin.com/in/pedro-salvatore-a4a2763b7) |
 
 **Turma 1TDSPK — FIAP 2026**
 
@@ -339,7 +349,13 @@ Cada card no Trello deve ter **2 a 4 etiquetas** combinando:
 | **NovaCarta** | `NovaCarta.tsx` | Exibe animação de nova carta obtida após roleta, com informação de set, química e bônus. |
 | **SetColecao** | `SetColecao.tsx` | Renderiza um set de 4 cartas com header, progresso e grid de CardItem. |
 | **SetProgress** | `SetProgress.tsx` | Barra de progresso de um set com marcos (nível 1/2/3), texto descritivo e bônus. |
-| **CollectionChip** | `CollectionChip.tsx` | Chip lateral mostrando progresso da coleção (obtidas/total) e próximo set. Link para `/colecao`. |
+| **CartaFabricarModal** | `CartaFabricarModal.tsx` | Modal para fabricar uma carta usando fragmentos da raridade (custo, quanto falta e valor creditado). |
+| **PainelValorColecao** | `PainelValorColecao.tsx` | Resumo da coleção (valor creditado e cartas obtidas) e guia de valores por raridade e por set. |
+| **TrilhaEvolucaoModal** | `TrilhaEvolucaoModal.tsx` | Trilha de evolução com níveis, bônus e próximos desbloqueios. |
+| **TermoAjuda** | `TermoAjuda.tsx` | Tooltip acessível de ajuda rápida. |
+| **IconeMissao** | `IconeMissao.tsx` | Ícone de missão/carta com cor do grupo. |
+| **IlhaRockySoul** | `IlhaRockySoul.tsx` | Ilha animada usada na Home. |
+| **OnboardingTutorial** | `OnboardingTutorial.tsx` | Tutorial inicial de boas-vindas. |
 | **MiniJogoSeparacao** | `MiniJogoSeparacao.tsx` | Mini-jogo educativo de separação de lixo com 3 fases, 3 vidas, combo, drag-and-drop, 4 categorias (reciclável, orgânico, vidro, metal), 16 itens, recordes em localStorage e medalhas. ~518 linhas. Modo treino (não soma recompensa). |
 | **Toast** | `Toast.tsx` | Sistema global de notificações toast com auto-dismiss em 2.8 segundos. |
 
@@ -347,15 +363,16 @@ Cada card no Trello deve ter **2 a 4 etiquetas** combinando:
 
 | Página | Arquivo | Descrição |
 |--------|---------|-----------|
-| **Home** | `Home.tsx` | Landing page com hero section, ilha flutuante animada, ranking mockado, desafio do dia, dica do dia, stats (12k+ usuários, 340t CO₂, 98% engajamento) e CTAs "Começar Agora" e "Saiba Mais". LoginModal integrado e sidebar com CollectionChip. |
+| **Home** | `Home.tsx` | Landing page com hero section, ilha flutuante animada, ranking mockado, desafio do dia, dica do dia, stats (12k+ usuários, 340t CO₂, 98% engajamento) e CTAs "Começar Agora" e "Saiba Mais". LoginModal integrado. |
 | **Dashboard** | `Dashboard.tsx` | Painel principal: desafio do dia com bônus, dica do dia (IA), grid de 20 missões para registrar, ranking global (com usuário real + 4 simulados), atividade recente (histórico + resgates + conversões) e MiniJogoSeparacao. Abre VerificarModal ao clicar em missão. ~445 linhas. |
-| **Coleção** | `Colecao.tsx` | Exibe coleção completa: progresso total, grid de 5 sets (SetColecao), Fábrica de Cartas (modal com cartas faltantes, fragmentos por raridade, custo de fabricação, dica interativa e botão fabricar). ~196 linhas. |
+| **Coleção** | `Colecao.tsx` | Exibe coleção completa: progresso total, grid de 5 sets (SetColecao) e Fábrica de Cartas em aba própria (cartas faltantes, fragmentos por raridade, custo de fabricação e botão fabricar). |
 | **Solução** | `Solucao.tsx` | Página institucional: problema, como funciona (5 passos), coleção de cartas (explicação visual com 5 raridades), sets e química, níveis e selos, diferenciais. |
-| **Recompensas** | `Recompensas.tsx` | Catálogo de 8 recompensas (card com badge, link para detalhe, botão resgatar), trilha de evolução (4 níveis), impacto ambiental (CO₂, árvores, streak) e conversor de créditos em dinheiro (Pix com validação, min 500 créditos). ResgatarModal integrado. ~304 linhas. |
+| **Recompensas** | `Recompensas.tsx` | Catálogo de 12 recompensas (card com badge, link para detalhe, botão resgatar), trilha de evolução (4 níveis), impacto ambiental (CO₂, árvores, streak) e conversor de créditos em dinheiro (Pix com validação, min 500 créditos). ResgatarModal integrado. ~304 linhas. |
 | **RecompensaDetalhe** | `RecompensaDetalhe.tsx` | Detalhe de uma recompensa com ícone, badge, categoria, descrição, saldo vs custo e botão resgatar. 404 caso não encontre. |
 | **Sobre** | `Sobre.tsx` | Página institucional: descrição do projeto e 8 tecnologias utilizadas (React, TS, Vite, Tailwind, HTML5, IBM Watson, Node-RED, Telegram Bot). |
-| **FAQ** | `Faq.tsx` | 7 perguntas frequentes com accordion animado. |
+| **FAQ** | `Faq.tsx` | 14 perguntas frequentes com accordion animado. |
 | **Integrantes** | `Integrantes.tsx` | 4 membros da equipe com foto, nome, RM, GitHub e LinkedIn. |
+| **Parceiros** | `Parceiros.tsx` | Ecopontos, patrocinadores e vouchers parceiros, com impacto e cortesias. |
 | **Contato** | `Contato.tsx` | Formulário de contato (nome, email, mensagem) com validação e feedback de envio. |
 | **404** | `PaginaNaoEncontrada.tsx` | Página de erro para rotas não encontradas com link para home. |
 
@@ -372,13 +389,14 @@ Cada card no Trello deve ter **2 a 4 etiquetas** combinando:
 | Hook | Arquivo | Descrição |
 |------|---------|-----------|
 | **useChemistry** | `useChemistry.ts` | Calcula química de um set: nível (0-3), percentual, mensagem descritiva e se set está completo. |
-| **useLocalStorage** | `useLocalStorage.ts` | Hook genérico de persistência em localStorage com serialização JSON. |
+| **useLocalStorage** | `useLocalStorage.ts` | Hook genérico de persistência em localStorage; remove a chave quando o valor volta ao padrão (usado no logout). |
+| **useLoginGate** | `useLoginGate.ts` | Exige nome do usuário antes de registrar ações e abre o modal de login quando necessário. |
 
 ### Dados React (`src/data/`)
 
 | Arquivo | Descrição |
 |---------|-----------|
-| **constants.ts** | 20 missões sustentáveis (id, nome, pontos, ícone, tipo de comprovação), CO₂ por missão (20 valores), 4 selos/níveis, 8 recompensas, 4 usuários simulados (ranking), 5 curiosidades, 7 perguntas FAQ, 4 integrantes e taxa de conversão (100 créditos = R$1). |
+| **constants.ts** | 20 missões sustentáveis (id, nome, pontos, ícone, tipo de comprovação), CO₂ por missão (20 valores), 4 selos/níveis, 12 recompensas, 4 usuários simulados (ranking), 5 curiosidades, 14 perguntas FAQ, 5 integrantes e taxa de conversão (100 créditos = R$1). |
 | **cartas.ts** | 20 cartas em 5 sets (4 cartas cada), 5 raridades com chances (75/55/35/20/10%), chance foil (8%), valores por raridade, fragmentos por duplicada, custo de fabricação e função calcularQuímica (nível 1/2/3). |
 | **cartasStyle.ts** | Estilos visuais das cartas: backgrounds por raridade (gradientes), glows, tiers (border, glow, texto), funções getCardBackground, getCardLabel, getIniciaisSet e efeito foil. |
 
@@ -387,6 +405,8 @@ Cada card no Trello deve ter **2 a 4 etiquetas** combinando:
 | Arquivo | Descrição |
 |---------|-----------|
 | **validation.ts** | Funções de validação: validateName (min 3, max 50, apenas letras), validateEmail (regex), validateMessage (min 10), normalizeName (trim + lowercase) e normalizeEmail (trim + lowercase). |
+| **limparDados.ts** | Remove todas as chaves `rocky_*` do localStorage no logout. |
+| **loginGate.ts** | Evento global para abrir o modal de login a partir de qualquer ação bloqueada. |
 
 ### Tipos React (`src/types/`)
 
@@ -413,11 +433,4 @@ Para entrar em contato com a equipe RockySoulUp:
 
 - **Formulário do site:** acesse a rota `/contato` da aplicação e envie uma mensagem.
 - **GitHub do repositório:** abra uma issue ou PR em https://github.com/igorodriguesd/rockysoul-react
-- **LinkedIn dos integrantes:** utilize os links da tabela acima para falar diretamente com cada membro da equipe.
-
-| Integrante | LinkedIn |
-| --- | --- |
-| Igor Rodrigues de Santana | [linkedin.com/in/igor-rodrigues-135aa72b2](https://linkedin.com/in/igor-rodrigues-135aa72b2) |
-| Diego Gomes Goncalves de Lima | [LinkedIn](https://www.linkedin.com/in/diego-gomes-65339b408/) |
-| Miguel Silva | [LinkedIn](https://www.linkedin.com/in/miguel-silva-0a20073a9/) |
-| Rafael Santos Mendonca Costa | [LinkedIn](https://www.linkedin.com/in/rafael-santos-b09bba237/) |
+- **LinkedIn dos integrantes:** utilize os links da tabela de **Integrantes** acima para falar diretamente com cada membro da equipe.

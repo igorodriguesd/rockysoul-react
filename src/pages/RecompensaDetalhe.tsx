@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { useLoginGate } from '../hooks/useLoginGate';
 import { RECOMPENSAS } from '../data/constants';
 import ResgatarModal from '../components/ResgatarModal';
 
 export function RecompensaDetalhe() {
   const { id } = useParams<{ id: string }>();
   const { data } = useData();
+  const exigirLogin = useLoginGate();
   const [resgatarAberto, setResgatarAberto] = useState(false);
 
   const recompensa = RECOMPENSAS.find(r => r.id === id) ?? null;
@@ -77,7 +79,10 @@ export function RecompensaDetalhe() {
         </div>
 
         <button
-          onClick={() => setResgatarAberto(true)}
+          onClick={() => {
+            if (!exigirLogin()) return;
+            setResgatarAberto(true);
+          }}
           disabled={!podeResgatar}
           className={`w-full py-3 rounded-xl text-sm font-semibold transition-all ${podeResgatar
               ? 'bg-brand text-(--t-onaccent) hover:bg-brand-hover cursor-pointer'

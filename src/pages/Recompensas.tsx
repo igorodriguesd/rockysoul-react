@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { useLoginGate } from '../hooks/useLoginGate';
 import { RECOMPENSAS, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO, getParceiro } from '../data/constants';
 import ResgatarModal from '../components/ResgatarModal';
 import { showToast } from '../components/Toast';
@@ -21,6 +22,7 @@ export function Recompensas() {
   useEffect(() => { document.title = 'Recompensas - RockySoulUp'; }, []);
 
   const { data, subtrairPontos, addResgate } = useData();
+  const exigirLogin = useLoginGate();
   const [recompensaSelecionada, setRecompensaSelecionada] = useState<Recompensa | null>(null);
   const [filtroLoja, setFiltroLoja] = useState('todas');
   const [creditosConverter, setCreditosConverter] = useState('');
@@ -35,13 +37,12 @@ export function Recompensas() {
   const acimaSaldo = creditosNum > data.pontos;
   const podeConverter = !conversaoFeita && creditosNum >= MIN_CREDITOS_CONVERSAO && creditosNum <= data.pontos && chaveValida;
 
-  const emDestaque = useMemo(() => RECOMPENSAS.filter(r => r.badge), []);
   const matcher = FILTROS_LOJA.find(f => f.id === filtroLoja) ?? FILTROS_LOJA[0];
   const recompensasFiltradas = RECOMPENSAS.filter(r => matcher.matcher(r.categoria));
-  const destaquesVisiveis = emDestaque.filter(r => matcher.matcher(r.categoria));
 
   function solicitarConversao() {
     if (!podeConverter) return;
+    if (!exigirLogin()) return;
     subtrairPontos(creditosNum);
     addResgate({
       nome: `Conversão de créditos em dinheiro (R$${formatarReais(valorReais)})`,
@@ -74,58 +75,6 @@ export function Recompensas() {
             </div>
           </div>
         </header>
-
-        {destaquesVisiveis.length > 0 && (
-          <section className="mb-10">
-            <div className="flex items-center gap-2 mb-4">
-              <img src="/icons/trofeu.svg" alt="" className="w-5 h-5" />
-              <h2 className="text-slate-900 font-bold">Destaques da loja</h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {destaquesVisiveis.map(r => {
-                const podeResgatar = data.pontos >= r.pontos;
-                const jaResgatou = data.resgates.some(rg => rg.nome === r.nome);
-                return (
-                  <div
-                    key={r.id}
-                    className="bg-card-secondary border border-gold/40 rounded-2xl p-5 flex flex-col hover:scale-[1.01] transition-all shadow-[0_8px_30px_rgba(250,204,21,0.08)]"
-                  >
-                    <div className="h-6 mb-3 flex items-center">
-                      {r.badge && (
-                        <span className="self-start px-2 py-0.5 bg-gold text-slate-900 text-[10px] font-bold rounded-full">
-                          {r.badge}
-                        </span>
-                      )}
-                    </div>
-                    <Link to={`/recompensas/${r.id}`} className="flex items-start gap-3 mb-3 group">
-                      <img src={r.icone} alt="" className="w-9 h-9 shrink-0" />
-                      <div className="min-w-0">
-                        <h3 className="font-bold text-slate-900 text-sm group-hover:text-brand transition-colors">{r.nome}</h3>
-                        <p className="text-xs text-slate-500 mt-0.5">{r.descricao}</p>
-                      </div>
-                    </Link>
-                    <div className="mt-auto">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="text-sm font-bold text-gold-deep">{r.pontos} créditos</span>
-                        <span className="text-[10px] text-slate-500 bg-brand-soft px-2 py-0.5 rounded-full">{r.categoria}</span>
-                      </div>
-                      <button
-                        onClick={() => setRecompensaSelecionada(r)}
-                        disabled={!podeResgatar}
-                        className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all ${podeResgatar
-                            ? 'bg-brand text-(--t-onaccent) hover:bg-brand-hover cursor-pointer'
-                            : 'bg-brand-soft text-slate-400 cursor-not-allowed'
-                          }`}
-                      >
-                        {jaResgatou ? 'Resgatado' : podeResgatar ? 'Resgatar' : 'Créditos insuficientes'}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        )}
 
         <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
           <h2 className="text-slate-900 font-bold">Todas as recompensas</h2>
@@ -181,7 +130,10 @@ export function Recompensas() {
                     </div>
                   )}
                   <button
-                    onClick={() => setRecompensaSelecionada(r)}
+                    onClick={() => {
+                      if (!exigirLogin()) return;
+                      setRecompensaSelecionada(r);
+                    }}
                     disabled={!podeResgatar}
                     className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-all ${podeResgatar
                         ? 'bg-brand text-(--t-onaccent) hover:bg-brand-hover cursor-pointer'
@@ -230,14 +182,7 @@ export function Recompensas() {
           ) : (
             <>
               <div className="rounded-2xl p-6 sm:p-7" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
-                <div className="text-center">
-                  <p className="text-[11px] uppercase tracking-widest text-slate-500">Seu saldo</p>
-                  <p className="text-4xl font-extrabold text-gold-deep font-serif-display tabular-nums mt-1">
-                    {data.pontos} <span className="text-sm font-semibold">créditos</span>
-                  </p>
-                </div>
-
-                <div className="mt-5">
+                <div className="mt-1">
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">Converter</label>
                   <input
                     type="number"

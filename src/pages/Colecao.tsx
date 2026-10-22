@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CARTAS, SETS_CARTAS, FRAGMENTOS_POR_DUPLICADA, CUSTO_FABRICACAO, PESO_RARIDADE, getValorCarta } from '../data/cartas';
+import { CARTAS, SETS_CARTAS, FRAGMENTOS_POR_DUPLICADA, CUSTO_FABRICACAO, PESO_RARIDADE, getValorCarta, missoesPorRaridade } from '../data/cartas';
 import SetColecao from '../components/SetColecao';
 import { useColecao } from '../context/CollectionContext';
-import { useData } from '../context/DataContext';
-import { nomeNivelPorPontos, grupoDaCarta } from '../data/constants';
+import { MISSOES, nomeNivelPorPontos, grupoDaCarta } from '../data/constants';
 import { TermoAjuda } from '../components/TermoAjuda';
 import IconeMissao from '../components/IconeMissao';
 import PainelValorColecao from '../components/PainelValorColecao';
@@ -20,9 +19,7 @@ export function Colecao() {
 
   const navigate = useNavigate();
   const { colecao, getProgressoTotal, getValorTotal, fabricarCarta, setDesbloqueado } = useColecao();
-  const { data } = useData();
   const [modo, setModo] = useState<ModoColecao>('cartas');
-  const [mostrarDica, setMostrarDica] = useState(false);
   const [fabricada, setFabricada] = useState<Carta | null>(null);
 
   const { obtidas, total } = getProgressoTotal();
@@ -35,7 +32,122 @@ export function Colecao() {
     .filter(c => !colecao.cartasObtidas.includes(c.id))
     .sort((a, b) => PESO_RARIDADE[a.raridade] - PESO_RARIDADE[b.raridade]);
 
+  const listaFabrica = [...CARTAS]
+    .filter(c => setDesbloqueado(c.setId))
+    .sort((a, b) => PESO_RARIDADE[a.raridade] - PESO_RARIDADE[b.raridade]);
+
+  const totalFabrica = listaFabrica.length;
+  const obtidasFabrica = listaFabrica.filter(c => colecao.cartasObtidas.includes(c.id)).length;
+  const faltandoFabrica = totalFabrica - obtidasFabrica;
+
+  const setsBloqueados = SETS_CARTAS
+    .filter(s => !setDesbloqueado(s.id))
+    .sort((a, b) => a.pontosMin - b.pontosMin);
+  const proximoSet = setsBloqueados[0] ?? null;
+  const cartasBloqueadas = setsBloqueados.reduce((acc, s) => acc + CARTAS.filter(c => c.setId === s.id).length, 0);
+
   const nFabricaveis = faltando.filter(c => setDesbloqueado(c.setId) && (fragmentos[c.raridade] ?? 0) >= CUSTO_FABRICACAO[c.raridade]).length;
+
+  const listaFabricaObtidas = listaFabrica.filter(c => colecao.cartasObtidas.includes(c.id));
+  const listaFabricaFaltando = listaFabrica.filter(c => !colecao.cartasObtidas.includes(c.id));
+  const listaFabricaPronto = listaFabricaFaltando.filter(c => (fragmentos[c.raridade] ?? 0) >= CUSTO_FABRICACAO[c.raridade]);
+  const listaFabricaFalta = listaFabricaFaltando
+    .filter(c => (fragmentos[c.raridade] ?? 0) < CUSTO_FABRICACAO[c.raridade])
+    .sort((a, b) => {
+      const pa = (fragmentos[a.raridade] ?? 0) / CUSTO_FABRICACAO[a.raridade];
+      const pb = (fragmentos[b.raridade] ?? 0) / CUSTO_FABRICACAO[b.raridade];
+      return pb - pa;
+    });
+
+  function renderCartaFabrica(carta: Carta, fabricavel: boolean) {
+    const custo = CUSTO_FABRICACAO[carta.raridade];
+    const obtida = colecao.cartasObtidas.includes(carta.id);
+    const foil = colecao.cartasFoil?.includes(carta.id) ?? false;
+    const progresso = Math.min(100, ((fragmentos[carta.raridade] ?? 0) / custo) * 100);
+    const porRepetida = FRAGMENTOS_POR_DUPLICADA[carta.raridade];
+    const faltam = custo - (fragmentos[carta.raridade] ?? 0);
+    const repetidas = Math.ceil(faltam / porRepetida);
+    const origem = missoesPorRaridade(carta.raridade)
+      .map(id => MISSOES.find(m => m.id === id))
+      .filter((m): m is (typeof MISSOES)[number] => !!m);
+    return (
+      <div
+        key={carta.id}
+        className="bg-(--t-card-primary) border border-(--t-card-primary-border) shadow-(--t-card-primary-shadow) rounded-xl p-2.5 flex flex-col items-center text-center relative"
+      >
+        <div
+          className="bg-(--t-mist) w-11 h-11 rounded-xl flex items-center justify-center mb-1.5"
+          style={{ border: `1px solid ${{ comum: '#9ca3af', incomum: '#38bdf8', rara: '#a855f7', epica: '#ff4d9e', lendaria: '#fbbf24' }[carta.raridade]}44` }}
+        >
+          <IconeMissao src={carta.icone} cor={grupoDaCarta(carta.id)?.cor ?? '#94a3b8'} className="w-6 h-6" />
+        </div>
+        {obtida && (
+          <span
+            className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black"
+            style={{ background: 'var(--t-accent)', color: 'var(--t-onaccent)' }}
+            title="Já está na sua coleção"
+          >
+            ✓
+          </span>
+        )}
+        <p className="text-slate-900 text-[11px] font-semibold mt-1 leading-tight">{carta.nome}</p>
+        <p className="text-slate-600 text-[9px] uppercase tracking-widest mb-2">
+          {carta.raridade}{foil ? ' · brilhante' : ''}
+        </p>
+        {obtida ? (
+          <>
+            <div
+              className="w-full text-[11px] font-bold rounded-lg py-1.5 text-center"
+              style={{ background: 'var(--t-accent-soft)', color: 'var(--color-brand)' }}
+            >
+              Já obtida
+            </div>
+            <p className="text-[9px] text-slate-500 mt-1 leading-tight text-center">
+              se cair de novo → <strong className="text-[#38bdf8]">+{FRAGMENTOS_POR_DUPLICADA[carta.raridade]}</strong> frag. de {carta.raridade}
+            </p>
+          </>
+        ) : fabricavel ? (
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                const nova = fabricarCarta(carta.id);
+                if (nova) {
+                  setFabricada(carta);
+                  setTimeout(() => setFabricada(null), 2200);
+                }
+              }}
+              className="w-full text-[11px] font-bold rounded-lg py-1.5 transition-all active:scale-95 cursor-pointer"
+              style={{ background: 'var(--t-grad-brand)', color: 'var(--t-onaccent)' }}
+            >
+              Fabricar ({custo})
+            </button>
+            <p className="text-[9px] text-slate-500 mt-1 leading-tight text-center">
+              usa <strong className="text-slate-600">{custo}</strong> frag. de {carta.raridade} · vale <strong className="text-gold">{getValorCarta(carta)}</strong> créd.
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="w-full h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--t-slate-200)' }}>
+              <div className="h-full rounded-full" style={{ width: `${progresso}%`, background: 'var(--t-grad-brand)' }} />
+            </div>
+            <p className="text-[9px] text-slate-500 mt-1.5 leading-tight text-center">
+              faltam <strong className="text-slate-700">{faltam}</strong> frag. de {carta.raridade} · vale <strong className="text-gold">{getValorCarta(carta)}</strong> créd.
+            </p>
+            <p className="text-[9px] text-slate-500 mt-1 leading-tight text-center">
+              ≈ <strong className="text-slate-700">{repetidas}</strong> repetida{repetidas === 1 ? '' : 's'} de {carta.raridade}
+            </p>
+            {origem.length > 0 && (
+              <p className="text-[9px] text-slate-500 mt-1 leading-tight text-center">
+                repita: {origem.slice(0, 2).map(m => m.nome).join(' · ')}
+                {origem.length > 2 ? ' …' : ''}
+              </p>
+            )}
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-[90rem] mx-auto px-4 sm:px-6 py-6">
@@ -136,88 +248,107 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-slate-900 font-semibold text-base leading-tight">Fábrica de Cartas</h3>
-              <p className="text-slate-500 text-xs">Cartas repetidas viram fragmentos. Monte as que faltam — cada set desbloqueia conforme seu nível.</p>
+              <p className="text-slate-500 text-xs">
+                Cartas repetidas viram fragmentos. Monte as que faltam — aqui só entram as cartas dos sets que você já
+                desbloqueou.
+              </p>
+            </div>
+            <div className="shrink-0 text-right">
+              <p className="text-slate-900 text-sm font-bold leading-tight">{obtidasFabrica}/{totalFabrica} cartas</p>
+              <p className="text-[11px] text-slate-500 leading-tight">
+                {faltandoFabrica === 0 ? 'tudo liberado!' : `${faltandoFabrica} para montar`}
+              </p>
             </div>
           </header>
 
-          {mostrarDica && (
-            <div className="mb-3 rounded-xl p-3 text-xs leading-relaxed text-slate-700 bg-surface-2 border border-violet/30">
-              <p>
-                <strong className="text-slate-900">Fragmento</strong> é o «dinheiro de montar» da coleção: carta repetida vira
-                fragmentos da raridade dela, e juntando a quantidade certa você monta a que falta — sem sorte.
-                No chip fica seu total; no botão da carta, quanto falta (ex.: <strong className="text-slate-900">3/10</strong> = tem 3, precisa de 10).
-                Cada repetida rende: comum <strong className="text-[#38bdf8]">+3</strong>, incomum <strong className="text-[#38bdf8]">+5</strong>, rara <strong className="text-[#38bdf8]">+10</strong>, épica <strong className="text-[#38bdf8]">+20</strong>, lendária <strong className="text-[#38bdf8]">+40</strong>.
-                Cartas repetidas <strong className="text-slate-900">não</strong> dão créditos; fabricar a que falta dá — o valor
-                da carta entra no seu saldo.
-              </p>
-            </div>
+          {proximoSet && (
+            <p className="mb-3 text-[11px] text-slate-500 leading-snug">
+              <span className="text-slate-400">🔒</span> {cartasBloqueadas} cartas de {setsBloqueados.length}{' '}
+              {setsBloqueados.length === 1 ? 'set ainda bloqueado' : 'sets ainda bloqueados'} — o próximo é{' '}
+              <strong className="text-gold">{proximoSet.nome}</strong>, que libera no nível{' '}
+              <strong className="text-gold">{nomeNivelPorPontos(proximoSet.pontosMin)}</strong> ({proximoSet.pontosMin}{' '}
+              créditos). As cartas de sets bloqueados não podem ser fabricadas.
+            </p>
           )}
 
-          <div className="flex flex-wrap gap-2 mb-2">
+          <div className="mb-3 rounded-xl p-3 text-[11px] leading-snug text-slate-600 bg-(--t-surface-2) border border-violet/30">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-2">Como trocar repetida por carta</p>
+            <ol className="flex flex-col gap-1.5">
+              <li className="flex gap-2">
+                <span className="shrink-0 w-4 h-4 rounded-full bg-brand text-(--t-onaccent) text-[9px] font-black flex items-center justify-center mt-px">1</span>
+                <span>
+                  <strong className="text-slate-900">Cumpra uma missão</strong> e ganhe a carta dela. Se você
+                  <strong className="text-slate-900"> já tem</strong> essa carta, ela vira
+                  <strong className="text-[#38bdf8]"> fragmentos</strong> da raridade dela (não vira créditos).
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0 w-4 h-4 rounded-full bg-brand text-(--t-onaccent) text-[9px] font-black flex items-center justify-center mt-px">2</span>
+                <span>
+                  <strong className="text-slate-900">Repita a mesma missão</strong> até juntar os fragmentos. Os chips
+                  abaixo mostram seu total e quanto cada repetida rende.
+                </span>
+              </li>
+              <li className="flex gap-2">
+                <span className="shrink-0 w-4 h-4 rounded-full bg-brand text-(--t-onaccent) text-[9px] font-black flex items-center justify-center mt-px">3</span>
+                <span>
+                  Volte aqui e clique em <strong className="text-slate-900">Fabricar</strong> na carta que falta: ela entra
+                  na sua coleção <strong className="text-slate-900">e</strong> o valor dela vai para o saldo.
+                </span>
+              </li>
+            </ol>
+            <p className="mt-2 pt-2 border-t border-(--t-card-primary-border) text-slate-500">
+              Os fragmentos <strong className="text-slate-700">não servem só para fechar o set</strong>: qualquer carta de
+              qualquer set já liberado pode ser fabricada. Você também pode clicar na carta que falta, na aba
+              <strong className="text-slate-700"> Minhas cartas</strong>, e usar os fragmentos dali.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2 mb-2 items-center">
             {(Object.keys(FRAGMENTOS_POR_DUPLICADA) as Array<keyof typeof FRAGMENTOS_POR_DUPLICADA>).map(r =>
               <div key={r} className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs bg-surface-2">
                 <span className="w-2 h-2 rounded-full" style={{ background: r === 'comum' ? '#9ca3af' : r === 'incomum' ? '#38bdf8' : r === 'rara' ? '#a855f7' : r === 'epica' ? '#ff4d9e' : '#fbbf24' }} />
                 <span className="text-slate-700">{r}</span>
                 <span className="text-gold font-bold">{fragmentos[r]}</span>
+                <span className="text-slate-500 text-[10px]">({FRAGMENTOS_POR_DUPLICADA[r]}/repetida)</span>
               </div>
             )}
-            <button
-              type="button"
-              onClick={() => setMostrarDica(v => !v)}
-              className="shrink-0 ml-auto flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-violet border border-violet/40 bg-violet/10 hover:bg-violet/20 active:scale-95 transition-all cursor-pointer"
-              title={mostrarDica ? 'Ocultar explicação' : 'O que é fragmento?'}
-            >
-              <span className="text-sm font-black leading-none">?</span>
-              {mostrarDica ? 'Fechar dica' : 'O que é?'}
-            </button>
           </div>
 
-          {faltando.length === 0 ? (
-            <p className="text-brand text-sm font-semibold text-center py-2">Coleção completa! Parabéns</p>
-          ) : (
-            <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-2.5">
-              {faltando.map(carta => {
-                const custo = CUSTO_FABRICACAO[carta.raridade];
-                const tem = (fragmentos[carta.raridade] ?? 0) >= custo;
-                const setCarta = SETS_CARTAS.find(s => s.id === carta.setId);
-                const nivelBloqueio = setCarta && (data.pontosAcumulados ?? data.pontos) < setCarta.pontosMin ? nomeNivelPorPontos(setCarta.pontosMin) : null;
-                return (
-                  <div
-                    key={carta.id}
-                    className="bg-(--t-card-primary) border border-(--t-card-primary-border) shadow-(--t-card-primary-shadow) rounded-xl p-2.5 flex flex-col items-center text-center"
-                    style={{ opacity: nivelBloqueio ? 0.55 : 1 }}
-                  >
-                    <div
-                      className="bg-(--t-mist) w-11 h-11 rounded-xl flex items-center justify-center mb-1.5"
-                      style={{ border: `1px solid ${{ comum: '#9ca3af', incomum: '#38bdf8', rara: '#a855f7', epica: '#ff4d9e', lendaria: '#fbbf24' }[carta.raridade]}44` }}
-                    >
-                      <IconeMissao src={carta.icone} cor={grupoDaCarta(carta.id)?.cor ?? '#94a3b8'} className="w-6 h-6" />
-                    </div>
-                    <p className="text-slate-900 text-[11px] font-semibold mt-1 leading-tight">{carta.nome}</p>
-                    <p className="text-slate-600 text-[9px] uppercase tracking-widest mb-2">{carta.raridade}</p>
-                    {nivelBloqueio && (
-                      <p className="text-[9px] font-semibold text-gold mb-1.5">Nível {nivelBloqueio}</p>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const nova = fabricarCarta(carta.id);
-                        if (nova) {
-                          setFabricada(carta);
-                          setTimeout(() => setFabricada(null), 2200);
-                        }
-                      }}
-                      disabled={!tem || !!nivelBloqueio}
-                      className="w-full text-[11px] font-bold rounded-lg py-1.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                      style={tem && !nivelBloqueio
-                        ? { background: 'var(--t-grad-brand)', color: 'var(--t-onaccent)' }
-                        : { background: 'var(--t-mist)', color: 'var(--color-brand)' }}
-                    >
-                      {nivelBloqueio ? `${nomeNivelPorPontos(setCarta!.pontosMin)}` : tem ? `Fabricar (${custo})` : `${fragmentos[carta.raridade]}/${custo}`}
-                    </button>
-                  </div>
-                );
-              })}
+          {faltandoFabrica === 0 && totalFabrica > 0 && (
+            <p className="text-brand text-sm font-semibold text-center py-2 mb-3">Você fabricou todas as cartas liberadas! 🎉</p>
+          )}
+
+          {listaFabricaPronto.length > 0 && (
+            <div className="mb-4">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-2">
+                Pode fabricar agora · {listaFabricaPronto.length}
+              </p>
+              <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-2.5">
+                {listaFabricaPronto.map(carta => renderCartaFabrica(carta, true))}
+              </div>
+            </div>
+          )}
+
+          {listaFabricaFalta.length > 0 && (
+            <div className="mb-4">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-2">
+                Falta fragmentos · {listaFabricaFalta.length}
+              </p>
+              <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-2.5">
+                {listaFabricaFalta.map(carta => renderCartaFabrica(carta, false))}
+              </div>
+            </div>
+          )}
+
+          {listaFabricaObtidas.length > 0 && (
+            <div className="mb-4">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-2">
+                Já obtidas · cada repetida vira fragmento
+              </p>
+              <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-2.5">
+                {listaFabricaObtidas.map(carta => renderCartaFabrica(carta, true))}
+              </div>
             </div>
           )}
 
