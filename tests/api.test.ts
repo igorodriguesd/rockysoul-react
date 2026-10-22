@@ -83,7 +83,7 @@ test('429 preserves Retry-After and hides provider/body details', async () => {
 test('no automatic retry, and repeated submissions preserve the idempotency key/body', async () => {
   const calls: RequestInit[] = [];
   const client = createApiClient('http://localhost:8080', async (_url, init) => { calls.push(init!); throw new Error('network'); }); client.setToken('token');
-  const body = { acaoId: 701, descricao: 'Reciclagem', imagemBase64: 'base64' };
+  const body = { acaoId: 701, descricao: 'Reciclagem', imagemBase64: 'base64', desafioId: '00000000-0000-4000-8000-000000000001' };
   await assert.rejects(services(client).submit(body, 'fixed-operation-key')); assert.equal(calls.length, 1);
   await assert.rejects(services(client).submit(body, 'fixed-operation-key')); assert.equal(calls.length, 2);
   assert.equal(calls[0].body, calls[1].body); assert.equal(new Headers(calls[0].headers).get('Idempotency-Key'), 'fixed-operation-key');
@@ -133,4 +133,16 @@ test('oversized and non-image evidence is rejected before sending', async () => 
   await assert.rejects(imageBase64(new File([new Uint8Array(524289)], 'big.png', { type: 'image/png' })));
   await assert.rejects(imageBase64(new File(['<svg/>'], 'bad.svg', { type: 'image/svg+xml' })));
   assert.throws(() => validateImageHeader(new Uint8Array([1, 2, 3])));
+});
+test('capture challenge uses the protected endpoint and sends only the selected action', async () => {
+  const calls: RequestInit[] = [];
+  const challenge = { id: '00000000-0000-4000-8000-000000000001', acaoId: 21, codigo: 'TEST22', expiraEm: '2026-10-22T18:00:00Z' };
+  const client = createApiClient('http://localhost:8080', async (url, init) => {
+    assert.equal(String(url), 'http://localhost:8080/verificacoes/desafio'); calls.push(init!);
+    return new Response(JSON.stringify(challenge), { headers: { 'Content-Type': 'application/json' } });
+  });
+  client.setToken('session-token');
+  assert.deepEqual(await services(client).challenge(21), challenge);
+  assert.equal(calls[0].method, 'POST'); assert.deepEqual(JSON.parse(String(calls[0].body)), { acaoId: 21 });
+  assert.equal(new Headers(calls[0].headers).get('Authorization'), 'Bearer session-token');
 });

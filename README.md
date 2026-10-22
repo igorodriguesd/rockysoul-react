@@ -147,3 +147,14 @@ docs/             Guia de operação e decisões
 
 Leia [docs/INTEGRACAO_API.md](docs/INTEGRACAO_API.md) para configuração, erros,
 idempotência, escopo da integração e próximos passos do login externo.
+
+
+## Captura com desafio
+
+No Dashboard, escolha a ação e inicie a câmera. Escreva em papel o código
+temporário mostrado e capture o papel junto da ação, sem rostos ou dados pessoais.
+Não há upload da galeria neste fluxo. Câmera exige permissão e HTTPS/localhost.
+O backend precisa da migração V004 e do contrato de desafio atualizado.
+Capturas compatíveis com desafio confirmado podem receber crédito automático
+dentro dos limites; pendências não creditam pontos. O saldo é reconsultado após
+a decisão. Idempotência preserva foto, desafio e chave ao repetir um envio incerto.

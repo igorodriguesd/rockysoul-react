@@ -1,5 +1,5 @@
 import type { ApiClient } from './client';
-import type { Cadastro, Login, Sessao, Consumo, Registro, Recurso, Submissao, Usuario, Verificacao } from './types';
+import type { Cadastro, Login, Sessao, Desafio, Consumo, Registro, Recurso, Submissao, Usuario, Verificacao } from './types';
 
 export function resourcePath(resource: Recurso, value: Registro): string {
   const encode = (key: string) => encodeURIComponent(String(value[key]));
@@ -19,6 +19,7 @@ export function services(api: ApiClient) {
     save: (resource: Recurso, body: Registro, original?: Registro) => api.request<Registro>(original ? resourcePath(resource, original) : `/${resource}`, { method: original ? 'PUT' : 'POST', body }),
     delete: (resource: Recurso, row: Registro) => api.request<void>(`${resourcePath(resource, row)}?versao=${row.versao}`, { method: 'DELETE' }),
     balance: (row: Registro, body: Registro) => api.request<Registro>(`/usuario/${row.id}/saldo`, { method: 'PUT', body }),
+    challenge: (acaoId: number) => api.request<Desafio>('/verificacoes/desafio', { method: 'POST', body: { acaoId } }),
     submit: (body: Submissao, key: string) => api.request<Verificacao>('/verificacoes', { method: 'POST', body, key }),
     verification: (id: string) => api.request<Verificacao>(`/verificacoes/${encodeURIComponent(id)}`),
     evidence: (id: string, signal?: AbortSignal) => api.request<Blob>(`/verificacoes/${encodeURIComponent(id)}/evidencia`, { image: true, signal }),
