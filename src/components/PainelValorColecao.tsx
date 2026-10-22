@@ -74,7 +74,7 @@ export default function PainelValorColecao({ valorTotal, obtidas, total, foils }
                 <span>Valor</span>
                 <span>Chance</span>
                 <span>Repetida</span>
-                <span>Fabricar</span>
+                <span>Montar</span>
               </div>
               {ORDEM_RARIDADES.map(r => (
                 <div
@@ -95,7 +95,7 @@ export default function PainelValorColecao({ valorTotal, obtidas, total, foils }
             <p className="text-[11px] text-slate-500 mt-2 leading-snug">
               <strong className="text-gold">Carta brilhante (foil) vale ×{MULTIPLICADOR_FOIL}</strong> — a mesma carta sobe
               de rara (30) para rara brilhante (90), com 8% de chance ao ganhar uma carta. Repetida normalmente não dá créditos:
-              vira fragmentos para fabricar as que faltam (a não ser que evolua para brilhante). E fabricar também credita o valor da carta.
+              vira fragmentos para montar as que faltam (a não ser que evolua para brilhante). E montar também credita o valor da carta.
             </p>
           </div>
 

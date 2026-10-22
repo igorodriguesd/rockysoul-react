@@ -28,7 +28,7 @@ As principais telas da plataforma (Home, Dashboard, Coleção e Recompensas):
   <tr>
     <td align="center">
       <img src="public/imagens/print-colecao.png" alt="Coleção" width="340"><br>
-      <sub><strong>Coleção</strong> — cartinhas, sets e Fábrica de Cartas</sub>
+      <sub><strong>Coleção</strong> — cartinhas, sets e Fragmentos</sub>
     </td>
     <td align="center">
       <img src="public/imagens/print-recompensas.png" alt="Recompensas" width="340"><br>
@@ -47,7 +47,7 @@ O coração do projeto é a combinação de **gamificação** com um **avatar/as
 - **Pontos** — cada ação sustentável gera pontos que alimentam o avatar e o perfil do usuário.
 - **Níveis de evolução** — Broto → Semente → Árvore → Floresta, com progresso visual em anel de progresso e barra de XP.
 - **Selos desbloqueáveis** — conquistas automáticas ao acumular pontos.
-- **Coleção de Cartinhas** — ao concluir missões, uma **roleta** sorteia **cartinhas colecionáveis** de 5 sets temáticos e 5 raridades (Comum a Lendária), com chance de versão **brilhante** ✨. Cartas repetidas viram **fragmentos** para a **Fábrica de Cartas**, e completar um set (4/4) ativa a **química** com bônus de até +180 créditos (+30 na 3ª carta e +150 na 4ª).
+- **Coleção de Cartinhas** — ao concluir missões, uma **roleta** sorteia **cartinhas colecionáveis** de 5 sets temáticos e 5 raridades (Comum a Lendária), com chance de versão **brilhante** ✨. Cartas repetidas viram **fragmentos** para a aba **Fragmentos**, e completar um set (4/4) ativa a **química** com bônus de até +180 créditos (+30 na 3ª carta e +150 na 4ª).
 - **Mini-jogo "Separe o Lixo"** — gamificação extra por meio de um jogo de separação de recicláveis (3 fases, vidas, combos e recordes), em modo treino: a pontuação não vira recompensa, serve para praticar e se divertir.
 - **Desafio do Dia** — missão diária com bônus por streak (dias seguidos).
 - **Ranking global** — posição do usuário entre os participantes da comunidade.
@@ -78,7 +78,7 @@ O assistente **RockySoul** funciona como um "avatar" que representa o site: ele 
 | --- | --- | --- |
 | `/` | Home | Estática |
 | `/dashboard` | Dashboard (gamificação + avatar) | Estática |
-| `/colecao` | Coleção de Cartinhas + Fábrica de Cartas | Estática |
+| `/colecao` | Coleção de Cartinhas + aba Fragmentos | Estática |
 | `/solucao` | Solução do Projeto | Estática |
 | `/recompensas` | Recompensas | Estática |
 | `/recompensas/:id` | Detalhe da Recompensa | **Dinâmica (useParams)** |
@@ -113,7 +113,7 @@ rockysoul-react/
 │   │   ├── RoletaDrop.tsx      # Roleta de sorteio da cartinha
 │   │   ├── SetColecao.tsx      # Set de cartinhas com quimica
 │   │   ├── SetProgress.tsx     # Barra de progresso do set
-│   │   ├── CartaFabricarModal.tsx # Fabricacao de carta com fragmentos
+│   │   ├── CartaFabricarModal.tsx # Montagem de carta com fragmentos
 │   │   ├── PainelValorColecao.tsx # Resumo e guia de valores da colecao
 │   │   ├── TrilhaEvolucaoModal.tsx # Trilha de niveis e bonus
 │   │   ├── TermoAjuda.tsx      # Tooltip de ajuda
@@ -123,7 +123,7 @@ rockysoul-react/
 │   ├── pages/                  # Paginas da aplicacao (componentes React)
 │   │   ├── Home.tsx
 │   │   ├── Dashboard.tsx
-│   │   ├── Colecao.tsx         # Colecao de cartinhas + Fabrica de Cartas
+│   │   ├── Colecao.tsx         # Colecao de cartinhas + aba Fragmentos
 │   │   ├── Solucao.tsx
 │   │   ├── Recompensas.tsx
 │   │   ├── RecompensaDetalhe.tsx  # Rota dinamica com useParams
@@ -171,7 +171,7 @@ Ao concluir uma missão, o Dashboard aciona a **roleta** e pode premiar você co
 | Épica | 20% | +20 |
 | Lendária | 10% | +40 |
 
-Há ainda **8% de chance** de a cartinha vir na versão **brilhante** (✨). Na **Fábrica de Cartas** (aba dentro da página Coleção), fragmentos são usados para montar cartinhas que faltam — custo de 10/16/32/70/140 fragmentos por raridade (Comum/Incomum/Rara/Épica/Lendária).
+Há ainda **8% de chance** de a cartinha vir na versão **brilhante** (✨). Na aba **Fragmentos** (dentro da página Coleção) aparecem apenas as cartinhas que faltam nos sets liberados; cada repetida vira fragmentos da raridade dela e o custo para montar é de 10/16/32/70/140 fragmentos (Comum/Incomum/Rara/Épica/Lendária).
 
 ### Recompensas
 
@@ -349,7 +349,7 @@ Cada card no Trello deve ter **2 a 4 etiquetas** combinando:
 | **NovaCarta** | `NovaCarta.tsx` | Exibe animação de nova carta obtida após roleta, com informação de set, química e bônus. |
 | **SetColecao** | `SetColecao.tsx` | Renderiza um set de 4 cartas com header, progresso e grid de CardItem. |
 | **SetProgress** | `SetProgress.tsx` | Barra de progresso de um set com marcos (nível 1/2/3), texto descritivo e bônus. |
-| **CartaFabricarModal** | `CartaFabricarModal.tsx` | Modal para fabricar uma carta usando fragmentos da raridade (custo, quanto falta e valor creditado). |
+| **CartaFabricarModal** | `CartaFabricarModal.tsx` | Modal para montar uma carta usando fragmentos da raridade (custo, quanto falta e valor creditado). |
 | **PainelValorColecao** | `PainelValorColecao.tsx` | Resumo da coleção (valor creditado e cartas obtidas) e guia de valores por raridade e por set. |
 | **TrilhaEvolucaoModal** | `TrilhaEvolucaoModal.tsx` | Trilha de evolução com níveis, bônus e próximos desbloqueios. |
 | **TermoAjuda** | `TermoAjuda.tsx` | Tooltip acessível de ajuda rápida. |
@@ -365,7 +365,7 @@ Cada card no Trello deve ter **2 a 4 etiquetas** combinando:
 |--------|---------|-----------|
 | **Home** | `Home.tsx` | Landing page com hero section, ilha flutuante animada, ranking mockado, desafio do dia, dica do dia, stats (12k+ usuários, 340t CO₂, 98% engajamento) e CTAs "Começar Agora" e "Saiba Mais". LoginModal integrado. |
 | **Dashboard** | `Dashboard.tsx` | Painel principal: desafio do dia com bônus, dica do dia (IA), grid de 20 missões para registrar, ranking global (com usuário real + 4 simulados), atividade recente (histórico + resgates + conversões) e MiniJogoSeparacao. Abre VerificarModal ao clicar em missão. ~445 linhas. |
-| **Coleção** | `Colecao.tsx` | Exibe coleção completa: progresso total, grid de 5 sets (SetColecao) e Fábrica de Cartas em aba própria (cartas faltantes, fragmentos por raridade, custo de fabricação e botão fabricar). |
+| **Coleção** | `Colecao.tsx` | Exibe coleção completa: progresso total, grid de 5 sets (SetColecao) e aba Fragmentos (cartas faltantes dos sets liberados, fragmentos por raridade, custo de montagem e botão Montar). |
 | **Solução** | `Solucao.tsx` | Página institucional: problema, como funciona (5 passos), coleção de cartas (explicação visual com 5 raridades), sets e química, níveis e selos, diferenciais. |
 | **Recompensas** | `Recompensas.tsx` | Catálogo de 12 recompensas (card com badge, link para detalhe, botão resgatar), trilha de evolução (4 níveis), impacto ambiental (CO₂, árvores, streak) e conversor de créditos em dinheiro (Pix com validação, min 500 créditos). ResgatarModal integrado. ~304 linhas. |
 | **RecompensaDetalhe** | `RecompensaDetalhe.tsx` | Detalhe de uma recompensa com ícone, badge, categoria, descrição, saldo vs custo e botão resgatar. 404 caso não encontre. |
@@ -381,7 +381,7 @@ Cada card no Trello deve ter **2 a 4 etiquetas** combinando:
 | Contexto | Arquivo | Descrição |
 |----------|---------|-----------|
 | **DataContext** | `DataContext.tsx` | Gerencia dados do usuário: nome, email, pontos, histórico, resgates, selos, streak, desafio do dia e bônus. Persiste automaticamente no localStorage. |
-| **CollectionContext** | `CollectionContext.tsx` | Gerencia coleção de cartas: adquirir carta, drop por missão, fragmentos, fabricar carta, química de sets, progresso e valor total. Persiste no localStorage. |
+| **CollectionContext** | `CollectionContext.tsx` | Gerencia coleção de cartas: adquirir carta, drop por missão, fragmentos, montar carta, química de sets, progresso e valor total. Persiste no localStorage. |
 | **ChatContext** | `ChatContext.tsx` | Controla estado aberto/fechado do chatbot. |
 
 ### Hooks React (`src/hooks/`)
@@ -397,7 +397,7 @@ Cada card no Trello deve ter **2 a 4 etiquetas** combinando:
 | Arquivo | Descrição |
 |---------|-----------|
 | **constants.ts** | 20 missões sustentáveis (id, nome, pontos, ícone, tipo de comprovação), CO₂ por missão (20 valores), 4 selos/níveis, 12 recompensas, 4 usuários simulados (ranking), 5 curiosidades, 14 perguntas FAQ, 5 integrantes e taxa de conversão (100 créditos = R$1). |
-| **cartas.ts** | 20 cartas em 5 sets (4 cartas cada), 5 raridades com chances (75/55/35/20/10%), chance foil (8%), valores por raridade, fragmentos por duplicada, custo de fabricação e função calcularQuímica (nível 1/2/3). |
+| **cartas.ts** | 20 cartas em 5 sets (4 cartas cada), 5 raridades com chances (75/55/35/20/10%), chance foil (8%), valores por raridade, fragmentos por duplicada, custo de montagem e função calcularQuímica (nível 1/2/3). |
 | **cartasStyle.ts** | Estilos visuais das cartas: backgrounds por raridade (gradientes), glows, tiers (border, glow, texto), funções getCardBackground, getCardLabel, getIniciaisSet e efeito foil. |
 
 ### Utils React (`src/utils/`)
@@ -423,7 +423,7 @@ Cada card no Trello deve ter **2 a 4 etiquetas** combinando:
 | `RaridadeCarta` | Union type: comum, incomum, rara, epica, lendaria |
 | `Carta`, `SetCarta`, `Quimica` | Interfaces do sistema de cartas |
 | `SetColecaoUsuario`, `ColecaoData` | Interfaces da coleção do usuário |
-| `NovaCartaInfo`, `ResultadoDrop` | Tipos para drops e fabricação |
+| `NovaCartaInfo`, `ResultadoDrop` | Tipos para drops e montagem |
 
 ---
 

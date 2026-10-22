@@ -120,7 +120,7 @@ export function Colecao() {
               className="w-full text-[11px] font-bold rounded-lg py-1.5 transition-all active:scale-95 cursor-pointer"
               style={{ background: 'var(--t-grad-brand)', color: 'var(--t-onaccent)' }}
             >
-              Fabricar ({custo})
+              Montar ({custo})
             </button>
             <p className="text-[9px] text-slate-500 mt-1 leading-tight text-center">
               usa <strong className="text-slate-600">{custo}</strong> frag. de {carta.raridade} · vale <strong className="text-gold">{getValorCarta(carta)}</strong> créd.
@@ -222,7 +222,7 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
           className={`rounded-full px-4 py-2 text-sm font-semibold transition-all cursor-pointer ${modo === 'fabrica' ? 'text-(--t-onaccent)' : 'text-slate-600 bg-surface-2 hover:bg-surface-hover'}`}
           style={modo === 'fabrica' ? { background: GRAD_COLECAO } : undefined}
         >
-          Fábrica
+          Fragmentos
           {nFabricaveis > 0 && (
             <span className="ml-1.5 inline-flex items-center justify-center min-w-4.5 h-4.5 px-1 rounded-full text-[10px] font-extrabold bg-gold text-slate-900">
               {nFabricaveis}
@@ -247,10 +247,10 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
               <img src="/icons/coringa.svg" alt="" className="w-6 h-6" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-slate-900 font-semibold text-base leading-tight">Fábrica de Cartas</h3>
+              <h3 className="text-slate-900 font-semibold text-base leading-tight">Monte cartas com fragmentos</h3>
               <p className="text-slate-500 text-xs">
-                Cartas repetidas viram fragmentos. Monte as que faltam — aqui só entram as cartas dos sets que você já
-                desbloqueou.
+                Cada carta repetida vira fragmentos da raridade dela. Use os fragmentos para montar cartas que você
+                ainda não tem dos sets liberados — não é preciso ter a repetida daquela carta específica.
               </p>
             </div>
             <div className="shrink-0 text-right">
@@ -267,7 +267,7 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
               {setsBloqueados.length === 1 ? 'set ainda bloqueado' : 'sets ainda bloqueados'} — o próximo é{' '}
               <strong className="text-gold">{proximoSet.nome}</strong>, que libera no nível{' '}
               <strong className="text-gold">{nomeNivelPorPontos(proximoSet.pontosMin)}</strong> ({proximoSet.pontosMin}{' '}
-              créditos). As cartas de sets bloqueados não podem ser fabricadas.
+              créditos). As cartas de sets bloqueados não podem ser montadas.
             </p>
           )}
 
@@ -292,14 +292,14 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
               <li className="flex gap-2">
                 <span className="shrink-0 w-4 h-4 rounded-full bg-brand text-(--t-onaccent) text-[9px] font-black flex items-center justify-center mt-px">3</span>
                 <span>
-                  Volte aqui e clique em <strong className="text-slate-900">Fabricar</strong> na carta que falta: ela entra
+                  Volte aqui e clique em <strong className="text-slate-900">Montar</strong> na carta que falta: ela entra
                   na sua coleção <strong className="text-slate-900">e</strong> o valor dela vai para o saldo.
                 </span>
               </li>
             </ol>
             <p className="mt-2 pt-2 border-t border-(--t-card-primary-border) text-slate-500">
               Os fragmentos <strong className="text-slate-700">não servem só para fechar o set</strong>: qualquer carta de
-              qualquer set já liberado pode ser fabricada. Você também pode clicar na carta que falta, na aba
+              qualquer set já liberado pode ser montada. Você também pode clicar na carta que falta, na aba
               <strong className="text-slate-700"> Minhas cartas</strong>, e usar os fragmentos dali.
             </p>
           </div>
@@ -322,7 +322,7 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
           {listaFabricaPronto.length > 0 && (
             <div className="mb-4">
               <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-2">
-                Pode fabricar agora · {listaFabricaPronto.length}
+                Pode montar agora · {listaFabricaPronto.length}
               </p>
               <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-2.5">
                 {listaFabricaPronto.map(carta => renderCartaFabrica(carta, true))}
@@ -355,7 +355,7 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
           {fabricada && (
             <div className="mt-4 rounded-xl p-3 text-center" style={{ background: 'rgba(109,79,194,0.15)', border: `1px solid ${BORDA_COLECAO}` }}>
               <p className="text-slate-800 text-sm">
-                Carta fabricada: <strong className="text-brand">{fabricada.nome}</strong> ·{' '}
+                Carta montada: <strong className="text-brand">{fabricada.nome}</strong> ·{' '}
                 <span className="text-brand-2 font-semibold">+{getValorCarta(fabricada)} créditos no seu saldo</span>
               </p>
             </div>

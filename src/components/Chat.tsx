@@ -149,7 +149,7 @@ export default function Chat() {
       return `${prefixo}\n\n**CARTA BRILHANTE!** Sua ${drop.carta.nome} evoluiu para a versão premium (valor ×3) e está destacada na sua vitrine!\nValor da carta: **+${getValorCarta(drop.carta) * 2} créditos** no seu saldo`;
     }
     if ('duplicada' in drop) {
-      return `${prefixo}\n\nCarta repetida: **${drop.carta.nome}** virou **+${drop.fragmentosGanhos} fragmentos** de ${drop.carta.raridade.toLowerCase()}. Monte as cartas que faltam na Fábrica de Cartas.`;
+      return `${prefixo}\n\nCarta repetida: **${drop.carta.nome}** virou **+${drop.fragmentosGanhos} fragmentos** de ${drop.carta.raridade.toLowerCase()}. Monte as cartas que faltam na aba **Fragmentos** da Coleção.`;
     }
     return `${prefixo}\n\nA carta **${drop.carta.nome}** escapou desta vez! Chance de ganhar carta: ${drop.chance}%. Tente novamente.`;
   }
@@ -433,7 +433,7 @@ export default function Chat() {
           '**Chance de ganhar carta por raridade:**\n' + chances + '\n\n' +
           `Cada set completo paga **+${BONUS_QUIMICA_SET} créditos** de química (+${BONUS_QUIMICA_N2} na 3ª carta, +${BONUS_QUIMICA_N3} na 4ª) — e as 4 cartas do set creditam o valor delas.\n\n` +
           '**Sets por nível:** Recursos e Cidade Verde já no início · Guardiões da Água no Semente (500 créditos) · Energia Limpa na Árvore (1200 créditos) · Cultivo na Floresta (2000 créditos).\n\n' +
-          '**Dica:** cartas repetidas viram fragmentos — use-os na **Fábrica de Cartas** da sua Coleção para montar as que faltam!'
+          '**Dica:** cartas repetidas viram fragmentos — use-os na aba **Fragmentos** da sua Coleção para montar as que faltam!'
         );
         break;
       }

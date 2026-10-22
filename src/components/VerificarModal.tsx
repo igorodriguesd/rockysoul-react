@@ -359,7 +359,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                       <p className="text-slate-600 text-xs leading-snug">
                         Você já tem <strong className="text-slate-700">{drop.carta.nome}</strong>. Ela virou{' '}
                         <strong className="text-[#a66cff]">+{drop.fragmentosGanhos} fragmentos</strong> de {drop.carta.raridade.toLowerCase()}.
-                        Junte fragmentos para montar uma carta que falta — clique na carta na aba <strong className="text-slate-700">Minhas cartas</strong> ou use a <strong className="text-slate-700">Fábrica</strong> na Coleção.
+                        Junte fragmentos para montar uma carta que falta — clique na carta na aba <strong className="text-slate-700">Minhas cartas</strong> ou use a aba <strong className="text-slate-700">Fragmentos</strong> na Coleção.
                       </p>
                     </div>
                   ) : (

@@ -54,7 +54,7 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
           : getCardBackgroundComBorda(carta.raridade, foil),
       }}
       title={bloqueada
-        ? `${set ? set.nome : ''} · Carta desconhecida — realize ações deste set para descobri-la (chance ${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%).${onClick ? ' Clique para fabricar com fragmentos.' : ''}`
+        ? `${set ? set.nome : ''} · Carta desconhecida — realize ações deste set para descobri-la (chance ${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%).${onClick ? ' Clique para montar com fragmentos.' : ''}`
         : `${carta.nome}${foil ? ' · brilhante' : ''}`}
       onClick={onClick}
       onKeyDown={e => {

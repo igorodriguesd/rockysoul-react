@@ -67,7 +67,7 @@ export default function CartaFabricarModal({ carta, onFechar }: Props) {
     const nova = fabricarCarta(carta.id);
     if (!nova) return;
     setSucesso(true);
-    showToast(`Carta fabricada: ${carta.nome} · +${valor} créditos no seu saldo`);
+    showToast(`Carta montada: ${carta.nome} · +${valor} créditos no seu saldo`);
   }
 
   return (
@@ -75,7 +75,7 @@ export default function CartaFabricarModal({ carta, onFechar }: Props) {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={`Fabricar ${carta.nome}`}
+        aria-label={`Montar ${carta.nome} com fragmentos`}
         className="[background:var(--t-glass-strong)] border border-(--t-glass-strong-border) shadow-(--t-glass-strong-shadow) rounded-2xl shadow-2xl w-[90vw] max-w-100 p-6 relative max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
@@ -86,7 +86,7 @@ export default function CartaFabricarModal({ carta, onFechar }: Props) {
         {sucesso ? (
           <div className="text-center py-4">
             <img src="/icons/sucesso.svg" alt="Sucesso" className="w-16 h-16 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-slate-900 mb-1">Carta fabricada!</h2>
+            <h2 className="text-xl font-bold text-slate-900 mb-1">Carta montada!</h2>
             <p className="text-sm text-slate-800 mb-1">
               <strong className="text-gold-deep">{carta.nome}</strong> entrou na sua coleção.
             </p>
@@ -125,7 +125,7 @@ export default function CartaFabricarModal({ carta, onFechar }: Props) {
               <div className="flex justify-between text-sm" style={{ borderTop: '1px solid rgba(226,232,240,1)', paddingTop: '0.5rem' }}>
                 <span className="text-slate-500">Faltam</span>
                 <span className={`font-semibold ${faltam === 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                  {faltam === 0 ? 'nada — pode fabricar agora' : `${faltam} fragmentos`}
+                  {faltam === 0 ? 'nada — pode montar agora' : `${faltam} fragmentos`}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
@@ -158,7 +158,7 @@ export default function CartaFabricarModal({ carta, onFechar }: Props) {
               disabled={!pode}
               className="w-full py-3 bg-brand text-(--t-onaccent) font-bold rounded-xl hover:bg-brand-hover transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {pode ? `Usar ${custo} fragmentos` : setLiberado ? `Faltam ${faltam} fragmentos` : 'Set bloqueado'}
+              {pode ? `Montar com ${custo} fragmentos` : setLiberado ? `Faltam ${faltam} fragmentos` : 'Set bloqueado'}
             </button>
           </>
         )}
