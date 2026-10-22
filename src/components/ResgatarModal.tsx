@@ -41,8 +41,8 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
   function confirmarResgate() {
     if (!recompensa || !podeResgatar) return;
     
-    subtrairPontos(recompensa.pontos);
     const novoSaldo = data.pontos - recompensa.pontos;
+    subtrairPontos(recompensa.pontos);
     setSaldoRestante(novoSaldo);
     
     addResgate({
