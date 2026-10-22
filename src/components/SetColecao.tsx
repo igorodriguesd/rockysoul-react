@@ -1,18 +1,20 @@
 import { useColecao } from '../context/CollectionContext';
 import { useChemistry } from '../hooks/useChemistry';
-import type { SetCarta } from '../types';
+import type { SetCarta, Carta } from '../types';
 import CardItem from './CardItem';
 import SetProgress from './SetProgress';
 
 interface Props {
   set: SetCarta;
+  cartasVisiveis?: Carta[];
+  cartasObtidas?: string[];
 }
 
-export default function SetColecao({ set }: Props) {
+export default function SetColecao({ set, cartasVisiveis, cartasObtidas }: Props) {
   const { colecao, getCartasDoSet } = useColecao();
   const { quimica } = useChemistry(set.id);
-  const cartas = getCartasDoSet(set.id);
-  const obtidas = colecao.sets[set.id]?.cartas ?? [];
+  const cartas = cartasVisiveis ?? getCartasDoSet(set.id);
+  const obtidas = cartasObtidas ?? colecao.sets[set.id]?.cartas ?? [];
 
   return (
     <section className="glass-strong rounded-2xl p-4 sm:p-5">
@@ -29,13 +31,14 @@ export default function SetColecao({ set }: Props) {
         </div>
       </header>
 
-      <SetProgress set={set} />
+      <SetProgress set={set} total={cartas.length} obtidas={cartas.filter(card => obtidas.includes(card.id)).length} />
 
       <div className="grid grid-cols-4 gap-2 sm:gap-2.5 mt-4">
         {cartas.map(carta => {
           const desbloqueada = obtidas.includes(carta.id);
           return (
             <CardItem
+              catalogoApi
               key={carta.id}
               carta={carta}
               bloqueada={!desbloqueada}

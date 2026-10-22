@@ -1,8 +1,9 @@
-import { useChemistry } from '../hooks/useChemistry';
 import type { SetCarta } from '../types';
 
 interface Props {
   set: SetCarta;
+  total?: number;
+  obtidas?: number;
 }
 
 const MARCOS = [
@@ -11,11 +12,10 @@ const MARCOS = [
   { alvo: 4, nivel: 3 },
 ];
 
-export default function SetProgress({ set }: Props) {
-  const { quimica, totalCartas = 0, percentual = 0, mensagem = '', setCompleto = false } = useChemistry(set.id);
-
-  const levelAtual = quimica?.level ?? 0;
-  const totalMaximo = 4;
+export default function SetProgress({ set, total = 0, obtidas = 0 }: Props) {
+  const totalCartas = obtidas; const totalMaximo = Math.max(total, 1);
+  const percentual = Math.min(100, obtidas / totalMaximo * 100); const levelAtual = 0;
+  const mensagem = `${obtidas}/${total} cartas nesta página`; const setCompleto = false;
 
   return (
     <div>
@@ -49,7 +49,7 @@ export default function SetProgress({ set }: Props) {
           />
         </div>
 
-        {MARCOS.map(m => (
+        {MARCOS.filter(m => m.alvo <= totalMaximo).map(m => (
           <span
             key={m.alvo}
             className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full transition-all z-10"

@@ -16,12 +16,15 @@ import { Contato } from './pages/Contato';
 import { Colecao } from './pages/Colecao';
 import { PaginaNaoEncontrada } from './pages/PaginaNaoEncontrada';
 import Chat from './components/Chat';
+import { ApiProvider } from './context/ApiContext';
+import { Perfil } from './pages/Perfil';
+import { Administracao } from './pages/Administracao';
 
 export default function App() {
   const ehModoPrint = new URLSearchParams(window.location.search).has('print');
 
   return (
-    <DataProvider>
+    <ApiProvider><DataProvider>
       <CollectionProvider>
         <ChatProvider>
           <div className="bg-app min-h-screen flex flex-col">
@@ -30,6 +33,8 @@ export default function App() {
                 <Route index element={<Home />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="colecao" element={<Colecao />} />
+                <Route path="perfil" element={<Perfil />} />
+                <Route path="administracao" element={<Administracao />} />
                 <Route path="solucao" element={<Solucao />} />
                 <Route path="recompensas" element={<Recompensas />} />
                 <Route path="recompensas/:id" element={<RecompensaDetalhe />} />
@@ -45,6 +50,6 @@ export default function App() {
           </div>
         </ChatProvider>
       </CollectionProvider>
-    </DataProvider>
+    </DataProvider></ApiProvider>
   );
 }

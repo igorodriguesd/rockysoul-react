@@ -8,9 +8,10 @@ interface Props {
   ativa: boolean;
   foil?: boolean;
   semHover?: boolean;
+  catalogoApi?: boolean;
 }
 
-export default function CardItem({ carta, bloqueada, ativa, foil = false, semHover = false }: Props) {
+export default function CardItem({ carta, bloqueada, ativa, foil = false, semHover = false, catalogoApi = false }: Props) {
   const set = SETS_CARTAS.find(s => s.id === carta.setId);
   const tier = TIER[carta.raridade];
 
@@ -43,7 +44,7 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
           className="fut-chip rounded-md px-1.5 py-1 text-[9px] leading-none font-bold tracking-wide"
           style={{ color: bloqueada ? 'rgba(255,255,255,0.5)' : tier.texto }}
         >
-          {bloqueada ? `${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%` : set ? getIniciaisSet(set.id) : ''}
+          {catalogoApi ? (bloqueada ? 'Catálogo' : 'Obtida') : bloqueada ? `${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%` : set ? getIniciaisSet(set.id) : ''}
         </span>
       </div>
 
@@ -81,14 +82,14 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
             className="rounded px-1.5 py-1 text-[9px] leading-none font-bold"
             style={{ background: 'rgba(255,255,255,0.1)', color: bloqueada ? 'rgba(255,255,255,0.4)' : tier.texto }}
           >
-            chance {CHANCE_DROP_POR_RARIDADE[carta.raridade]}%
+            {catalogoApi ? carta.raridade : `chance ${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%`}
           </span>
           {!bloqueada && (
             <span
               className="rounded px-1.5 py-1 text-[9px] leading-none font-bold"
               style={{ background: 'rgba(32,217,104,0.22)', color: foil ? '#fde68a' : '#7dffb0' }}
             >
-              +{getValorCarta(carta, foil)} créd.
+              {catalogoApi ? 'Na coleção' : `+${getValorCarta(carta, foil)} créd.`}
             </span>
           )}
         </div>

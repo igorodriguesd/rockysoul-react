@@ -1,7 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useData } from '../context/DataContext';
-import { MISSOES, USUARIOS_BASE, CURIOSIDADES, RECOMPENSAS } from '../data/constants';
+import { MISSOES as MISSOES_VISUAIS, CURIOSIDADES, RECOMPENSAS } from '../data/constants';
 import VerificarModal from '../components/VerificarModal';
+import { useApi } from '../context/ApiContext';
+import { useApiPage } from '../hooks/useApiPage';
+import type { Acao, HistoricoApi } from '../api/types';
+import type { Missao } from '../types';
+import { ApiGate, ListState, PageControls } from '../components/ApiUi';
+import { Verificacoes } from '../components/Verificacoes';
+import LoginModal from '../components/LoginModal';
 import MiniJogoSeparacao from '../components/MiniJogoSeparacao';
 
 interface RankingUser {
@@ -109,7 +116,7 @@ function timeAgo(data: string): string {
 }
 
 function getMissaoIdByName(name: string): string | null {
-  const found = MISSOES.find(m => m.nome === name);
+  const found = MISSOES_VISUAIS.find(m => m.nome === name);
   return found ? found.id : null;
 }
 
@@ -136,7 +143,12 @@ function hexToRgb(hex: string): string {
 
 export function Dashboard() {
   const { data, getNivel, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio } = useData();
-  const [missaoSelecionada, setMissaoSelecionada] = useState<(typeof MISSOES)[0] | null>(null);
+  const { user } = useApi();
+  const [page, setPage] = useState(0); const [historyPage, setHistoryPage] = useState(0);
+  const actions = useApiPage<Acao>('acao', page); const history = useApiPage<HistoricoApi>('historico', historyPage);
+  const MISSOES: Missao[] = actions.rows.map(row => ({ id: String(row.id), nome: row.nome, pontos: row.pontos, comprovacao: 'foto', icone: MISSOES_VISUAIS.find(item => item.nome === row.nome)?.icone ?? '/icons/folha.svg' }));
+  const [loginAberto, setLoginAberto] = useState(false);
+  const [missaoSelecionada, setMissaoSelecionada] = useState<Missao | null>(null);
 
   useEffect(() => {
     document.title = 'RockySoulUp - Dashboard';
@@ -144,12 +156,7 @@ export function Dashboard() {
 
   const nivel = getNivel();
 
-  const ranking: RankingUser[] = [
-    ...USUARIOS_BASE
-      .filter(u => u.nome.trim().toLowerCase() !== (data.nome || '').trim().toLowerCase())
-      .map(u => ({ nome: u.nome, pontos: u.pontos })),
-    { nome: data.nome || 'Você', pontos: data.pontos },
-  ].sort((a, b) => b.pontos - a.pontos);
+  const ranking: RankingUser[] = user ? [{ nome: user.nome, pontos: user.pontos }] : [];
 
   const recentHistory = useMemo<AtividadeItem[]>(() => {
     const itens: AtividadeItem[] = data.historico.map((h, i) => {
@@ -194,11 +201,13 @@ export function Dashboard() {
   const inicial = data.nome.trim() ? data.nome[0].toUpperCase() : 'I';
 
   function handleMissao(missao: (typeof MISSOES)[0]) {
+    if (!user) { setLoginAberto(true); return; }
     setMissaoSelecionada(missao);
   }
 
   function handleAcaoDesafio() {
-    if (desafioFeito) return;
+    if (!user) { setLoginAberto(true); return; }
+    if (desafioFeito || !desafioDoDia.id) return;
     handleMissao(desafioDoDia);
   }
 
@@ -231,7 +240,7 @@ export function Dashboard() {
             </div>
             <div className="mb-3">
               <span className="text-[#ffc928]/80 text-xs">
-                {desafioBonusDisponivel ? 'Bônus extra disponível' : 'bônus já resgatado'}
+                {desafioBonusDisponivel ? 'Bônus extra disponível' : 'Pontos após aprovação'}
               </span>
             </div>
             <button
@@ -258,7 +267,7 @@ export function Dashboard() {
             <p className="text-white/60 text-sm leading-snug flex-1 font-serif-display italic">
               "{dicaDoDia}"
             </p>
-            <span className="text-green-400/50 text-[11px] font-medium">Verificado pela IA</span>
+            <span className="text-green-400/50 text-[11px] font-medium">Dica de sustentabilidade</span>
           </div>
         </aside>
 
@@ -276,9 +285,10 @@ export function Dashboard() {
               <h2 className="text-white font-semibold">Registrar Ação</h2>
               <span className="text-white/50 text-[13px]">{feitasHoje.size}/{MISSOES.length} hoje</span>
             </div>
+            <ListState {...actions} count={actions.rows.length} />
             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 auto-rows-min flex-1 content-start">
               {MISSOES.map(missao => {
-                const cor = MISSAO_COR_MAP[missao.id] || '#4ade80';
+                const cor = MISSAO_COR_MAP[MISSOES_VISUAIS.find(item => item.nome === missao.nome)?.id ?? ''] || '#4ade80';
                 const checked = feitasHoje.has(missao.nome);
                 return (
                   <button
@@ -296,7 +306,7 @@ export function Dashboard() {
                       </div>
                     )}
                     <img
-                      src={MISSAO_ICONE_MAP[missao.id]}
+                      src={missao.icone}
                       className="w-8 h-8 group-hover:scale-110 transition-transform"
                       alt=""
                     />
@@ -310,13 +320,17 @@ export function Dashboard() {
             </div>
           </div>
 
+          <PageControls page={page} setPage={setPage} count={actions.rows.length} loading={actions.loading} />
+          {!user && <ApiGate><span /></ApiGate>}
+          {user && <Verificacoes />}
+          {user && <section className="card-secondary rounded-2xl p-4"><h2 className="font-semibold mb-3">Histórico de registros</h2><ListState {...history} count={history.rows.length} /><ul className="divide-y divide-white/5">{history.rows.map(row => <li key={row.id} className="py-3 flex justify-between gap-3"><div><p className="text-white/80 text-sm">{row.descricao}</p><p className="text-white/40 text-xs">{row.dataAcao.replace('T', ' ')}</p></div><span className="text-green-400 text-sm">{row.pontos} pts</span></li>)}</ul><PageControls page={historyPage} setPage={setHistoryPage} count={history.rows.length} loading={history.loading} /></section>}
           <MiniJogoSeparacao />
         </div>
 
         <aside className="hidden lg:flex flex-col lg:w-75 shrink-0 gap-4">
 
           <div className="card-tertiary rounded-2xl p-4">
-            <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Ranking Global</p>
+            <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Seu progresso</p>
             <div className="flex flex-col gap-1">
               {ranking.slice(0, 4).map((u, i) => {
                 const nivelUser = NIVEL_ICONE[nivelPorPontos(u.pontos)] || '/icons/semente.svg';
@@ -424,6 +438,7 @@ export function Dashboard() {
         </aside>
       </div>
 
+      <LoginModal aberto={loginAberto} onFechar={() => setLoginAberto(false)} />
       {missaoSelecionada && (
         <VerificarModal
           aberto={true}

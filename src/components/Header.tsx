@@ -3,7 +3,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useColecao } from '../context/CollectionContext';
 import { CREDITOS_POR_REAL } from '../data/constants';
-import { CARTAS, PESO_RARIDADE } from '../data/cartas';
+import { PESO_RARIDADE } from '../data/cartas';
+import { useApi } from '../context/ApiContext';
 import LoginModal from './LoginModal';
 
 const NIVEL_ICONE_HEADER: Record<string, string> = {
@@ -24,7 +25,7 @@ function progressoParaNivel(pontos: number): number {
   return (pontos / 100) * 10;
 }
 
-const links = [
+const baseLinks = [
   { to: '/', label: 'Home' },
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/colecao', label: 'Coleção' },
@@ -41,11 +42,13 @@ export default function Header() {
   const [usuarioAberto, setUsuarioAberto] = useState(false);
   const [loginAberto, setLoginAberto] = useState(false);
   const { data, getNivel, resetar } = useData();
-  const { colecao, getValorTotal } = useColecao();
+  const { colecao, getValorTotal, catalogo: CARTAS } = useColecao();
+  const { user, isAdmin } = useApi();
+  const links = [...baseLinks, ...(user ? [{ to: '/perfil', label: 'Perfil' }] : []), ...(isAdmin ? [{ to: '/administracao', label: 'Administração' }] : [])];
   const navigate = useNavigate();
   const avatarRef = useRef<HTMLDivElement>(null);
 
-  const usuarioLogado = Boolean(data.nome.trim());
+  const usuarioLogado = Boolean(user);
 
   const nivel = getNivel();
   const progresso = progressoParaNivel(data.pontos);
@@ -82,7 +85,7 @@ export default function Header() {
 
   function handleLoginFechar() {
     setLoginAberto(false);
-    setUsuarioAberto(true);
+    setUsuarioAberto(false);
   }
 
   function handleSair() {
@@ -251,7 +254,7 @@ export default function Header() {
                     onClick={() => { setUsuarioAberto(false); navigate('/recompensas'); }}
                     className="w-full mt-3 rounded-xl p-3 flex items-center justify-between transition-all hover:brightness-105 cursor-pointer"
                     style={{ background: 'linear-gradient(90deg, rgba(74,222,128,0.16), rgba(34,197,94,0.1))', border: '1px solid rgba(74,222,128,0.35)' }}
-                    aria-label="Ver conversão de créditos"
+                    aria-label="Ver recompensas"
                   >
                     <div className="text-left">
                       <p className="text-white/45 text-[10px] uppercase tracking-widest">Seus créditos</p>
@@ -260,8 +263,8 @@ export default function Header() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[#4ade80] font-bold" style={{ fontSize: 18 }}>R$ {formatarReais(valorEmReais)}</p>
-                      <p className="text-white/35 text-[9px]">{CREDITOS_POR_REAL} créditos = R$1,00 · converter</p>
+                      <p className="text-[#4ade80] font-bold" style={{ fontSize: 18 }}>{formatarReais(valorEmReais)} R$*</p>
+                      <p className="text-white/35 text-[9px]">{CREDITOS_POR_REAL} créditos = R$1,00 · referência</p>
                     </div>
                   </button>
 
@@ -298,7 +301,7 @@ export default function Header() {
             <button
               onClick={() => setMenuAberto(!menuAberto)}
               className="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg text-white hover:bg-white/20 transition-colors drop-shadow-md"
-              aria-label="Menu"
+              aria-label="Menu" aria-expanded={menuAberto}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 {menuAberto ? (

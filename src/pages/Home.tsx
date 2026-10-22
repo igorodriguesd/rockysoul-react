@@ -4,7 +4,6 @@ import { useData } from '../context/DataContext';
 import { useChat } from '../context/ChatContext';
 import LoginModal from '../components/LoginModal';
 import CollectionChip from '../components/CollectionChip';
-import { USUARIOS_BASE } from '../data/constants';
 
 const NIVEL_ICONES: Record<string, string> = {
   Semente: '/icons/semente.svg',
@@ -41,7 +40,7 @@ export function Home() {
   }
 
   const nivel = getNivel();
-  const ranking = [...(data.pontos > 0 ? [{ nome: data.nome, pontos: data.pontos }] : []), ...USUARIOS_BASE]
+  const ranking = [...(data.nome ? [{ nome: data.nome, pontos: data.pontos }] : [])]
     .sort((a, b) => b.pontos - a.pontos)
     .slice(0, 2);
 
@@ -191,7 +190,7 @@ export function Home() {
               </h1>
 
               <p className="text-white/70 leading-relaxed" style={{ fontSize: 20, maxWidth: 480 }}>
-                Gamifique sua jornada ecológica. Realize ações, ganhe cartas colecionáveis, monte sua coleção, suba no ranking
+                Registre suas ações ecológicas, acompanhe a revisão das evidências e consulte seus pontos e sua coleção
                 e deixe o planeta melhor — com IA como guia.
               </p>
 
@@ -269,13 +268,13 @@ export function Home() {
                   boxShadow: '0 4px 20px rgba(245, 196, 81, 0.15)',
                 }}
               >
-                <p className="text-white/40 text-xs uppercase tracking-widest mb-2.5">Ranking</p>
+                <p className="text-white/40 text-xs uppercase tracking-widest mb-2.5">Meu saldo</p>
                 <div className="flex items-center gap-3">
                   <span
                     className="text-sm font-bold rounded-full w-7 h-7 flex items-center justify-center text-[#0f3c22]"
                     style={{ background: '#4ade80' }}
                   >
-                    1
+                    •
                   </span>
                   <div>
                     <p className="text-white text-lg font-semibold leading-none">{ranking[0]?.nome.split(' ')[0] ?? '—'}</p>
@@ -304,8 +303,8 @@ export function Home() {
               >
                 <img src={desafioDoDia.icone} alt="" className="w-6 h-6" />
                 <div>
-                  <p className="text-white/40 text-xs uppercase tracking-widest">Desafio do dia</p>
-                  <p className="text-white/85 text-base font-medium">{desafioDoDia.nome} +{desafioDoDia.pontos} pts</p>
+                  <p className="text-white/40 text-xs uppercase tracking-widest">Ação do catálogo</p>
+                  <p className="text-white/85 text-base font-medium">{desafioDoDia.nome} · {desafioDoDia.pontos} pts após aprovação</p>
                 </div>
               </div>
             </div>
@@ -323,9 +322,9 @@ export function Home() {
 
           <div className="flex items-center gap-6 lg:gap-10 flex-wrap justify-center mt-4">
             {[
-              { value: '12k+', label: 'Usuários ativos' },
-              { value: '340t', label: 'CO₂ evitado' },
-              { value: '98%', label: 'Engajamento' },
+              { value: 'Ações', label: 'Evidências com revisão' },
+              { value: 'Pontos', label: 'Crédito após aprovação' },
+              { value: 'Coleção', label: 'Dados confirmados pela API' },
             ].map((s) => (
               <div key={s.label} className="text-center hover:opacity-90 transition-opacity px-2">
                 <p className="font-serif-display text-white mb-1" style={{ fontSize: 36 }}>

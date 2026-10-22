@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react';
-import { CARTAS, SETS_CARTAS, FRAGMENTOS_POR_DUPLICADA, CUSTO_FABRICACAO, PESO_RARIDADE, getValorCarta } from '../data/cartas';
+import { FRAGMENTOS_POR_DUPLICADA, CUSTO_FABRICACAO, PESO_RARIDADE, getValorCarta } from '../data/cartas';
 import SetColecao from '../components/SetColecao';
 import { useColecao } from '../context/CollectionContext';
+import { ApiGate, ListState, PageControls } from '../components/ApiUi';
+import { useApi } from '../context/ApiContext';
+import { useApiPage } from '../hooks/useApiPage';
+import type { CartaApi, UsuarioCartaApi, FragmentoApi } from '../api/types';
 import type { Carta } from '../types';
 
 export function Colecao() {
   useEffect(() => { document.title = 'RockySoulUp - Coleção'; }, []);
 
-  const { colecao, getProgressoTotal, getValorTotal, fabricarCarta } = useColecao();
+  const { colecao, getProgressoTotal, getValorTotal, fabricarCarta, catalogo: CARTAS, conjuntos: SETS_CARTAS } = useColecao();
+  const { user } = useApi();
+  const [page, setPage] = useState(0); const [ownedPage, setOwnedPage] = useState(0); const [fragmentPage, setFragmentPage] = useState(0);
+  const catalog = useApiPage<CartaApi>('carta', page); const owned = useApiPage<UsuarioCartaApi>('usuario-carta', ownedPage); const fragments = useApiPage<FragmentoApi>('usuario-fragmento', fragmentPage);
   const [fabricada, setFabricada] = useState<Carta | null>(null);
   const [fabricaAberta, setFabricaAberta] = useState(false);
   const [mostrarDica, setMostrarDica] = useState(false);
@@ -30,7 +37,7 @@ export function Colecao() {
         <div className="text-center sm:text-left">
           <h1 className="text-white text-3xl font-bold mb-1">Minha Coleção</h1>
           <p className="text-[#20d968] text-sm font-semibold mt-1">
-            Valor da coleção: {valorTotal} créditos{foils.length > 0 && ` · ${foils.length} brilhante${foils.length > 1 ? 's' : ''} ✨`}
+            Cartas na coleção: {obtidas} · Valor em créditos: {valorTotal}{foils.length > 0 && ` · ${foils.length} brilhante${foils.length > 1 ? 's' : ''} ✨`}
           </p>
         </div>
         <button
@@ -69,12 +76,16 @@ export function Colecao() {
         />
       </div>
 
+      {!user && <ApiGate><span /></ApiGate>}
+      <ListState {...catalog} count={catalog.rows.length} />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        {SETS_CARTAS.map(set => (
-          <SetColecao key={set.id} set={set} />
+        {[...new Set(catalog.rows.map(card => card.conjunto))].map(id => SETS_CARTAS.find(set => set.id === id) ?? { id, nome: id, tema: 'Sua coleção sustentável', descricao: '', cor: '#20d968', icone: '/icons/folha.svg' }).map(set => (
+          <SetColecao key={set.id} set={set} cartasVisiveis={catalog.rows.filter(card => card.conjunto === set.id).map(card => ({ id: String(card.id), nome: card.nome, setId: card.conjunto, raridade: card.raridade.toLowerCase() as Carta['raridade'], descricao: card.descricao ?? '', educativa: '', icone: CARTAS.find(item => item.id === String(card.id))?.icone ?? '/icons/folha.svg' }))} cartasObtidas={owned.rows.filter(row => row.usuarioId === user?.id && row.quantidade > 0).map(row => String(row.cartaId))} />
         ))}
       </div>
 
+      <PageControls page={page} setPage={setPage} count={catalog.rows.length} loading={catalog.loading} />
+      {user && <section className="glass-strong rounded-2xl p-4 sm:p-5 mt-5"><h2 className="font-semibold">Cartas atribuídas</h2><ListState {...owned} count={owned.rows.length} />{owned.rows.map(row => <p key={row.cartaId} className="text-white/60 text-sm py-2">{CARTAS.find(card => card.id === String(row.cartaId))?.nome ?? `Carta #${row.cartaId}`} · {row.quantidade} unidade(s)</p>)}<PageControls page={ownedPage} setPage={setOwnedPage} count={owned.rows.length} loading={owned.loading} /><h2 className="font-semibold mt-5">Fragmentos</h2><ListState {...fragments} count={fragments.rows.length} /><div className="flex flex-wrap gap-2 mt-3">{fragments.rows.map(row => <p key={row.raridade} className="rounded-lg px-3 py-2 text-xs bg-white/5 text-[#a66cff]">{row.raridade} · {row.quantidade}</p>)}</div><PageControls page={fragmentPage} setPage={setFragmentPage} count={fragments.rows.length} loading={fragments.loading} /></section>}
       {fabricaAberta && (
       <div
         className="fixed inset-0 z-[110] flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/70"
@@ -107,7 +118,7 @@ export function Colecao() {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-white font-semibold text-base leading-tight">Fábrica de Cartas</h3>
-              <p className="text-white/50 text-xs">Cartas repetidas viram fragmentos. Monte as que faltam.</p>
+              <p className="text-white/50 text-xs">Consulte seus fragmentos. Fabricação ainda indisponível.</p>
             </div>
           </header>
 
@@ -166,7 +177,7 @@ export function Colecao() {
                           setTimeout(() => setFabricada(null), 2200);
                         }
                       }}
-                      disabled={!tem}
+                      disabled title="Fabricação ainda indisponível"
                       className="w-full text-[11px] font-bold rounded-lg py-1.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                       style={tem
                         ? { background: 'linear-gradient(135deg, #a66cff, #8b5cf6)', color: '#fff' }

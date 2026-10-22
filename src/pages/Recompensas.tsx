@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { MISSOES, RECOMPENSAS, SELOS, CO2_POR_MISSAO, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO } from '../data/constants';
+import { MISSOES, RECOMPENSAS as RECOMPENSAS_VISUAIS, SELOS as SELOS_VISUAIS, CO2_POR_MISSAO, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO } from '../data/constants';
 import ResgatarModal from '../components/ResgatarModal';
 import { showToast } from '../components/Toast';
+import { useApi } from '../context/ApiContext';
+import { useApiPage } from '../hooks/useApiPage';
+import { ApiGate, ListState, PageControls } from '../components/ApiUi';
+import type { RecompensaApi, SeloApi } from '../api/types';
 import type { Recompensa } from '../types';
 
 function getMissaoIdByName(name: string): string | null {
@@ -18,7 +22,11 @@ function formatarReais(valor: number): string {
 export function Recompensas() {
   useEffect(() => { document.title = 'Recompensas - RockySoulUp'; }, []);
 
-  const { data, getNivel, subtrairPontos, addResgate } = useData();
+  const { data, getNivel } = useData();
+  const { user } = useApi(); const [page, setPage] = useState(0); const [badgePage, setBadgePage] = useState(0);
+  const rewards = useApiPage<RecompensaApi>('recompensa', page); const badges = useApiPage<SeloApi>('selo', badgePage);
+  const RECOMPENSAS: Recompensa[] = rewards.rows.map(row => ({ id: String(row.id), nome: row.titulo, descricao: row.descricao ?? '', pontos: row.custo, categoria: (row.categoria ?? 'Natureza') as Recompensa['categoria'], icone: RECOMPENSAS_VISUAIS.find(item => item.nome === row.titulo)?.icone ?? '/icons/trofeu.svg', badge: row.destaque === 'NOVO' ? 'Novo' : row.destaque === 'TOP 1' ? 'Top 1' : undefined }));
+  const SELOS = badges.rows.map(row => ({ id: String(row.id), nome: row.nome, descricao: row.descricao ?? '', minPontos: row.pontosMin, icone: SELOS_VISUAIS.find(item => item.nome === row.nome)?.icone ?? '/icons/semente.svg' }));
   const [recompensaSelecionada, setRecompensaSelecionada] = useState<Recompensa | null>(null);
   const [creditosConverter, setCreditosConverter] = useState('');
   const [chavePix, setChavePix] = useState('');
@@ -37,19 +45,9 @@ export function Recompensas() {
   const chaveValida = chavePix.trim().length >= 3;
   const abaixoMinimo = creditosNum > 0 && creditosNum < MIN_CREDITOS_CONVERSAO;
   const acimaSaldo = creditosNum > data.pontos;
-  const podeConverter = !conversaoFeita && creditosNum >= MIN_CREDITOS_CONVERSAO && creditosNum <= data.pontos && chaveValida;
+  const podeConverter = false;
 
-  function solicitarConversao() {
-    if (!podeConverter) return;
-    subtrairPontos(creditosNum);
-    addResgate({
-      nome: `Conversão de créditos em dinheiro (R$${formatarReais(valorReais)})`,
-      pontos: creditosNum,
-      data: new Date().toISOString(),
-    });
-    setConversaoFeita({ creditos: creditosNum, valor: valorReais });
-    showToast(`Conversão de ${creditosNum} créditos = R$${formatarReais(valorReais)}`);
-  }
+  function solicitarConversao() { showToast('Conversão em Pix ainda indisponível. Nenhum saldo foi alterado.'); }
 
   function novaConversao() {
     setConversaoFeita(null);
@@ -62,16 +60,18 @@ export function Recompensas() {
       <div className="max-w-275 mx-auto px-6 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2 drop-shadow">Recompensas</h1>
-          <p className="text-white/70">Acumule créditos, resgate recompensas ecológicas ou converta em dinheiro</p>
+          <p className="text-white/70">Acompanhe seus créditos e conheça as recompensas ecológicas</p>
           <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-full border border-[#4ade80]/25" style={{ background: 'rgba(74,222,128,0.08)' }}>
             <img src="/icons/trofeu.svg" alt="" className="w-4 h-4" />
             <span className="text-sm font-semibold text-white/85">{data.pontos} créditos disponíveis</span>
           </div>
         </div>
 
+        {!user && <ApiGate><span /></ApiGate>}
+        <ListState {...rewards} count={rewards.rows.length} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-12">
           {RECOMPENSAS.map(r => {
-            const podeResgatar = data.pontos >= r.pontos;
+            const podeResgatar = false;
             const jaResgatou = data.resgates.some(rg => rg.nome === r.nome);
             return (
               <div
@@ -105,7 +105,7 @@ export function Recompensas() {
                         : 'bg-white/8 text-white/35 cursor-not-allowed'
                       }`}
                   >
-                    {jaResgatou ? 'Resgatado' : podeResgatar ? 'Resgatar' : 'Créditos insuficientes'}
+                    {jaResgatou ? 'Resgatado' : podeResgatar ? 'Resgatar' : 'Resgate em breve'}
                   </button>
                 </div>
               </div>
@@ -113,13 +113,15 @@ export function Recompensas() {
           })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-12">
+        <PageControls page={page} setPage={setPage} count={rewards.rows.length} loading={rewards.loading} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-12 mt-8">
           <div className="card-secondary rounded-2xl p-5">
             <div className="flex items-center justify-between mb-4">
               <p className="text-white/55 text-[11px] uppercase tracking-widest">Trilha de Evolução</p>
               <span className="text-[#4ade80] text-sm font-bold">{nivel}</span>
             </div>
             <div className="flex flex-col gap-3">
+              <ListState {...badges} count={badges.rows.length} />
               {SELOS.map((l, i, arr) => {
                 const unlocked = data.pontos >= l.minPontos;
                 const active = nivel === l.nome;
@@ -151,6 +153,7 @@ export function Recompensas() {
           </div>
 
           <div className="card-secondary rounded-2xl p-5">
+            <PageControls page={badgePage} setPage={setBadgePage} count={badges.rows.length} loading={badges.loading} />
             <p className="text-white/55 text-[11px] uppercase tracking-widest mb-4">Impacto Ambiental</p>
             <div className="grid grid-cols-3 gap-2.5 mb-4">
               {[
@@ -168,7 +171,7 @@ export function Recompensas() {
             <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
               <p className="text-sm text-white/70 font-medium">Ações registradas</p>
               <p className="text-white/40 text-xs mt-0.5 leading-relaxed">
-                Cada ação registrada conta como CO₂ evitado e aproxima você dos selos da trilha.
+                Estimativas educativas; consulte as ações registradas na sua conta.
               </p>
               <p className="text-[#4ade80] font-bold mt-2 font-serif-display" style={{ fontSize: 22 }}>
                 {data.historico.length} <span className="text-[11px] font-medium opacity-60">ações</span>
@@ -189,7 +192,7 @@ export function Recompensas() {
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-white">Conversor de Créditos</h2>
-                  <p className="text-xs text-white/45">Converta seus créditos da plataforma em dinheiro</p>
+                  <p className="text-xs text-white/45">Conversão em Pix ainda indisponível</p>
                 </div>
               </div>
               <div className="rounded-2xl p-4 mb-3" style={{ background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.15)' }}>
@@ -205,11 +208,11 @@ export function Recompensas() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-[#4ade80] mt-0.5">•</span>
-                  O valor é enviado para a sua chave Pix informada.
+                  O envio por Pix estará disponível após integração do resgate.
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-[#4ade80] mt-0.5">•</span>
-                  Créditos convertidos são descontados do seu saldo na hora.
+                  Nenhum crédito é descontado enquanto esta função estiver indisponível.
                 </li>
               </ul>
             </div>
@@ -240,7 +243,7 @@ export function Recompensas() {
                 <div>
                   <label className="block text-sm font-medium text-white/80 mb-1.5">Quantos créditos converter</label>
                   <input
-                    type="number"
+                    type="number" disabled
                     min={MIN_CREDITOS_CONVERSAO}
                     value={creditosConverter}
                     onChange={e => setCreditosConverter(e.target.value)}
@@ -264,7 +267,7 @@ export function Recompensas() {
                 <div>
                   <label className="block text-sm font-medium text-white/80 mb-1.5">Chave Pix para receber</label>
                   <input
-                    type="text"
+                    type="text" disabled
                     value={chavePix}
                     onChange={e => setChavePix(e.target.value)}
                     placeholder="E-mail, CPF, telefone ou chave aleatória"

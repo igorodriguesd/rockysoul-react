@@ -1,286 +1,149 @@
 # RockySoulUp — Frontend React
 
-<p align="center">
-  <img src="public/imagens/logo.png" alt="Logo RockySoulUp" width="160">
-</p>
+Interface para registrar ações sustentáveis com evidências, acompanhar sua
+revisão e consultar pontos, histórico, cartas, fragmentos, selos e recompensas.
+O frontend consome a API Java RockySoulup em **http://localhost:8080**.
 
-Plataforma **gamificada** de sustentabilidade que transforma ações ecológicas do dia a dia em **pontos, níveis, selos, cartinhas colecionáveis, mini-jogos e recompensas reais** — com integração a um **avatar inteligente** (o assistente **RockySoul**) que guia a jornada do usuário dentro do site.
+**React 19 · Vite 8 · TypeScript · Tailwind CSS 4 · React Router 7**
 
-Desenvolvida como **SPA (Single Page Application)** com **React + Vite + TypeScript + TailwindCSS**.
+## Executar localmente
 
----
+Com Node.js e npm instalados, execute na raiz do projeto:
 
-## Imagens e Ícones do Projeto
-
-As principais telas da plataforma (Home, Dashboard, Coleção e Recompensas):
-
-<table align="center">
-  <tr>
-    <td align="center">
-      <img src="public/imagens/print-home.png" alt="Home" width="340"><br>
-      <sub><strong>Home</strong> — vitrine e o assistente RockySoul</sub>
-    </td>
-    <td align="center">
-      <img src="public/imagens/print-dashboard.png" alt="Dashboard" width="340"><br>
-      <sub><strong>Dashboard</strong> — pontos, nível, selos e desafio do dia</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center">
-      <img src="public/imagens/print-colecao.png" alt="Coleção" width="340"><br>
-      <sub><strong>Coleção</strong> — cartinhas, sets e Fábrica de Cartas</sub>
-    </td>
-    <td align="center">
-      <img src="public/imagens/print-recompensas.png" alt="Recompensas" width="340"><br>
-      <sub><strong>Recompensas</strong> — troca de pontos por prêmios</sub>
-    </td>
-  </tr>
-</table>
-
----
-
-## Gamificação com Avatar Integrado
-
-O coração do projeto é a combinação de **gamificação** com um **avatar/assistente virtual** que media toda a experiência dentro do site:
-
-- **Avatar RockySoul** — assistente virtual integrado ao site. Ele conversa em português, entende comandos de linguagem natural ("reciclei", "usei bicicleta", "economizei água") e executa ações reais na aplicação: registra ações, mostra saldo/nível, sugere missões, ensina curiosidades e até resgata recompensas para o usuário.
-- **Pontos** — cada ação sustentável gera pontos que alimentam o avatar e o perfil do usuário.
-- **Níveis de evolução** — Semente → Broto → Árvore → Expert, com progresso visual em anel de progresso e barra de XP.
-- **Selos desbloqueáveis** — conquistas automáticas ao acumular pontos.
-- **Coleção de Cartinhas** — ao concluir missões, uma **roleta** sorteia **cartinhas colecionáveis** de 5 sets temáticos e 5 raridades (Comum a Lendária), com chance de versão **brilhante** ✨. Cartas repetidas viram **fragmentos** para a **Fábrica de Cartas**, e completar um set (4/4) ativa a **química** com bônus de +150 créditos.
-- **Mini-jogo "Separe o Lixo"** — gamificação extra por meio de um jogo de separação de recicláveis (3 fases, vidas, combos e recordes), em modo treino: a pontuação não vira recompensa, serve para praticar e se divertir.
-- **Desafio do Dia** — missão diária com bônus por streak (dias seguidos).
-- **Ranking global** — posição do usuário entre os participantes da comunidade.
-- **Recompensas reais** — troca de pontos por cupons, descontos e brindes na página Recompensas.
-- **Conversor de créditos em dinheiro** — converte créditos em reais que são enviados pela sua **chave Pix** (100 créditos = R$ 1,00, mínimo de 500 créditos).
-- **Impacto ambiental** — métricas de CO₂ evitado e árvores equivalentes.
-
-O assistente **RockySoul** funciona como um "avatar" que representa o site: ele interage com o usuário, conhece o progresso dele (via estado global) e o acompanha em cada página — reforçando o laço entre gamificação e a interface.
-
----
-
-## Tecnologias Utilizadas
-
-- **React 19** — Interface e componentização
-- **Vite** — Build, dev server e desempenho
-- **TypeScript** — Tipagem estática obrigatória
-- **TailwindCSS 4** — Estilização utilitária de toda a interface
-- **React Router DOM 7** — Navegação SPA com rotas estáticas e dinâmicas
-- **Oxlint** — Linter
-
-> Sem frameworks de UI prontos (Bootstrap, Material UI, Chakra, jQuery etc.) e sem bibliotecas externas de requisição (como Axios). Toda a interface, gamificação e o chat do avatar são **100% código próprio** em React + Vite + TypeScript.
-
----
-
-## Páginas e Rotas
-
-| Rota | Página | Tipo |
-| --- | --- | --- |
-| `/` | Home | Estática |
-| `/dashboard` | Dashboard (gamificação + avatar) | Estática |
-| `/colecao` | Coleção de Cartinhas + Fábrica de Cartas | Estática |
-| `/solucao` | Solução do Projeto | Estática |
-| `/recompensas` | Recompensas | Estática |
-| `/recompensas/:id` | Detalhe da Recompensa | **Dinâmica (useParams)** |
-| `/sobre` | Sobre | Estática |
-| `/faq` | FAQ | Estática |
-| `/integrantes` | Equipe | Estática |
-| `/contato` | Contato | Estática |
-| `/*` | Página 404 (endereços desconhecidos) | Estática |
-
----
-
-## Estrutura de Pastas
-
-```
-rockysoul-react/
-├── public/
-│   ├── icons/                  # Icones SVG da aplicacao
-│   └── imagens/                # Logo, ilha, prints das telas e fotos dos integrantes
-├── src/
-│   ├── components/             # Componentes reutilizaveis
-│   │   ├── Header.tsx          # Navegacao principal + menu do usuario
-│   │   ├── Footer.tsx          # Rodape do site
-│   │   ├── Chat.tsx            # Avatar RockySoul (assistente virtual)
-│   │   ├── Toast.tsx           # Sistema de notificacoes
-│   │   ├── LoginModal.tsx      # Cadastro/entrada com validacao propria
-│   │   ├── VerificarModal.tsx  # Verificacao de acao (foto/GPS/timer/declaracao)
-│   │   ├── ResgatarModal.tsx   # Confirmacao de resgate de recompensa
-│   │   ├── MiniJogoSeparacao.tsx # Mini-jogo de separacao de lixo
-│   │   ├── CardItem.tsx        # Cartinha colecionavel (raridade, foil, hover)
-│   │   ├── NovaCarta.tsx       # Cartinha revelada depois da roleta
-│   │   ├── RoletaDrop.tsx      # Roleta de sorteio da cartinha
-│   │   ├── SetColecao.tsx      # Set de cartinhas com quimica
-│   │   ├── SetProgress.tsx     # Barra de progresso do set
-│   │   └── CollectionChip.tsx  # Chip da colecao (header/dashboard)
-│   ├── pages/                  # Paginas da aplicacao (componentes React)
-│   │   ├── Home.tsx
-│   │   ├── Dashboard.tsx
-│   │   ├── Colecao.tsx         # Colecao de cartinhas + Fabrica de Cartas
-│   │   ├── Solucao.tsx
-│   │   ├── Recompensas.tsx
-│   │   ├── RecompensaDetalhe.tsx  # Rota dinamica com useParams
-│   │   ├── Sobre.tsx
-│   │   ├── Faq.tsx
-│   │   ├── Integrantes.tsx
-│   │   └── Contato.tsx
-│   ├── context/        # Estado global (DataContext, CollectionContext, ChatContext)
-│   ├── hooks/          # Hooks personalizados (useLocalStorage)
-│   ├── data/           # Dados e constantes (missoes, selos, niveis, recompensas, cartas, integrantes)
-│   ├── types/          # Interfaces TypeScript
-│   ├── layouts/        # LayoutPrincipal (Header + Outlet + Footer)
-│   ├── utils/          # Formatacao e validacao de formulario
-│   ├── App.tsx         # Rotas e layout principal
-│   ├── main.tsx        # Ponto de entrada
-│   └── index.css       # Tailwind + tema (cores, fontes) + animacoes
-```
-
----
-
-## Sistema de Gamificação
-
-### Níveis e Selos
-
-| Nível | Faixa de Pontos | Selo correspondente |
-| --- | --- | --- |
-| Semente | 0 – 99 | Semente (100 pts) |
-| Broto | 100 – 299 | Broto (300 pts) |
-| Árvore | 300 – 999 | Árvore (600 pts) |
-| Expert | 1000+ | Expert (1000 pts) |
-
-### Missoes (ações sustentáveis)
-
-São **20 missões** — Reciclagem, Transporte Sustentável, Economia de Energia, Economia de Água, Bicicleta, Plantio, Banho Rápido (timer), Compostagem, Consumo Consciente, Garrafa Reutilizável, Compartilhar Dicas, Sacola Reutilizável, Captação de Água da Chuva, Mobilidade Elétrica, Usar Ciclovia, Energia Solar, Energia Eólica, Iluminação Eficiente, Horta Doméstica e Apoiar Agrofloresta — cada uma com pontuação própria e formato de **comprovação** (foto, foto+GPS, timer ou declaração).
-
-### Coleção de Cartinhas
-
-Ao concluir uma missão, o Dashboard aciona a **roleta** e pode premiar você com uma cartinha. São **20 cartinhas** divididas em **5 sets temáticos** — Recursos, Guardiões da Água, Cidade Verde, Energia Limpa e Cultivo — com **Química** de set: complete 4 cartinhas de um set para ganhar **+150 créditos**. Cada raridade tem sua própria chance de ser sorteada e rende fragmentos diferentes quando repetida:
-
-| Raridade | Chance de encontrar | Fragmentos por repetida |
-| --- | --- | --- |
-| Comum | 75% | +3 |
-| Incomum | 55% | +5 |
-| Rara | 35% | +10 |
-| Épica | 20% | +20 |
-| Lendária | 10% | +40 |
-
-Há ainda **8% de chance** de a cartinha vir na versão **brilhante** (✨). Na **Fábrica de Cartas** (dentro do popup de "Cartas repetidas" na página Coleção), fragmentos são usados para montar cartinhas que faltam — custo de 10/16/32/70/140 fragmentos por raridade (Comum/Incomum/Rara/Épica/Lendária).
-
-### Recompensas
-
-**8 recompensas** — descontos de energia/água, passes de transporte, mudas, adoção de árvores, cupons e kits sustentáveis — resgatáveis conforme o saldo de créditos. A página também traz o **Conversor de Créditos** (100 créditos = R$ 1,00, mínimo de 500, pagamento via **chave Pix**) e os painéis de **Trilha de Evolução** e **Impacto Ambiental** (CO₂ evitado e árvores equivalentes).
-
-### Ranking global
-
-Além do seu saldo, o app simula a comunidade com o **Ranking global** (Maria Oliveira, Ana Silva, Carlos Souza e Pedro Santos) para posicionar o usuário entre os participantes.
-
----
-
-## Avatar RockySoul (Assistente Virtual)
-
-O **Chat.tsx** implementa o avatar inteligente com:
-
-- **Detecção de intenção** via palavras-chave em português (saudação, pontos, nível, dica, recompensa, registro de ação, curiosidade, despedida etc.).
-- **Fluxos guiados** (registrar ação, converter créditos e resgatar recompensa) com entrada numérica.
-- **Integração com o estado global** (`DataContext` e `CollectionContext`): o avatar acessa pontos, nível, histórico e coleção de cartinhas, e realiza ações reais (adicionar/subtrair pontos, registrar resgates).
-- **Sugestões rápidas** e **curiosidades sustentáveis**.
-- Teaser inicial que convida o usuário a conversar com o assistente (`ChatContext`).
-
----
-
-## Como Usar
-
-### 1. Instalação e execução
-
-```bash
-# Clone o repositório
-git clone https://github.com/igorodriguesd/rockysoul-react.git
-cd rockysoul-react
-
-# Instale as dependencias
+```shell
 npm install
-
-# Inicie o servidor de desenvolvimento
 npm run dev
-
-# Gere a build de producao
-npm run build
-
-# Rode o linter
-npm run lint
 ```
 
-Acesse `http://localhost:5173` no navegador (porta padrão do Vite).
+Abra **http://127.0.0.1:5173** ou **http://localhost:5173**. A porta 5173 é fixa;
+uma execução existente precisa ser encerrada antes de iniciar outra nessa porta.
+A API Java deve ser iniciada separadamente, com banco e migrações configurados.
 
-### 2. Uso da plataforma
+O endereço da API já tem default local. Para substituí-lo, use um arquivo `.env`
+local, baseado em `.env.example`, e reinicie o Vite:
 
-1. Na **Home**, clique em **"Começar Agora"** e informe seu nome/email.
-2. No **Dashboard**, registre uma ação sustentável (reciclar, economizar energia/água, usar transporte etc.), envie a foto como comprovação e acumule **pontos**.
-3. Cada missão concluída aciona a **roleta**: conquiste **cartinhas colecionáveis** e monte sua coleção na página **Coleção** — completando sets você ativa a **química** (+150 créditos).
-4. Complete o **Desafio do Dia** para ganhar bônus e mantenha o **streak** (dias seguidos).
-5. Treine no **Mini-jogo "Separe o Lixo"** para praticar a separação de recicláveis e bater seus recordes (modo treino, sem valer recompensa).
-6. Evolua nos **níveis** (Semente → Broto → Árvore → Expert), desbloqueie **selos** e veja sua posição no **ranking**.
-7. Troque seus créditos por **recompensas reais** ou **converta em dinheiro via Pix** na página Recompensas.
-8. Converse com o **avatar RockySoul** (canto inferior direito) — ele registra ações, mostra saldo e resgata recompensas por voz/texto.
+```properties
+VITE_API_BASE_URL=http://localhost:8080
+```
 
----
+Variáveis VITE_ são públicas e entram no bundle do navegador. Nunca inclua nelas
+senha Oracle, JWT_SECRET, chave Gemini ou qualquer outro segredo.
+O CORS do backend deve permitir a origem exata do frontend e os cabeçalhos
+Authorization, Content-Type e Idempotency-Key, expondo Retry-After.
 
-## Responsividade
+## Criar conta e entrar
 
-- **Mobile** — até 480px
-- **Tablet** — 768px
-- **Desktop** — 992px+
+1. Clique em **Criar conta**, no cabeçalho ou no aviso de acesso da página.
+2. Informe nome, email, senha e confirmação da senha.
+3. Clique em **Cadastrar**. A criação usa POST `/auth/cadastro`, sem exigir token.
+4. Após a confirmação, a tela muda para **Entrar** com o email preenchido.
+5. Digite a senha e clique em **Entrar na conta**. O login usa POST `/auth/login`
+   e o frontend envia o token automaticamente nas chamadas protegidas.
 
-No TailwindCSS, os tokens de breakpoint (`sm`=480px, `md`=768px, `lg`=992px, `xl`=1280px) foram alinhados a esse spec em `src/index.css`, garantindo que o layout não quebre em nenhuma das larguras avaliadas.
+Senha: 12–72 caracteres e até 72 bytes UTF-8. Nome: até 100 caracteres; email:
+até 150. A confirmação é validada localmente e não é enviada ao backend. Perfis,
+pontos e saldo não são aceitos pelo formulário: a API define a nova conta USER
+com saldo inicial zero. Cadastro não autentica automaticamente.
 
----
+Os campos de senha são limpos após cada tentativa; nenhuma senha é guardada em
+localStorage/sessionStorage. O token fica somente em memória: atualizar a página
+ou expirar a sessão exige entrar novamente. O acesso avançado por token continua
+opcional para diagnóstico e não é necessário no fluxo normal.
 
-## Dados Persistidos
+Login externo OAuth/OIDC fica para uma próxima etapa. Hoje o cadastro e login
+utilizam a própria API Java, sem substituir suas regras de segurança.
 
-Todas as informações do usuário são salvas no **localStorage**, via hook `useLocalStorage`:
+## Funcionalidades integradas
 
-- Pontos totais e diários
-- Missões completadas
-- Histórico de ações
-- Selos desbloqueados
-- Resgates e conversões
-- Dados do usuário (nome/email)
-- Streak (dias seguidos) e desafio do dia
-- **Coleção de cartinhas** (cartas obtidas, brilhantes, fragmentos e sets)
-- Recordes do mini-jogo
+| Tela | O que permite fazer |
+|---|---|
+| Home | Acesso à jornada, perfil/saldo da conta e navegação |
+| Dashboard | Consultar ações, enviar JPEG/PNG para análise, acompanhar verificações e histórico |
+| Evidência privada | Visualizar a imagem com autenticação e excluí-la quando permitido |
+| Coleção | Consultar catálogo, cartas atribuídas e fragmentos com paginação |
+| Recompensas | Consultar catálogo, estoque, detalhes e selos |
+| Perfil | Consultar/editar nome e email com controle de versão |
+| Administração | Administrar ações, cartas, selos, recompensas, histórico e associações |
+| Usuários — ADMIN | Consultar, editar perfil, ajustar saldo e desativar contas |
+| Revisão — ADMIN | Aprovar/rejeitar com justificativa ou reprocessar com confirmação de cobrança |
+| Consumo — ADMIN | Consultar reservas/limites e suspender/retomar novas análises |
 
----
+O backend determina permissões e propriedade dos registros. A área ADMIN só
+é habilitada após uma operação administrativa confirmar acesso no servidor.
+Alterar o perfil revoga a sessão atual e exige conectar um novo token.
 
-## Repositório
+## Ações, análise e pontos
 
-- **GitHub:** https://github.com/igorodriguesd/rockysoul-react
+Escolha uma ação do catálogo e envie uma imagem JPEG/PNG de até 512 KiB e
+32–2048 pixels por lado, junto de uma descrição de até 1000 caracteres.
+O frontend envia somente ação, descrição e imagem; não escolhe pontos, modelo,
+aprovação ou identidade do titular.
 
----
+As verificações passam por estados como EM_ANALISE, PENDENTE_REVISAO, APROVADA
+e REJEITADA. **202 e parecer favorável da IA não concedem pontos.** A revisão
+administrativa é necessária e o saldo exibido sempre vem do backend.
 
-## Integrantes
+O envio tem chave de idempotência por operação. Se a rede falhar, o modal conserva
+o mesmo corpo e a mesma chave para uma repetição explícita, enquanto permanecer
+aberto. Não há retry automático nem alteração otimista de saldo. Consulte as
+verificações antes de iniciar outro envio se fechar a aba ou o modal.
 
-| Foto | Nome | RM | Turma | GitHub | LinkedIn |
-| --- | --- | --- | --- | --- | --- |
-| <img src="public/imagens/igor.jpg" alt="Igor" width="48" style="border-radius:50%"> | Igor Rodrigues de Santana | RM570651 | 1TDSPK | [igorodriguesd](https://github.com/igorodriguesd) | [LinkedIn](https://linkedin.com/in/igor-rodrigues-135aa72b2) |
-| <img src="public/imagens/diego.jpg" alt="Diego" width="48" style="border-radius:50%"> | Diego Gomes Goncalves de Lima | RM570335 | 1TDSPK | [dgxls](https://github.com/dgxls) | [LinkedIn](https://www.linkedin.com/in/diego-gomes-65339b408/) |
-| <img src="public/imagens/miguel.jpg" alt="Miguel" width="48" style="border-radius:50%"> | Miguel Silva | RM572019 | 1TDSPK | [miguelsilva71](https://github.com/miguelsilva71) | [LinkedIn](https://www.linkedin.com/in/miguel-silva-0a20073a9/) |
-| <img src="public/imagens/rafael.jpg" alt="Rafael" width="48" style="border-radius:50%"> | Rafael Santos Mendonca Costa | RM572368 | 1TDSPK | [RafaelSantos56](https://github.com/RafaelSantos56) | [LinkedIn](https://www.linkedin.com/in/rafael-santos-b09bba237/) |
+A integração de IA precisa estar habilitada e configurada no backend. O frontend
+não ativa AI_ENABLED e não contém credenciais dos provedores.
 
-**Turma 1TDSPK — FIAP 2026**
+## Recursos do protótipo que dependem de novas operações de backend
 
----
+Resgates, Pix, bônus diário, ranking global, sorteio de cartas, variantes
+brilhantes, fabricação, bônus de química e concessão automática de selos ainda
+não possuem os fluxos necessários na API. Eles não são apresentados como
+operações reais de crédito/débito nas telas integradas. O assistente anterior
+que simulava premiações foi substituído por ajuda de navegação.
 
-## Contato
+Os catálogos e componentes visuais do projeto continuam disponíveis, mas valores
+financeiros e propriedade de cartas não são fabricados no navegador. Níveis
+visuais derivados de pontos não concedem prêmios no servidor.
 
-Para entrar em contato com a equipe RockySoulUp:
+## Rotas da interface
 
-- **Formulário do site:** acesse a rota `/contato` da aplicação e envie uma mensagem.
-- **GitHub do repositório:** abra uma issue ou PR em https://github.com/igorodriguesd/rockysoul-react
-- **LinkedIn dos integrantes:** utilize os links da tabela acima para falar diretamente com cada membro da equipe.
+| Rota | Página |
+|---|---|
+| `/` | Home |
+| `/dashboard` | Ações, verificações e histórico |
+| `/colecao` | Cartas e fragmentos |
+| `/recompensas` | Recompensas e selos |
+| `/recompensas/:id` | Detalhe de recompensa |
+| `/perfil` | Perfil autenticado |
+| `/administracao` | Administração autorizada |
+| `/solucao`, `/sobre`, `/faq`, `/integrantes`, `/contato` | Páginas institucionais |
 
-| Integrante | LinkedIn |
-| --- | --- |
-| Igor Rodrigues de Santana | [linkedin.com/in/igor-rodrigues-135aa72b2](https://linkedin.com/in/igor-rodrigues-135aa72b2) |
-| Diego Gomes Goncalves de Lima | [LinkedIn](https://www.linkedin.com/in/diego-gomes-65339b408/) |
-| Miguel Silva | [LinkedIn](https://www.linkedin.com/in/miguel-silva-0a20073a9/) |
-| Rafael Santos Mendonca Costa | [LinkedIn](https://www.linkedin.com/in/rafael-santos-b09bba237/) |
+## Validação e comandos
+
+```shell
+npm run build
+npm run lint
+npm run test:api
+```
+
+Os testes de API usam o runner nativo do **Node 24**, fetch simulado e nenhuma
+chave real. A integração foi compilada e testada também no Chrome, com todas
+as respostas da API interceptadas: nenhuma chamada paga ou escrita Oracle foi
+necessária para validar os fluxos do frontend.
+
+O lint conclui sem erros; há avisos de Fast Refresh nos arquivos de contexto
+e recomendações sobre sincronização de estado em efeitos. A homologação com
+a API/Oracle reais depende do backend iniciado e de contas de teste configuradas.
+
+## Organização
+
+```text
+src/api/          Contratos, transporte, serviços, formulários e evidências
+src/context/      Sessão em memória e adaptadores de dados
+src/hooks/        Carregamento paginado com isolamento por sessão
+src/components/   Controles, modal de envio e revisão privada
+src/pages/        Telas de usuário e administração
+tests/            Testes do cliente HTTP e dos contratos de integração
+docs/             Guia de operação e decisões
+```
+
+Leia [docs/INTEGRACAO_API.md](docs/INTEGRACAO_API.md) para configuração, erros,
+idempotência, escopo da integração e próximos passos do login externo.
