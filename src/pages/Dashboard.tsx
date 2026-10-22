@@ -547,7 +547,7 @@ export function Dashboard() {
 
           <div className="flex flex-col gap-4">
             {/* ===== DESAFIO DO DIA (topo da coluna) ===== */}
-            <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-xl p-3 flex flex-col lg:flex-row lg:items-center gap-2.5 min-w-0">
+            <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-xl p-3 flex flex-row items-center gap-2.5 min-w-0 overflow-hidden">
               <div className="flex items-center gap-2.5 min-w-0 flex-1">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
                   <BoltIcon />
