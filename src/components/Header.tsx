@@ -147,6 +147,13 @@ export default function Header() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!menuAberto) return;
+    const overflowAnterior = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = overflowAnterior; };
+  }, [menuAberto]);
+
   function handleEntrar() {
     setLoginAberto(true);
   }
@@ -364,10 +371,10 @@ className={({ isActive }) =>
 
       {menuAberto && (
         <div
-          className="fixed inset-0 z-[200] flex flex-col bg-(--t-header) backdrop-blur-xl border-b border-(--t-header-border) shadow-xl"
+          className="fixed inset-0 z-[200] flex flex-col overscroll-contain bg-(--t-header) backdrop-blur-xl border-b border-(--t-header-border) shadow-xl"
           onClick={() => setMenuAberto(false)}
         >
-          <div className="px-6 py-5 flex items-center justify-between border-b border-(--t-header-border)">
+          <div className="shrink-0 px-6 py-5 flex items-center justify-between border-b border-(--t-header-border)">
             <span className="font-bold text-slate-900 text-lg">Menu</span>
             <button
               onClick={() => setMenuAberto(false)}
@@ -380,45 +387,7 @@ className={({ isActive }) =>
               </svg>
             </button>
           </div>
-          <nav className="flex-1 px-6 py-4 overflow-y-auto">
-            <ul className="space-y-1">
-              {links.map(link => (
-                <li key={link.to}>
-                  <NavLink
-                    to={link.to}
-                    end={link.to === '/'}
-                    onClick={() => setMenuAberto(false)}
-                    className={({ isActive }) =>
-                      `block px-4 py-3 rounded-xl text-sm font-medium transition-all border ${isActive
-                        ? 'text-brand bg-card-tertiary border-brand/35'
-                        : 'border-transparent text-slate-600 hover:bg-surface-hover hover:text-slate-900'
-                      }`
-                    }
-                  >
-                    {link.label}
-                  </NavLink>
-                </li>
-              ))}
-              {linksSecundarios.map(link => (
-                <li key={link.to}>
-                  <NavLink
-                    to={link.to}
-                    end={link.to === '/'}
-                    onClick={() => setMenuAberto(false)}
-                    className={({ isActive }) =>
-                      `block px-4 py-3 rounded-xl text-sm font-medium transition-all border ${isActive
-                        ? 'text-brand bg-card-tertiary border-brand/35'
-                        : 'border-transparent text-slate-600 hover:bg-surface-hover hover:text-slate-900'
-                      }`
-                    }
-                  >
-                    {link.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div className="px-6 py-5 border-t border-(--t-header-border)">
+          <div className="shrink-0 px-6 py-4 border-b border-(--t-header-border)">
             {usuarioLogado ? (
               <div className="space-y-2">
                 <div className="flex items-center gap-3 rounded-xl p-3" style={{ background: 'var(--t-mist)' }}>
@@ -468,6 +437,44 @@ className={({ isActive }) =>
               </button>
             )}
           </div>
+          <nav className="flex-1 min-h-0 px-6 py-4 overflow-y-auto overscroll-contain touch-pan-y">
+            <ul className="space-y-1">
+              {links.map(link => (
+                <li key={link.to}>
+                  <NavLink
+                    to={link.to}
+                    end={link.to === '/'}
+                    onClick={() => setMenuAberto(false)}
+                    className={({ isActive }) =>
+                      `block px-4 py-3 rounded-xl text-sm font-medium transition-all border ${isActive
+                        ? 'text-brand bg-card-tertiary border-brand/35'
+                        : 'border-transparent text-slate-600 hover:bg-surface-hover hover:text-slate-900'
+                      }`
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                </li>
+              ))}
+              {linksSecundarios.map(link => (
+                <li key={link.to}>
+                  <NavLink
+                    to={link.to}
+                    end={link.to === '/'}
+                    onClick={() => setMenuAberto(false)}
+                    className={({ isActive }) =>
+                      `block px-4 py-3 rounded-xl text-sm font-medium transition-all border ${isActive
+                        ? 'text-brand bg-card-tertiary border-brand/35'
+                        : 'border-transparent text-slate-600 hover:bg-surface-hover hover:text-slate-900'
+                      }`
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
       )}
       <LoginModal aberto={loginAberto} onFechar={handleLoginFechar} />

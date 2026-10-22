@@ -143,9 +143,9 @@ export function Home() {
         </div>
 
         <div className="relative z-10 mt-7 shrink-0 flex flex-col items-center w-full pb-2">
-          <div className="flex items-center gap-3 mb-3 opacity-80">
+          <div className="flex items-center justify-center gap-3 mb-3 opacity-80 px-6">
             <LeafSmall />
-            <p className="text-slate-600 italic tracking-[0.15em] text-base font-serif-display">
+            <p className="text-slate-600 italic tracking-[0.15em] text-base font-serif-display text-center">
               Sustentabilidade não é sacrifício. É evolução.
             </p>
             <LeafSmall flip />
