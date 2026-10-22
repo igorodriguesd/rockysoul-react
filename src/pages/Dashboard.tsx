@@ -547,8 +547,8 @@ export function Dashboard() {
 
           <div className="flex flex-col gap-4">
             {/* ===== DESAFIO DO DIA (topo da coluna) ===== */}
-            <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-xl p-3 flex flex-row items-center gap-2.5 min-w-0 overflow-hidden">
-              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '10px', minWidth: 0, overflow: 'hidden' }} className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-xl p-3">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: '1 1 auto', minWidth: '160px' }} className="min-w-0">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
                   <BoltIcon />
                 </div>
@@ -559,34 +559,37 @@ export function Dashboard() {
                     <p className="text-slate-900 font-semibold text-[13px] truncate">{desafioDoDia.nome}</p>
                   </div>
                 </div>
-                <span className={`text-[11px] font-bold shrink-0 ${desafioBonusDisponivel ? 'text-[#ffc928]' : 'text-slate-400'}`}>
-                  +{desafioDoDia.pontos} créditos
-                </span>
               </div>
 
-              {patrocinadorDesafio && (
-                <div className="flex items-center gap-1.5 rounded-lg px-2 py-1 w-fit sm:ml-auto" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
-                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: patrocinadorDesafio.cor }} />
-                  <span className="text-[10px] uppercase tracking-wider text-slate-600">
-                    <strong className="text-slate-800">{patrocinadorDesafio.nome}</strong>
-                  </span>
-                </div>
-              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }} className="shrink-0">
+                <span className={`text-[11px] font-bold ${desafioBonusDisponivel ? 'text-[#ffc928]' : 'text-slate-400'}`}>
+                  +{desafioDoDia.pontos} créditos
+                </span>
 
-              <button
-                onClick={handleAcaoDesafio}
-                disabled={desafioFeito}
-                className={`shrink-0 rounded-full font-semibold text-[13px] py-2 px-4 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${desafioFeito ? '' : 'animate-pulse-glow'}`}
-                style={{
-                  background: desafioFeito ? 'var(--t-mist)' : 'var(--t-grad-strong)',
-                  color: desafioFeito ? 'var(--color-brand)' : '#FFFFFF',
-                  border: desafioFeito ? '1px solid var(--t-brand-border)' : 'none',
-                  boxShadow: desafioFeito ? 'none' : '0 8px 24px rgba(0,230,118,0.3)',
-                }}
-              >
-                {desafioFeito && <img src="/icons/check.svg" className="w-3.5 h-3.5" alt="" />}
-                {desafioFeito ? 'Concluído' : 'Cumprir desafio'}
-              </button>
+                {patrocinadorDesafio && (
+                  <div className="flex items-center gap-1.5 rounded-lg px-2 py-1" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
+                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: patrocinadorDesafio.cor }} />
+                    <span className="text-[10px] uppercase tracking-wider text-slate-600">
+                      <strong className="text-slate-800">{patrocinadorDesafio.nome}</strong>
+                    </span>
+                  </div>
+                )}
+
+                <button
+                  onClick={handleAcaoDesafio}
+                  disabled={desafioFeito}
+                  className={`shrink-0 rounded-full font-semibold text-[13px] py-2 px-4 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer ${desafioFeito ? '' : 'animate-pulse-glow'}`}
+                  style={{
+                    background: desafioFeito ? 'var(--t-mist)' : 'var(--t-grad-strong)',
+                    color: desafioFeito ? 'var(--color-brand)' : '#FFFFFF',
+                    border: desafioFeito ? '1px solid var(--t-brand-border)' : 'none',
+                    boxShadow: desafioFeito ? 'none' : '0 8px 24px rgba(0,230,118,0.3)',
+                  }}
+                >
+                  {desafioFeito && <img src="/icons/check.svg" className="w-3.5 h-3.5" alt="" />}
+                  {desafioFeito ? 'Concluído' : 'Cumprir desafio'}
+                </button>
+              </div>
             </div>
 
             {/* ===== SEU IMPACTO (número principal) ===== */}
