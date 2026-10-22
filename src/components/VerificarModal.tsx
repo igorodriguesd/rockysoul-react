@@ -260,7 +260,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
 
   function girarNovamente() {
     if (girandoRef.current) return;
-    if (data.pontos < custoRegirar) {
+    if (custoRegirar <= 0 || data.pontos < custoRegirar) {
       showToast('Créditos insuficientes para girar de novo');
       return;
     }
@@ -383,7 +383,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                           type="button"
                           onClick={girarNovamente}
                           disabled={data.pontos < custoRegirar}
-                          className="w-full mt-2.5 py-2 bg-brand text-(--t-onaccent) font-bold rounded-xl hover:bg-brand-hover transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                          className={`w-full mt-2.5 py-2 bg-brand text-(--t-onaccent) font-bold rounded-xl hover:bg-brand-hover transition-all ${data.pontos < custoRegirar ? 'opacity-40 cursor-not-allowed pointer-events-none' : 'cursor-pointer'}`}
                         >
                           Girar de novo · {custoRegirar} créditos
                         </button>
