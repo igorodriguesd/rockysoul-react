@@ -3,8 +3,9 @@ import { useData } from '../context/DataContext';
 import { useColecao } from '../context/CollectionContext';
 import { useChat } from '../context/ChatContext';
 import { MISSOES, RECOMPENSAS, CURIOSIDADES, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO } from '../data/constants';
-import { SETS_CARTAS, CHANCE_DROP_POR_RARIDADE, LABEL_RARIDADE, getValorCarta, VALOR_POR_RARIDADE, getValorSetCompleto, getValorColecaoCompleta, BONUS_QUIMICA_SET } from '../data/cartas';
+import { SETS_CARTAS, CHANCE_DROP_POR_RARIDADE, LABEL_RARIDADE, getValorCarta, VALOR_POR_RARIDADE, getValorSetCompleto, getValorColecaoCompleta, BONUS_QUIMICA_SET, BONUS_QUIMICA_N2, BONUS_QUIMICA_N3 } from '../data/cartas';
 import type { ChatMessage, Carta, ResultadoDrop } from '../types';
+import { abrirLogin } from '../utils/loginGate';
 import RoletaDrop from './RoletaDrop';
 
 type BotState = 'normal' | 'aguardandoNome' | 'aguardandoAcao' | 'aguardandoResgate' | 'aguardandoValorConversao' | 'aguardandoChavePix';
@@ -80,7 +81,7 @@ export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { data, adicionarPontos, subtrairPontos, addResgate, getNivel, setNome } = useData();
-  const { adquirirPorMissao, colecao, getProgressoTotal, getQuimica, getProximoObjetivo, getValorTotal } = useColecao();
+  const { adquirirPorMissao, colecao, getProgressoTotal, getQuimica, getTotalCartasDoSet, getProximoObjetivo, getValorTotal } = useColecao();
   const { aberto, abrirChat, fecharChat } = useChat();
 
   useEffect(() => {
@@ -154,6 +155,10 @@ export default function Chat() {
   }
 
   function registrarAcao(missaoId: string, nome: string, pontos: number): string {
+    if (!data.nome?.trim()) {
+      abrirLogin();
+      return 'Para registrar ações, entre com o seu nome primeiro — clique em **Entrar** no topo da página.';
+    }
     const creditos = MISSOES.find(m => m.id === missaoId)?.pontos ?? pontos;
     adicionarPontos(creditos, nome);
     const drop = adquirirPorMissao(missaoId);
@@ -189,6 +194,13 @@ export default function Chat() {
     }
 
     if (estado === 'aguardandoAcao') {
+      if (!data.nome?.trim()) {
+        estadoRef.current = 'normal';
+        setAguardandoEntrada(false);
+        abrirLogin();
+        responder('Entre com o seu nome para registrar ações — clique em **Entrar** no topo da página.');
+        return;
+      }
       const num = parseInt(texto, 10);
       if (!isNaN(num) && num >= 1 && num <= MISSOES.length) {
         const missao = MISSOES[num - 1];
@@ -399,7 +411,7 @@ export default function Chat() {
         const valorTotal = getValorTotal();
         const linhasSets = SETS_CARTAS.map(set => {
           const quimica = getQuimica(set.id);
-          const cartasSet = colecao.sets[set.id]?.cartas.length ?? 0;
+          const cartasSet = getTotalCartasDoSet(set.id);
           const nivel = quimica.level === 3 ? 'Química Nível 3 · Set completo' : quimica.level > 0 ? `Química Nível ${quimica.level}` : 'Sem química';
           return `- **${set.nome}** (${cartasSet}/4) · ${nivel} · set completo: **${getValorSetCompleto(set.id)} créditos**`;
         }).join('\n');
@@ -419,7 +431,7 @@ export default function Chat() {
           '**Sets e química:**\n' + linhasSets + '\n\n' +
           (proximo ? `Próximo objetivo: complete o set **${proximo.set.nome}** (faltam ${proximo.faltam} carta(s)) para ativar a química.\n\n` : 'Set completo em todos! Você domina a coleção 😄\n\n') +
           '**Chance de ganhar carta por raridade:**\n' + chances + '\n\n' +
-          `Cada set completo paga **+${BONUS_QUIMICA_SET} créditos** de química (+30 na 3ª carta, +150 na 4ª) — e as 4 cartas do set creditam o valor delas.\n\n` +
+          `Cada set completo paga **+${BONUS_QUIMICA_SET} créditos** de química (+${BONUS_QUIMICA_N2} na 3ª carta, +${BONUS_QUIMICA_N3} na 4ª) — e as 4 cartas do set creditam o valor delas.\n\n` +
           '**Sets por nível:** Recursos e Cidade Verde já no início · Guardiões da Água no Semente (500 créditos) · Energia Limpa na Árvore (1200 créditos) · Cultivo na Floresta (2000 créditos).\n\n' +
           '**Dica:** cartas repetidas viram fragmentos — use-os na **Fábrica de Cartas** da sua Coleção para montar as que faltam!'
         );

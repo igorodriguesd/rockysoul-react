@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useLoginGate } from '../hooks/useLoginGate';
 
 type Categoria = 'reciclavel' | 'organico' | 'vidro' | 'metal';
 
@@ -152,6 +153,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
   });
   const finalizouRef = useRef(false);
   const fluxoIdRef = useRef(0);
+  const exigirLogin = useLoginGate();
 
   useEffect(() => {
     if (estado !== 'jogando' || tempo <= 0) return;
@@ -176,6 +178,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
   }, [tempo, estado, pontuacao]);
 
   function iniciar() {
+    if (!exigirLogin()) return;
     finalizouRef.current = false;
     setFase(1);
     setRestantes(gerarItens(1));

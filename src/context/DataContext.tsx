@@ -1,12 +1,28 @@
-import { createContext, useContext, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useCallback, useRef, type ReactNode } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import type { UserData, HistoricoEntrada, Resgate, Missao } from '../types';
-import { SELOS, NIVEIS, MISSOES, buscarAmigoPorCodigo, gerarCodigoAmigo } from '../data/constants';
+import { SELOS, NIVEIS, MISSOES, TRILHA_EVOLUCAO, BONUS_BOAS_VINDAS, indiceEtapaPorPontos, buscarAmigoPorCodigo, gerarCodigoAmigo } from '../data/constants';
 import { showToast } from '../components/Toast';
 
 const STORAGE_KEY = 'rocky_user_data';
 
 const BONUS_DESAFIO = 20;
+
+function calcularBonusEvolucao(acumuladoAntes: number, acumuladoDepois: number, jaRecebeuBoasVindas: boolean) {
+  let bonus = 0;
+  const etapas: string[] = [];
+  if (!jaRecebeuBoasVindas) {
+    bonus += BONUS_BOAS_VINDAS;
+    etapas.push('boas-vindas');
+  }
+  const idxAntes = indiceEtapaPorPontos(acumuladoAntes);
+  const idxDepois = indiceEtapaPorPontos(acumuladoDepois);
+  for (let i = idxAntes + 1; i <= idxDepois; i++) {
+    bonus += TRILHA_EVOLUCAO[i].bonusCreditos;
+    etapas.push(TRILHA_EVOLUCAO[i].nome);
+  }
+  return { bonus, etapas };
+}
 
 const defaultData: UserData = {
   nome: '',
@@ -24,6 +40,7 @@ const defaultData: UserData = {
   resgates: [],
   impactoParceiros: {},
   amigos: [],
+  bonusBoasVindasRecebido: false,
 };
 
 function hojeStr(): string {
@@ -71,7 +88,7 @@ interface DataContextType {
   desafioDoDia: Missao;
   desafioBonusDisponivel: boolean;
   resgatarBonusDesafio: () => void;
-  registrarImpactoParceiro: (parceiroId: string, tipo: 'entrega' | 'resgate', creditos: number) => void;
+  registrarImpactoParceiro: (parceiroId: string, tipo: 'entrega' | 'resgate' | 'acao', creditos: number) => void;
   addAmigo: (codigo: string) => boolean;
   codigoAmigo: string;
   amigos: string[];
@@ -81,6 +98,9 @@ const DataContext = createContext<DataContextType | null>(null);
 
 export function DataProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useLocalStorage<UserData>(STORAGE_KEY, defaultData);
+  // Espelha o total acumulado para detectar evolução de nível sem depender do estado do React.
+  const acumuladoRef = useRef<number | null>(null);
+  const boasVindasRef = useRef(data.bonusBoasVindasRecebido ?? false);
 
   const setNome = useCallback((nome: string) => {
     setData(prev => ({ ...prev, nome }));
@@ -91,6 +111,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
   }, [setData]);
 
   const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: boolean) => {
+    // Bônus de evolução: boas-vindas na primeira ação + créditos ao subir de nível.
+    const acumuladoAntes = acumuladoRef.current ?? (data.pontosAcumulados ?? data.pontos);
+    const acumuladoDepois = acumuladoAntes + pontos;
+    acumuladoRef.current = acumuladoDepois;
+
+    const { bonus, etapas: etapasGanhas } = calcularBonusEvolucao(
+      acumuladoAntes,
+      acumuladoDepois,
+      boasVindasRef.current,
+    );
+    boasVindasRef.current = true;
+
     setData(prev => {
       const hoje = hojeStr();
       const ehNovoDia = prev.dataHoje !== hoje;
@@ -109,7 +141,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         data: new Date().toISOString(),
       };
 
-      const novosPontos = dataAtualizada.pontos + pontos;
+      const novosPontos = dataAtualizada.pontos + pontos + bonus;
       const novosPontosHoje = dataAtualizada.pontosHoje + pontos;
       const novosAcumulados = (dataAtualizada.pontosAcumulados ?? dataAtualizada.pontos) + pontos;
       const novoHistorico = [entrada, ...dataAtualizada.historico].slice(0, 50);
@@ -126,9 +158,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
         pontosHoje: novosPontosHoje,
         historico: novoHistorico,
         selosDesbloqueados: [...(dataAtualizada.selosDesbloqueados ?? []), ...novosSelos],
+        bonusBoasVindasRecebido: true,
       };
     });
-  }, [setData]);
+
+    if (bonus > 0) {
+      showToast(`+${bonus} créditos — bônus de evolução (${etapasGanhas.join(', ')})`);
+    }
+  }, [setData, data.pontosAcumulados, data.pontos]);
 
   const adicionarPontos = useCallback((pontos: number, nomeMissao: string) => {
     aplicarPontos(pontos, nomeMissao, true);
@@ -170,16 +207,26 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const resetar = useCallback(() => {
     setData(defaultData);
+    acumuladoRef.current = 0;
+    boasVindasRef.current = false;
   }, [setData]);
 
   const desafioDoDia = getDesafioDoDia();
   const desafioBonusDisponivel = data.ultimoDesafio !== hojeStr();
 
   const resgatarBonusDesafio = useCallback(() => {
-    setData(prev => {
-      const hoje = hojeStr();
-      if (prev.ultimoDesafio === hoje) return prev;
+    if (data.ultimoDesafio === hojeStr()) return;
 
+    const acumuladoAntes = acumuladoRef.current ?? (data.pontosAcumulados ?? data.pontos);
+    const acumuladoDepois = acumuladoAntes + BONUS_DESAFIO;
+    acumuladoRef.current = acumuladoDepois;
+    const { bonus, etapas } = calcularBonusEvolucao(acumuladoAntes, acumuladoDepois, boasVindasRef.current);
+    boasVindasRef.current = true;
+
+    setData(prev => {
+      if (prev.ultimoDesafio === hojeStr()) return prev;
+
+      const hoje = hojeStr();
       const ehNovoDia = prev.dataHoje !== hoje;
       const streak = ehNovoDia
         ? (prev.ultimoDia === ontemStr() ? prev.streak + 1 : 1)
@@ -193,7 +240,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         data: new Date().toISOString(),
       };
 
-      const novosPontos = prev.pontos + BONUS_DESAFIO;
+      const novosPontos = prev.pontos + BONUS_DESAFIO + bonus;
       const novosAcumulados = (prev.pontosAcumulados ?? prev.pontos) + BONUS_DESAFIO;
       const novosSelos = SELOS
         .filter(s => novosAcumulados >= s.minPontos && !prev.selosDesbloqueados.includes(s.id))
@@ -210,18 +257,23 @@ export function DataProvider({ children }: { children: ReactNode }) {
         ultimoDesafio: hojeStr(),
         historico: [entrada, ...prev.historico].slice(0, 50),
         selosDesbloqueados: [...prev.selosDesbloqueados, ...novosSelos],
+        bonusBoasVindasRecebido: true,
       };
     });
     showToast(`+${BONUS_DESAFIO} créditos - Bônus do Desafio do Dia`);
-  }, [setData]);
+    if (bonus > 0) {
+      showToast(`+${bonus} créditos — bônus de evolução (${etapas.join(', ')})`);
+    }
+  }, [setData, data.ultimoDesafio, data.pontosAcumulados, data.pontos]);
 
-  const registrarImpactoParceiro = useCallback((parceiroId: string, tipo: 'entrega' | 'resgate', creditos: number) => {
+  const registrarImpactoParceiro = useCallback((parceiroId: string, tipo: 'entrega' | 'resgate' | 'acao', creditos: number) => {
     setData(prev => {
-      const atual = prev.impactoParceiros[parceiroId] ?? { entregas: 0, resgates: 0, creditos: 0 };
-      const novo: typeof atual = {
+      const atual = prev.impactoParceiros[parceiroId] ?? { entregas: 0, resgates: 0, creditos: 0, acoes: 0 };
+      const novo = {
         creditos: atual.creditos + creditos,
         entregas: atual.entregas + (tipo === 'entrega' ? 1 : 0),
         resgates: atual.resgates + (tipo === 'resgate' ? 1 : 0),
+        acoes: (atual.acoes ?? 0) + (tipo === 'acao' ? 1 : 0),
       };
       return { ...prev, impactoParceiros: { ...prev.impactoParceiros, [parceiroId]: novo } };
     });

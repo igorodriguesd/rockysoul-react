@@ -2,6 +2,8 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useColecao } from '../context/CollectionContext';
+import { limparDadosLocais } from '../utils/limparDados';
+import { EVENTO_ABRIR_LOGIN } from '../utils/loginGate';
 import LoginModal from './LoginModal';
 
 const NIVEL_ICONE_HEADER: Record<string, string> = {
@@ -37,7 +39,7 @@ export default function Header() {
   const [oculto, setOculto] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
   const { data, getNivel, resetar } = useData();
-  const { colecao } = useColecao();
+  const { colecao, resetarColecao } = useColecao();
   const navigate = useNavigate();
   const avatarRef = useRef<HTMLDivElement>(null);
   const maisRef = useRef<HTMLDivElement>(null);
@@ -98,6 +100,16 @@ export default function Header() {
   }, [notifAberto]);
 
   useEffect(() => {
+    function abrir() {
+      setMenuAberto(false);
+      setUsuarioAberto(false);
+      setLoginAberto(true);
+    }
+    window.addEventListener(EVENTO_ABRIR_LOGIN, abrir);
+    return () => window.removeEventListener(EVENTO_ABRIR_LOGIN, abrir);
+  }, []);
+
+  useEffect(() => {
     if (!window.matchMedia?.('(hover: hover)')?.matches) return;
 
     function mostrar() {
@@ -145,7 +157,10 @@ export default function Header() {
   }
 
   function handleSair() {
+    // Sair zera tudo: saldo, histórico, cartas, fragmentos e selos não ficam no navegador.
     resetar();
+    resetarColecao();
+    limparDadosLocais();
     setUsuarioAberto(false);
     navigate('/');
   }
