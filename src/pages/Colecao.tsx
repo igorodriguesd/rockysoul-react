@@ -263,7 +263,7 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
 
           {proximoSet && (
             <p className="mb-3 text-[11px] text-slate-500 leading-snug">
-              <span className="text-slate-400">🔒</span> {cartasBloqueadas} cartas de {setsBloqueados.length}{' '}
+              {cartasBloqueadas} cartas de {setsBloqueados.length}{' '}
               {setsBloqueados.length === 1 ? 'set ainda bloqueado' : 'sets ainda bloqueados'} — o próximo é{' '}
               <strong className="text-gold">{proximoSet.nome}</strong>, que libera no nível{' '}
               <strong className="text-gold">{nomeNivelPorPontos(proximoSet.pontosMin)}</strong> ({proximoSet.pontosMin}{' '}
@@ -316,7 +316,7 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
           </div>
 
           {faltandoFabrica === 0 && totalFabrica > 0 && (
-            <p className="text-brand text-sm font-semibold text-center py-2 mb-3">Você fabricou todas as cartas liberadas! 🎉</p>
+            <p className="text-brand text-sm font-semibold text-center py-2 mb-3">Você fabricou todas as cartas liberadas!</p>
           )}
 
           {listaFabricaPronto.length > 0 && (

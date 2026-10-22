@@ -31,7 +31,7 @@ function StatusChip({ status, nome }: { status: 'atual' | 'alcançado' | 'próxi
   }
   return (
     <span className="px-2 py-0.5 rounded-full text-[9px] font-bold text-slate-400 whitespace-nowrap shrink-0" style={{ background: 'rgba(148,163,184,0.1)', border: '1px solid rgba(148,163,184,0.25)' }}>
-      🔒
+      bloqueado
     </span>
   );
 }
@@ -105,7 +105,9 @@ export default function TrilhaEvolucaoModal({ aberto, onFechar, pontos }: Props)
             className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
             style={{ background: 'var(--t-mist)' }}
           >
-            ✕
+            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
           </button>
         </div>
 

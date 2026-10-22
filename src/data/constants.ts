@@ -346,10 +346,10 @@ export const NIVEIS: Nivel[] = [
 ];
 
 export const TRILHA_EVOLUCAO: TrilhaEtapa[] = [
-  { nome: 'Broto', icone: '/icons/folha.svg', emoji: '🌱', minXP: 0, bonusCreditos: 50, recompensa: '+50 créditos de boas-vindas', desbloqueio: 'Seus primeiros sets de cartas', explicacao: 'Todo impacto começa pequeno — a primeira ação já te coloca aqui.' },
-  { nome: 'Semente', icone: '/icons/semente.svg', emoji: '🌿', minXP: 500, bonusCreditos: 100, recompensa: '+100 créditos', desbloqueio: 'Cartas novas e o set Guardiões da Água', explicacao: '500 créditos acumulados: sua rotina já faz a ilha respirar melhor.' },
-  { nome: 'Árvore', icone: '/icons/arvore.svg', emoji: '🌳', minXP: 1200, bonusCreditos: 200, recompensa: '+200 créditos', desbloqueio: 'Cartas raras e o set Energia Limpa', explicacao: '1.200 créditos: o impacto real começa a proteger o planeta.' },
-  { nome: 'Floresta', icone: '/icons/floresta.svg', emoji: '🌎', minXP: 2000, bonusCreditos: 400, recompensa: '+400 créditos e selo exclusivo', desbloqueio: 'Todas as cartas, o set Cultivo e o selo Floresta', explicacao: '2.000 créditos: você é uma verdadeira guardiã do planeta.' },
+  { nome: 'Broto', icone: '/icons/folha.svg', minXP: 0, bonusCreditos: 50, recompensa: '+50 créditos de boas-vindas', desbloqueio: 'Seus primeiros sets de cartas', explicacao: 'Todo impacto começa pequeno — a primeira ação já te coloca aqui.' },
+  { nome: 'Semente', icone: '/icons/semente.svg', minXP: 500, bonusCreditos: 100, recompensa: '+100 créditos', desbloqueio: 'Cartas novas e o set Guardiões da Água', explicacao: '500 créditos acumulados: sua rotina já faz a ilha respirar melhor.' },
+  { nome: 'Árvore', icone: '/icons/arvore.svg', minXP: 1200, bonusCreditos: 200, recompensa: '+200 créditos', desbloqueio: 'Cartas raras e o set Energia Limpa', explicacao: '1.200 créditos: o impacto real começa a proteger o planeta.' },
+  { nome: 'Floresta', icone: '/icons/floresta.svg', minXP: 2000, bonusCreditos: 400, recompensa: '+400 créditos e selo exclusivo', desbloqueio: 'Todas as cartas, o set Cultivo e o selo Floresta', explicacao: '2.000 créditos: você é uma verdadeira guardiã do planeta.' },
 ];
 
 /** Bônus de boas-vindas: creditado na primeira ação do usuário. */

@@ -398,7 +398,7 @@ export default function Chat() {
           `Coleção completa, com todas as cartas e a química: **${getValorColecaoCompleta()} créditos**\n\n` +
           '**Valor por raridade (entra no saldo na hora):**\n' + valores + ' · Brilhante = **×3**\n\n' +
           '**Sets e química:**\n' + linhasSets + '\n\n' +
-          (proximo ? `Próximo objetivo: complete o set **${proximo.set.nome}** (faltam ${proximo.faltam} carta(s)) para ativar a química.\n\n` : 'Set completo em todos! Você domina a coleção 😄\n\n') +
+          (proximo ? `Próximo objetivo: complete o set **${proximo.set.nome}** (faltam ${proximo.faltam} carta(s)) para ativar a química.\n\n` : 'Set completo em todos! Você domina a coleção.\n\n') +
           '**Chance de ganhar carta por raridade:**\n' + chances + '\n\n' +
           `Cada set completo paga **+${BONUS_QUIMICA_SET} créditos** de química (+${BONUS_QUIMICA_N2} na 3ª carta, +${BONUS_QUIMICA_N3} na 4ª) — e as 4 cartas do set creditam o valor delas.\n\n` +
           '**Sets por nível:** Recursos e Cidade Verde já no início · Guardiões da Água no Semente (500 créditos) · Energia Limpa na Árvore (1200 créditos) · Cultivo na Floresta (2000 créditos).\n\n' +

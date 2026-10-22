@@ -33,7 +33,6 @@ export interface Nivel {
 export interface TrilhaEtapa {
   nome: string;
   icone: string;
-  emoji: string;
   minXP: number;
   recompensa: string;
   bonusCreditos: number;
