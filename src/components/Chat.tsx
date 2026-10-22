@@ -70,7 +70,6 @@ export default function Chat() {
   const [mensagens, setMensagens] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [indiceCuriosidade, setIndiceCuriosidade] = useState(0);
-  const [mostrarTeaser, setMostrarTeaser] = useState(false);
   const [aguardandoEntrada, setAguardandoEntrada] = useState(false);
   const [dropChat, setDropChat] = useState<ResultadoDrop | null>(null);
   const [cartaDropChat, setCartaDropChat] = useState<Carta | null>(null);
@@ -91,7 +90,6 @@ export default function Chat() {
   useEffect(() => {
     if (aberto && !initRef.current) {
       initRef.current = true;
-      setMostrarTeaser(false);
       setTimeout(() => {
         setMensagens([{ texto: 'Olá! Eu sou o RockySoul, seu assistente de sustentabilidade.\n\nVocê pode **registrar ações**, ver seus **créditos e nível**, **converter créditos em dinheiro**, pedir **dicas** e **resgatar recompensas**.\n\nUse os atalhos abaixo ou digite o que quiser!', remetente: 'bot' }]);
       }, 350);
@@ -101,35 +99,6 @@ export default function Chat() {
       setCartaDropChat(null);
     }
   }, [aberto]);
-
-  useEffect(() => {
-    if (aberto) return;
-
-    let jaViu = false;
-    try {
-      jaViu = sessionStorage.getItem('rocky_chat_teaser') === '1';
-    } catch {
-      jaViu = false;
-    }
-    if (jaViu) return;
-
-    const t = setTimeout(() => setMostrarTeaser(true), 2500);
-    return () => clearTimeout(t);
-  }, [aberto]);
-
-  function marcarTeaserVisto() {
-    setMostrarTeaser(false);
-    try {
-      sessionStorage.setItem('rocky_chat_teaser', '1');
-    } catch {
-      setMostrarTeaser(false);
-    }
-  }
-
-  function abrirComTeaser() {
-    marcarTeaserVisto();
-    abrirChat();
-  }
 
   function adicionarMensagem(texto: string, remetente: 'user' | 'bot') {
     setMensagens(prev => [...prev, { texto, remetente }]);
@@ -525,33 +494,6 @@ export default function Chat() {
     <>
       {!aberto && (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
-          {mostrarTeaser && (
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={abrirComTeaser}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirComTeaser(); } }}
-              className="relative max-w-65 bg-card-secondary border border-card-secondary-border rounded-2xl rounded-br-sm shadow-2xl border border-brand/25 p-4 text-left cursor-pointer"
-            >
-              <button
-                onClick={(e) => { e.stopPropagation(); marcarTeaserVisto(); }}
-                className="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-slate-500 hover:text-slate-800 rounded-full hover:bg-surface-hover transition-colors"
-                aria-label="Dispensar dica"
-              >
-                <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
-              </button>
-              <div className="flex items-start gap-3">
-                <img src="/imagens/logo.png" alt="" className="h-9 w-auto opacity-90 shrink-0" />
-                <div>
-                  <p className="text-xs font-bold text-leaf">RockySoul</p>
-                  <p className="text-sm text-slate-700 mt-0.5 leading-snug">
-                    Oi! Sou seu assistente de sustentabilidade. Digite "dica" ou "registrar" pra começar.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="relative">
             <button
               onClick={abrirChat}
