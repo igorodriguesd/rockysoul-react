@@ -8,7 +8,6 @@ import {
   SETS_CARTAS,
   getValorSet,
   getValorSetCompleto,
-  getValorColecaoCompleta,
   BONUS_QUIMICA_N2,
   BONUS_QUIMICA_N3,
   BONUS_QUIMICA_SET,
@@ -35,14 +34,13 @@ interface Props {
 
 export default function PainelValorColecao({ valorTotal, obtidas, total, foils }: Props) {
   const [aberto, setAberto] = useState(false);
-  const valorColecaoCompleta = getValorColecaoCompleta();
 
   return (
     <section
       className="rounded-2xl p-4 sm:p-5 mb-5"
       style={{ background: 'var(--t-collection-bg)', border: '1px solid var(--t-collection-border)' }}
     >
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-2 gap-2.5">
         <div className="rounded-xl px-3 py-2.5 bg-(--t-surface-2) border border-(--t-card-primary-border)">
           <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Valor da coleção</p>
           <p className="text-xl font-extrabold text-gold leading-tight mt-0.5">{valorTotal} créd.</p>
@@ -54,18 +52,6 @@ export default function PainelValorColecao({ valorTotal, obtidas, total, foils }
           <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">
             {foils > 0 ? `${foils} brilhante${foils > 1 ? 's' : ''} (valor ×${MULTIPLICADOR_FOIL})` : 'nenhuma brilhante ainda'}
           </p>
-        </div>
-        <div className="rounded-xl px-3 py-2.5 bg-(--t-surface-2) border border-(--t-card-primary-border)">
-          <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Coleção completa</p>
-          <p className="text-xl font-extrabold text-brand leading-tight mt-0.5">{valorColecaoCompleta} créd.</p>
-          <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">Todas as cartas + química</p>
-        </div>
-        <div className="rounded-xl px-3 py-2.5 bg-(--t-surface-2) border border-(--t-card-primary-border)">
-          <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Set completo</p>
-          <p className="text-xl font-extrabold text-brand-2 leading-tight mt-0.5">
-            {getValorSetCompleto('recursos')} créd.
-          </p>
-          <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">4 cartas + {BONUS_QUIMICA_SET} de química</p>
         </div>
       </div>
 
@@ -107,9 +93,9 @@ export default function PainelValorColecao({ valorTotal, obtidas, total, foils }
               ))}
             </div>
             <p className="text-[11px] text-slate-500 mt-2 leading-snug">
-              <strong className="text-gold">Carta brilhante (foil) vale ×{MULTIPLICADOR_FOIL}</strong> — a mesma carta evolves
-              de rara (30) para rara brilhante (90). Cartas repetidas não dão créditos: elas viram fragmentos para
-              fabricar as que faltam, e fabricar também credita o valor da carta.
+              <strong className="text-gold">Carta brilhante (foil) vale ×{MULTIPLICADOR_FOIL}</strong> — a mesma carta sobe
+              de rara (30) para rara brilhante (90), com 8% de chance ao ganhar uma carta. Repetida normalmente não dá créditos:
+              vira fragmentos para fabricar as que faltam (a não ser que evolua para brilhante). E fabricar também credita o valor da carta.
             </p>
           </div>
 

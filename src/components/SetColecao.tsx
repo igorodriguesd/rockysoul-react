@@ -1,11 +1,12 @@
+import { useState } from 'react';
 import { useColecao } from '../context/CollectionContext';
 import { useChemistry } from '../hooks/useChemistry';
 import { useData } from '../context/DataContext';
 import { nomeNivelPorPontos } from '../data/constants';
-import { getValorSet, getValorSetCompleto, BONUS_QUIMICA_SET } from '../data/cartas';
-import type { SetCarta } from '../types';
+import type { SetCarta, Carta } from '../types';
 import CardItem from './CardItem';
 import SetProgress from './SetProgress';
+import CartaFabricarModal from './CartaFabricarModal';
 
 interface Props {
   set: SetCarta;
@@ -16,10 +17,9 @@ export default function SetColecao({ set }: Props) {
   const { data } = useData();
   const { quimica } = useChemistry(set.id);
   const cartas = getCartasDoSet(set.id);
-  const obtidas = colecao.sets[set.id]?.cartas ?? [];
+  const obtidas = cartas.filter(c => colecao.cartasObtidas.includes(c.id)).map(c => c.id);
   const bloqueado = (data.pontosAcumulados ?? data.pontos) < set.pontosMin;
-  const valorSetCompleto = getValorSetCompleto(set.id);
-  const valorCartas = getValorSet(set.id);
+  const [cartaAlvo, setCartaAlvo] = useState<Carta | null>(null);
 
   return (
     <section className="shadow-(--t-glass-strong-shadow) rounded-2xl p-4 sm:p-5" style={bloqueado ? { opacity: 0.85, background: 'linear-gradient(168deg, #241b3d 0%, #12233a 100%)', border: '1px solid rgba(109,79,194,0.35)' } : { background: 'linear-gradient(168deg, #241b3d 0%, #12233a 100%)', border: '1px solid rgba(109,79,194,0.35)' }}>
@@ -39,19 +39,13 @@ export default function SetColecao({ set }: Props) {
                 Libera no nível {nomeNivelPorPontos(set.pontosMin)} · {set.pontosMin} créditos
               </span>
             )}
-            <span
-              className="inline-flex items-center rounded-full px-2 py-0.5 bg-brand/15 text-brand text-[10px] font-semibold"
-              title={`${valorCartas} créditos das 4 cartas + ${BONUS_QUIMICA_SET} de química`}
-            >
-              Set completo: {valorSetCompleto} créditos
-            </span>
           </p>
         </div>
       </header>
 
       <SetProgress set={set} />
 
-      <div className="grid grid-cols-4 gap-2 sm:gap-2.5 mt-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4">
         {cartas.map(carta => {
           const desbloqueada = obtidas.includes(carta.id);
           return (
@@ -61,10 +55,19 @@ export default function SetColecao({ set }: Props) {
               bloqueada={!desbloqueada}
               ativa={desbloqueada && quimica.level > 0}
               foil={colecao.cartasFoil?.includes(carta.id) ?? false}
+              onClick={!desbloqueada ? () => setCartaAlvo(carta) : undefined}
             />
           );
         })}
       </div>
+
+      <p className="mt-3 text-[11px] leading-snug text-slate-500">
+        {bloqueado
+          ? 'Carta desconhecida: cumpra missões deste set para descobrir.'
+          : 'Qualquer carta que falta pode ser desbloqueada com fragmentos — clique na carta e use seus fragmentos.'}
+      </p>
+
+      <CartaFabricarModal carta={cartaAlvo} onFechar={() => setCartaAlvo(null)} />
     </section>
   );
 }
