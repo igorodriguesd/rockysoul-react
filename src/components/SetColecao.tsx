@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useColecao } from '../context/CollectionContext';
 import { useChemistry } from '../hooks/useChemistry';
 import { useData } from '../context/DataContext';
@@ -67,7 +68,10 @@ export default function SetColecao({ set }: Props) {
           : 'Qualquer carta que falta pode ser desbloqueada com fragmentos — clique na carta e use seus fragmentos.'}
       </p>
 
-      <CartaFabricarModal carta={cartaAlvo} onFechar={() => setCartaAlvo(null)} />
+      {createPortal(
+        <CartaFabricarModal carta={cartaAlvo} onFechar={() => setCartaAlvo(null)} />,
+        document.body,
+      )}
     </section>
   );
 }

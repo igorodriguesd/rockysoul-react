@@ -182,6 +182,7 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
 
     const fragmentosGanhos = FRAGMENTOS_POR_DUPLICADA[carta.raridade];
     adicionarFragmentos(carta.raridade, fragmentosGanhos);
+    showToast(`+${fragmentosGanhos} fragmentos de ${carta.raridade} (carta repetida)`);
     return { caiu: true, duplicada: true, carta, fragmentosGanhos };
   }, [colecao, adquirirCarta, setColecao, adicionarFragmentos, adicionarBonus]);
 

@@ -54,7 +54,7 @@ export function Home() {
 
               <h1
                 className="text-white leading-[1.05]"
-                style={{ fontSize: 'clamp(38px, 4.2vw, 60px)', letterSpacing: '-0.01em', maxWidth: 560 }}
+                style={{ fontSize: 'clamp(28px, 4.2vw, 60px)', letterSpacing: '-0.01em', maxWidth: 560 }}
               >
                 Faça o bem.<br />
                 Veja seu <em className="not-italic" style={{ color: '#00e676', textShadow: '0 0 12px rgba(0,230,118,0.6)' }}>impacto</em> crescer.

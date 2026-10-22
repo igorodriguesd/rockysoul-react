@@ -171,8 +171,7 @@ export default function Header() {
         <NavLink to="/" className="flex items-center gap-2 shrink-0">
           <img src="/imagens/logo.png" alt="RockySoulUp" className="h-7 w-auto opacity-90" />
           <span
-            className="font-brand font-bold text-slate-900 tracking-tight"
-            style={{ fontSize: 20 }}
+            className="font-brand font-bold text-slate-900 tracking-tight text-sm sm:text-base md:text-lg"
           >
             RockySoulUp
           </span>

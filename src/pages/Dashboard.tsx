@@ -425,7 +425,7 @@ export function Dashboard() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {chips.map(s => (
                 <div key={s.rotulo} className="rounded-xl px-2.5 sm:px-3 py-3 flex items-center justify-center sm:justify-start gap-2.5 bg-white/12 border border-white/20 backdrop-blur">
                   <img src={s.icone} className="hidden sm:block w-4.5 h-4.5 shrink-0 opacity-90" alt="" />
