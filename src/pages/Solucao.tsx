@@ -98,7 +98,7 @@ export function Solucao() {
         <h3 className="font-bold text-slate-900 text-sm mb-3">Sets e Química</h3>
         <div className="flex flex-col gap-2 mb-3">
           {SETS_CARTAS.map(set => (
-            <div key={set.id} className="flex items-center gap-3 rounded-xl px-3 py-2" style={{ background: 'var(--t-collection-bg)', border: '1px solid rgba(109,79,194,0.35)' }}>
+            <div key={set.id} className="flex flex-wrap items-center gap-3 rounded-xl px-3 py-2" style={{ background: 'var(--t-collection-bg)', border: '1px solid rgba(109,79,194,0.35)' }}>
               <span className="w-2 h-2 rounded-full shrink-0" style={{ background: set.cor }} />
               <img src={set.icone} alt="" className="w-4 h-4" />
               <span className="text-sm text-slate-700 font-medium">{set.nome}</span>
@@ -110,8 +110,9 @@ export function Solucao() {
           ))}
         </div>
         <p className="text-xs text-slate-600 leading-relaxed">
-          Junte as <strong className="text-slate-800">4 cartinhas de um set</strong> para ativar a <strong className="text-slate-800">Química Nível 3</strong> e ganhar{' '}
-          <strong className="text-brand">+150 créditos</strong> de bônus.
+          Reúna as <strong className="text-slate-800">4 cartinhas de um set</strong> para ativar a <strong className="text-slate-800">Química</strong>:
+          a 3ª carta paga <strong className="text-brand">+30 créditos</strong> e a 4ª paga <strong className="text-brand">+150 créditos</strong> —
+          um set completo rende <strong className="text-brand">+180 créditos</strong> de bônus, além do valor das cartas.
         </p>
       </div>
 

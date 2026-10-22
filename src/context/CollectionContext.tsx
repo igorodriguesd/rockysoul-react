@@ -55,9 +55,11 @@ interface CollectionContextType {
   getChanceDrop: (carta: Carta) => number;
   getCartasDoSet: (setId: string) => Carta[];
   getQuimica: (setId: string) => Quimica;
+  getTotalCartasDoSet: (setId: string) => number;
   getProgressoTotal: () => { obtidas: number; total: number };
   getValorTotal: () => number;
   getProximoObjetivo: () => { set: SetCarta; faltam: number } | null;
+  resetarColecao: () => void;
 }
 
 const CollectionContext = createContext<CollectionContextType | null>(null);
@@ -224,9 +226,15 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
       .sort((a, b) => PESO_RARIDADE[a.raridade] - PESO_RARIDADE[b.raridade]);
   }, []);
 
+  // Quantas cartas do set o usuário tem — derivado de cartasObtidas (fonte da verdade),
+  // para não depender do cache `sets` e não dessincronizar.
+  const getTotalCartasDoSet = useCallback((setId: string): number => {
+    return CARTAS.filter(c => c.setId === setId && colecao.cartasObtidas.includes(c.id)).length;
+  }, [colecao.cartasObtidas]);
+
   const getQuimica = useCallback((setId: string): Quimica => {
-    return calcularQuimica(setUsuario(setId, colecao).cartas.length);
-  }, [colecao]);
+    return calcularQuimica(getTotalCartasDoSet(setId));
+  }, [getTotalCartasDoSet]);
 
   const getProgressoTotal = useCallback(() => {
     const obtidas = colecao.cartasObtidas.filter(id => CARTAS.some(c => c.id === id)).length;
@@ -240,7 +248,7 @@ const getValorTotal = useCallback(() => {
   const getProximoObjetivo = useCallback(() => {
     const ordenados = SETS_CARTAS
       .map(set => {
-        const obtidas = setUsuario(set.id, colecao).cartas.length;
+        const obtidas = getTotalCartasDoSet(set.id);
         return { set, obtidas, faltam: 4 - obtidas };
       })
       .filter(s => s.faltam > 0 && (data.pontosAcumulados ?? data.pontos) >= s.set.pontosMin)
@@ -248,7 +256,11 @@ const getValorTotal = useCallback(() => {
 
     if (ordenados.length === 0) return null;
     return { set: ordenados[0].set, faltam: ordenados[0].faltam };
-  }, [colecao, data.pontosAcumulados, data.pontos]);
+  }, [getTotalCartasDoSet, data.pontosAcumulados, data.pontos]);
+
+  const resetarColecao = useCallback(() => {
+    setColecao(defaultColecao);
+  }, [setColecao]);
 
   return (
     <CollectionContext.Provider value={{
@@ -261,9 +273,11 @@ const getValorTotal = useCallback(() => {
       getChanceDrop,
       getCartasDoSet,
       getQuimica,
+      getTotalCartasDoSet,
       getProgressoTotal,
       getValorTotal,
       getProximoObjetivo,
+      resetarColecao,
     }}>
       {children}
     </CollectionContext.Provider>

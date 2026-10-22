@@ -7,7 +7,7 @@ import RoletaDrop from './RoletaDrop';
 import IconeMissao from './IconeMissao';
 import type { Missao, ResultadoDrop } from '../types';
 import { MISSION_TO_CARD, CARTAS, LABEL_RARIDADE, CHANCE_DROP_POR_RARIDADE, CUSTO_REGIRAR_POR_RARIDADE, getValorCarta } from '../data/cartas';
-import { PARCEIROS, BONUS_ECOPONTO, grupoDaMissao, grupoDaCarta } from '../data/constants';
+import { PARCEIROS, BONUS_ECOPONTO, BONUS_ACAO_PARCEIRO, grupoDaMissao, grupoDaCarta } from '../data/constants';
 
 interface Props {
   aberto: boolean;
@@ -62,6 +62,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
   const [roletaPronta, setRoletaPronta] = useState(false);
   const [declaracaoConfirmada, setDeclaracaoConfirmada] = useState(false);
   const [ecopontoId, setEcopontoId] = useState('');
+  const [parceiroEntrega, setParceiroEntrega] = useState<string | null>(null);
   const [tentativa, setTentativa] = useState(0);
   const girandoRef = useRef(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -87,6 +88,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
     setRoletaPronta(false);
     setDeclaracaoConfirmada(false);
     setEcopontoId('');
+    setParceiroEntrega(null);
     setTentativa(0);
     girandoRef.current = false;
     setSegundos(tempoTotal);
@@ -139,6 +141,13 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
 
   const ecopontos = PARCEIROS.filter(p => p.tipos.includes('ecoponto'));
 
+  const patrocinadorMissao = PARCEIROS.find(p => p.temas?.includes(missao.id)) ?? null;
+
+  function registrarAcaoParceiro() {
+    if (!patrocinadorMissao) return;
+    registrarImpactoParceiro(patrocinadorMissao.id, 'acao', BONUS_ACAO_PARCEIRO);
+  }
+
   function handleFoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -173,6 +182,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
   function confirmar() {
     const parceiroSelecionado = ecopontos.find(p => p.id === ecopontoId);
     const bonusEcoponto = parceiroSelecionado ? BONUS_ECOPONTO : 0;
+    setParceiroEntrega(parceiroSelecionado?.nome ?? null);
 
     if (missao.comprovacao === 'declaracao') {
       if (declaracaoFeitaHoje(missao.id)) {
@@ -192,6 +202,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
         adicionarBonus(BONUS_ECOPONTO, `Entrega no ecoponto ${parceiroSelecionado.nome}`);
         registrarImpactoParceiro(parceiroSelecionado.id, 'entrega', BONUS_ECOPONTO);
       }
+      registrarAcaoParceiro();
       setPontosGanhos(missao.pontos + bonusEcoponto);
       setSucesso(true);
       onVerificado?.(missao.id);
@@ -210,6 +221,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
         adicionarBonus(BONUS_ECOPONTO, `Entrega no ecoponto ${parceiroSelecionado.nome}`);
         registrarImpactoParceiro(parceiroSelecionado.id, 'entrega', BONUS_ECOPONTO);
       }
+      registrarAcaoParceiro();
       setPontosGanhos(missao.pontos + bonusEcoponto);
       setSucesso(true);
       onVerificado?.(missao.id);
@@ -233,6 +245,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
       adicionarBonus(BONUS_ECOPONTO, `Entrega no ecoponto ${parceiroSelecionado.nome}`);
       registrarImpactoParceiro(parceiroSelecionado.id, 'entrega', BONUS_ECOPONTO);
     }
+    registrarAcaoParceiro();
     setPontosGanhos(missao.pontos + bonusEcoponto);
     setSucesso(true);
     onVerificado?.(missao.id);
@@ -346,7 +359,7 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
                       <p className="text-slate-600 text-xs leading-snug">
                         Você já tem <strong className="text-slate-700">{drop.carta.nome}</strong>. Ela virou{' '}
                         <strong className="text-[#a66cff]">+{drop.fragmentosGanhos} fragmentos</strong> de {drop.carta.raridade.toLowerCase()}.
-                        Junte fragmentos para montar uma carta que falta — abra as <strong className="text-slate-700">Cartas repetidas</strong> na sua Coleção.
+                        Junte fragmentos para montar uma carta que falta — clique na carta na aba <strong className="text-slate-700">Minhas cartas</strong> ou use a <strong className="text-slate-700">Fábrica</strong> na Coleção.
                       </p>
                     </div>
                   ) : (
@@ -389,6 +402,29 @@ export default function VerificarModal({ aberto, onFechar, missao, onVerificado 
 
             <p className="text-gold-deep text-2xl font-bold mt-4">+{pontosGanhos} créditos</p>
             <p className="text-slate-500 text-[11px] mt-0.5">créditos da ação · cartas ganhas creditam o valor delas à parte</p>
+            {(patrocinadorMissao || parceiroEntrega) && (
+              <div
+                className="mt-3 mx-auto max-w-[380px] rounded-xl px-3 py-2.5 text-left"
+                style={{ background: 'var(--t-mist)', border: '1px dashed var(--t-brand-border)' }}
+              >
+                <p className="text-[11px] text-slate-600 leading-snug">
+                  <strong className="text-slate-900">Impacto nos parceiros</strong>
+                </p>
+                {parceiroEntrega && (
+                  <p className="text-[11px] text-slate-600 leading-snug mt-1">
+                    Entrega em <strong style={{ color: 'var(--color-brand)' }}>{parceiroEntrega}</strong> ·{' '}
+                    <strong className="text-gold">+{BONUS_ECOPONTO} créditos</strong>
+                  </p>
+                )}
+                {patrocinadorMissao && (
+                  <p className="text-[11px] text-slate-600 leading-snug mt-1">
+                    Sua ação entrou no impacto de{' '}
+                    <strong style={{ color: 'var(--color-brand)' }}>{patrocinadorMissao.nome}</strong> ·{' '}
+                    <strong className="text-gold">+{BONUS_ACAO_PARCEIRO} crédito de impacto</strong>
+                  </p>
+                )}
+              </div>
+            )}
             <button
               onClick={fechar}
               className="w-full py-2.5 mt-4 bg-brand text-(--t-onaccent) font-bold rounded-xl hover:bg-brand-hover transition-all"

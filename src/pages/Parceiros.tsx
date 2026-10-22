@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { PARCEIROS } from '../data/constants';
+import { PARCEIROS, RECOMPENSAS } from '../data/constants';
 import type { Parceiro } from '../types';
 
 interface LinhaRanking {
@@ -10,6 +10,8 @@ interface LinhaRanking {
   cortesias: number;
   pessoaEntregas: number;
   pessoaResgates: number;
+  pessoaAcoes: number;
+  cortesiaParceiro: { id: string; nome: string; pontos: number } | null;
   tipo: string;
 }
 
@@ -32,13 +34,16 @@ export function Parceiros() {
     return PARCEIROS
       .filter(p => p.impactoBase)
       .map(p => {
-        const meu = impacto[p.id] ?? { entregas: 0, resgates: 0, creditos: 0 };
+        const meu = impacto[p.id] ?? { entregas: 0, resgates: 0, creditos: 0, acoes: 0 };
+        const cortesia = RECOMPENSAS.find(r => r.parceiroId === p.id) ?? null;
         return {
           parceiro: p,
           creditos: p.impactoBase!.creditos + meu.creditos,
           cortesias: p.impactoBase!.cortesias + meu.resgates,
           pessoaEntregas: meu.entregas,
           pessoaResgates: meu.resgates,
+          pessoaAcoes: meu.acoes ?? 0,
+          cortesiaParceiro: cortesia ? { id: cortesia.id, nome: cortesia.nome, pontos: cortesia.pontos } : null,
           tipo: rotuloTipo(p),
         };
       })
@@ -48,7 +53,8 @@ export function Parceiros() {
   const maxCreditos = Math.max(...linhas.map(l => l.creditos), 1);
   const totalCreditos = linhas.reduce((s, l) => s + l.creditos, 0);
   const totalCortesias = linhas.reduce((s, l) => s + l.cortesias, 0);
-  const contribuicoesPessoais = linhas.filter(l => l.pessoaEntregas > 0 || l.pessoaResgates > 0).length;
+  const totalAcoesPessoais = linhas.reduce((s, l) => s + l.pessoaAcoes + l.pessoaEntregas + l.pessoaResgates, 0);
+  const contribuicoesPessoais = linhas.filter(l => l.pessoaAcoes > 0 || l.pessoaEntregas > 0 || l.pessoaResgates > 0).length;
 
   return (
     <div className="max-w-[900px] mx-auto px-4 sm:px-6 py-4 lg:py-6 flex flex-col gap-4">
@@ -59,11 +65,12 @@ export function Parceiros() {
           <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Ranking de Empresas</span>
         </div>
         <h1 className="text-2xl font-bold text-slate-900 font-serif-display">Parceiras que sustentam o impacto</h1>
-        <p className="text-sm text-slate-600 mt-1 max-w-[560px]">
-          Cada entrega comprovada num ecoponto e cada cortesia resgatada movimentam
-          <strong className="text-slate-800"> créditos</strong> para o parceiro. Suas ações fazem
-          essas empresas subirem no ranking.
-        </p>
+                <p className="text-sm text-slate-600 mt-1 max-w-[560px]">
+                  Toda ação que você valida soma impacto no parceiro que patrocina a missão, cada entrega
+                  comprovada num ecoponto e cada cortesia resgatada movimentam
+                  <strong className="text-slate-800"> créditos</strong> para o parceiro. Suas ações fazem
+                  essas empresas subirem no ranking.
+                </p>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mt-4">
           <div className="rounded-xl p-3" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
             <p className="text-slate-500 text-[10px] uppercase tracking-widest">Créditos movimentados</p>
@@ -77,7 +84,7 @@ export function Parceiros() {
             <div className="rounded-xl p-3" style={{ background: 'var(--t-impact-bg)', border: '1px solid rgba(56,189,248,0.35)' }}>
               <p className="text-slate-500 text-[10px] uppercase tracking-widest">Seu impacto</p>
               <p className="text-impact font-bold" style={{ fontSize: 20 }}>
-                {linhas.reduce((s, l) => s + l.pessoaEntregas + l.pessoaResgates, 0)} ações
+                {totalAcoesPessoais} ações
               </p>
             </div>
           )}
@@ -98,7 +105,7 @@ export function Parceiros() {
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                   <span className="w-2 h-2 rounded-full shrink-0" style={{ background: l.parceiro.cor }} />
-                  <strong className="text-slate-900 text-sm truncate">{l.parceiro.nome}</strong>
+                  <strong className="text-slate-900 text-sm">{l.parceiro.nome}</strong>
                   <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded-full font-semibold" style={{ background: 'var(--t-mist)', color: 'var(--color-brand)' }}>
                     {l.tipo}
                   </span>
@@ -106,10 +113,19 @@ export function Parceiros() {
                 <p className="text-slate-500 text-[11px] leading-snug mt-0.5">
                   {l.parceiro.descricao} · {l.parceiro.localizacao}
                 </p>
-                {l.pessoaEntregas > 0 || l.pessoaResgates > 0 ? (
+                {l.pessoaAcoes > 0 || l.pessoaEntregas > 0 || l.pessoaResgates > 0 ? (
                   <p className="text-brand text-[10px] font-semibold mt-1">
-                    Você contribuiu: {l.pessoaEntregas} entrega{l.pessoaEntregas === 1 ? '' : 's'} · {l.pessoaResgates} cortesia{l.pessoaResgates === 1 ? '' : 's'}
+                    Você contribuiu: {l.pessoaAcoes} aç{l.pessoaAcoes === 1 ? 'ão' : 'ões'} · {l.pessoaEntregas} entrega{l.pessoaEntregas === 1 ? '' : 's'} · {l.pessoaResgates} cortesia{l.pessoaResgates === 1 ? '' : 's'}
                   </p>
+                ) : null}
+                {l.cortesiaParceiro ? (
+                  <Link
+                    to={`/recompensas/${l.cortesiaParceiro.id}`}
+                    className="inline-flex items-center gap-1.5 mt-1.5 text-[10px] font-semibold text-brand-2 bg-brand-soft rounded-full px-2 py-1 hover:opacity-80 transition-opacity"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: l.parceiro.cor }} />
+                    Cortesia: {l.cortesiaParceiro.nome} · {l.cortesiaParceiro.pontos} créd.
+                  </Link>
                 ) : null}
                 <div className="h-2 rounded-full overflow-hidden mt-2" style={{ background: 'var(--t-slate-200)' }}>
                   <div
