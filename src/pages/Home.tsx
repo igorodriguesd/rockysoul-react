@@ -6,13 +6,6 @@ import LoginModal from '../components/LoginModal';
 import Footer from '../components/Footer';
 import IlhaRockySoul from '../components/IlhaRockySoul';
 
-const PASSOS_LATERAIS = [
-  { numero: '1', icone: '/icons/camera.svg', titulo: 'Registre', texto: 'Uma missão sustentável com foto.', rota: '/dashboard', acento: '#22c55e' },
-  { numero: '2', icone: '/icons/carrinho.svg', titulo: 'Ganhe', texto: 'Créditos para gastar ou converter.', rota: '/recompensas', acento: '#a78bfa' },
-  { numero: '3', icone: '/icons/trofeu.svg', titulo: 'Colecione', texto: 'Cartas por set, foil e química.', rota: '/colecao', acento: '#facc15' },
-  { numero: '4', icone: '/icons/arvore.svg', titulo: 'Evolua', texto: 'Seu nível vai de Broto a Floresta.', rota: '/dashboard', acento: '#38bdf8' },
-];
-
 export function Home() {
   useEffect(() => { document.title = 'RockySoulUp - Home'; }, []);
 
@@ -98,47 +91,6 @@ export function Home() {
             <div className="shrink-0 w-full max-w-[380px] sm:w-[460px] lg:w-auto lg:flex-1 min-w-0 lg:self-stretch -ml-2 sm:-ml-6 lg:ml-12">
               <IlhaRockySoul />
             </div>
-          </div>
-        </div>
-
-        <div className="relative z-10 max-w-[1100px] mx-auto px-6 mt-6 w-full shrink-0">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <LeafSmall />
-            <p className="text-white/80 tracking-[0.12em] text-sm font-semibold uppercase text-center">Como funciona</p>
-            <LeafSmall flip />
-          </div>
-          <div className="flex flex-col gap-2.5 sm:grid sm:grid-cols-2 lg:grid-cols-4">
-            {PASSOS_LATERAIS.map((passo) => (
-              <button
-                key={passo.numero}
-                type="button"
-                onClick={() => navigate(passo.rota)}
-                className="bg-(--t-glass-side) border border-[var(--t-glass-side-border)] shadow-glass-side rounded-2xl px-3.5 py-3 text-left flex items-center gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl cursor-pointer relative overflow-hidden"
-                role="link"
-                aria-label={`Como funciona, passo ${passo.numero}: ${passo.titulo}. Abrir.`}
-              >
-                <div
-                  className="pointer-events-none absolute top-0 left-0 right-0 h-px opacity-70"
-                  style={{ background: `linear-gradient(90deg, transparent, ${passo.acento}, transparent)` }}
-                />
-                <span
-                  className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm"
-                  style={{ background: `${passo.acento}22`, border: `1px solid ${passo.acento}55` }}
-                >
-                  <img src={passo.icone} alt="" className="w-5 h-5" />
-                </span>
-                <span className="block flex-1 min-w-0 leading-tight">
-                  <span className="flex items-baseline gap-1.5">
-                    <span className="text-[11px] font-extrabold" style={{ color: passo.acento }}>0{passo.numero}</span>
-                    <span className="text-slate-900 font-extrabold text-sm truncate">{passo.titulo}</span>
-                  </span>
-                  <span className="block text-slate-500 text-[11px] leading-snug mt-0.5">{passo.texto}</span>
-                </span>
-                <svg aria-hidden="true" className="shrink-0 text-slate-400" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 6l6 6-6 6" />
-                </svg>
-              </button>
-            ))}
           </div>
         </div>
 
