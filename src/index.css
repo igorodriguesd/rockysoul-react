@@ -228,6 +228,8 @@
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }
 
   h1, h2, h3, h4 {

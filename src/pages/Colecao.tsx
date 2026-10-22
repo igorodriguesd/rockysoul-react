@@ -324,7 +324,7 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
               <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-2">
                 Pode fabricar agora · {listaFabricaPronto.length}
               </p>
-              <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
                 {listaFabricaPronto.map(carta => renderCartaFabrica(carta, true))}
               </div>
             </div>
@@ -335,7 +335,7 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
               <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-2">
                 Falta fragmentos · {listaFabricaFalta.length}
               </p>
-              <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
                 {listaFabricaFalta.map(carta => renderCartaFabrica(carta, false))}
               </div>
             </div>
@@ -346,7 +346,7 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
               <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-2">
                 Já obtidas · cada repetida vira fragmento
               </p>
-              <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
                 {listaFabricaObtidas.map(carta => renderCartaFabrica(carta, true))}
               </div>
             </div>
