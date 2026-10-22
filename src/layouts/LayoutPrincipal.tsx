@@ -1,7 +1,6 @@
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import OnboardingTutorial from '../components/OnboardingTutorial';
 
 export function LayoutPrincipal() {
   const { pathname } = useLocation();
@@ -13,7 +12,6 @@ export function LayoutPrincipal() {
         <Outlet />
       </main>
       {!ehHome && <Footer />}
-      <OnboardingTutorial />
     </div>
   );
 }
