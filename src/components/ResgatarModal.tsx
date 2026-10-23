@@ -1,22 +1,19 @@
-<<<<<<< HEAD
-=======
 import { useState, useEffect, useCallback } from 'react';
 import { useData } from '../context/DataContext';
 import { getParceiro } from '../data/constants';
 import { showToast } from './Toast';
->>>>>>> origin/main
 import type { Recompensa } from '../types';
-export default function ResgatarModal({ aberto, onFechar }: { aberto: boolean; onFechar: () => void; recompensa: Recompensa }) {
-  if (!aberto) return null;
-  return <div className="fixed inset-0 z-[9998] flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/60"><section role="dialog" aria-modal="true" aria-label="Resgate indisponível" className="glass-strong rounded-2xl shadow-2xl w-[90vw] max-w-md p-6 relative max-h-[90vh] overflow-y-auto space-y-4"><h2 className="text-xl font-bold">Resgate ainda indisponível</h2><p>A API não possui uma operação de resgate. Nenhum saldo foi alterado.</p><button className="w-full py-3 bg-[#20d968] text-[#070d19] font-bold rounded-xl hover:brightness-110 transition-all cursor-pointer" onClick={onFechar}>Entendi</button></section></div>;
+
+interface Props {
+  aberto: boolean;
+  onFechar: () => void;
+  recompensa?: Recompensa | null;
 }
-<<<<<<< HEAD
-=======
 
 export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
-  const { data, subtrairPontos, addResgate, registrarImpactoParceiro } = useData();
+  const { data } = useData();
   const [sucesso, setSucesso] = useState(false);
-  const [saldoRestante, setSaldoRestante] = useState(0);
+  const saldoRestante = data.pontos;
 
   const fechar = useCallback(() => {
     setSucesso(false);
@@ -42,20 +39,7 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
   const parceiro = recompensa.parceiroId ? getParceiro(recompensa.parceiroId) : null;
 
   function confirmarResgate() {
-    if (!recompensa || !podeResgatar) return;
-    
-    const novoSaldo = data.pontos - recompensa.pontos;
-    subtrairPontos(recompensa.pontos);
-    setSaldoRestante(novoSaldo);
-    
-    addResgate({
-      nome: recompensa.nome,
-      pontos: recompensa.pontos,
-      data: new Date().toISOString(),
-    });
-    if (parceiro) registrarImpactoParceiro(parceiro.id, 'resgate', recompensa.pontos);
-    setSucesso(true);
-    showToast(`Resgate: ${recompensa.nome}`);
+    showToast('Resgate ainda não está disponível na API. Seu saldo não foi alterado.');
   }
 
   return (
@@ -151,4 +135,3 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
     </div>
   );
 }
->>>>>>> origin/main
