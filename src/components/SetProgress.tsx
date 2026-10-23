@@ -1,14 +1,9 @@
-<<<<<<< HEAD
-=======
 import { useChemistry } from '../hooks/useChemistry';
 import { BONUS_QUIMICA_N3 } from '../data/cartas';
->>>>>>> origin/main
 import type { SetCarta } from '../types';
 
 interface Props {
   set: SetCarta;
-  total?: number;
-  obtidas?: number;
 }
 
 const MARCOS = [
@@ -17,15 +12,8 @@ const MARCOS = [
   { alvo: 4, nivel: 3 },
 ];
 
-<<<<<<< HEAD
-export default function SetProgress({ set, total = 0, obtidas = 0 }: Props) {
-  const totalCartas = obtidas; const totalMaximo = Math.max(total, 1);
-  const percentual = Math.min(100, obtidas / totalMaximo * 100); const levelAtual = 0;
-  const mensagem = `${obtidas}/${total} cartas nesta página`; const setCompleto = false;
-=======
 export default function SetProgress({ set }: Props) {
   const { quimica, totalCartas = 0, percentual = 0, mensagem = '', setCompleto = false } = useChemistry(set.id);
->>>>>>> origin/main
 
   return (
     <div>
@@ -40,28 +28,6 @@ export default function SetProgress({ set }: Props) {
         )}
       </div>
 
-<<<<<<< HEAD
-      <div 
-        role="progressbar"
-        aria-valuenow={percentual}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label={`Progresso da coleção ${set.nome}`}
-        className="relative h-2.5 rounded-full" 
-        style={{ background: 'rgba(82,232,138,0.12)' }}
-      >
-        <div className="w-full h-full rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-700"
-            style={{
-              width: `${percentual}%`,
-              background: `linear-gradient(90deg, ${set.cor || '#20d968'}, #20d968)`,
-            }}
-          />
-        </div>
-
-        {MARCOS.filter(m => m.alvo <= totalMaximo).map(m => (
-=======
       <div className="relative h-2.5 rounded-full overflow-hidden" style={{ background: 'var(--t-collection-bg)' }}>
         <div
           className="h-full rounded-full transition-all duration-700"
@@ -71,7 +37,6 @@ export default function SetProgress({ set }: Props) {
           }}
         />
         {MARCOS.map(m => (
->>>>>>> origin/main
           <span
             key={m.alvo}
             className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full transition-all z-10"
