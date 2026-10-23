@@ -28,7 +28,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   };
   const first = acoes[0];
   const desafioDoDia: Missao = first ? actionView(first) : { id: '', nome: 'Entre para consultar ações', pontos: 0, icone: '/icons/folha.svg', comprovacao: 'foto', descricao: '', comoValidar: '', comprovantes: [] };
-  const unsupported = () => showToast('Esta operação ainda não está disponível na API. Nenhum saldo foi alterado.');
+  const unsupported = () => showToast('Esta opção ainda não está disponível. Seus créditos continuam os mesmos.');
   const value = { data, verificacoes, missoes, actionsLoading: actions.loading, actionsError: actions.error, desafioDoDia, desafioBonusDisponivel: false,
     getNivel: () => NIVEIS.find(level => data.pontosAcumulados >= level.min && data.pontosAcumulados <= level.max)?.nome ?? 'Semente',
     getSelosDesbloqueados: () => selos.filter(selo => data.pontos >= selo.pontosMin).map(selo => String(selo.id)),
