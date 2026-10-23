@@ -14,15 +14,14 @@ export function ApiProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setAdmin] = useState(false);
   const [revision, setRevision] = useState(0);
   const [connecting, setConnecting] = useState(false);
-  const epoch = useRef(0); const expiry = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const epoch = useRef(0);
   const api = useMemo(() => createApiClient(BASE_URL), []);
   const service = useMemo(() => services(api), [api]);
   const disconnect = useCallback(() => {
     epoch.current++; api.setToken(null); setUser(null); setAdmin(false); setRevision(n => n + 1);
-    if (expiry.current) clearTimeout(expiry.current);
     try { localStorage.removeItem(TOKEN_KEY); } catch { /* storage indisponível */ }
   }, [api]);
-  useEffect(() => { api.setUnauthorizedHandler(disconnect); return () => { api.setUnauthorizedHandler(() => {}); if (expiry.current) clearTimeout(expiry.current); api.setToken(null); }; }, [disconnect, api]);
+  useEffect(() => { api.setUnauthorizedHandler(disconnect); return () => { api.setUnauthorizedHandler(() => {}); api.setToken(null); }; }, [disconnect, api]);
   // Restaura a sessão ao recarregar a página
   useEffect(() => {
     let token: string | null = null;
@@ -48,7 +47,7 @@ export function ApiProvider({ children }: { children: ReactNode }) {
       if (attempt !== epoch.current) return;
       setUser(profile); setAdmin(admin); refresh();
       try { localStorage.setItem(TOKEN_KEY, token); } catch { /* storage indisponível */ }
-      expiry.current = setTimeout(() => { disconnect(); showToast('Sessão expirada. Entre novamente.'); }, Math.min(identity.expires - Date.now(), 2_147_000_000));
+      // Não desloga automaticamente por inatividade — o backend retorna 401 quando o token expirar
     } catch (error) { if (attempt === epoch.current) disconnect(); throw error; }
     finally { setConnecting(false); }
   };
