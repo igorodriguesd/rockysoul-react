@@ -1,6 +1,7 @@
 export type Comprovacao = 'foto' | 'foto-gps' | 'timer' | 'declaracao';
 
 export interface Missao {
+  acaoId?: number;
   id: string;
   nome: string;
   pontos: number;
