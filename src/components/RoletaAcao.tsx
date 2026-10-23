@@ -37,7 +37,7 @@ export default function RoletaAcao({ id, onFechar }: { id: string; onFechar: () 
     if (inFlight.current || row?.girada) return;
     inFlight.current = true; setBusy(true); setError('');
     try { const result = await service.spin(id); if (alive.current) { setRow(result); setAnimating(true); } refresh(); }
-    catch (failure) { if (alive.current) setError(`${errorMessage(failure)} Você pode tentar novamente: o mesmo giro sempre retorna o resultado salvo.`); }
+    catch (failure) { if (alive.current) setError(`${errorMessage(failure)} Tente novamente para conferir seu giro. Você não perderá outro giro por isso.`); }
     finally { inFlight.current = false; if (alive.current) setBusy(false); }
   }
   const card = row ? cardView(row.carta) : null;
@@ -52,7 +52,7 @@ export default function RoletaAcao({ id, onFechar }: { id: string; onFechar: () 
             <p className="text-lg font-bold text-brand">{row.duplicada ? `Carta repetida: +${row.fragmentos} fragmentos` : row.ganhou ? `Você ganhou ${card.nome}!` : 'A carta não saiu neste giro.'}</p>
             <p className="text-sm text-slate-700 mt-0.5">{row.duplicada ? `Fragmentos de raridade ${card.raridade} adicionados à sua coleção.` : row.ganhou ? 'A carta foi salva na sua coleção.' : 'Registre outra ação e aguarde sua aprovação para ganhar um novo giro.'}</p><Link to="/colecao" onClick={onFechar} className="text-brand text-xs font-bold">Ver coleção</Link>
           </div> : <p className="text-sm text-slate-700 mt-0.5">Um giro gratuito por ação aprovada. Cartas repetidas viram fragmentos. Nenhum ponto será descontado.</p>}
-          {!row.girada && <button disabled={busy} onClick={() => { void spin(); }} className="w-full py-2.5 mt-4 bg-brand text-(--t-onaccent) font-bold rounded-xl hover:bg-brand-hover transition-all">{busy ? 'Registrando giro…' : 'Girar roleta'}</button>}
+          {!row.girada && <button disabled={busy} onClick={() => { void spin(); }} className="w-full py-2.5 mt-4 bg-brand text-(--t-onaccent) font-bold rounded-xl hover:bg-brand-hover transition-all">{busy ? 'Girando…' : 'Girar roleta'}</button>}
         </>}
         {error && <p role="alert" className="text-xs text-red-500 mt-1.5">{error}</p>}
         <button onClick={onFechar} disabled={busy || animating} className="w-full py-2.5 mt-4 bg-brand text-(--t-onaccent) font-bold rounded-xl hover:bg-brand-hover transition-all">Concluir</button>
