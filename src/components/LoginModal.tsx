@@ -33,13 +33,13 @@ function AccountForm({ onFechar, initialMode }: Omit<Props, 'aberto'>) {
       const validation = validateRegistration({ nome, email, senha, confirmarSenha });
       if (Object.keys(validation).length) { setErrors(validation); return; }
     } else if (mode === 'login' && (!email.trim() || !senha || senha.length > 72 || new TextEncoder().encode(senha).byteLength > 72)) {
-      setError('Informe email e senha válidos. A senha aceita até 72 caracteres e 72 bytes UTF-8.'); return;
+      setError('Confira seu email e sua senha. Se a senha for muito longa, use menos caracteres.'); return;
     }
     inFlight.current = true; setBusy(true);
     try {
       if (mode === 'register') {
         const profile = await service.register({ nome, email, senha });
-        if (!Number.isSafeInteger(profile.id) || profile.id <= 0 || typeof profile.email !== 'string') throw new ApiError('Resposta de cadastro inválida. Consulte a conta antes de tentar cadastrar novamente.');
+        if (!Number.isSafeInteger(profile.id) || profile.id <= 0 || typeof profile.email !== 'string') throw new ApiError('Não conseguimos confirmar o cadastro. Tente entrar com seu email antes de criar a conta novamente.');
         setEmail(profile.email); setNome(''); setMode('login');
         setSuccess('Conta criada com sucesso! Entre com seu email e senha para continuar.');
       } else if (mode === 'login') { await login(email, senha); onFechar(); }
