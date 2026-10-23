@@ -8,7 +8,7 @@ import { Verificacoes } from '../components/Verificacoes';
 import { errorMessage } from '../api/client';
 import { showToast } from '../components/Toast';
 
-export function Administracao() { return <div className="max-w-6xl mx-auto px-5 py-8"><ApiGate><AdminData /></ApiGate></div>; }
+export function Administracao() { return <div className="max-w-6xl mx-auto px-5 py-8"><ApiGate acesso="à área administrativa"><AdminData /></ApiGate></div>; }
 function AdminData() {
   const { isAdmin } = useApi();
   if (!isAdmin) return <section className="card-primary rounded-2xl p-4 sm:p-5 text-white"><h1 className="text-2xl font-bold">Área administrativa</h1><p className="mt-3 text-white/65">O acesso administrativo não foi confirmado para esta sessão. Use uma conta ADMIN; se a API estava indisponível ao conectar, reconecte quando ela estiver pronta.</p></section>;
