@@ -5,7 +5,7 @@ export function validateRegistration(values: RegistrationValues): RegistrationEr
   if (!values.nome.trim() || values.nome.trim().length > 100) errors.nome = 'Informe seu nome, com até 100 caracteres.';
   if (!values.email.trim() || values.email.trim().length > 150 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) errors.email = 'Informe um email válido, com até 150 caracteres.';
   if (!values.senha.trim() || values.senha.length < 12 || values.senha.length > 72) errors.senha = 'A senha deve ter de 12 a 72 caracteres.';
-  else if (new TextEncoder().encode(values.senha).byteLength > 72) errors.senha = 'A senha deve ocupar no máximo 72 bytes UTF-8; acentos e emojis usam mais bytes.';
+  else if (new TextEncoder().encode(values.senha).byteLength > 72) errors.senha = 'Essa senha é muito longa. Use menos caracteres, acentos ou emojis.';
   if (values.confirmarSenha !== values.senha) errors.confirmarSenha = 'As senhas precisam ser iguais.';
   return errors;
 }
