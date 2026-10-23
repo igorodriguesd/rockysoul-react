@@ -1,21 +1,9 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-<<<<<<< HEAD
-import { MISSOES as MISSOES_VISUAIS, CURIOSIDADES, RECOMPENSAS } from '../data/constants';
-import VerificarModal from '../components/VerificarModal';
-import { useApi } from '../context/ApiContext';
-import { useApiPage } from '../hooks/useApiPage';
-import type { Acao, HistoricoApi } from '../api/types';
-import type { Missao } from '../types';
-import { ApiGate, ListState, PageControls } from '../components/ApiUi';
-import { Verificacoes } from '../components/Verificacoes';
-import LoginModal from '../components/LoginModal';
-=======
-import { MISSOES, CURIOSIDADES, RECOMPENSAS, PARCEIROS, CO2_POR_MISSAO, AMIGOS_SIMULADOS, NIVEIS, TRILHA_EVOLUCAO, GRUPOS_MISSAO, grupoDaMissao } from '../data/constants';
+import { MISSOES as MISSOES_VISUAIS, CURIOSIDADES, RECOMPENSAS, PARCEIROS, CO2_POR_MISSAO, AMIGOS_SIMULADOS, NIVEIS, TRILHA_EVOLUCAO, GRUPOS_MISSAO, grupoDaMissao } from '../data/constants';
 import VerificarModal from '../components/VerificarModal';
 import TrilhaEvolucaoModal from '../components/TrilhaEvolucaoModal';
->>>>>>> origin/main
 import MiniJogoSeparacao from '../components/MiniJogoSeparacao';
 import IconeMissao from '../components/IconeMissao';
 import { useColecao } from '../context/CollectionContext';
@@ -30,6 +18,7 @@ interface AtividadeItem {
   icone: string;
   data: string;
   timestamp: number;
+  estado?: string;
 }
 
 const MISSAO_ICONE_MAP: Record<string, string> = {
@@ -129,16 +118,7 @@ function inicioDoDia(data: Date): Date {
 }
 
 export function Dashboard() {
-<<<<<<< HEAD
-  const { data, getNivel, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio } = useData();
-  const { user } = useApi();
-  const [page, setPage] = useState(0); const [historyPage, setHistoryPage] = useState(0);
-  const actions = useApiPage<Acao>('acao', page); const history = useApiPage<HistoricoApi>('historico', historyPage);
-  const MISSOES: Missao[] = actions.rows.map(row => ({ id: String(row.id), nome: row.nome, pontos: row.pontos, comprovacao: 'foto', icone: MISSOES_VISUAIS.find(item => item.nome === row.nome)?.icone ?? '/icons/folha.svg' }));
-  const [loginAberto, setLoginAberto] = useState(false);
-  const [missaoSelecionada, setMissaoSelecionada] = useState<Missao | null>(null);
-=======
-  const { data, getNivel, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio, addAmigo, codigoAmigo, amigos } = useData();
+  const { missoes: MISSOES, verificacoes, data, getNivel, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio, addAmigo, codigoAmigo, amigos } = useData();
   const { getProgressoTotal } = useColecao();
   const exigirLogin = useLoginGate();
   const [missaoSelecionada, setMissaoSelecionada] = useState<(typeof MISSOES)[0] | null>(null);
@@ -148,7 +128,6 @@ export function Dashboard() {
   const [periodoGrafico, setPeriodoGrafico] = useState('7');
   const [mostrarEvolucao, setMostrarEvolucao] = useState(false);
   const missoesRef = useRef<HTMLDivElement>(null);
->>>>>>> origin/main
 
   useEffect(() => {
     document.title = 'RockySoulUp - Dashboard';
@@ -156,11 +135,6 @@ export function Dashboard() {
 
   const nivel = getNivel();
 
-<<<<<<< HEAD
-  const ranking: RankingUser[] = user ? [{ nome: user.nome, pontos: user.pontos }] : [];
-
-=======
->>>>>>> origin/main
   const recentHistory = useMemo<AtividadeItem[]>(() => {
     const itens: AtividadeItem[] = data.historico.map((h, i) => {
       const missaoId = getMissaoIdByName(h.nome);
@@ -190,8 +164,13 @@ export function Dashboard() {
       });
     });
 
+    verificacoes.filter(row => row.estado !== 'APROVADA').forEach(row => {
+      const acao = MISSOES.find(m => m.acaoId === row.acaoId);
+      itens.push({ id: row.id, nome: acao?.nome ?? `Ação #${row.acaoId}`, pontos: row.pontosCreditados,
+        tipo: 'acao', icone: acao?.icone ?? '/icons/camera.svg', data: '', timestamp: 0, estado: row.estado });
+    });
     return itens.sort((a, b) => b.timestamp - a.timestamp).slice(0, 8);
-  }, [data.historico, data.resgates]);
+  }, [data.historico, data.resgates, verificacoes, MISSOES]);
 
   const dicaDoDia = getDicaDoDia();
 
@@ -205,6 +184,7 @@ export function Dashboard() {
   const poolAmigos = AMIGOS_SIMULADOS.filter(a => !amigos.includes(a.codigo));
 
   function handleAddAmigo() {
+    if (!codigoAmigo) { showToast('Comunidade e códigos de amigos ainda não estão disponíveis na API.'); return; }
     const ok = addAmigo(codigoInput);
     if (ok) {
       showToast('Amigo adicionado à sua comunidade');
@@ -215,6 +195,7 @@ export function Dashboard() {
   }
 
   function copiarCodigoAmigo() {
+    if (!codigoAmigo) { showToast('Código de amigo indisponível na API.'); return; }
     try {
       navigator.clipboard?.writeText(codigoAmigo);
       showToast('Código de amigo copiado');
@@ -233,7 +214,7 @@ export function Dashboard() {
   const missoesFiltradas = useMemo(() => {
     const matcher = FILTROS_MISSOES.find(f => f.id === filtroMissoes) ?? FILTROS_MISSOES.find(f => f.id === 'todas')!;
     return MISSOES.filter(m => matcher.matcher(m.id)).sort((a, b) => a.pontos - b.pontos);
-  }, [filtroMissoes]);
+  }, [filtroMissoes, MISSOES]);
 
   const missoesVisiveis = verTodas ? missoesFiltradas : missoesFiltradas.slice(0, INICIAIS_VISIVEIS);
   const totalFiltro = missoesFiltradas.length;
@@ -318,17 +299,12 @@ export function Dashboard() {
   const totalPeriodo = graficoImpacto.dias.reduce((s, d) => s + d.valor, 0);
 
   function handleMissao(missao: (typeof MISSOES)[0]) {
-<<<<<<< HEAD
-    if (!user) { setLoginAberto(true); return; }
-=======
     if (!exigirLogin()) return;
->>>>>>> origin/main
     setMissaoSelecionada(missao);
   }
 
   function handleAcaoDesafio() {
-    if (!user) { setLoginAberto(true); return; }
-    if (desafioFeito || !desafioDoDia.id) return;
+    if (desafioFeito) return;
     handleMissao(desafioDoDia);
   }
 
@@ -367,26 +343,6 @@ export function Dashboard() {
           </span>
         </Link>
 
-<<<<<<< HEAD
-          <div className="card-primary rounded-2xl p-4 relative overflow-hidden">
-            <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(#4ade80, transparent)' }} />
-            <div className="flex items-center gap-2 mb-3">
-              <BoltIcon />
-              <span className="text-white/50 text-xs font-bold uppercase tracking-widest">Desafio do Dia</span>
-            </div>
-            <div className="flex items-center gap-3 mb-3">
-              <img src={desafioDoDia.icone} className="w-10 h-10 shrink-0" alt="" />
-              <div className="flex-1 min-w-0">
-                <p className="text-white font-semibold text-base truncate">{desafioDoDia.nome}</p>
-                <p className="text-white/40 text-sm">
-                  +{desafioDoDia.pontos} pts · verificação por foto
-                </p>
-              </div>
-            </div>
-            <div className="mb-3">
-              <span className="text-[#ffc928]/80 text-xs">
-                {desafioBonusDisponivel ? 'Bônus extra disponível' : 'Pontos após aprovação'}
-=======
         {/* ===================== PROGRESSO (protagonista) ===================== */}
         <div className="relative overflow-hidden rounded-3xl p-5 sm:p-7 [background:var(--t-grad-strong)] shadow-[0_14px_40px_rgba(0,230,118,0.28)]">
           <div
@@ -405,44 +361,9 @@ export function Dashboard() {
               <span className="inline-flex items-center gap-1.5 text-white/80 text-sm font-medium mt-0.5">
                 {getGreeting(nivel)}
                 {TRILHA_EVOLUCAO[idxNivel] && <img src={TRILHA_EVOLUCAO[idxNivel].icone} className="w-4 h-4" alt="" />}
->>>>>>> origin/main
               </span>
             </div>
 
-<<<<<<< HEAD
-          <div className="card-tertiary rounded-2xl p-4 flex flex-col gap-2 min-w-0">
-            <div className="flex items-center gap-2">
-              <img src="/icons/folha.svg" className="w-4 h-4 opacity-60" alt="" />
-              <span className="text-white/40 text-[11px] font-bold uppercase tracking-widest">Dica do Dia</span>
-            </div>
-            <p className="text-white/60 text-sm leading-snug flex-1 font-serif-display italic">
-              "{dicaDoDia}"
-            </p>
-            <span className="text-green-400/50 text-[11px] font-medium">Dica de sustentabilidade</span>
-          </div>
-        </aside>
-
-        <div className="flex-1 min-w-0 flex flex-col gap-5">
-
-          <div>
-            <p className="text-white/35 text-sm">Bom dia,</p>
-            <h1 className="text-white mt-0.5 font-serif-display" style={{ fontSize: 30 }}>
-              {nomeExibido} <span style={{ color: '#4ade80' }}>—</span> {getGreeting(nivel)}
-            </h1>
-          </div>
-
-          <div className="card-secondary rounded-2xl p-4 flex-1 flex flex-col">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-white font-semibold">Registrar Ação</h2>
-              <span className="text-white/50 text-[13px]">{feitasHoje.size}/{MISSOES.length} hoje</span>
-            </div>
-            <ListState {...actions} count={actions.rows.length} />
-            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-2.5 auto-rows-min flex-1 content-start">
-              {MISSOES.map(missao => {
-                const cor = MISSAO_COR_MAP[MISSOES_VISUAIS.find(item => item.nome === missao.nome)?.id ?? ''] || '#4ade80';
-                const checked = feitasHoje.has(missao.nome);
-                return (
-=======
             <div className="flex flex-col lg:flex-row lg:items-center gap-5">
               <div className="min-w-0">
                 <p className="text-white/70 text-[11px] font-bold uppercase tracking-widest">{nivelAtual.nome}</p>
@@ -470,88 +391,15 @@ export function Dashboard() {
                 </div>
                 <div className="flex items-center justify-between mt-1.5">
                   <span className="text-white/75 text-[11px] font-semibold tabular-nums">{pctNivel}% concluído</span>
->>>>>>> origin/main
                   <button
                     onClick={() => setMostrarEvolucao(true)}
                     className="text-white/85 hover:text-white text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
                   >
-<<<<<<< HEAD
-                    {checked && (
-                      <div className="absolute top-2 right-2 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: 'rgba(74,222,128,0.2)' }}>
-                        <img src="/icons/check.svg" className="w-2.5 h-2.5" alt="feito" />
-                      </div>
-                    )}
-                    <img
-                      src={missao.icone}
-                      className="w-8 h-8 group-hover:scale-110 transition-transform"
-                      alt=""
-                    />
-                    <div className="mt-auto">
-                      <p className="text-white/90 text-sm font-medium leading-snug">{missao.nome}</p>
-                      <p className="font-semibold text-sm mt-0.5" style={{ color: cor }}>+{missao.pontos} pts</p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <PageControls page={page} setPage={setPage} count={actions.rows.length} loading={actions.loading} />
-          {!user && <ApiGate><span /></ApiGate>}
-          {user && <Verificacoes />}
-          {user && <section className="card-secondary rounded-2xl p-4"><h2 className="font-semibold mb-3">Histórico de registros</h2><ListState {...history} count={history.rows.length} /><ul className="divide-y divide-white/5">{history.rows.map(row => <li key={row.id} className="py-3 flex justify-between gap-3"><div><p className="text-white/80 text-sm">{row.descricao}</p><p className="text-white/40 text-xs">{row.dataAcao.replace('T', ' ')}</p></div><span className="text-green-400 text-sm">{row.pontos} pts</span></li>)}</ul><PageControls page={historyPage} setPage={setHistoryPage} count={history.rows.length} loading={history.loading} /></section>}
-          <MiniJogoSeparacao />
-        </div>
-
-        <aside className="hidden lg:flex flex-col lg:w-75 shrink-0 gap-4">
-
-          <div className="card-tertiary rounded-2xl p-4">
-            <p className="text-white/55 text-[11px] uppercase tracking-widest mb-3">Seu progresso</p>
-            <div className="flex flex-col gap-1">
-              {ranking.slice(0, 4).map((u, i) => {
-                const nivelUser = NIVEL_ICONE[nivelPorPontos(u.pontos)] || '/icons/semente.svg';
-                return (
-                  <div
-                    key={u.nome + i}
-                    className="flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 transition-all hover:bg-white/5"
-                  >
-                    <span
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
-                      style={{
-                        background: i === 0 ? 'linear-gradient(135deg,#ffc928,#f59e0b)' : i === 1 ? 'rgba(203,213,225,0.2)' : i === 2 ? 'rgba(180,120,60,0.25)' : 'rgba(255,255,255,0.05)',
-                        color: i < 3 ? 'white' : 'rgba(255,255,255,0.3)',
-                      }}
-                    >
-                      {i + 1}
-                    </span>
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-[#0f3c22] shrink-0"
-                      style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)', opacity: i === 0 ? 1 : 0.7 }}
-                    >
-                      {u.nome[0].toUpperCase()}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-white/80 text-sm font-medium truncate">{u.nome}</p>
-                      <p className="text-white/45 text-[11px]">{u.pontos} pts</p>
-                    </div>
-                    <img src={nivelUser} className="w-4 h-4" alt="" />
-                  </div>
-                );
-              })}
-
-              <div className="flex items-center gap-2.5 rounded-xl px-2.5 py-2.5 mt-1" style={{ background: 'rgba(74,222,128,0.07)', border: '1px solid rgba(74,222,128,0.12)' }}>
-                <span className="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold text-white/30 shrink-0" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                  {ranking.findIndex(u => u.nome === nomeExibido) >= 0 ? ranking.findIndex(u => u.nome === nomeExibido) + 1 : ranking.length}
-                </span>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-[#0f3c22] shrink-0" style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)' }}>
-                  {inicial}
-=======
                     Ver trilha completa
                     <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M9 18l6-6-6-6" />
                     </svg>
                   </button>
->>>>>>> origin/main
                 </div>
 
                 <div className="flex items-center gap-2 mt-4">
@@ -611,7 +459,7 @@ export function Dashboard() {
             </div>
           </div>
           <button
-            onClick={() => missoesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            onClick={() => { if (exigirLogin()) missoesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}
             className="shrink-0 rounded-full font-semibold text-[13px] py-2.5 sm:py-3 px-5 sm:px-7 flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer animate-pulse-glow"
             style={{ background: 'var(--t-grad-strong)', color: '#FFFFFF', boxShadow: '0 8px 24px rgba(0,230,118,0.3)' }}
           >
@@ -876,7 +724,7 @@ export function Dashboard() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-slate-800 text-sm font-medium leading-snug truncate">{entry.nome}</p>
-                        <p className="text-slate-500 text-[11px] mt-0.5">{timeAgo(entry.data)}</p>
+                        <p className="text-slate-500 text-[11px] mt-0.5">{entry.estado ? entry.estado.replaceAll('_', ' ') : timeAgo(entry.data)}</p>
                       </div>
                       <span className={`text-xs font-bold shrink-0 mt-1 ${ganhou ? 'text-brand' : 'text-red-400'}`}>
                         {ganhou ? '+' : '-'}{entry.pontos}
@@ -994,12 +842,8 @@ export function Dashboard() {
         <MiniJogoSeparacao compacto />
       </div>
 
-<<<<<<< HEAD
-      <LoginModal aberto={loginAberto} onFechar={() => setLoginAberto(false)} />
-=======
       <TrilhaEvolucaoModal aberto={mostrarEvolucao} onFechar={() => setMostrarEvolucao(false)} pontos={pontos} />
 
->>>>>>> origin/main
       {missaoSelecionada && (
         <VerificarModal
           aberto={true}
