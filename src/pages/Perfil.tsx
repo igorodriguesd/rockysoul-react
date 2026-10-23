@@ -3,7 +3,7 @@ import { useApi } from '../context/ApiContext';
 import { ApiGate } from '../components/ApiUi';
 import { errorMessage } from '../api/client';
 import { showToast } from '../components/Toast';
-export function Perfil() { return <main className="max-w-2xl mx-auto px-5 py-8"><ApiGate><ProfileForm /></ApiGate></main>; }
+export function Perfil() { return <main className="max-w-2xl mx-auto px-5 py-8"><ApiGate acesso="ao seu perfil"><ProfileForm /></ApiGate></main>; }
 function ProfileForm() {
   const { user, service, disconnect, refreshProfile } = useApi();
   const [nome, setNome] = useState(user?.nome ?? ''); const [email, setEmail] = useState(user?.email ?? '');
