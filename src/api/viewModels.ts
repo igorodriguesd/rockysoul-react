@@ -9,7 +9,7 @@ export function actionView(row: Acao): Missao {
   return { ...visual, id: visual?.id ?? `api-${row.id}`, acaoId: row.id, nome: row.nome, pontos: row.pontos,
     icone: visual?.icone ?? '/icons/folha.svg', comprovacao: 'foto',
     descricao: visual?.descricao ?? row.nome,
-    comoValidar: 'Capture a ação com o código do desafio escrito em papel na mesma cena. A decisão e os pontos são definidos pela API.',
+    comoValidar: 'Capture a ação com o código do desafio escrito em papel na mesma cena. Se a ação for aprovada, seus pontos serão adicionados.',
     comprovantes: visual?.comprovantes ?? ['Foto da ação e do código em papel'] };
 }
 export function rewardView(row: RecompensaApi): Recompensa {
