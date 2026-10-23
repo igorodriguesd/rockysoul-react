@@ -1,3 +1,4 @@
+import { ApiGate } from '../components/ApiUi';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
@@ -9,7 +10,8 @@ import { rewardView } from '../api/viewModels';
 import { errorMessage } from '../api/client';
 import ResgatarModal from '../components/ResgatarModal';
 
-export function RecompensaDetalhe() {
+export function RecompensaDetalhe() { return <ApiGate acesso="aos detalhes desta recompensa"><RecompensaDetalheContent /></ApiGate>; }
+function RecompensaDetalheContent() {
   const { id } = useParams<{ id: string }>();
   const { data } = useData();
   const exigirLogin = useLoginGate();
