@@ -1,3 +1,4 @@
+import { ApiGate } from '../components/ApiUi';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FRAGMENTOS_POR_DUPLICADA, CUSTO_FABRICACAO, PESO_RARIDADE, getValorCarta, missoesPorRaridade } from '../data/cartas';
@@ -14,7 +15,8 @@ type ModoColecao = 'cartas' | 'fabrica';
 const GRAD_COLECAO = 'linear-gradient(135deg, #6d4fc2, #a78bfa)';
 const BORDA_COLECAO = 'rgba(109,79,194,0.4)';
 
-export function Colecao() {
+export function Colecao() { return <ApiGate acesso="à sua coleção"><ColecaoContent /></ApiGate>; }
+function ColecaoContent() {
   useEffect(() => { document.title = 'RockySoulUp - Coleção'; }, []);
 
   const navigate = useNavigate();
