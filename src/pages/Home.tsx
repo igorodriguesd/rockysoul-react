@@ -3,12 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useChat } from '../context/ChatContext';
 import LoginModal from '../components/LoginModal';
-<<<<<<< HEAD
-import CollectionChip from '../components/CollectionChip';
-=======
 import Footer from '../components/Footer';
 import IlhaRockySoul from '../components/IlhaRockySoul';
->>>>>>> origin/main
 
 const PASSOS_LATERAIS = [
   { numero: '1', icone: '/icons/camera.svg', titulo: 'Registre', texto: 'Uma missão sustentável com foto.', rota: '/dashboard', acento: '#22c55e' },
@@ -33,14 +29,6 @@ export function Home() {
     }
   }
 
-<<<<<<< HEAD
-  const nivel = getNivel();
-  const ranking = [...(data.nome ? [{ nome: data.nome, pontos: data.pontos }] : [])]
-    .sort((a, b) => b.pontos - a.pontos)
-    .slice(0, 2);
-
-=======
->>>>>>> origin/main
   return (
     <>
       <section className="relative min-h-dvh w-full overflow-hidden pt-24 pb-4 flex flex-col">
@@ -72,14 +60,8 @@ export function Home() {
                 Veja seu <em className="not-italic" style={{ color: '#00e676', textShadow: '0 0 12px rgba(0,230,118,0.6)' }}>impacto</em> crescer.
               </h1>
 
-<<<<<<< HEAD
-              <p className="text-white/70 leading-relaxed" style={{ fontSize: 20, maxWidth: 480 }}>
-                Registre suas ações ecológicas, acompanhe a revisão das evidências e consulte seus pontos e sua coleção
-                e deixe o planeta melhor — com IA como guia.
-=======
               <p className="text-white/70 leading-relaxed" style={{ fontSize: 18, maxWidth: 480 }}>
                 Transforme hábitos sustentáveis em créditos, recompensas e conquistas.
->>>>>>> origin/main
               </p>
 
               <div className="flex items-center gap-3 flex-wrap mt-2">
@@ -117,82 +99,6 @@ export function Home() {
               <IlhaRockySoul />
             </div>
           </div>
-<<<<<<< HEAD
-
-          {/* ASIDE DIREITA - CARDS LATERAIS */}
-          <aside className="hidden xl:flex flex-col items-start gap-7 w-72.5 shrink-0 self-stretch justify-center">
-            {/* Card Nível - Borda Verde Menta */}
-            <div>
-              <div
-                className="glass-side rounded-2xl px-6 py-5 flex items-center gap-3.5 opacity-85 transition-transform duration-300 hover:-translate-y-2"
-                style={{
-                  border: '1px solid rgba(134, 239, 172, 0.4)',
-                  boxShadow: '0 4px 20px rgba(134, 239, 172, 0.15)',
-                }}
-              >
-                <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #86efac, #4ade80)' }}>
-                  <img src={NIVEL_ICONES[nivel] ?? '/icons/semente.svg'} alt="" className="w-7 h-7" />
-                </div>
-                <div>
-                  <p className="text-white/50 text-xs font-medium uppercase tracking-widest">Nível</p>
-                  <p className="text-white text-lg font-semibold leading-tight">{nivel}</p>
-                  <p className="text-green-300/70 text-xs">+2 esta semana</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Card Ranking - Borda Dourada */}
-            <div>
-              <div
-                className="glass-side rounded-xl px-6 py-5 opacity-75 rotate-2 transition-transform duration-300 hover:-translate-y-2"
-                style={{
-                  border: '1px solid rgba(245, 196, 81, 0.45)',
-                  boxShadow: '0 4px 20px rgba(245, 196, 81, 0.15)',
-                }}
-              >
-                <p className="text-white/40 text-xs uppercase tracking-widest mb-2.5">Meu saldo</p>
-                <div className="flex items-center gap-3">
-                  <span
-                    className="text-sm font-bold rounded-full w-7 h-7 flex items-center justify-center text-[#0f3c22]"
-                    style={{ background: '#4ade80' }}
-                  >
-                    •
-                  </span>
-                  <div>
-                    <p className="text-white text-lg font-semibold leading-none">{ranking[0]?.nome.split(' ')[0] ?? '—'}</p>
-                    <p className="text-green-300/70 text-xs mt-1">{ranking[0]?.pontos ?? 0} pts</p>
-                  </div>
-                </div>
-                {ranking[1] && (
-                  <div className="flex items-center gap-3 mt-2.5 opacity-60">
-                    <span className="text-sm font-bold text-[#ffffff99] w-7 text-center">2</span>
-                    <div>
-                      <p className="text-white/75 text-base leading-none">{ranking[1].nome.split(' ')[0]} · {ranking[1].pontos} pts</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Card Desafio do Dia - Borda Laranja/Âmbar */}
-            <div>
-              <div
-                className="glass-side rounded-full px-6 py-4 flex items-center gap-3 opacity-70 transition-transform duration-300 hover:-translate-y-2"
-                style={{
-                  border: '1px solid rgba(245, 158, 11, 0.4)',
-                  boxShadow: '0 4px 20px rgba(245, 158, 11, 0.15)',
-                }}
-              >
-                <img src={desafioDoDia.icone} alt="" className="w-6 h-6" />
-                <div>
-                  <p className="text-white/40 text-xs uppercase tracking-widest">Ação do catálogo</p>
-                  <p className="text-white/85 text-base font-medium">{desafioDoDia.nome} · {desafioDoDia.pontos} pts após aprovação</p>
-                </div>
-              </div>
-            </div>
-          </aside>
-=======
->>>>>>> origin/main
         </div>
 
         <div className="relative z-10 max-w-[1100px] mx-auto px-6 mt-6 w-full shrink-0">
@@ -244,24 +150,6 @@ export function Home() {
             </p>
             <LeafSmall flip />
           </div>
-<<<<<<< HEAD
-
-          <div className="flex items-center gap-6 lg:gap-10 flex-wrap justify-center mt-4">
-            {[
-              { value: 'Ações', label: 'Evidências com revisão' },
-              { value: 'Pontos', label: 'Crédito após aprovação' },
-              { value: 'Coleção', label: 'Dados confirmados pela API' },
-            ].map((s) => (
-              <div key={s.label} className="text-center hover:opacity-90 transition-opacity px-2">
-                <p className="font-serif-display text-white mb-1" style={{ fontSize: 36 }}>
-                  {s.value}
-                </p>
-                <p className="text-white/60 text-sm tracking-wide">{s.label}</p>
-              </div>
-            ))}
-          </div>
-=======
->>>>>>> origin/main
         </div>
 
         <Footer />
