@@ -64,7 +64,7 @@ export function createApiClient(baseUrl: string, fetcher: typeof fetch = globalT
       } catch (error) {
         if (error instanceof ApiError) throw error;
         if (options.signal?.aborted) throw new DOMException('Operação cancelada.', 'AbortError');
-        throw new ApiError('Sem resposta da API em localhost:8080. Confira o servidor e o CORS. Se houve envio, consulte o estado antes de repetir.');
+        throw new ApiError(`Sem resposta da API em ${base.origin}. Confira sua conexão e aguarde se o serviço estiver iniciando. Se houve envio, consulte o estado antes de repetir.`);
       } finally { clearTimeout(timeout); options.signal?.removeEventListener('abort', abort); }
     },
   };
