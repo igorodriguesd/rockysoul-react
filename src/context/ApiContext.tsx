@@ -28,7 +28,7 @@ export function ApiProvider({ children }: { children: ReactNode }) {
     try {
       const profile = await service.profile(identity.id);
       if (attempt !== epoch.current) return;
-      if (profile.id !== identity.id || typeof profile.nome !== 'string' || !Number.isSafeInteger(profile.versao)) throw new Error('Perfil inválido.');
+      if (profile.id !== identity.id || typeof profile.nome !== 'string' || !Number.isSafeInteger(profile.versao)) throw new Error('Não foi possível carregar sua conta. Tente entrar novamente.');
       let admin = false;
       try { await service.usage(); admin = true; } catch (error) {
         if (error instanceof Error && 'status' in error && error.status === 401) throw error;
@@ -42,7 +42,7 @@ export function ApiProvider({ children }: { children: ReactNode }) {
   };
   const login = async (email: string, senha: string) => {
     const session = await service.login({ email, senha });
-    if (typeof session.accessToken !== 'string' || session.tokenType !== 'Bearer' || !Number.isFinite(session.expiresIn) || session.expiresIn <= 0) throw new ApiError('Resposta de autenticação inválida.');
+    if (typeof session.accessToken !== 'string' || session.tokenType !== 'Bearer' || !Number.isFinite(session.expiresIn) || session.expiresIn <= 0) throw new ApiError('Não foi possível entrar agora. Tente novamente em instantes.');
     await connect(session.accessToken);
   };
   const logout = async () => { try { await service.logout(); } catch (error) { showToast(errorMessage(error)); } finally { disconnect(); } };
