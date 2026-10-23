@@ -12,7 +12,7 @@ export function PageControls({ page, setPage, count, loading }: { page: number; 
 }
 export function ListState({ loading, error, count }: { loading: boolean; error: string | null; count: number }) {
   const { refresh } = useApi();
-  if (loading) return <p role="status" className="text-white/60 py-5">Carregando dados da API…</p>;
+  if (loading) return <p role="status" className="text-white/60 py-5">Carregando…</p>;
   if (error) return <div role="alert" className="my-4 text-red-300"><p>{error}</p><button className="rounded-xl px-3 py-2 text-sm font-medium text-white/80 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed mt-2" onClick={refresh}>Tentar carregar novamente</button></div>;
-  return count ? null : <p className="text-white/55 py-5">Nenhum registro nesta página.</p>;
+  return count ? null : <p className="text-white/55 py-5">Nada para mostrar por enquanto.</p>;
 }
