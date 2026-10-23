@@ -1,19 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-<<<<<<< HEAD
-import { MISSOES, RECOMPENSAS as RECOMPENSAS_VISUAIS, SELOS as SELOS_VISUAIS, CO2_POR_MISSAO, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO } from '../data/constants';
-=======
 import { useLoginGate } from '../hooks/useLoginGate';
-import { RECOMPENSAS, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO, getParceiro } from '../data/constants';
->>>>>>> origin/main
+import { CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO, getParceiro } from '../data/constants';
 import ResgatarModal from '../components/ResgatarModal';
 import { showToast } from '../components/Toast';
-import { useApi } from '../context/ApiContext';
-import { useApiPage } from '../hooks/useApiPage';
-import { ApiGate, ListState, PageControls } from '../components/ApiUi';
-import type { RecompensaApi, SeloApi } from '../api/types';
 import type { Recompensa } from '../types';
+import { useApiPage } from '../hooks/useApiPage';
+import type { RecompensaApi } from '../api/types';
+import { rewardView } from '../api/viewModels';
 
 function formatarReais(valor: number): string {
   return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -29,16 +24,10 @@ const FILTROS_LOJA: { id: string; label: string; matcher: (categoria: string) =>
 export function Recompensas() {
   useEffect(() => { document.title = 'Recompensas - RockySoulUp'; }, []);
 
-<<<<<<< HEAD
-  const { data, getNivel } = useData();
-  const { user } = useApi(); const [page, setPage] = useState(0); const [badgePage, setBadgePage] = useState(0);
-  const rewards = useApiPage<RecompensaApi>('recompensa', page); const badges = useApiPage<SeloApi>('selo', badgePage);
-  const RECOMPENSAS: Recompensa[] = rewards.rows.map(row => ({ id: String(row.id), nome: row.titulo, descricao: row.descricao ?? '', pontos: row.custo, categoria: (row.categoria ?? 'Natureza') as Recompensa['categoria'], icone: RECOMPENSAS_VISUAIS.find(item => item.nome === row.titulo)?.icone ?? '/icons/trofeu.svg', badge: row.destaque === 'NOVO' ? 'Novo' : row.destaque === 'TOP 1' ? 'Top 1' : undefined }));
-  const SELOS = badges.rows.map(row => ({ id: String(row.id), nome: row.nome, descricao: row.descricao ?? '', minPontos: row.pontosMin, icone: SELOS_VISUAIS.find(item => item.nome === row.nome)?.icone ?? '/icons/semente.svg' }));
-=======
-  const { data, subtrairPontos, addResgate } = useData();
+  const { data } = useData();
+  const catalog = useApiPage<RecompensaApi>('recompensa');
+  const RECOMPENSAS = catalog.rows.map(rewardView);
   const exigirLogin = useLoginGate();
->>>>>>> origin/main
   const [recompensaSelecionada, setRecompensaSelecionada] = useState<Recompensa | null>(null);
   const [filtroLoja, setFiltroLoja] = useState('todas');
   const [creditosConverter, setCreditosConverter] = useState('');
@@ -51,27 +40,15 @@ export function Recompensas() {
   const chaveValida = chavePix.trim().length >= 3;
   const abaixoMinimo = creditosNum > 0 && creditosNum < MIN_CREDITOS_CONVERSAO;
   const acimaSaldo = creditosNum > data.pontos;
-  const podeConverter = false;
+  const podeConverter = !conversaoFeita && creditosNum >= MIN_CREDITOS_CONVERSAO && creditosNum <= data.pontos && chaveValida;
 
-<<<<<<< HEAD
-  function solicitarConversao() { showToast('Conversão em Pix ainda indisponível. Nenhum saldo foi alterado.'); }
-=======
   const matcher = FILTROS_LOJA.find(f => f.id === filtroLoja) ?? FILTROS_LOJA[0];
   const recompensasFiltradas = RECOMPENSAS.filter(r => matcher.matcher(r.categoria));
 
   function solicitarConversao() {
-    if (!podeConverter) return;
     if (!exigirLogin()) return;
-    subtrairPontos(creditosNum);
-    addResgate({
-      nome: `Conversão de créditos em dinheiro (R$${formatarReais(valorReais)})`,
-      pontos: creditosNum,
-      data: new Date().toISOString(),
-    });
-    setConversaoFeita({ creditos: creditosNum, valor: valorReais });
-    showToast(`Conversão de ${creditosNum} créditos = R$${formatarReais(valorReais)}`);
+    showToast('Conversão para Pix ainda não está disponível na API. Nenhum crédito foi descontado.');
   }
->>>>>>> origin/main
 
   function novaConversao() {
     setConversaoFeita(null);
@@ -81,15 +58,6 @@ export function Recompensas() {
 
   return (
     <>
-<<<<<<< HEAD
-      <div className="max-w-275 mx-auto px-6 py-12">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2 drop-shadow">Recompensas</h1>
-          <p className="text-white/70">Acompanhe seus créditos e conheça as recompensas ecológicas</p>
-          <div className="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-full border border-[#4ade80]/25" style={{ background: 'rgba(74,222,128,0.08)' }}>
-            <img src="/icons/trofeu.svg" alt="" className="w-4 h-4" />
-            <span className="text-sm font-semibold text-white/85">{data.pontos} créditos disponíveis</span>
-=======
       <div className="max-w-275 mx-auto px-6 py-10">
         <header className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -121,20 +89,12 @@ export function Recompensas() {
                 {f.label}
               </button>
             ))}
->>>>>>> origin/main
           </div>
         </div>
 
-        {!user && <ApiGate><span /></ApiGate>}
-        <ListState {...rewards} count={rewards.rows.length} />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-12">
-<<<<<<< HEAD
-          {RECOMPENSAS.map(r => {
-            const podeResgatar = false;
-=======
           {recompensasFiltradas.map(r => {
             const podeResgatar = data.pontos >= r.pontos;
->>>>>>> origin/main
             const jaResgatou = data.resgates.some(rg => rg.nome === r.nome);
             return (
               <div
@@ -177,7 +137,7 @@ export function Recompensas() {
                         : 'bg-brand-soft text-slate-400 cursor-not-allowed'
                       }`}
                   >
-                    {jaResgatou ? 'Resgatado' : podeResgatar ? 'Resgatar' : 'Resgate em breve'}
+                    {jaResgatou ? 'Resgatado' : podeResgatar ? 'Resgatar' : 'Créditos insuficientes'}
                   </button>
                 </div>
               </div>
@@ -185,110 +145,6 @@ export function Recompensas() {
           })}
         </div>
 
-<<<<<<< HEAD
-        <PageControls page={page} setPage={setPage} count={rewards.rows.length} loading={rewards.loading} />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-12 mt-8">
-          <div className="card-secondary rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-white/55 text-[11px] uppercase tracking-widest">Trilha de Evolução</p>
-              <span className="text-[#4ade80] text-sm font-bold">{nivel}</span>
-            </div>
-            <div className="flex flex-col gap-3">
-              <ListState {...badges} count={badges.rows.length} />
-              {SELOS.map((l, i, arr) => {
-                const unlocked = data.pontos >= l.minPontos;
-                const active = nivel === l.nome;
-                return (
-                  <div key={l.id} className="flex items-center gap-3.5 relative">
-                    {i < arr.length - 1 && (
-                      <div className="absolute left-4.5 top-9 w-px h-5" style={{ background: unlocked ? 'rgba(74,222,128,0.4)' : 'rgba(255,255,255,0.06)' }} />
-                    )}
-                    <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all"
-                      style={{
-                        background: active ? 'linear-gradient(135deg,#4ade80,#22c55e)' : unlocked ? 'rgba(74,222,128,0.12)' : 'rgba(255,255,255,0.04)',
-                        border: active ? 'none' : unlocked ? '1px solid rgba(74,222,128,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                        filter: unlocked ? 'none' : 'grayscale(1)',
-                        opacity: unlocked ? 1 : 0.35,
-                      }}
-                    >
-                      <img src={l.icone} className="w-5 h-5" alt="" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className={`text-sm font-semibold ${active ? 'text-green-300' : unlocked ? 'text-white/75' : 'text-white/35'}`}>{l.nome}</p>
-                      <p className="text-white/35 text-[11px]">{l.descricao} · {l.minPontos} pts</p>
-                    </div>
-                    {active && <span className="text-[11px] text-green-400 font-semibold">atual</span>}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="card-secondary rounded-2xl p-5">
-            <PageControls page={badgePage} setPage={setBadgePage} count={badges.rows.length} loading={badges.loading} />
-            <p className="text-white/55 text-[11px] uppercase tracking-widest mb-4">Impacto Ambiental</p>
-            <div className="grid grid-cols-3 gap-2.5 mb-4">
-              {[
-                { icon: '/icons/folha.svg', label: 'kg CO₂ evitado', value: totalCO2.toFixed(1) },
-                { icon: '/icons/arvore.svg', label: 'Árvores equiv.', value: arvoresEquiv },
-                { icon: '/icons/semente.svg', label: 'Dias seguidos', value: `${data.streak}d` },
-              ].map(m => (
-                <div key={m.label} className="text-center rounded-2xl py-4 px-2" style={{ background: 'rgba(74,222,128,0.05)', border: '1px solid rgba(74,222,128,0.1)' }}>
-                  <img src={m.icon} className="w-6 h-6 mx-auto" alt="" />
-                  <p className="text-green-300 font-bold mt-1.5 font-serif-display" style={{ fontSize: 20 }}>{m.value}</p>
-                  <p className="text-white/45 text-[10px] mt-0.5">{m.label}</p>
-                </div>
-              ))}
-            </div>
-            <div className="rounded-2xl p-4" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-              <p className="text-sm text-white/70 font-medium">Ações registradas</p>
-              <p className="text-white/40 text-xs mt-0.5 leading-relaxed">
-                Estimativas educativas; consulte as ações registradas na sua conta.
-              </p>
-              <p className="text-[#4ade80] font-bold mt-2 font-serif-display" style={{ fontSize: 22 }}>
-                {data.historico.length} <span className="text-[11px] font-medium opacity-60">ações</span>
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="card-secondary rounded-2xl p-5 sm:p-6 mb-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-6 items-start">
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-[#070d19] font-bold font-serif-display"
-                  style={{ background: 'linear-gradient(135deg,#4ade80,#22c55e)' }}
-                >
-                  R$
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-white">Conversor de Créditos</h2>
-                  <p className="text-xs text-white/45">Conversão em Pix ainda indisponível</p>
-                </div>
-              </div>
-              <div className="rounded-2xl p-4 mb-3" style={{ background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.15)' }}>
-                <p className="text-xs text-white/55 uppercase tracking-widest mb-1">Taxa de conversão</p>
-                <p className="text-[#4ade80] font-bold font-serif-display" style={{ fontSize: 20 }}>
-                  {CREDITOS_POR_REAL} créditos = R$1,00
-                </p>
-              </div>
-              <ul className="space-y-2 text-sm text-white/55">
-                <li className="flex items-start gap-2">
-                  <span className="text-[#4ade80] mt-0.5">•</span>
-                  Mínimo de <strong className="text-white/80">{MIN_CREDITOS_CONVERSAO} créditos</strong> por conversão.
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#4ade80] mt-0.5">•</span>
-                  O envio por Pix estará disponível após integração do resgate.
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#4ade80] mt-0.5">•</span>
-                  Nenhum crédito é descontado enquanto esta função estiver indisponível.
-                </li>
-              </ul>
-=======
         <div className="max-w-xl mx-auto mb-12">
           <div className="flex items-center gap-3 mb-6">
             <div
@@ -300,7 +156,6 @@ export function Recompensas() {
             <div>
               <h2 className="text-lg font-bold text-slate-900">Conversão para Pix</h2>
               <p className="text-xs text-slate-500">Transforme seus créditos em dinheiro</p>
->>>>>>> origin/main
             </div>
           </div>
 
@@ -327,7 +182,7 @@ export function Recompensas() {
                 <div className="mt-1">
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">Converter</label>
                   <input
-                    type="number" disabled
+                    type="number"
                     min={MIN_CREDITOS_CONVERSAO}
                     value={creditosConverter}
                     onChange={e => setCreditosConverter(e.target.value)}
@@ -355,7 +210,7 @@ export function Recompensas() {
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">Chave Pix</label>
                   <input
-                    type="text" disabled
+                    type="text"
                     value={chavePix}
                     onChange={e => setChavePix(e.target.value)}
                     placeholder="E-mail, CPF, telefone ou chave aleatória"
