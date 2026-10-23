@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useApi } from '../context/ApiContext';
 import { useApiPage } from '../hooks/useApiPage';
 import type { Verificacao } from '../api/types';
@@ -11,6 +11,19 @@ export function Verificacoes({ admin = false }: { admin?: boolean }) {
   const list = useApiPage<Verificacao>('verificacoes', page);
   const [selected, setSelected] = useState<Verificacao | null>(null); const [image, setImage] = useState<string | null>(null);
   const [reason, setReason] = useState(''); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
+  const [emails, setEmails] = useState<Record<number, string>>({});
+  const fetchedRef = useRef<Set<number>>(new Set());
+  // Busca email do usuario quando nao vem na verificacao
+  useEffect(() => {
+    if (!admin || !list.rows.length) return;
+    const ids = [...new Set(list.rows.map(r => r.usuarioId).filter(id => !fetchedRef.current.has(id)))];
+    if (ids.length === 0) return;
+    ids.forEach(id => fetchedRef.current.add(id));
+    let active = true;
+    Promise.all(ids.map(id => service.profile(id).then(p => ({ id, email: p.email })).catch(() => ({ id, email: '' }))))
+      .then(results => { if (active) setEmails(prev => { const next = { ...prev }; results.forEach(r => { if (r.email) next[r.id] = r.email; }); return next; }); });
+    return () => { active = false; };
+  }, [list.rows, admin, service]);
   useEffect(() => {
     setImage(null); if (!selected?.evidenciaDisponivel) return;
     const controller = new AbortController(); let url: string | null = null; let active = true;
@@ -34,7 +47,7 @@ export function Verificacoes({ admin = false }: { admin?: boolean }) {
   }
   return <section className="card-primary rounded-2xl p-4 sm:p-5 text-white space-y-4"><div className="flex justify-between items-center"><h2 className="text-xl font-bold">{admin ? 'Revisão de verificações' : 'Verificações'}</h2><button className="rounded-xl px-3 py-2 text-sm font-medium text-white/80 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" onClick={() => { refresh(); void refreshProfile().catch(failure => showToast(errorMessage(failure))); }}>Atualizar</button></div>
     <ListState {...list} count={list.rows.length} />
-    {list.rows.map(row => <button key={row.id} className="w-full text-left rounded-xl bg-white/5 p-4 hover:bg-white/10" onClick={() => { setSelected(row); setReason(''); setError(''); }}><span className="text-green-300">{row.estado === 'PENDENTE_REVISAO' ? 'Aguardando revisão' : row.estado === 'APROVADA' ? 'Aprovada' : row.estado === 'REJEITADA' ? 'Não aprovada' : 'Em análise'}</span><p className="text-sm mt-1">Ação #{row.acaoId} · {row.pontosCreditados} pontos creditados</p><p className="text-xs text-white/45 break-all">{row.id}{admin ? ` · Usuário #${row.usuarioId}${row.usuarioEmail ? ` (${row.usuarioEmail})` : ''}` : ''}</p></button>)}
+    {list.rows.map(row => <button key={row.id} className="w-full text-left rounded-xl bg-white/5 p-4 hover:bg-white/10" onClick={() => { setSelected(row); setReason(''); setError(''); }}><span className="text-green-300">{row.estado === 'PENDENTE_REVISAO' ? 'Aguardando revisão' : row.estado === 'APROVADA' ? 'Aprovada' : row.estado === 'REJEITADA' ? 'Não aprovada' : 'Em análise'}</span><p className="text-sm mt-1">Ação #{row.acaoId} · {row.pontosCreditados} pontos creditados</p><p className="text-xs text-white/45 break-all">{row.id}{admin ? ` · Usuário #${row.usuarioId}${(row.usuarioEmail || emails[row.usuarioId]) ? ` (${row.usuarioEmail || emails[row.usuarioId]})` : ''}` : ''}</p></button>)}
     <PageControls page={page} setPage={setPage} count={list.rows.length} loading={list.loading} />
     {selected && user && <div className="fixed inset-0 z-[9980] bg-black/75 p-4 flex items-center justify-center"><section role="dialog" aria-modal="true" aria-labelledby="review-title" className="card-primary rounded-2xl p-4 sm:p-5 text-white max-w-xl w-full max-h-[90vh] overflow-auto space-y-4"><div className="flex justify-between"><h3 id="review-title" className="font-bold">{selected.estado === 'PENDENTE_REVISAO' ? 'Aguardando revisão' : selected.estado === 'APROVADA' ? 'Aprovada' : selected.estado === 'REJEITADA' ? 'Não aprovada' : 'Em análise'}</h3><button disabled={busy} aria-label="Fechar detalhe" onClick={() => setSelected(null)}>✕</button></div><p className="text-sm text-white/70">Parecer: {selected.estado === 'APROVADA' ? 'Ação aprovada' : selected.estado === 'REJEITADA' ? 'Ação não aprovada' : 'Aguardando avaliação'} · Tentativas: {selected.tentativas}</p><p className="text-xs text-white/45">Acompanhe o resultado da análise por aqui.</p>{selected.possivelReuso && <p className="text-amber-200">Possível reutilização da imagem. Este sinal não comprova fraude.</p>}
       {image ? <img src={image} alt="Foto enviada para verificação" className="max-h-80 w-full object-contain rounded-xl" /> : <p className="text-white/50">{selected.evidenciaDisponivel ? 'Carregando foto…' : 'A foto não está mais disponível.'}</p>}
