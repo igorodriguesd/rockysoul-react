@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useData } from '../context/DataContext';
+import { useApi } from '../context/ApiContext';
 import { getParceiro } from '../data/constants';
 import { showToast } from './Toast';
+import { errorMessage } from '../api/client';
 import type { Recompensa } from '../types';
 
 interface Props {
@@ -12,17 +14,22 @@ interface Props {
 
 export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
   const { data } = useData();
+  const { user, service, refreshProfile } = useApi();
   const [sucesso, setSucesso] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [erro, setErro] = useState('');
   const saldoRestante = data.pontos;
 
   const fechar = useCallback(() => {
     setSucesso(false);
+    setErro('');
     onFechar();
   }, [onFechar]);
 
   useEffect(() => {
     if (!aberto) {
       setSucesso(false);
+      setErro('');
       return;
     }
 
@@ -38,8 +45,21 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
   const podeResgatar = data.pontos >= recompensa.pontos;
   const parceiro = recompensa.parceiroId ? getParceiro(recompensa.parceiroId) : null;
 
-  function confirmarResgate() {
-    showToast('Os resgates ainda não estão disponíveis. Seus créditos continuam os mesmos.');
+  async function confirmarResgate() {
+    if (!user || !recompensa || !podeResgatar || busy) return;
+    setBusy(true);
+    setErro('');
+    try {
+      const novoSaldo = data.pontos - recompensa.pontos;
+      await service.balance({ id: user.id, versao: user.versao } as any, { pontos: novoSaldo, resgatados: (user.resgatados ?? 0) + recompensa.pontos });
+      await refreshProfile();
+      setSucesso(true);
+      showToast(`Resgate confirmado! -${recompensa.pontos} créditos`);
+    } catch (failure) {
+      setErro(errorMessage(failure));
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -122,12 +142,14 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
               </p>
             )}
 
+            {erro && <p className="text-sm text-red-500 text-center mb-4">{erro}</p>}
+
             <button
-              onClick={confirmarResgate}
-              disabled={!podeResgatar}
+              onClick={() => { void confirmarResgate(); }}
+              disabled={!podeResgatar || busy}
               className="w-full py-3 bg-brand text-(--t-onaccent) font-bold rounded-xl hover:bg-brand-hover transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {podeResgatar ? 'Confirmar Resgate' : 'Créditos Insuficientes'}
+              {busy ? 'Resgatando…' : podeResgatar ? 'Confirmar Resgate' : 'Créditos Insuficientes'}
             </button>
           </>
         )}
