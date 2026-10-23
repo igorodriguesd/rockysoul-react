@@ -1,3 +1,4 @@
+import { ApiGate } from '../components/ApiUi';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
@@ -21,7 +22,8 @@ const FILTROS_LOJA: { id: string; label: string; matcher: (categoria: string) =>
   { id: 'parceiros', label: 'Parceiros', matcher: c => c === 'Parceiros' },
 ];
 
-export function Recompensas() {
+export function Recompensas() { return <ApiGate acesso="às recompensas"><RecompensasContent /></ApiGate>; }
+function RecompensasContent() {
   useEffect(() => { document.title = 'Recompensas - RockySoulUp'; }, []);
 
   const { data } = useData();
