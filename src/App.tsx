@@ -10,6 +10,7 @@ import { Solucao } from './pages/Solucao';
 import { Recompensas } from './pages/Recompensas';
 import { RecompensaDetalhe } from './pages/RecompensaDetalhe';
 import { Parceiros } from './pages/Parceiros';
+import { JogoSeparacao } from './pages/JogoSeparacao';
 import { Sobre } from './pages/Sobre';
 import { Faq } from './pages/Faq';
 import { Integrantes } from './pages/Integrantes';
@@ -40,6 +41,7 @@ export default function App() {
                 <Route path="recompensas" element={<Recompensas />} />
                 <Route path="recompensas/:id" element={<RecompensaDetalhe />} />
                 <Route path="parceiros" element={<Parceiros />} />
+                <Route path="jogo" element={<JogoSeparacao />} />
                 <Route path="sobre" element={<Sobre />} />
                 <Route path="faq" element={<Faq />} />
                 <Route path="integrantes" element={<Integrantes />} />

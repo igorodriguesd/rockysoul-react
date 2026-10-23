@@ -18,4 +18,4 @@ export interface Consumo { habilitado: boolean; suspenso: boolean; consumoOuRese
 export type Recurso = 'acao' | 'carta' | 'selo' | 'recompensa' | 'historico' | 'usuario' | 'usuario-carta' | 'usuario-fragmento';
 export type Registro = Record<string, string | number | null>;
 
-export interface Roleta { verificacaoId: string; carta: CartaApi; chance: number; girada: boolean; ganhou: boolean; duplicada: boolean; fragmentos: number }
+export interface Roleta { verificacaoId: string; carta: CartaApi; chance: number; girada: boolean; ganhou: boolean; duplicada: boolean; fragmentos: number; custo?: number; podeTentarNovamente?: boolean }

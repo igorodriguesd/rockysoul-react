@@ -20,6 +20,7 @@ const links = [
   { to: '/colecao', label: 'Coleção' },
   { to: '/recompensas', label: 'Recompensas' },
   { to: '/parceiros', label: 'Parceiros' },
+  { to: '/jogo', label: 'Jogo' },
 ];
 
 const linksSecundarios = [
