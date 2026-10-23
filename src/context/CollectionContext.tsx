@@ -1,9 +1,10 @@
+import { cardView } from '../api/viewModels';
 import { createContext, useContext, type ReactNode } from 'react';
 import type { Carta, ColecaoData, NovaCartaInfo, Quimica, RaridadeCarta, ResultadoDrop, SetCarta } from '../types';
 import type { CartaApi, FragmentoApi, UsuarioCartaApi } from '../api/types';
 import { useApi } from './ApiContext';
 import { useApiPage } from '../hooks/useApiPage';
-import { CARTAS as ARTWORK, SETS_CARTAS } from '../data/cartas';
+import { SETS_CARTAS } from '../data/cartas';
 import { showToast } from '../components/Toast';
 interface CollectionValue {
   colecao: ColecaoData;
@@ -31,17 +32,14 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
   const { rows: fragments } = useApiPage<FragmentoApi>('usuario-fragmento');
   const fragmentos = { comum: 0, incomum: 0, rara: 0, epica: 0, lendaria: 0 };
   for (const row of fragments) if (row.usuarioId === user?.id) fragmentos[row.raridade.toLowerCase() as RaridadeCarta] = row.quantidade;
-  const catalogo: Carta[] = cards.map(card => {
-    const artwork = ARTWORK.find(item => item.nome.toLocaleLowerCase() === card.nome.toLocaleLowerCase());
-    return { id: String(card.id), nome: card.nome, setId: card.conjunto, raridade: card.raridade.toLowerCase() as RaridadeCarta, descricao: card.descricao ?? '', educativa: '', icone: artwork?.icone ?? '/icons/folha.svg' };
-  });
+  const catalogo: Carta[] = cards.map(cardView);
   const conjuntos: SetCarta[] = [...new Set(cards.map(card => card.conjunto))].map(id => {
     const style = SETS_CARTAS.find(set => set.id.toLocaleLowerCase() === id.toLocaleLowerCase() || set.nome.toLocaleLowerCase() === id.toLocaleLowerCase());
-    return { id, nome: style?.nome ?? id, tema: style?.tema ?? 'Sua coleção sustentável', descricao: style?.descricao ?? '', icone: style?.icone ?? '/icons/folha.svg', cor: style?.cor ?? '#20d968', pontosMin: style?.pontosMin ?? 0 };
+    return { id: style?.id ?? id, nome: style?.nome ?? id, tema: style?.tema ?? 'Sua coleção sustentável', descricao: style?.descricao ?? '', icone: style?.icone ?? '/icons/folha.svg', cor: style?.cor ?? '#20d968', pontosMin: style?.pontosMin ?? 0 };
   });
-  const colecao: ColecaoData = { cartasObtidas: owned.filter(row => row.usuarioId === user?.id && row.quantidade > 0).map(row => String(row.cartaId)), cartasFoil: [], fragmentos, sets: {} };
+  const colecao: ColecaoData = { cartasObtidas: owned.filter(row => row.usuarioId === user?.id && row.quantidade > 0).map(row => { const card = cards.find(item => item.id === row.cartaId); return card ? cardView(card).id : `api-${row.cartaId}`; }), cartasFoil: [], fragmentos, sets: {} };
   for (const set of conjuntos) colecao.sets[set.id] = { cartas: catalogo.filter(card => card.setId === set.id && colecao.cartasObtidas.includes(card.id)).map(card => card.id), level: 0 };
-  const unsupported = () => { showToast('A API ainda não oferece fabricação, sorteio ou crédito de fragmentos.'); return null; };
+  const unsupported = () => { showToast('Use a roleta liberada pela aprovação da ação para ganhar cartas e fragmentos. A fabricação ainda não está disponível.'); return null; };
   return <Context.Provider value={{ colecao, catalogo, conjuntos, adquirirCarta: unsupported, adquirirPorMissao: unsupported, fabricarCarta: unsupported, adicionarFragmentos: unsupported,
     resetarColecao: () => {}, getTotalCartasDoSet: id => colecao.sets[id]?.cartas.length ?? 0,
     setDesbloqueado: id => !!user && (user.pontos + user.resgatados) >= (conjuntos.find(set => set.id === id)?.pontosMin ?? 0),
