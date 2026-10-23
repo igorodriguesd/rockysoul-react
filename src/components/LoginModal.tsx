@@ -10,7 +10,7 @@ export default function LoginModal({ aberto, onFechar, initialMode = 'login' }: 
 }
 function AccountForm({ onFechar, initialMode }: Omit<Props, 'aberto'>) {
   const { service, login, connect } = useApi();
-  const [mode, setMode] = useState<Mode>(initialMode ?? 'login');
+  const [mode, setMode] = useState<Mode>(initialMode === 'register' ? 'register' : 'login');
   const [nome, setNome] = useState(''); const [email, setEmail] = useState('');
   const [senha, setSenha] = useState(''); const [confirmarSenha, setConfirmarSenha] = useState(''); const [token, setToken] = useState('');
   const [errors, setErrors] = useState<RegistrationErrors>({}); const [error, setError] = useState(''); const [success, setSuccess] = useState('');
@@ -49,48 +49,8 @@ function AccountForm({ onFechar, initialMode }: Omit<Props, 'aberto'>) {
       if (failure instanceof ApiError && failure.status === 429) { const now = Date.now(); setClock(now); setBlockedUntil(now + (failure.retryAfter ?? 900) * 1000); }
     } finally { setSenha(''); setConfirmarSenha(''); setToken(''); inFlight.current = false; setBusy(false); }
   }
-<<<<<<< HEAD
-  return <div className="fixed inset-0 z-9998 flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/50">
-    <section className="account-modal bg-white/95 rounded-2xl shadow-2xl w-[90vw] max-w-95 p-6 relative border border-white/40 max-h-[90vh] overflow-auto text-gray-700" role="dialog" aria-modal="true" aria-labelledby="account-title" aria-busy={busy}>
-      <div className="w-14 h-14 mx-auto mb-3 bg-[#22c55e]/10 rounded-full flex items-center justify-center"><img src="/icons/comunidade.svg" alt="" className="w-7 h-7" /></div><div className="text-center"><h2 id="account-title" className="text-xl font-bold text-gray-800">{mode === 'register' ? 'Crie sua conta' : mode === 'token' ? 'Conectar por token' : 'Bem-vindo de volta'}</h2><button disabled={busy} onClick={onFechar} aria-label="Fechar" className="absolute top-3 right-3 text-gray-400 hover:text-gray-600">✕</button></div>
-      <p className="text-sm text-gray-500 mt-3">{mode === 'register' ? 'Comece sua jornada sustentável. Seus pontos serão registrados com segurança na sua conta.' : mode === 'token' ? 'Opção avançada para testar uma sessão já emitida pela API.' : 'Entre para acompanhar suas ações, pontos e coleção.'}</p>
-      <div className="flex gap-2 mt-5" aria-label="Acesso à conta"><button type="button" className={mode === 'login' ? 'rounded-xl px-4 py-2 bg-[#22c55e] text-white font-semibold' : 'rounded-xl px-4 py-2 bg-gray-100 text-gray-600 font-semibold'} disabled={busy} aria-pressed={mode === 'login'} onClick={() => changeMode('login')}>Entrar</button><button type="button" className={mode === 'register' ? 'rounded-xl px-4 py-2 bg-[#22c55e] text-white font-semibold' : 'rounded-xl px-4 py-2 bg-gray-100 text-gray-600 font-semibold'} disabled={busy} aria-pressed={mode === 'register'} onClick={() => changeMode('register')}>Criar conta</button></div>
-      {success && <p role="status" className="rounded-xl bg-green-400/10 border border-green-400/25 p-3 text-green-700 mt-4">{success}</p>}
-      <form onSubmit={submit} className="space-y-4 mt-5" noValidate={mode === 'register'}>
-        {mode === 'register' && <label className="block text-sm" htmlFor="account-name">Nome<input id="account-name" aria-label="Nome" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 mt-1" required autoComplete="name" maxLength={100} value={nome} disabled={busy} onChange={event => setNome(event.target.value)} aria-invalid={!!errors.nome} aria-describedby={errors.nome ? 'name-error' : undefined} />{errors.nome && <span id="name-error" className="block text-red-500 text-xs mt-1">{errors.nome}</span>}</label>}
-        {mode !== 'token' && <><label className="block text-sm" htmlFor="account-email">Email<input id="account-email" aria-label="Email" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 mt-1" type="email" required autoComplete="username" maxLength={150} value={email} disabled={busy} onChange={event => setEmail(event.target.value)} aria-invalid={!!errors.email} aria-describedby={errors.email ? 'email-error' : undefined} />{errors.email && <span id="email-error" className="block text-red-500 text-xs mt-1">{errors.email}</span>}</label>
-          <label className="block text-sm" htmlFor="account-password">Senha<input id="account-password" aria-label="Senha" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 mt-1" type="password" required autoComplete={mode === 'register' ? 'new-password' : 'current-password'} maxLength={72} value={senha} disabled={busy} onChange={event => setSenha(event.target.value)} aria-invalid={!!errors.senha} aria-describedby={errors.senha ? 'password-error' : mode === 'register' ? 'password-hint' : undefined} />{errors.senha && <span id="password-error" className="block text-red-500 text-xs mt-1">{errors.senha}</span>}</label>
-        </>}
-        {mode === 'register' && <><p id="password-hint" className="text-xs text-gray-500">Use de 12 a 72 caracteres, até 72 bytes UTF-8. Acentos e emojis ocupam mais bytes.</p><label className="block text-sm" htmlFor="account-confirm">Confirmar senha<input id="account-confirm" aria-label="Confirmar senha" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 mt-1" type="password" required autoComplete="new-password" maxLength={72} value={confirmarSenha} disabled={busy} onChange={event => setConfirmarSenha(event.target.value)} aria-invalid={!!errors.confirmarSenha} aria-describedby={errors.confirmarSenha ? 'confirm-error' : undefined} />{errors.confirmarSenha && <span id="confirm-error" className="block text-red-500 text-xs mt-1">{errors.confirmarSenha}</span>}</label></>}
-        {mode === 'token' && <label className="block text-sm">Token de acesso<input className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors bg-white/60 mt-1" type="password" required autoComplete="off" value={token} maxLength={8000} disabled={busy} onChange={event => setToken(event.target.value)} /></label>}
-        {error && <p role="alert" className="text-red-500 text-sm">{error}</p>}
-        {wait > 0 && <p role="status" className="text-amber-700 text-sm">Aguarde {wait}s antes de tentar novamente.</p>}
-        <button className="w-full py-3 bg-[#22c55e] text-white font-semibold rounded-xl hover:bg-[#16a34a] transition-colors disabled:opacity-40" disabled={busy || wait > 0}>{busy ? 'Aguarde…' : mode === 'register' ? 'Cadastrar' : mode === 'token' ? 'Conectar' : 'Entrar na conta'}</button>
-      </form>
-      {mode !== 'token' && <button type="button" className="mt-5 text-xs text-gray-500 underline" disabled={busy} onClick={() => changeMode('token')}>Acesso avançado por token</button>}
-    </section>
-  </div>;
-}
-=======
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-
-    const nomeErro = validateName(nome);
-    const emailErro = validateEmail(email, false);
-
-    if (nomeErro || emailErro) {
-      setErros({ nome: nomeErro ?? undefined, email: emailErro ?? undefined });
-      return;
-    }
-
-    setNome(normalizeName(nome));
-    if (email.trim()) setEmail(normalizeEmail(email));
-    handleClose();
-  }
-
   return (
-    <div className="fixed inset-0 z-9998 flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/50" onClick={onFechar}>
+    <div className="fixed inset-0 z-9998 flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/50" onClick={() => { if (!inFlight.current) onFechar(); }}>
       <div
         role="dialog"
         aria-modal="true"
@@ -98,7 +58,7 @@ function AccountForm({ onFechar, initialMode }: Omit<Props, 'aberto'>) {
         className="bg-(--t-surface)/95 rounded-2xl shadow-2xl w-[90vw] max-w-95 p-6 relative border border-slate-200"
         onClick={e => e.stopPropagation()}
       >
-        <button onClick={handleClose} className="absolute top-3 right-3 text-slate-400 hover:text-slate-600" aria-label="Fechar">
+        <button onClick={() => { if (!inFlight.current) onFechar(); }} className="absolute top-3 right-3 text-slate-400 hover:text-slate-600" aria-label="Fechar">
           <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
         </button>
 
@@ -106,47 +66,22 @@ function AccountForm({ onFechar, initialMode }: Omit<Props, 'aberto'>) {
           <div className="w-14 h-14 mx-auto mb-3 bg-brand/10 rounded-full flex items-center justify-center">
             <img src="/icons/comunidade.svg" alt="" className="w-7 h-7" />
           </div>
-          <h2 className="text-xl font-bold text-slate-900">Bem-vindo</h2>
-          <p className="text-sm text-slate-500 mt-1">Digite seus dados para começar</p>
+          <h2 className="text-xl font-bold text-slate-900">{mode === 'register' ? 'Crie sua conta' : 'Bem-vindo'}</h2>
+          <p className="text-sm text-slate-500 mt-1">{mode === 'register' ? 'Use uma senha de 12 a 72 caracteres' : 'Entre com seu email e senha'}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-          <div>
-            <label htmlFor="login-nome" className="block text-sm font-medium text-slate-700 mb-1">Nome *</label>
-            <input
-              id="login-nome"
-              type="text"
-              autoFocus
-              value={nome}
-              onChange={e => setNomeInput(e.target.value)}
-              placeholder="Seu nome (mínimo 3 caracteres)"
-              className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-(--t-surface) ${erros.nome ? 'border-red-400' : 'border-slate-300'
-                }`}
-            />
-            {erros.nome && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></svg>{erros.nome}</p>}
-          </div>
-          <div>
-            <label htmlFor="login-email" className="block text-sm font-medium text-slate-700 mb-1">Email (opcional)</label>
-            <input
-              id="login-email"
-              type="email"
-              value={email}
-              onChange={e => setEmailInput(e.target.value)}
-              placeholder="seu@email.com"
-              className={`w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-(--t-surface) ${erros.email ? 'border-red-400' : 'border-slate-300'
-                }`}
-            />
-            {erros.email && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></svg>{erros.email}</p>}
-          </div>
-          <button
-            type="submit"
-            className="w-full py-3 bg-brand text-(--t-onaccent) font-semibold rounded-xl hover:bg-brand-hover transition-colors"
-          >
-            Entrar
-          </button>
+        {success && <p role="status" className="text-sm text-slate-500 mt-1">{success}</p>}
+        <form onSubmit={submit} className="flex flex-col gap-4" noValidate aria-busy={busy}>
+          {mode === 'register' && <div><label htmlFor="account-name" className="block text-sm font-medium text-slate-700 mb-1">Nome *</label><input id="account-name" aria-label="Nome" autoComplete="name" maxLength={100} value={nome} onChange={e => setNome(e.target.value)} disabled={busy} className="w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-(--t-surface) border-slate-300" />{errors.nome && <p role="alert" className="text-red-500 text-xs mt-1 flex items-center gap-1">{errors.nome}</p>}</div>}
+          <div><label htmlFor="account-email" className="block text-sm font-medium text-slate-700 mb-1">Email *</label><input id="account-email" aria-label="Email" type="email" autoComplete="username" maxLength={150} value={email} onChange={e => setEmail(e.target.value)} disabled={busy} className="w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-(--t-surface) border-slate-300" />{errors.email && <p role="alert" className="text-red-500 text-xs mt-1 flex items-center gap-1">{errors.email}</p>}</div>
+          <div><label htmlFor="account-password" className="block text-sm font-medium text-slate-700 mb-1">Senha *</label><input id="account-password" aria-label="Senha" type="password" autoComplete={mode === 'register' ? 'new-password' : 'current-password'} maxLength={72} value={senha} onChange={e => setSenha(e.target.value)} disabled={busy} className="w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-(--t-surface) border-slate-300" />{errors.senha && <p role="alert" className="text-red-500 text-xs mt-1 flex items-center gap-1">{errors.senha}</p>}</div>
+          {mode === 'register' && <div><label htmlFor="account-confirm" className="block text-sm font-medium text-slate-700 mb-1">Confirmar senha *</label><input id="account-confirm" aria-label="Confirmar senha" type="password" autoComplete="new-password" maxLength={72} value={confirmarSenha} onChange={e => setConfirmarSenha(e.target.value)} disabled={busy} className="w-full border rounded-xl px-4 py-3 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors bg-(--t-surface) border-slate-300" />{errors.confirmarSenha && <p role="alert" className="text-red-500 text-xs mt-1 flex items-center gap-1">{errors.confirmarSenha}</p>}</div>}
+          {error && <p role="alert" className="text-red-500 text-xs mt-1 flex items-center gap-1">{error}</p>}
+          {wait > 0 && <p role="status" className="text-sm text-slate-500 mt-1">Aguarde {wait}s para tentar novamente.</p>}
+          <button type="submit" disabled={busy || wait > 0} className="w-full py-3 bg-brand text-(--t-onaccent) font-semibold rounded-xl hover:bg-brand-hover transition-colors">{busy ? 'Aguarde…' : mode === 'register' ? 'Cadastrar' : 'Entrar'}</button>
+          <button type="button" disabled={busy} className="text-sm text-slate-500 mt-1" onClick={() => changeMode(mode === 'register' ? 'login' : 'register')}>{mode === 'register' ? 'Já tenho conta — Entrar' : 'Criar conta'}</button>
         </form>
       </div>
     </div>
   );
 }
->>>>>>> origin/main
