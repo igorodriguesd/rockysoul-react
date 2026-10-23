@@ -11,7 +11,7 @@ import { showToast } from '../components/Toast';
 export function Administracao() { return <div className="max-w-6xl mx-auto px-5 py-8"><ApiGate acesso="à área administrativa"><AdminData /></ApiGate></div>; }
 function AdminData() {
   const { isAdmin } = useApi();
-  if (!isAdmin) return <section className="card-primary rounded-2xl p-4 sm:p-5 text-white"><h1 className="text-2xl font-bold">Área administrativa</h1><p className="mt-3 text-white/65">O acesso administrativo não foi confirmado para esta sessão. Use uma conta ADMIN; se a API estava indisponível ao conectar, reconecte quando ela estiver pronta.</p></section>;
+  if (!isAdmin) return <section className="card-primary rounded-2xl p-4 sm:p-5 text-white"><h1 className="text-2xl font-bold">Área administrativa</h1><p className="mt-3 text-white/65">Esta área é exclusiva para administradores. Entre com uma conta de administrador. Se você já está usando essa conta, saia e entre novamente.</p></section>;
   return <div className="space-y-6"><h1 className="text-white text-3xl font-bold">Administração</h1><Usage /><Verificacoes admin /><Crud /></div>;
 }
 function Usage() {
@@ -23,7 +23,7 @@ function Usage() {
     try { await service.suspend(!usage.suspenso); refresh(); } catch (failure) { setError(errorMessage(failure)); } finally { setBusy(false); }
   }
   const money = (value: number) => (value / 1_000_000).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-  return <section className="card-primary rounded-2xl p-4 sm:p-5 text-white space-y-3"><h2 className="text-xl font-bold">Consumo e suspensão da IA</h2>{usage && <><p>Integração {usage.habilitado ? 'habilitada' : 'desabilitada'} · {usage.suspenso ? 'Suspensa' : 'Sem suspensão administrativa'}</p><p>Dia: {money(usage.consumoOuReservaDiaMicrosUSD)} / {money(usage.limiteDiaMicrosUSD)}</p><p>Mês: {money(usage.consumoOuReservaMesMicrosUSD)} / {money(usage.limiteMesMicrosUSD)}</p><p className="text-white/60 text-sm">Reservas incertas: {usage.reservasIncertas}. Os valores incluem estimativas/reservas e não substituem a fatura dos provedores.</p><button className="rounded-xl px-3 py-2 text-sm font-medium text-white/80 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" disabled={busy} onClick={() => { void suspend(); }}>{usage.suspenso ? 'Retomar análises' : 'Suspender análises'}</button></>}{error && <p role="alert" className="text-red-300">{error}</p>}<button className="rounded-xl px-3 py-2 text-sm font-medium text-white/80 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ml-2" disabled={busy} onClick={refresh}>Reconsultar consumo</button></section>;
+  return <section className="card-primary rounded-2xl p-4 sm:p-5 text-white space-y-3"><h2 className="text-xl font-bold">Consumo e suspensão da IA</h2>{usage && <><p>Integração {usage.habilitado ? 'habilitada' : 'desabilitada'} · {usage.suspenso ? 'Suspensa' : 'Sem suspensão administrativa'}</p><p>Dia: {money(usage.consumoOuReservaDiaMicrosUSD)} / {money(usage.limiteDiaMicrosUSD)}</p><p>Mês: {money(usage.consumoOuReservaMesMicrosUSD)} / {money(usage.limiteMesMicrosUSD)}</p><p className="text-white/60 text-sm">Análises com custo ainda não confirmado: {usage.reservasIncertas}. Os valores são estimativas e podem ser diferentes da cobrança final.</p><button className="rounded-xl px-3 py-2 text-sm font-medium text-white/80 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" disabled={busy} onClick={() => { void suspend(); }}>{usage.suspenso ? 'Retomar análises' : 'Suspender análises'}</button></>}{error && <p role="alert" className="text-red-300">{error}</p>}<button className="rounded-xl px-3 py-2 text-sm font-medium text-white/80 bg-white/5 border border-white/10 hover:bg-white/10 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ml-2" disabled={busy} onClick={refresh}>Reconsultar consumo</button></section>;
 }
 function Crud() {
   const { service, refresh, refreshProfile, user, disconnect } = useApi();
@@ -58,14 +58,14 @@ function Crud() {
       const ownProfile = resource === 'usuario' && !editor.balance && editor.original?.id === user?.id;
       setEditor(null); refresh();
       if (ownProfile) { disconnect(); showToast('Perfil atualizado. Entre novamente.'); }
-      else { await refreshProfile(); showToast('Registro salvo pela API.'); }
+      else { await refreshProfile(); showToast('Alterações salvas.'); }
     } catch (failure) { setError(failure instanceof Error && !('status' in failure) ? failure.message : errorMessage(failure)); }
     finally { setBusy(false); }
   }
   async function remove(row: Registro) {
     if (!window.confirm(resource === 'usuario' ? 'Desativar esta conta? Todas as sessões serão revogadas.' : 'Excluir este registro? Referências existentes podem impedir a operação.')) return;
     setBusy(true); setError('');
-    try { await service.delete(resource, row); if (resource === 'usuario' && row.id === user?.id) disconnect(); else { refresh(); await refreshProfile(); } showToast('Operação confirmada pela API.'); }
+    try { await service.delete(resource, row); if (resource === 'usuario' && row.id === user?.id) disconnect(); else { refresh(); await refreshProfile(); } showToast('Pronto! A alteração foi concluída.'); }
     catch (failure) { setError(errorMessage(failure)); } finally { setBusy(false); }
   }
   return <section className="card-primary rounded-2xl p-4 sm:p-5 text-white space-y-4"><h2 className="text-xl font-bold">Catálogos e registros</h2><label className="block max-w-sm">Área<select className="w-full rounded-xl px-3 py-2.5 text-sm outline-none text-white placeholder-white/40 bg-white/8 border border-white/15 focus:border-[#22c55e] mt-2" value={resource} disabled={busy || !!editor} onChange={event => { setResource(event.target.value as Recurso); setPage(0); setError(''); }}>{(Object.keys(adminResources) as Recurso[]).map(key => <option key={key} value={key}>{adminResources[key].label}</option>)}</select></label>
