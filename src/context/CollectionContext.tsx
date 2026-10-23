@@ -39,11 +39,11 @@ export function CollectionProvider({ children }: { children: ReactNode }) {
   });
   const colecao: ColecaoData = { cartasObtidas: owned.filter(row => row.usuarioId === user?.id && row.quantidade > 0).map(row => { const card = cards.find(item => item.id === row.cartaId); return card ? cardView(card).id : `api-${row.cartaId}`; }), cartasFoil: [], fragmentos, sets: {} };
   for (const set of conjuntos) colecao.sets[set.id] = { cartas: catalogo.filter(card => card.setId === set.id && colecao.cartasObtidas.includes(card.id)).map(card => card.id), level: 0 };
-  const unsupported = () => { showToast('Use a roleta liberada pela aprovação da ação para ganhar cartas e fragmentos. A fabricação ainda não está disponível.'); return null; };
+  const unsupported = () => { showToast('Use a roleta liberada pela aprovação da ação para ganhar cartas e fragmentos. A criação de cartas ainda não está disponível.'); return null; };
   return <Context.Provider value={{ colecao, catalogo, conjuntos, adquirirCarta: unsupported, adquirirPorMissao: unsupported, fabricarCarta: unsupported, adicionarFragmentos: unsupported,
     resetarColecao: () => {}, getTotalCartasDoSet: id => colecao.sets[id]?.cartas.length ?? 0,
     setDesbloqueado: id => !!user && (user.pontos + user.resgatados) >= (conjuntos.find(set => set.id === id)?.pontosMin ?? 0),
-    getChanceDrop: () => 0, getQuimica: () => ({ level: 0, bonusPontos: 0, descricao: 'Bônus de coleção não implementado no backend.' }),
+    getChanceDrop: () => 0, getQuimica: () => ({ level: 0, bonusPontos: 0, descricao: 'Os bônus de coleção ainda não estão disponíveis.' }),
     getCartasDoSet: id => catalogo.filter(card => card.setId === id),
     getProgressoTotal: () => ({ obtidas: colecao.cartasObtidas.length, total: cards.length }), getValorTotal: () => 0, getProximoObjetivo: () => { const set = conjuntos.find(item => colecao.sets[item.id].cartas.length < catalogo.filter(card => card.setId === item.id).length); return set ? { set, faltam: catalogo.filter(card => card.setId === set.id).length - colecao.sets[set.id].cartas.length } : null; } }}>{children}</Context.Provider>;
 }
