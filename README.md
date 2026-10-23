@@ -2,7 +2,7 @@
 
 Interface para registrar ações sustentáveis com evidências, acompanhar sua
 revisão e consultar pontos, histórico, cartas, fragmentos, selos e recompensas.
-O frontend consome a API Java RockySoulup em **http://localhost:8080**.
+O frontend consome a API Java RockySoulup em **https://rockysoulup-api.onrender.com**.
 
 **React 19 · Vite 8 · TypeScript · Tailwind CSS 4 · React Router 7**
 
@@ -17,13 +17,13 @@ npm run dev
 
 Abra **http://127.0.0.1:5173** ou **http://localhost:5173**. A porta 5173 é fixa;
 uma execução existente precisa ser encerrada antes de iniciar outra nessa porta.
-A API Java deve ser iniciada separadamente, com banco e migrações configurados.
+A API Java já está hospedada na Render; não é necessário iniciá-la no IntelliJ.
 
-O endereço da API já tem default local. Para substituí-lo, use um arquivo `.env`
+O endereço padrão da API aponta para a Render. Para substituí-lo, use um arquivo `.env`
 local, baseado em `.env.example`, e reinicie o Vite:
 
 ```properties
-VITE_API_BASE_URL=http://localhost:8080
+VITE_API_BASE_URL=https://rockysoulup-api.onrender.com
 ```
 
 Variáveis VITE_ são públicas e entram no bundle do navegador. Nunca inclua nelas
@@ -158,3 +158,19 @@ O backend precisa da migração V004 e do contrato de desafio atualizado.
 Capturas compatíveis com desafio confirmado podem receber crédito automático
 dentro dos limites; pendências não creditam pontos. O saldo é reconsultado após
 a decisão. Idempotência preserva foto, desafio e chave ao repetir um envio incerto.
+
+
+## API hospedada na Render
+
+O endereço padrão é `https://rockysoulup-api.onrender.com`. O frontend local pode usar
+`http://localhost:5173` ou `http://127.0.0.1:5173`, já autorizados no CORS da API.
+Não é necessário iniciar a API pelo IntelliJ. O plano gratuito pode demorar na
+primeira resposta após inatividade; aguarde e tente novamente, sem repetir envios
+com uma nova chave. A aprovação automática de pontos está desligada na hospedagem
+durante a validação inicial.
+
+Para usar outro servidor, defina `VITE_API_BASE_URL` em `.env.local` e reinicie
+`npm run dev`; em produção, gere um novo build. Para voltar à API local, use
+`VITE_API_BASE_URL=http://localhost:8080`. Valores VITE são públicos: nunca colocar
+senhas, JWT_SECRET nem chaves Gemini. O domínio de um front hospedado precisa
+ser adicionado ao CORS do backend.
