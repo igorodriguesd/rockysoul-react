@@ -39,7 +39,7 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
   const parceiro = recompensa.parceiroId ? getParceiro(recompensa.parceiroId) : null;
 
   function confirmarResgate() {
-    showToast('Resgate ainda não está disponível na API. Seu saldo não foi alterado.');
+    showToast('Os resgates ainda não estão disponíveis. Seus créditos continuam os mesmos.');
   }
 
   return (
