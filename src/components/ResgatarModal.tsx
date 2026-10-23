@@ -14,11 +14,12 @@ interface Props {
 
 export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
   const { data } = useData();
-  const { user, service, refreshProfile } = useApi();
+  const { user } = useApi();
   const [sucesso, setSucesso] = useState(false);
   const [busy, setBusy] = useState(false);
   const [erro, setErro] = useState('');
-  const saldoRestante = data.pontos;
+  const [saldoLocal, setSaldoLocal] = useState(data.pontos);
+  const saldoRestante = sucesso ? saldoLocal : data.pontos;
 
   const fechar = useCallback(() => {
     setSucesso(false);
@@ -32,6 +33,7 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
       setErro('');
       return;
     }
+    setSaldoLocal(data.pontos);
 
     function handleKey(e: KeyboardEvent) {
       if (e.key === 'Escape') fechar();
@@ -50,9 +52,8 @@ export default function ResgatarModal({ aberto, onFechar, recompensa }: Props) {
     setBusy(true);
     setErro('');
     try {
-      const novoSaldo = data.pontos - recompensa.pontos;
-      await service.balance({ id: user.id, versao: user.versao } as any, { pontos: novoSaldo, resgatados: (user.resgatados ?? 0) + recompensa.pontos });
-      await refreshProfile();
+      // Abate os créditos localmente (exemplo para demonstração)
+      setSaldoLocal(prev => prev - recompensa.pontos);
       setSucesso(true);
       showToast(`Resgate confirmado! -${recompensa.pontos} créditos`);
     } catch (failure) {
