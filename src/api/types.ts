@@ -17,3 +17,5 @@ export interface Submissao { acaoId: number; desafioId: string; descricao: strin
 export interface Consumo { habilitado: boolean; suspenso: boolean; consumoOuReservaDiaMicrosUSD: number; limiteDiaMicrosUSD: number; consumoOuReservaMesMicrosUSD: number; limiteMesMicrosUSD: number; reservasIncertas: number }
 export type Recurso = 'acao' | 'carta' | 'selo' | 'recompensa' | 'historico' | 'usuario' | 'usuario-carta' | 'usuario-fragmento';
 export type Registro = Record<string, string | number | null>;
+
+export interface Roleta { verificacaoId: string; carta: CartaApi; chance: number; girada: boolean; ganhou: boolean; duplicada: boolean; fragmentos: number }
