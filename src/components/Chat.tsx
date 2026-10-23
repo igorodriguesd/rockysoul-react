@@ -1,36 +1,7 @@
-import { useState, useRef, useEffect, type FormEvent } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { useColecao } from '../context/CollectionContext';
 import { useChat } from '../context/ChatContext';
-<<<<<<< HEAD
-import { useNavigate } from 'react-router-dom';
-import { CURIOSIDADES } from '../data/constants';
-import type { ChatMessage } from '../types';
-const SUGESTOES_RAPIDAS = [{label:'Registrar ação',comando:'registrar'},{label:'Meus créditos',comando:'pontos'},{label:'Minhas cartas',comando:'cartas'},{label:'Meu nível',comando:'nivel'},{label:'Dica',comando:'dica'},{label:'Recompensas',comando:'recompensa'}];
-export default function Chat() {
- const {data,getNivel}=useData(); const {getProgressoTotal}=useColecao(); const navigate=useNavigate();
- const {aberto,abrirChat,fecharChat}=useChat();
- const [mensagens,setMensagens]=useState<ChatMessage[]>([{texto:'Olá! Sou o RockySoul. Posso orientar você a enviar ações, consultar seus créditos e conhecer a coleção.',remetente:'bot'}]);
- const [input,setInput]=useState(''); const [mostrarTeaser,setMostrarTeaser]=useState(false); const aguardandoEntrada=false;
- const messagesEndRef=useRef<HTMLDivElement>(null);
- useEffect(()=>{messagesEndRef.current?.scrollIntoView({behavior:'smooth'});},[mensagens]);
- useEffect(()=>{if(aberto)return;const timer=setTimeout(()=>setMostrarTeaser(true),2500);return ()=>clearTimeout(timer);},[aberto]);
- function marcarTeaserVisto(){setMostrarTeaser(false);}
- function abrirComTeaser(){marcarTeaserVisto();abrirChat();}
- function handleAcaoRapida(texto:string){
-  const command=texto.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  let resposta='Posso ajudar com suas ações, créditos, coleção e dicas de sustentabilidade.';
-  if(/registr|recicl|bicicl|planti|economiz/.test(command)){resposta='Escolha uma ação no Dashboard e envie sua foto. Os pontos dependem da aprovação da verificação.';navigate('/dashboard');}
-  else if(/pix|convert|dinheiro|resgat/.test(command))resposta='Resgates e conversão em Pix ainda estão indisponíveis. Nenhum saldo foi alterado.';
-  else if(/ponto|credito|saldo/.test(command))resposta=data.nome?`Seu saldo confirmado é de ${data.pontos} créditos.`:'Entre para consultar seu saldo.';
-  else if(/carta|colecao/.test(command)){const p=getProgressoTotal();resposta=`Sua coleção tem ${p.obtidas}/${p.total} cartas nesta consulta. Veja os detalhes em Coleção.`;navigate('/colecao');}
-  else if(/nivel/.test(command))resposta=`Seu nível é ${getNivel()}.`;
-  else if(/dica|curiosidade/.test(command))resposta=CURIOSIDADES[new Date().getDate()%CURIOSIDADES.length];
-  else if(/recompensa/.test(command)){resposta='Consulte o catálogo de recompensas. O resgate ainda não está disponível.';navigate('/recompensas');}
-  setMensagens(prev=>[...prev,{texto,remetente:'user'},{texto:resposta,remetente:'bot'}]);setInput('');
- }
- function handleSubmit(e:FormEvent){e.preventDefault();if(input.trim())handleAcaoRapida(input.trim());}
-=======
 import { MISSOES, RECOMPENSAS, CURIOSIDADES, CREDITOS_POR_REAL, MIN_CREDITOS_CONVERSAO } from '../data/constants';
 import { SETS_CARTAS, CHANCE_DROP_POR_RARIDADE, LABEL_RARIDADE, getValorCarta, VALOR_POR_RARIDADE, getValorSetCompleto, getValorColecaoCompleta, BONUS_QUIMICA_SET, BONUS_QUIMICA_N2, BONUS_QUIMICA_N3 } from '../data/cartas';
 import type { ChatMessage, Carta, ResultadoDrop } from '../types';
@@ -39,9 +10,6 @@ import RoletaDrop from './RoletaDrop';
 
 type BotState = 'normal' | 'aguardandoNome' | 'aguardandoAcao' | 'aguardandoResgate' | 'aguardandoValorConversao' | 'aguardandoChavePix';
 
-function formatarReais(valor: number): string {
-  return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
 
 const INTENTS: Record<string, string[]> = {
   saudacoes: ['oi', 'ola', 'bom dia', 'boa tarde', 'boa noite', 'hey', 'e ai', 'fala', 'salve'],
@@ -104,11 +72,10 @@ export default function Chat() {
   const [cartaDropChat, setCartaDropChat] = useState<Carta | null>(null);
   const [chanceDropChat, setChanceDropChat] = useState(50);
   const estadoRef = useRef<BotState>('normal');
-  const conversaoRef = useRef(0);
   const initRef = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const { data, adicionarPontos, subtrairPontos, addResgate, getNivel, setNome } = useData();
+  const { data, adicionarPontos, getNivel } = useData();
   const { adquirirPorMissao, colecao, getProgressoTotal, getQuimica, getTotalCartasDoSet, getProximoObjetivo, getValorTotal } = useColecao();
   const { aberto, abrirChat, fecharChat } = useChat();
 
@@ -120,7 +87,7 @@ export default function Chat() {
     if (aberto && !initRef.current) {
       initRef.current = true;
       setTimeout(() => {
-        setMensagens([{ texto: 'Olá! Eu sou o RockySoul, seu assistente de sustentabilidade.\n\nVocê pode **registrar ações**, ver seus **créditos e nível**, **converter créditos em dinheiro**, pedir **dicas** e **resgatar recompensas**.\n\nUse os atalhos abaixo ou digite o que quiser!', remetente: 'bot' }]);
+        setMensagens([{ texto: 'Olá! Eu sou o RockySoul, seu assistente de sustentabilidade.\n\nVocê pode consultar seus **créditos e nível**, pedir **dicas** e conhecer as ações sustentáveis. Para registrar uma ação, use a câmera com desafio no Dashboard. Resgate e Pix ainda não estão disponíveis na API.\n\nUse os atalhos abaixo ou digite o que quiser!', remetente: 'bot' }]);
       }, 350);
     }
     if (!aberto) {
@@ -177,104 +144,14 @@ export default function Chat() {
 
     adicionarMensagem(texto, 'user');
     const estado = estadoRef.current;
-
-    if (estado === 'aguardandoNome') {
-      const nome = texto.split(' ')[0].replace(/[^a-zA-ZÀ-ÿ]/g, '');
-      if (nome.length < 2) {
-        responder('Por favor, digite um nome válido com pelo menos 2 letras.');
-        return;
-      }
-      setNome(nome);
-      estadoRef.current = 'normal';
-      setAguardandoEntrada(false);
-      responder(`Prazer em conhecer você, ${nome}! Bem-vindo ao RockySoulUp! Seu nível atual é **${getNivel()}** e você tem **${data.pontos} créditos**. Como posso te ajudar?`);
-      return;
-    }
-
-    if (estado === 'aguardandoAcao') {
-      if (!data.nome?.trim()) {
-        estadoRef.current = 'normal';
-        setAguardandoEntrada(false);
-        abrirLogin();
-        responder('Entre com o seu nome para registrar ações — clique em **Entrar** no topo da página.');
-        return;
-      }
-      const num = parseInt(texto, 10);
-      if (!isNaN(num) && num >= 1 && num <= MISSOES.length) {
-        const missao = MISSOES[num - 1];
-        const drop = adquirirPorMissao(missao.id);
-        adicionarPontos(missao.pontos, missao.nome);
-        estadoRef.current = 'normal';
-        setAguardandoEntrada(false);
-        const resposta = drop ? textoDrop(drop, `Ação registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} créditos`) : `Ação registrada com sucesso!\n\n**${missao.nome}**\n+${missao.pontos} créditos`;
-        responder(resposta);
-      } else {
-        responder(`Número inválido. Por favor, digite um número de 1 a ${MISSOES.length}.`);
-      }
-      return;
-    }
-
-    if (estado === 'aguardandoResgate') {
-      const num = parseInt(texto, 10);
-      if (!isNaN(num) && num >= 1 && num <= RECOMPENSAS.length) {
-        const recompensa = RECOMPENSAS[num - 1];
-        if (data.pontos >= recompensa.pontos) {
-          subtrairPontos(recompensa.pontos);
-          addResgate({ nome: recompensa.nome, pontos: recompensa.pontos, data: new Date().toISOString() });
-          estadoRef.current = 'normal';
-          setAguardandoEntrada(false);
-          responder(`Recompensa resgatada com sucesso!\n\n**${recompensa.nome}**\n-${recompensa.pontos} créditos`);
-        } else {
-          estadoRef.current = 'normal';
-          setAguardandoEntrada(false);
-          responder(`Você não tem créditos suficientes para esta recompensa.\n\nPrecisa de **${recompensa.pontos} créditos**, mas tem apenas **${data.pontos} créditos**.`);
-        }
-      } else {
-        responder(`Número inválido. Por favor, digite um número de 1 a ${RECOMPENSAS.length}.`);
-      }
-      return;
-    }
-
-    if (estado === 'aguardandoValorConversao') {
-      const num = parseInt(texto.replace(/\D+/g, ''), 10);
-      if (isNaN(num) || num <= 0) {
-        responder(`Digite a quantidade de créditos que deseja converter (apenas números).\n\nMínimo: **${MIN_CREDITOS_CONVERSAO} créditos** · Seu saldo: **${data.pontos} créditos**`);
-        return;
-      }
-      if (num < MIN_CREDITOS_CONVERSAO) {
-        responder(`O valor mínimo para conversão é **${MIN_CREDITOS_CONVERSAO} créditos** (R$${formatarReais(MIN_CREDITOS_CONVERSAO / CREDITOS_POR_REAL)}). Escolha um valor maior.`);
-        return;
-      }
-      if (num > data.pontos) {
-        responder(`Você não tem créditos suficientes. Seu saldo é **${data.pontos} créditos**. Digite um valor menor.`);
-        return;
-      }
-      conversaoRef.current = num;
-      estadoRef.current = 'aguardandoChavePix';
-      responder(`Você vai converter **${num} créditos** = **R$${formatarReais(num / CREDITOS_POR_REAL)}**.\n\nAgora digite sua **chave Pix** (CPF, e-mail, telefone ou chave aleatória):`);
-      return;
-    }
-
-    if (estado === 'aguardandoChavePix') {
-      const chave = texto.trim();
-      if (chave.length < 3) {
-        responder('Chave Pix inválida. Digite uma chave válida (CPF, e-mail, telefone ou chave aleatória).');
-        return;
-      }
-      const creditos = conversaoRef.current;
-      const valor = creditos / CREDITOS_POR_REAL;
-      subtrairPontos(creditos);
-      addResgate({
-        nome: `Conversão de créditos em dinheiro (R$${formatarReais(valor)})`,
-        pontos: creditos,
-        data: new Date().toISOString(),
-      });
-      conversaoRef.current = 0;
-      estadoRef.current = 'normal';
-      setAguardandoEntrada(false);
-      responder(
-        `**Conversão solicitada com sucesso!**\n\n**-${creditos} créditos** · **R$${formatarReais(valor)}**\n\nO valor será enviado para a chave Pix. A conversão aparece na sua **Atividade Recente**.`
-      );
+    const apiIntent = detectIntent(texto);
+    const apiOnly = ['registrar','converter','recompensa','reciclagem','transporte','energia','agua','bicicleta','arvore','banho'];
+    if (estado !== 'normal' || (apiIntent && apiOnly.includes(apiIntent))) {
+      estadoRef.current = 'normal'; setAguardandoEntrada(false);
+      responder(apiIntent === 'converter' || apiIntent === 'recompensa'
+        ? 'Resgate e Pix ainda não estão disponíveis na API. Nenhum saldo foi alterado.'
+        : 'Para registrar uma ação, entre com sua conta e use a câmera com desafio no Dashboard. A API confirma a decisão e os pontos.');
+      if (!data.nome) abrirLogin();
       return;
     }
 
@@ -519,7 +396,6 @@ export default function Chat() {
     ProcessarMensagem(comando);
   }
 
->>>>>>> origin/main
   return (
     <>
       {!aberto && (
