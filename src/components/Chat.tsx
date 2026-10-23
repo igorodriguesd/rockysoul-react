@@ -87,7 +87,7 @@ export default function Chat() {
     if (aberto && !initRef.current) {
       initRef.current = true;
       setTimeout(() => {
-        setMensagens([{ texto: 'Olá! Eu sou o RockySoul, seu assistente de sustentabilidade.\n\nVocê pode consultar seus **créditos e nível**, pedir **dicas** e conhecer as ações sustentáveis. Para registrar uma ação, use a câmera com desafio no Dashboard. Resgate e Pix ainda não estão disponíveis na API.\n\nUse os atalhos abaixo ou digite o que quiser!', remetente: 'bot' }]);
+        setMensagens([{ texto: 'Olá! Eu sou o RockySoul, seu assistente de sustentabilidade.\n\nVocê pode consultar seus **créditos e nível**, pedir **dicas** e conhecer as ações sustentáveis. Para registrar uma ação, use a câmera com desafio no Dashboard. Os resgates e o Pix ainda não estão disponíveis.\n\nUse os atalhos abaixo ou digite o que quiser!', remetente: 'bot' }]);
       }, 350);
     }
     if (!aberto) {
@@ -154,8 +154,8 @@ export default function Chat() {
     if (estado !== 'normal' || (apiIntent && apiOnly.includes(apiIntent))) {
       estadoRef.current = 'normal'; setAguardandoEntrada(false);
       responder(apiIntent === 'converter' || apiIntent === 'recompensa'
-        ? 'Resgate e Pix ainda não estão disponíveis na API. Nenhum saldo foi alterado.'
-        : 'Para registrar uma ação, entre com sua conta e use a câmera com desafio no Dashboard. A API confirma a decisão e os pontos.');
+        ? 'Os resgates e o Pix ainda não estão disponíveis. Seus créditos continuam os mesmos.'
+        : 'Para registrar uma ação, entre com sua conta e use a câmera com desafio no Dashboard. Você recebe os pontos quando a ação for aprovada.');
       if (!data.nome) abrirLogin();
       return;
     }
