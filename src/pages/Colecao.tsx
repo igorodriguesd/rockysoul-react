@@ -1,22 +1,12 @@
 import { useEffect, useState } from 'react';
-<<<<<<< HEAD
-import { FRAGMENTOS_POR_DUPLICADA, CUSTO_FABRICACAO, PESO_RARIDADE, getValorCarta } from '../data/cartas';
-import SetColecao from '../components/SetColecao';
-import { useColecao } from '../context/CollectionContext';
-import { ApiGate, ListState, PageControls } from '../components/ApiUi';
-import { useApi } from '../context/ApiContext';
-import { useApiPage } from '../hooks/useApiPage';
-import type { CartaApi, UsuarioCartaApi, FragmentoApi } from '../api/types';
-=======
 import { useNavigate } from 'react-router-dom';
-import { CARTAS, SETS_CARTAS, FRAGMENTOS_POR_DUPLICADA, CUSTO_FABRICACAO, PESO_RARIDADE, getValorCarta, missoesPorRaridade } from '../data/cartas';
+import { FRAGMENTOS_POR_DUPLICADA, CUSTO_FABRICACAO, PESO_RARIDADE, getValorCarta, missoesPorRaridade } from '../data/cartas';
 import SetColecao from '../components/SetColecao';
 import { useColecao } from '../context/CollectionContext';
 import { MISSOES, nomeNivelPorPontos, grupoDaCarta } from '../data/constants';
 import { TermoAjuda } from '../components/TermoAjuda';
 import IconeMissao from '../components/IconeMissao';
 import PainelValorColecao from '../components/PainelValorColecao';
->>>>>>> origin/main
 import type { Carta } from '../types';
 
 type ModoColecao = 'cartas' | 'fabrica';
@@ -27,16 +17,9 @@ const BORDA_COLECAO = 'rgba(109,79,194,0.4)';
 export function Colecao() {
   useEffect(() => { document.title = 'RockySoulUp - Coleção'; }, []);
 
-<<<<<<< HEAD
-  const { colecao, getProgressoTotal, getValorTotal, fabricarCarta, catalogo: CARTAS, conjuntos: SETS_CARTAS } = useColecao();
-  const { user } = useApi();
-  const [page, setPage] = useState(0); const [ownedPage, setOwnedPage] = useState(0); const [fragmentPage, setFragmentPage] = useState(0);
-  const catalog = useApiPage<CartaApi>('carta', page); const owned = useApiPage<UsuarioCartaApi>('usuario-carta', ownedPage); const fragments = useApiPage<FragmentoApi>('usuario-fragmento', fragmentPage);
-=======
   const navigate = useNavigate();
-  const { colecao, getProgressoTotal, getValorTotal, fabricarCarta, setDesbloqueado } = useColecao();
+  const { catalogo: CARTAS, conjuntos: SETS_CARTAS, colecao, getProgressoTotal, getValorTotal, fabricarCarta, setDesbloqueado } = useColecao();
   const [modo, setModo] = useState<ModoColecao>('cartas');
->>>>>>> origin/main
   const [fabricada, setFabricada] = useState<Carta | null>(null);
 
   const { obtidas, total } = getProgressoTotal();
@@ -171,10 +154,6 @@ export function Colecao() {
       <header className="mb-4 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4">
         <div className="text-center sm:text-left">
           <h1 className="text-white text-3xl font-bold mb-1">Minha Coleção</h1>
-<<<<<<< HEAD
-          <p className="text-[#20d968] text-sm font-semibold mt-1">
-            Cartas na coleção: {obtidas} · Valor em créditos: {valorTotal}{foils.length > 0 && ` · ${foils.length} brilhante${foils.length > 1 ? 's' : ''} ✨`}
-=======
           <p className="text-slate-400 text-sm font-medium mt-1 max-w-2xl">
             Cada carta conquistada vira <strong className="text-gold">créditos no seu saldo</strong> — quanto mais rara a
             carta, maior o valor. Completar um set ainda rende um bônus de química.
@@ -182,7 +161,6 @@ export function Colecao() {
               termo="Por que carta rara vale mais?"
               dica="O valor da carta é creditado no seu saldo assim que você a obtém: Comum 8, Incomum 15, Rara 30, Épica 60 e Lendária 120 créditos. A versão brilhante vale 3x. E cada set completo paga +180 créditos de química (30 na 3ª carta, 150 na 4ª)."
             />
->>>>>>> origin/main
           </p>
         </div>
       </header>
@@ -231,10 +209,6 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
         />
       </div>
 
-<<<<<<< HEAD
-      {!user && <ApiGate><span /></ApiGate>}
-      <ListState {...catalog} count={catalog.rows.length} />
-=======
       <div className="flex items-center gap-2 mb-4">
         <button
           onClick={() => setModo('cartas')}
@@ -388,133 +362,11 @@ style={{ background: 'var(--t-collection-bg)', border: `1px solid ${BORDA_COLECA
           )}
       </div>
       ) : (
->>>>>>> origin/main
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-        {[...new Set(catalog.rows.map(card => card.conjunto))].map(id => SETS_CARTAS.find(set => set.id === id) ?? { id, nome: id, tema: 'Sua coleção sustentável', descricao: '', cor: '#20d968', icone: '/icons/folha.svg' }).map(set => (
-          <SetColecao key={set.id} set={set} cartasVisiveis={catalog.rows.filter(card => card.conjunto === set.id).map(card => ({ id: String(card.id), nome: card.nome, setId: card.conjunto, raridade: card.raridade.toLowerCase() as Carta['raridade'], descricao: card.descricao ?? '', educativa: '', icone: CARTAS.find(item => item.id === String(card.id))?.icone ?? '/icons/folha.svg' }))} cartasObtidas={owned.rows.filter(row => row.usuarioId === user?.id && row.quantidade > 0).map(row => String(row.cartaId))} />
+        {SETS_CARTAS.map(set => (
+          <SetColecao key={set.id} set={set} />
         ))}
       </div>
-<<<<<<< HEAD
-
-      <PageControls page={page} setPage={setPage} count={catalog.rows.length} loading={catalog.loading} />
-      {user && <section className="glass-strong rounded-2xl p-4 sm:p-5 mt-5"><h2 className="font-semibold">Cartas atribuídas</h2><ListState {...owned} count={owned.rows.length} />{owned.rows.map(row => <p key={row.cartaId} className="text-white/60 text-sm py-2">{CARTAS.find(card => card.id === String(row.cartaId))?.nome ?? `Carta #${row.cartaId}`} · {row.quantidade} unidade(s)</p>)}<PageControls page={ownedPage} setPage={setOwnedPage} count={owned.rows.length} loading={owned.loading} /><h2 className="font-semibold mt-5">Fragmentos</h2><ListState {...fragments} count={fragments.rows.length} /><div className="flex flex-wrap gap-2 mt-3">{fragments.rows.map(row => <p key={row.raridade} className="rounded-lg px-3 py-2 text-xs bg-white/5 text-[#a66cff]">{row.raridade} · {row.quantidade}</p>)}</div><PageControls page={fragmentPage} setPage={setFragmentPage} count={fragments.rows.length} loading={fragments.loading} /></section>}
-      {fabricaAberta && (
-      <div
-        className="fixed inset-0 z-[110] flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/70"
-        onClick={() => setFabricaAberta(false)}
-      >
-        <div
-          className="relative w-full max-w-5xl rounded-2xl p-4 sm:p-5 max-h-[calc(100vh-8rem)] sm:max-h-[85vh] overflow-y-auto overscroll-contain"
-          style={{
-            background: 'linear-gradient(180deg, rgba(18,32,54,0.98), rgba(9,17,30,0.98))',
-            border: '1px solid rgba(166,108,255,0.4)',
-            boxShadow: '0 24px 70px rgba(0,0,0,0.65)',
-          }}
-          onClick={e => e.stopPropagation()}
-        >
-          <button
-            type="button"
-            onClick={() => setFabricaAberta(false)}
-            className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center text-white/70 hover:text-white bg-white/10 hover:bg-white/20 transition-colors cursor-pointer"
-            title="Fechar"
-          >
-            ✕
-          </button>
-
-          <header className="flex items-center gap-3 mb-4">
-            <div
-              className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: 'rgba(166,108,255,0.15)', border: '1px solid rgba(166,108,255,0.4)' }}
-            >
-              <img src="/icons/craft.svg" alt="" className="w-6 h-6" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-white font-semibold text-base leading-tight">Fábrica de Cartas</h3>
-              <p className="text-white/50 text-xs">Consulte seus fragmentos. Fabricação ainda indisponível.</p>
-            </div>
-          </header>
-
-          {mostrarDica && (
-            <div className="mb-3 rounded-xl p-3 text-xs leading-relaxed text-white/75 bg-white/5 border border-[#a66cff]/30">
-              <p>
-                <strong className="text-white">Fragmento</strong> é o «dinheiro de montar» da coleção: carta repetida vira
-                fragmentos da raridade dela, e juntando a quantidade certa você monta a que falta — sem sorte.
-                No chip fica seu total; no botão da carta, quanto falta (ex.: <strong className="text-white">3/10</strong> = tem 3, precisa de 10).
-                Cada repetida rende: comum <strong className="text-[#a66cff]">+3</strong>, incomum <strong className="text-[#a66cff]">+5</strong>, rara <strong className="text-[#a66cff]">+10</strong>, épica <strong className="text-[#a66cff]">+20</strong>, lendária <strong className="text-[#a66cff]">+40</strong>.
-              </p>
-            </div>
-          )}
-
-          <div className="flex flex-wrap gap-2 mb-2">
-            {(Object.keys(FRAGMENTOS_POR_DUPLICADA) as Array<keyof typeof FRAGMENTOS_POR_DUPLICADA>).map(r =>
-              <div key={r} className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs bg-white/5">
-                <span className="w-2 h-2 rounded-full" style={{ background: r === 'comum' ? '#9ca3af' : r === 'incomum' ? '#38bdf8' : r === 'rara' ? '#a66cff' : r === 'epica' ? '#f5c451' : '#f59e0b' }} />
-                <span className="text-white/70">{r}</span>
-                <span className="text-[#a66cff] font-bold">{fragmentos[r]}</span>
-              </div>
-            )}
-            <button
-              type="button"
-              onClick={() => setMostrarDica(v => !v)}
-              className="shrink-0 ml-auto flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-[#a66cff] border border-[#a66cff]/40 bg-[#a66cff]/10 hover:bg-[#a66cff]/20 active:scale-95 transition-all cursor-pointer"
-              title={mostrarDica ? 'Ocultar explicação' : 'O que é fragmento?'}
-            >
-              <span className="text-sm font-black leading-none">?</span>
-              {mostrarDica ? 'Fechar dica' : 'O que é?'}
-            </button>
-          </div>
-
-          {faltando.length === 0 ? (
-            <p className="text-[#20d968] text-sm font-semibold text-center py-2">Coleção completa! Parabéns 🎉</p>
-          ) : (
-            <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-5 gap-2.5">
-              {faltando.map(carta => {
-                const custo = CUSTO_FABRICACAO[carta.raridade];
-                const tem = (fragmentos[carta.raridade] ?? 0) >= custo;
-                return (
-                  <div
-                    key={carta.id}
-                    className="rounded-xl p-2.5 flex flex-col items-center text-center"
-                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}
-                  >
-                    <img src={carta.icone} alt="" className="w-8 h-8 opacity-75" />
-                    <p className="text-white text-[11px] font-semibold mt-1.5 leading-tight">{carta.nome}</p>
-                    <p className="text-white/40 text-[9px] uppercase tracking-widest mb-2">{carta.raridade}</p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const nova = fabricarCarta(carta.id);
-                        if (nova) {
-                          setFabricada(carta);
-                          setTimeout(() => setFabricada(null), 2200);
-                        }
-                      }}
-                      disabled title="Fabricação ainda indisponível"
-                      className="w-full text-[11px] font-bold rounded-lg py-1.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                      style={tem
-                        ? { background: 'linear-gradient(135deg, #a66cff, #8b5cf6)', color: '#fff' }
-                        : { background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.5)' }}
-                    >
-                      {tem ? `Fabricar (${custo})` : `${fragmentos[carta.raridade]}/${custo}`}
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {fabricada && (
-            <div className="mt-4 rounded-xl p-3 text-center" style={{ background: 'rgba(32,217,104,0.12)', border: '1px solid rgba(32,217,104,0.4)' }}>
-              <p className="text-white text-sm">
-                Carta fabricada: <strong className="text-[#20d968]">{fabricada.nome}</strong> · {' '}
-                <span className="text-[#4ade80] font-semibold">+{getValorCarta(fabricada)} créditos</span> na coleção!
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-=======
->>>>>>> origin/main
       )}
     </div>
   );
