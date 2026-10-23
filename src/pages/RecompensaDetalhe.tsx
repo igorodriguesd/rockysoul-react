@@ -105,7 +105,7 @@ function RecompensaDetalheContent() {
               : 'bg-brand-soft text-slate-400 cursor-not-allowed'
             }`}
         >
-          {podeResgatar ? 'Resgatar recompensa' : 'Resgate indisponível na API'}
+          {podeResgatar ? 'Resgatar recompensa' : 'Resgate indisponível no momento'}
         </button>
       </div>
 
