@@ -2,11 +2,8 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useColecao } from '../context/CollectionContext';
 import { useChemistry } from '../hooks/useChemistry';
-<<<<<<< HEAD
-=======
 import { useData } from '../context/DataContext';
 import { nomeNivelPorPontos } from '../data/constants';
->>>>>>> origin/main
 import type { SetCarta, Carta } from '../types';
 import CardItem from './CardItem';
 import SetProgress from './SetProgress';
@@ -14,23 +11,16 @@ import CartaFabricarModal from './CartaFabricarModal';
 
 interface Props {
   set: SetCarta;
-  cartasVisiveis?: Carta[];
-  cartasObtidas?: string[];
 }
 
-export default function SetColecao({ set, cartasVisiveis, cartasObtidas }: Props) {
+export default function SetColecao({ set }: Props) {
   const { colecao, getCartasDoSet } = useColecao();
   const { data } = useData();
   const { quimica } = useChemistry(set.id);
-<<<<<<< HEAD
-  const cartas = cartasVisiveis ?? getCartasDoSet(set.id);
-  const obtidas = cartasObtidas ?? colecao.sets[set.id]?.cartas ?? [];
-=======
   const cartas = getCartasDoSet(set.id);
   const obtidas = cartas.filter(c => colecao.cartasObtidas.includes(c.id)).map(c => c.id);
   const bloqueado = (data.pontosAcumulados ?? data.pontos) < set.pontosMin;
   const [cartaAlvo, setCartaAlvo] = useState<Carta | null>(null);
->>>>>>> origin/main
 
   return (
     <section className="shadow-(--t-glass-strong-shadow) rounded-2xl p-4 sm:p-5" style={bloqueado ? { opacity: 0.85, background: 'linear-gradient(168deg, #241b3d 0%, #12233a 100%)', border: '1px solid rgba(109,79,194,0.35)' } : { background: 'linear-gradient(168deg, #241b3d 0%, #12233a 100%)', border: '1px solid rgba(109,79,194,0.35)' }}>
@@ -54,14 +44,13 @@ export default function SetColecao({ set, cartasVisiveis, cartasObtidas }: Props
         </div>
       </header>
 
-      <SetProgress set={set} total={cartas.length} obtidas={cartas.filter(card => obtidas.includes(card.id)).length} />
+      <SetProgress set={set} />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4">
         {cartas.map(carta => {
           const desbloqueada = obtidas.includes(carta.id);
           return (
             <CardItem
-              catalogoApi
               key={carta.id}
               carta={carta}
               bloqueada={!desbloqueada}
