@@ -10,17 +10,10 @@ interface Props {
   ativa: boolean;
   foil?: boolean;
   semHover?: boolean;
-<<<<<<< HEAD
-  catalogoApi?: boolean;
-}
-
-export default function CardItem({ carta, bloqueada, ativa, foil = false, semHover = false, catalogoApi = false }: Props) {
-=======
   onClick?: () => void;
 }
 
 export default function CardItem({ carta, bloqueada, ativa, foil = false, semHover = false, onClick }: Props) {
->>>>>>> origin/main
   const set = SETS_CARTAS.find(s => s.id === carta.setId);
   const tier = TIER[carta.raridade];
   const comGradiente = usaBordaGradiente(carta.raridade);
@@ -82,7 +75,7 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
           className="bg-[rgba(0,0,0,0.35)] border border-white/30 backdrop-blur-[2px] rounded-md px-1.5 py-1 text-[9px] leading-none font-bold tracking-wide"
           style={{ color: bloqueada ? 'rgba(255,255,255,0.5)' : tier.texto }}
         >
-          {catalogoApi ? (bloqueada ? 'Catálogo' : 'Obtida') : bloqueada ? `${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%` : set ? getIniciaisSet(set.id) : ''}
+          {bloqueada ? `${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%` : set ? getIniciaisSet(set.id) : ''}
         </span>
       </div>
 
@@ -136,14 +129,14 @@ export default function CardItem({ carta, bloqueada, ativa, foil = false, semHov
             className="rounded px-1.5 py-1 text-[9px] leading-none font-bold"
             style={{ background: 'rgba(255,255,255,0.1)', color: bloqueada ? 'rgba(255,255,255,0.4)' : tier.texto }}
           >
-            {catalogoApi ? carta.raridade : `chance ${CHANCE_DROP_POR_RARIDADE[carta.raridade]}%`}
+            chance {CHANCE_DROP_POR_RARIDADE[carta.raridade]}%
           </span>
           {!bloqueada && (
             <span
               className="rounded px-1.5 py-1 text-[9px] leading-none font-bold"
               style={{ background: 'rgba(250,204,21,0.2)', color: foil ? '#fde68a' : '#FACC15' }}
             >
-              {catalogoApi ? 'Na coleção' : `+${getValorCarta(carta, foil)} créd.`}
+              +{getValorCarta(carta, foil)} créd.
             </span>
           )}
         </div>
