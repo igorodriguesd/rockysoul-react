@@ -49,7 +49,7 @@ function RecompensasContent() {
 
   function solicitarConversao() {
     if (!exigirLogin()) return;
-    showToast('Conversão para Pix ainda não está disponível na API. Nenhum crédito foi descontado.');
+    showToast('O Pix ainda não está disponível. Nenhum crédito foi descontado.');
   }
 
   function novaConversao() {
