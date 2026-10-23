@@ -145,6 +145,11 @@ export default function Chat() {
     adicionarMensagem(texto, 'user');
     const estado = estadoRef.current;
     const apiIntent = detectIntent(texto);
+    if (!data.nome && apiIntent && ['pontos', 'nivel', 'cartas'].includes(apiIntent)) {
+      responder('Para ter acesso aos seus pontos, nível e coleção, faça seu login.');
+      abrirLogin();
+      return;
+    }
     const apiOnly = ['registrar','converter','recompensa','reciclagem','transporte','energia','agua','bicicleta','arvore','banho'];
     if (estado !== 'normal' || (apiIntent && apiOnly.includes(apiIntent))) {
       estadoRef.current = 'normal'; setAguardandoEntrada(false);
