@@ -8,6 +8,7 @@ type ApiState = { api: ReturnType<typeof createApiClient>; service: ReturnType<t
   connect: (token: string) => Promise<void>; login: (email: string, senha: string) => Promise<void>; disconnect: () => void; logout: () => Promise<void>; refresh: () => void; refreshProfile: () => Promise<void> };
 const Context = createContext<ApiState | null>(null);
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://rockysoulup-api.onrender.com';
+const TOKEN_KEY = 'rocky_auth_token';
 export function ApiProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Usuario | null>(null);
   const [isAdmin, setAdmin] = useState(false);
@@ -19,8 +20,18 @@ export function ApiProvider({ children }: { children: ReactNode }) {
   const disconnect = useCallback(() => {
     epoch.current++; api.setToken(null); setUser(null); setAdmin(false); setRevision(n => n + 1);
     if (expiry.current) clearTimeout(expiry.current);
+    try { localStorage.removeItem(TOKEN_KEY); } catch { /* storage indisponível */ }
   }, [api]);
   useEffect(() => { api.setUnauthorizedHandler(disconnect); return () => { api.setUnauthorizedHandler(() => {}); if (expiry.current) clearTimeout(expiry.current); api.setToken(null); }; }, [disconnect, api]);
+  // Restaura a sessão ao recarregar a página
+  useEffect(() => {
+    let token: string | null = null;
+    try { token = localStorage.getItem(TOKEN_KEY); } catch { token = null; }
+    if (token) {
+      connect(token).catch(() => { /* sessão inválida ou expirada — segue deslogado */ });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const refresh = useCallback(() => setRevision(n => n + 1), []);
   const connect = async (value: string) => {
     disconnect(); const token = value.trim(); const identity = tokenIdentity(token); const attempt = epoch.current;
@@ -36,6 +47,7 @@ export function ApiProvider({ children }: { children: ReactNode }) {
       }
       if (attempt !== epoch.current) return;
       setUser(profile); setAdmin(admin); refresh();
+      try { localStorage.setItem(TOKEN_KEY, token); } catch { /* storage indisponível */ }
       expiry.current = setTimeout(() => { disconnect(); showToast('Sessão expirada. Entre novamente.'); }, Math.min(identity.expires - Date.now(), 2_147_000_000));
     } catch (error) { if (attempt === epoch.current) disconnect(); throw error; }
     finally { setConnecting(false); }

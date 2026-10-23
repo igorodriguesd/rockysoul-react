@@ -11,7 +11,7 @@ export interface HistoricoApi { id: number; usuarioId: number; descricao: string
 export interface UsuarioCartaApi { usuarioId: number; cartaId: number; quantidade: number; versao: number }
 export interface FragmentoApi { usuarioId: number; raridade: Raridade; quantidade: number; versao: number }
 export type EstadoVerificacao = 'ENVIADA' | 'EM_ANALISE' | 'PENDENTE_REVISAO' | 'APROVADA' | 'REJEITADA';
-export interface Verificacao { id: string; usuarioId: number; acaoId: number; estado: EstadoVerificacao; versao: number; possivelReuso: boolean; evidenciaDisponivel: boolean; parecer: string | null; modelo: string; regras: string; tentativas: number; pontosCreditados: number }
+export interface Verificacao { id: string; usuarioId: number; usuarioEmail?: string; acaoId: number; estado: EstadoVerificacao; versao: number; possivelReuso: boolean; evidenciaDisponivel: boolean; parecer: string | null; modelo: string; regras: string; tentativas: number; pontosCreditados: number }
 export interface Desafio { id: string; acaoId: number; codigo: string; expiraEm: string }
 export interface Submissao { acaoId: number; desafioId: string; descricao: string; imagemBase64: string }
 export interface Consumo { habilitado: boolean; suspenso: boolean; consumoOuReservaDiaMicrosUSD: number; limiteDiaMicrosUSD: number; consumoOuReservaMesMicrosUSD: number; limiteMesMicrosUSD: number; reservasIncertas: number }
