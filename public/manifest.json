@@ -1,0 +1,25 @@
+{
+  "name": "RockySoulUp",
+  "short_name": "RockySoulUp",
+  "description": "Plataforma gamificada de sustentabilidade — transforme ações ecológicas em créditos, cartas colecionáveis e recompensas reais.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07111d",
+  "theme_color": "#00e676",
+  "id": "/",
+  "icons": [
+    {
+      "src": "/imagens/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/imagens/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

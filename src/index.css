@@ -1,5 +1,114 @@
 @import "tailwindcss";
 
+@property --holo-angle {
+  syntax: '<angle>';
+  initial-value: 220deg;
+  inherits: false;
+}
+
+/* ============================================================
+   TEMA ÚNICO: :root = Classic "Soul Up" (dark)
+   ============================================================ */
+:root {
+  color-scheme: dark;
+
+  /* RockySoulUp Dark Theme — identidade única */
+  --t-void: #07111d;            /* Fundo da aplicação */
+  --t-surface: #0b1725;         /* Áreas secundárias */
+  --t-surface-2: #12233a;       /* Cards */
+  --t-surface-hover: #172b45;   /* Card elevado / hover */
+
+  --t-text-base: #f8fafc;       /* Texto principal */
+  --t-text-secondary: #cbd5e1;  /* Texto secundário */
+  --t-text-muted: #94a3b8;      /* Texto muted */
+  --t-text-disabled: #64748b;   /* Texto desabilitado */
+
+  --t-accent: #00e676;          /* Verde Rocky — ação principal */
+  --t-accent-hover: #00f57a;
+  --t-accent-2: #22c55e;        /* Sucesso / progresso */
+  --t-accent-3: #38bdf8;        /* Azul — informação / impacto */
+  --t-accent-4: #60a5fa;
+  --t-accent-5: #a78bfa;        /* Roxo — coleção / cartas */
+  --t-accent-soft: rgba(0, 230, 118, 0.12);
+  --t-accent-soft-2: rgba(0, 230, 118, 0.18);
+  --t-onaccent: #03110a;
+
+  --t-primary-dark: #047857;    /* Verde escuro */
+  --t-gold: #facc15;            /* Amarelo destaque */
+  --t-gold-deep: #fbbf24;
+  --t-red: #f87171;             /* Vermelho erro */
+
+  --t-bg-app: radial-gradient(circle at 50% 0%, #12233a 0%, #07111d 70%);
+
+  --t-border-subtle: rgba(148, 163, 184, 0.12);  /* Borda padrão dos cards */
+  --t-border-active: rgba(0, 230, 118, 0.45);     /* Borda verde: ativo/concluído/destaque */
+
+  --t-collection: #a78bfa;          /* Roxo coleção */
+  --t-collection-bg: #241b3d;       /* Superfície de coleção */
+  --t-collection-border: #6d4fc2;
+
+  --t-impact: #38bdf8;              /* Azul impacto */
+  --t-impact-bg: #102d3d;           /* Superfície de impacto */
+
+  --t-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+  --t-glass-border: var(--t-border-subtle);
+  --t-glass-hero: rgba(11, 23, 37, 0.92);
+  --t-glass-hero-border: var(--t-border-subtle);
+  --t-glass-hero-shadow: 0 0 40px rgba(0, 230, 118, 0.08), inset 0 0 20px rgba(0, 230, 118, 0.05);
+  --t-glass-side: rgba(11, 23, 37, 0.96);
+  --t-glass-side-border: var(--t-border-subtle);
+  --t-glass-side-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --t-glass-strong: linear-gradient(160deg, rgba(18, 35, 58, 0.96), rgba(11, 23, 37, 0.95));
+  --t-glass-strong-border: var(--t-border-subtle);
+  --t-glass-strong-shadow: 0 12px 40px rgba(0, 230, 118, 0.12);
+  --t-card-primary: #12233a;    /* Cards / Surface */
+  --t-card-primary-border: var(--t-border-subtle);
+  --t-card-primary-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --t-card-secondary: #172b45;  /* Card elevado */
+  --t-card-secondary-border: var(--t-border-subtle);
+  --t-card-tertiary: #0d3b35;   /* Fundo de elemento ativo */
+
+  --t-header: rgba(11, 23, 37, 0.9);
+  --t-header-border: #164e63;
+  --t-header-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+
+  --t-grad-brand: linear-gradient(135deg, #22c55e, #00e676);
+  --t-grad-strong: linear-gradient(160deg, #047857, #065f46);
+  --t-grad-menu: linear-gradient(135deg, #22c55e, #00e676 55%, #38bdf8);
+  --t-grad-arena: linear-gradient(155deg, #0b1725, #12233a, #07111d);
+  --t-grad-factory: linear-gradient(180deg, rgba(18, 35, 58, 0.98), rgba(7, 17, 29, 0.98));
+  --t-grad-arena-btn: linear-gradient(135deg, #22c55e, #00e676);
+  --t-on-arena-btn: #03110a;
+  --t-arena-btn-shadow: 0 8px 22px rgba(0, 230, 118, 0.3);
+  --t-arena-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+  --t-hero-btn: linear-gradient(135deg, #22c55e, #00e676);
+  --t-hero-text: #03110a;
+  --t-hero-shadow: 0 10px 40px rgba(0, 230, 118, 0.3);
+
+  --t-glow: rgba(0, 230, 118, 0.45);
+  --t-mist: rgba(0, 230, 118, 0.12);
+  --t-brand-border: var(--t-border-subtle);  /* Borda de elementos internos de card */
+  --t-mist-gray: rgba(255, 255, 255, 0.1);
+  --t-glow-card: rgba(0, 230, 118, 0.4);
+  --t-island-shadow: rgba(0, 0, 0, 0.4);
+  --t-wheel-slot: #22c55e;
+  --t-wheel-stroke: #07110b;
+  --t-wheel-point: #00e676;
+
+  --t-slate-50: #0b1725;
+  --t-slate-100: #0f1c2e;
+  --t-slate-200: #12233a;
+  --t-slate-300: #172b45;
+  --t-slate-400: #64748b;
+  --t-slate-500: #94a3b8;
+  --t-slate-600: #cbd5e1;
+  --t-slate-700: #cbd5e1;
+  --t-slate-800: #f8fafc;
+  --t-slate-900: #f8fafc;
+  --t-slate-950: #f8fafc;
+}
+
 @theme {
   --breakpoint-sm: 480px;
   --breakpoint-md: 768px;
@@ -7,23 +116,105 @@
   --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
 
-  --font-brand: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  --font-serif-display: Georgia, 'Times New Roman', serif;
+  --font-brand: 'Manrope', 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-serif-display: 'Manrope', 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
 
   --animate-pulse-glow: pulse-glow 2.5s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-fut-shine: fut-shine 2.4s linear infinite;
+  --animate-fut-hue: fut-hue 9s ease-in-out infinite;
+  --animate-holo-shine: holo-shine 6s linear infinite;
 
-  --color-void: #070d19;        
-  --color-surface: #0f1c2e;     
-  --color-surface-light: #162840; 
-  --color-sunset: #f97316;     
+  --color-void: var(--t-void);
+  --color-surface: var(--t-surface);
+  --color-surface-2: var(--t-surface-2);
+  --color-surface-hover: var(--t-surface-hover);
+  --color-frost: var(--t-text-base);
 
-  --color-moss: #047857;
-  --color-fern: #059669;
-  --color-leaf: #00ff88;        
-  --color-leaf-soft: #34d399;   
-  --color-frost: #ffffff;       
-  --color-sage: #38bdf8;        
-  --color-sun: #fbbf24;
+  --color-brand: var(--t-accent);
+  --color-brand-hover: var(--t-accent-hover);
+  --color-brand-2: var(--t-accent-2);
+  --color-brand-3: var(--t-accent-3);
+  --color-brand-4: var(--t-accent-4);
+  --color-violet: var(--t-accent-5);
+  --color-brand-soft: var(--t-accent-soft);
+  --color-brand-soft-2: var(--t-accent-soft-2);
+
+  --color-collection: var(--t-collection);
+  --color-collection-bg: var(--t-collection-bg);
+  --color-collection-border: var(--t-collection-border);
+
+  --color-impact: var(--t-impact);
+  --color-impact-bg: var(--t-impact-bg);
+
+  --color-gold: var(--t-gold);
+  --color-gold-deep: var(--t-gold-deep);
+
+  --color-graphite: #0f172a;
+  --color-milk: #f8fafc;
+  --color-silver: #94a3b8;
+
+  --color-leaf: var(--t-accent);
+  --color-leaf-soft: var(--t-accent-2);
+  --color-moss: var(--t-accent-hover);
+  --color-fern: var(--t-accent-2);
+  --color-sage: var(--t-accent-3);
+  --color-sun: var(--t-gold);
+
+  --color-card-primary: var(--t-card-primary);
+  --color-card-primary-border: var(--t-card-primary-border);
+  --color-card-secondary: var(--t-card-secondary);
+  --color-card-secondary-border: var(--t-card-secondary-border);
+  --color-card-tertiary: var(--t-card-tertiary);
+  --color-mist: var(--t-mist);
+  --color-mist-gray: var(--t-mist-gray);
+
+  --color-glass-border: var(--t-glass-border);
+  --color-glass-hero-border: var(--t-glass-hero-border);
+  --color-glass-side-border: var(--t-glass-side-border);
+  --color-glass-strong-border: var(--t-glass-strong-border);
+
+  --shadow-card-primary: var(--t-card-primary-shadow);
+  --shadow-glass-hero: var(--t-glass-hero-shadow);
+  --shadow-glass-side: var(--t-glass-side-shadow);
+  --shadow-glass-strong: var(--t-glass-strong-shadow);
+
+  --color-slate-50: var(--t-slate-50);
+  --color-slate-100: var(--t-slate-100);
+  --color-slate-200: var(--t-slate-200);
+  --color-slate-300: var(--t-slate-300);
+  --color-slate-400: var(--t-slate-400);
+  --color-slate-500: var(--t-slate-500);
+  --color-slate-600: var(--t-slate-600);
+  --color-slate-700: var(--t-slate-700);
+  --color-slate-800: var(--t-slate-800);
+  --color-slate-900: var(--t-slate-900);
+  --color-slate-950: var(--t-slate-950);
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  @keyframes fut-shine {
+    0% { transform: translateX(-160%) rotate(18deg); }
+    100% { transform: translateX(420%) rotate(18deg); }
+  }
+
+  @keyframes fut-hue {
+    0%, 100% { filter: hue-rotate(0deg) saturate(1); }
+    50% { filter: hue-rotate(14deg) saturate(1.15); }
+  }
+
+  @keyframes holo-shine {
+    0% { --holo-angle: 220deg; }
+    100% { --holo-angle: 580deg; }
+  }
 }
 
 @layer base {
@@ -33,159 +224,17 @@
 
   body {
     margin: 0;
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Manrope', 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
-    color: var(--color-frost); 
+    overflow-wrap: break-word;
+    word-wrap: break-word;
   }
 
   h1, h2, h3, h4 {
     font-family: var(--font-serif-display);
-    font-weight: 700;
-    color: var(--color-frost);
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
-}
-
-@utility bg-app {
-  background: radial-gradient(circle at 50% 0%, #102a3a 0%, var(--color-void) 70%);
-  position: relative;
-}
-
-@utility home-bg {
-  background: radial-gradient(circle at 50% 0%, #102a3a 0%, var(--color-void) 70%);
-}
-
-@utility glass-hero {
-  background: rgba(9, 20, 34, 0.92);
-  border: 1px solid rgba(0, 255, 136, 0.3);
-  box-shadow: 0 0 40px rgba(0, 255, 136, 0.08), inset 0 0 20px rgba(0, 255, 136, 0.05);
-}
-
-@utility glass-side {
-  background: rgba(9, 20, 34, 0.96);
-  border: 1px solid rgba(0, 255, 136, 0.2);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}
-
-@utility glass-strong {
-  background: linear-gradient(160deg, rgba(20, 38, 60, 0.96), rgba(12, 26, 44, 0.95));
-  border: 1px solid rgba(0, 255, 136, 0.4);
-  box-shadow: 0 12px 40px rgba(0, 255, 136, 0.12);
-}
-
-@utility card-primary {
-  background: var(--color-surface);
-  border: 1px solid rgba(0, 255, 136, 0.4);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-}
-
-@utility card-secondary {
-  background: var(--color-surface-light);
-  border: 1px solid rgba(0, 255, 136, 0.2);
-}
-
-@utility card-tertiary {
-  background: rgba(11, 74, 44, 0.32);
-  border: none;
-}
-
-@utility floating-island {
-  animation: float 6s ease-in-out infinite;
-  filter: drop-shadow(0 30px 30px rgba(0, 0, 0, 0.4));
-}
-
-.fut-card {
-  position: relative;
-  overflow: hidden;
-}
-
-.fut-card.fut-foil::after {
-  content: '';
-  position: absolute;
-  top: -60%;
-  left: -80%;
-  width: 55%;
-  height: 260%;
-  pointer-events: none;
-  z-index: 2;
-  transform: rotate(18deg);
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-  animation: fut-shine 2.4s linear infinite;
-}
-
-.fut-card.fut-hover {
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease, filter 0.3s ease;
-}
-
-.fut-card.fut-hover:not(:disabled):hover {
-  z-index: 60;
-  transform: perspective(800px) translateY(-58px) rotateZ(-7deg) rotateX(14deg) scale(1.16);
-  filter: brightness(1.12) saturate(1.12);
-  box-shadow: 0 34px 70px rgba(0, 0, 0, 0.55), 0 0 34px var(--fut-glow, rgba(32, 217, 104, 0.5));
-}
-
-.fut-plate {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.42));
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-}
-
-.fut-chip {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-}
-
-@keyframes fut-shine {
-  0% { transform: translateX(-160%) rotate(18deg); }
-  100% { transform: translateX(420%) rotate(18deg); }
-}
-
-.fut-legend {
-  animation: fut-hue 9s ease-in-out infinite;
-}
-
-@keyframes fut-hue {
-  0%, 100% { filter: hue-rotate(0deg) saturate(1); }
-  50% { filter: hue-rotate(14deg) saturate(1.15); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-12px); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-pulse-glow {
-    animation: none;
-  }
-  .fut-card.fut-foil::after,
-  .fut-legend {
-    animation: none;
-  }
-  html {
-    scroll-behavior: auto;
-  }
-}
-
-html.resizing * {
-  animation-play-state: paused !important;
-  transition: none !important;
-}
-
-html.resizing,
-html.resizing * {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-}
-
-html.resizing .home-bg {
-  display: none !important;
 }

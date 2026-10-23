@@ -47,74 +47,62 @@ export function Contato() {
       <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Contato</h1>
       <p className="text-center text-white/70 mb-10">Entre em contato com a equipe RockySoulUp</p>
 
-      <div className="card-primary rounded-2xl p-8">
+      <div className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl p-8">
         {enviado ? (
-          <div className="text-center py-8" role="status" aria-live="polite">
-            <img src="/icons/sucesso.svg" alt="Enviado com sucesso" className="w-16 h-16 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-1">Mensagem enviada!</h3>
-            <p className="text-white/50">Obrigado pelo contato. Responderemos em breve.</p>
+          <div className="text-center py-8">
+            <img src="/icons/sucesso.svg" alt="Enviado" className="w-16 h-16 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-slate-900 mb-1">Mensagem enviada!</h3>
+            <p className="text-slate-500">Obrigado pelo contato. Responderemos em breve.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
             <div>
-              <label htmlFor="contato-nome" className="block text-sm font-medium text-white/75 mb-1">
+              <label htmlFor="contato-nome" className="block text-sm font-medium text-slate-700 mb-1">
                 Nome *
               </label>
               <input
                 id="contato-nome"
                 type="text"
                 value={nome}
-                onChange={e => {
-                  setNome(e.target.value);
-                  if (erros.nome) setErros(prev => ({ ...prev, nome: undefined }));
-                }}
-                aria-invalid={!!erros.nome}
-                aria-describedby={erros.nome ? 'erro-nome' : undefined}
-                className={`w-full border rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors ${
-                  erros.nome ? 'border-red-400' : 'border-white/15'
-                }`}
-                style={{ background: 'rgba(255,255,255,0.05)' }}
+                onChange={e => setNome(e.target.value)}
+                className={`w-full border rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors ${erros.nome ? 'border-red-400' : 'border-slate-300'
+                  }`}
+                style={{ background: 'var(--t-surface-2)' }}
                 placeholder="Seu nome completo (mínimo 3 caracteres)"
               />
               {erros.nome && (
-                <p id="erro-nome" className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></svg>
+                <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></svg>
                   {erros.nome}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor="contato-email" className="block text-sm font-medium text-white/75 mb-1">
+              <label htmlFor="contato-email" className="block text-sm font-medium text-slate-700 mb-1">
                 Email *
               </label>
               <input
                 id="contato-email"
                 type="email"
                 value={email}
-                onChange={e => {
-                  setEmail(e.target.value);
-                  if (erros.email) setErros(prev => ({ ...prev, email: undefined }));
-                }}
-                aria-invalid={!!erros.email}
-                aria-describedby={erros.email ? 'erro-email' : undefined}
-                className={`w-full border rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors ${
-                  erros.email ? 'border-red-400' : 'border-white/15'
-                }`}
-                style={{ background: 'rgba(255,255,255,0.05)' }}
+                onChange={e => setEmail(e.target.value)}
+                className={`w-full border rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors ${erros.email ? 'border-red-400' : 'border-slate-300'
+                  }`}
+                style={{ background: 'var(--t-surface-2)' }}
                 placeholder="seu@email.com"
               />
               {erros.email && (
-                <p id="erro-email" className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></svg>
+                <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></svg>
                   {erros.email}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor="contato-mensagem" className="block text-sm font-medium text-white/75 mb-1">
-                Mensagem * <span className="text-xs text-white/45">(10-1000 caracteres)</span>
+              <label htmlFor="contato-mensagem" className="block text-sm font-medium text-slate-700 mb-1">
+                Mensagem * <span className="text-xs text-slate-500">(10-1000 caracteres)</span>
               </label>
               <textarea
                 id="contato-mensagem"
@@ -126,15 +114,14 @@ export function Contato() {
                 aria-invalid={!!erros.mensagem}
                 aria-describedby={erros.mensagem ? 'erro-mensagem' : undefined}
                 rows={5}
-                className={`w-full border rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-colors resize-none ${
-                  erros.mensagem ? 'border-red-400' : 'border-white/15'
-                }`}
-                style={{ background: 'rgba(255,255,255,0.05)' }}
+                className={`w-full border rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-colors resize-none ${erros.mensagem ? 'border-red-400' : 'border-slate-300'
+                  }`}
+                style={{ background: 'var(--t-surface-2)' }}
                 placeholder="Escreva sua mensagem aqui..."
               />
               {erros.mensagem && (
-                <p id="erro-mensagem" className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></svg>
+                <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 21h20L12 3Z" /><path d="M12 10v4" /><path d="M12 17h.01" /></svg>
                   {erros.mensagem}
                 </p>
               )}
@@ -142,7 +129,7 @@ export function Contato() {
 
             <button
               type="submit"
-              className="w-full py-3 font-semibold rounded-xl bg-[#22c55e] text-white hover:bg-[#16a34a] cursor-pointer transition-colors"
+              className="w-full py-3 font-semibold rounded-xl bg-brand text-(--t-onaccent) hover:bg-brand-hover cursor-pointer transition-colors"
             >
               Enviar Mensagem
             </button>

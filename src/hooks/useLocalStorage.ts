@@ -12,11 +12,16 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T 
 
   useEffect(() => {
     try {
+      // Valor inicial = estado "zerado" (ex.: após Sair): remove a chave em vez de gravar o padrão.
+      if (storedValue === initialValue) {
+        window.localStorage.removeItem(key);
+        return;
+      }
       window.localStorage.setItem(key, JSON.stringify(storedValue));
     } catch (error) {
       console.error(`Erro ao salvar no localStorage [${key}]:`, error);
     }
-  }, [key, storedValue]);
+  }, [key, storedValue, initialValue]);
 
   return [storedValue, setStoredValue];
 }

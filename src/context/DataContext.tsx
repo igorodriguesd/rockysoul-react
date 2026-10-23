@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { createContext, useContext, type ReactNode } from 'react';
 import type { Missao, UserData } from '../types';
 import type { Acao, HistoricoApi, SeloApi } from '../api/types';
@@ -30,6 +31,312 @@ export function DataProvider({ children }: { children: ReactNode }) {
     resetar: () => { void logout(); }, setNome: unsupported, setEmail: unsupported,
     adicionarPontos: unsupported, adicionarBonus: unsupported, subtrairPontos: unsupported, addResgate: unsupported, resgatarBonusDesafio: unsupported };
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
+=======
+import { createContext, useContext, useCallback, useRef, type ReactNode } from 'react';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import type { UserData, HistoricoEntrada, Resgate, Missao } from '../types';
+import { SELOS, NIVEIS, MISSOES, TRILHA_EVOLUCAO, BONUS_BOAS_VINDAS, indiceEtapaPorPontos, buscarAmigoPorCodigo, gerarCodigoAmigo } from '../data/constants';
+import { showToast } from '../components/Toast';
+
+const STORAGE_KEY = 'rocky_user_data';
+
+const BONUS_DESAFIO = 20;
+
+function calcularBonusEvolucao(acumuladoAntes: number, acumuladoDepois: number, jaRecebeuBoasVindas: boolean) {
+  let bonus = 0;
+  const etapas: string[] = [];
+  if (!jaRecebeuBoasVindas) {
+    bonus += BONUS_BOAS_VINDAS;
+    etapas.push('boas-vindas');
+  }
+  const idxAntes = indiceEtapaPorPontos(acumuladoAntes);
+  const idxDepois = indiceEtapaPorPontos(acumuladoDepois);
+  for (let i = idxAntes + 1; i <= idxDepois; i++) {
+    bonus += TRILHA_EVOLUCAO[i].bonusCreditos;
+    etapas.push(TRILHA_EVOLUCAO[i].nome);
+  }
+  return { bonus, etapas };
+}
+
+const defaultData: UserData = {
+  nome: '',
+  email: '',
+  pontos: 0,
+  pontosAcumulados: 0,
+  missoesCompletas: 0,
+  pontosHoje: 0,
+  dataHoje: '',
+  ultimoDia: '',
+  streak: 0,
+  ultimoDesafio: '',
+  historico: [],
+  selosDesbloqueados: [],
+  resgates: [],
+  impactoParceiros: {},
+  amigos: [],
+  bonusBoasVindasRecebido: false,
+};
+
+function hojeStr(): string {
+  return new Date().toDateString();
+}
+
+function ontemStr(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toDateString();
+}
+
+function getDesafioDoDia(): Missao {
+  if (!MISSOES || MISSOES.length === 0) {
+    return {
+      id: 'default',
+      nome: 'Desafio Diário',
+      pontos: 10,
+      icone: '/icons/folha.svg',
+      comprovacao: 'declaracao',
+      descricao: 'Complete suas tarefas diárias',
+      comoValidar: 'Declare que você praticou a ação hoje.',
+      comprovantes: ['Declaração de uso na caixa abaixo'],
+    };
+  }
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  const inicioAno = new Date(hoje.getFullYear(), 0, 1);
+  const diaDoAno = Math.floor((hoje.getTime() - inicioAno.getTime()) / 86400000);
+  const index = Math.abs(diaDoAno) % MISSOES.length;
+  return MISSOES[index] ?? MISSOES[0];
+}
+
+interface DataContextType {
+  data: UserData;
+  setNome: (nome: string) => void;
+  setEmail: (email: string) => void;
+  adicionarPontos: (pontos: number, nomeMissao: string) => void;
+  adicionarBonus: (pontos: number, motivo: string, semToast?: boolean) => void;
+  subtrairPontos: (pontos: number) => void;
+  addResgate: (resgate: Resgate) => void;
+  getNivel: () => string;
+  getSelosDesbloqueados: () => string[];
+  resetar: () => void;
+  desafioDoDia: Missao;
+  desafioBonusDisponivel: boolean;
+  resgatarBonusDesafio: () => void;
+  registrarImpactoParceiro: (parceiroId: string, tipo: 'entrega' | 'resgate' | 'acao', creditos: number) => void;
+  addAmigo: (codigo: string) => boolean;
+  codigoAmigo: string;
+  amigos: string[];
+}
+
+const DataContext = createContext<DataContextType | null>(null);
+
+export function DataProvider({ children }: { children: ReactNode }) {
+  const [data, setData] = useLocalStorage<UserData>(STORAGE_KEY, defaultData);
+  // Espelha o total acumulado para detectar evolução de nível sem depender do estado do React.
+  const acumuladoRef = useRef<number | null>(null);
+  const boasVindasRef = useRef(data.bonusBoasVindasRecebido ?? false);
+
+  const setNome = useCallback((nome: string) => {
+    setData(prev => ({ ...prev, nome }));
+  }, [setData]);
+
+  const setEmail = useCallback((email: string) => {
+    setData(prev => ({ ...prev, email }));
+  }, [setData]);
+
+  const aplicarPontos = useCallback((pontos: number, nome: string, contaMissao: boolean) => {
+    // Bônus de evolução: boas-vindas na primeira ação + créditos ao subir de nível.
+    const acumuladoAntes = acumuladoRef.current ?? (data.pontosAcumulados ?? data.pontos);
+    const acumuladoDepois = acumuladoAntes + pontos;
+    acumuladoRef.current = acumuladoDepois;
+
+    const { bonus, etapas: etapasGanhas } = calcularBonusEvolucao(
+      acumuladoAntes,
+      acumuladoDepois,
+      boasVindasRef.current,
+    );
+    boasVindasRef.current = true;
+
+    setData(prev => {
+      const hoje = hojeStr();
+      const ehNovoDia = prev.dataHoje !== hoje;
+      const streak = ehNovoDia
+        ? (prev.ultimoDia === ontemStr() ? prev.streak + 1 : 1)
+        : prev.streak;
+      const ultimoDia = ehNovoDia ? hoje : (prev.ultimoDia || hoje);
+
+      const dataAtualizada = ehNovoDia
+        ? { ...prev, dataHoje: hoje, pontosHoje: 0, ultimoDia, streak }
+        : prev;
+
+      const entrada: HistoricoEntrada = {
+        nome,
+        pontos,
+        data: new Date().toISOString(),
+      };
+
+      const novosPontos = dataAtualizada.pontos + pontos + bonus;
+      const novosPontosHoje = dataAtualizada.pontosHoje + pontos;
+      const novosAcumulados = (dataAtualizada.pontosAcumulados ?? dataAtualizada.pontos) + pontos;
+      const novoHistorico = [entrada, ...dataAtualizada.historico].slice(0, 50);
+
+      const novosSelos = SELOS
+        .filter(s => novosAcumulados >= s.minPontos && !dataAtualizada.selosDesbloqueados.includes(s.id))
+        .map(s => s.id);
+
+      return {
+        ...dataAtualizada,
+        pontos: novosPontos,
+        pontosAcumulados: novosAcumulados,
+        missoesCompletas: contaMissao ? dataAtualizada.missoesCompletas + 1 : dataAtualizada.missoesCompletas,
+        pontosHoje: novosPontosHoje,
+        historico: novoHistorico,
+        selosDesbloqueados: [...(dataAtualizada.selosDesbloqueados ?? []), ...novosSelos],
+        bonusBoasVindasRecebido: true,
+      };
+    });
+
+    if (bonus > 0) {
+      showToast(`+${bonus} créditos — bônus de evolução (${etapasGanhas.join(', ')})`);
+    }
+  }, [setData, data.pontosAcumulados, data.pontos]);
+
+  const adicionarPontos = useCallback((pontos: number, nomeMissao: string) => {
+    aplicarPontos(pontos, nomeMissao, true);
+  }, [aplicarPontos]);
+
+  const adicionarBonus = useCallback((pontos: number, motivo: string, semToast = false) => {
+    aplicarPontos(pontos, motivo, false);
+    if (!semToast) showToast(`+${pontos} créditos - ${motivo}`);
+  }, [aplicarPontos]);
+
+  const subtrairPontos = useCallback((pontos: number) => {
+    setData(prev => ({ ...prev, pontos: Math.max(0, prev.pontos - pontos) }));
+  }, [setData]);
+
+  const addResgate = useCallback((resgate: Resgate) => {
+    setData(prev => {
+      const resgatesAntigos = prev.resgates ?? [];
+      return {
+        ...prev,
+        resgates: [resgate, ...resgatesAntigos].slice(0, 20),
+      };
+    });
+  }, [setData]);
+
+  const getNivel = useCallback(() => {
+    const pts = data.pontosAcumulados ?? data.pontos;
+    for (const nivel of NIVEIS) {
+      if (pts >= nivel.min && pts <= nivel.max) return nivel.nome;
+    }
+    return NIVEIS[NIVEIS.length - 1].nome;
+  }, [data.pontosAcumulados, data.pontos]);
+
+  const getSelosDesbloqueados = useCallback(() => {
+    const pts = data.pontosAcumulados ?? data.pontos;
+    return SELOS
+      .filter(s => pts >= s.minPontos)
+      .map(s => s.id);
+  }, [data.pontosAcumulados, data.pontos]);
+
+  const resetar = useCallback(() => {
+    setData(defaultData);
+    acumuladoRef.current = 0;
+    boasVindasRef.current = false;
+  }, [setData]);
+
+  const desafioDoDia = getDesafioDoDia();
+  const desafioBonusDisponivel = data.ultimoDesafio !== hojeStr();
+
+  const resgatarBonusDesafio = useCallback(() => {
+    if (data.ultimoDesafio === hojeStr()) return;
+
+    const acumuladoAntes = acumuladoRef.current ?? (data.pontosAcumulados ?? data.pontos);
+    const acumuladoDepois = acumuladoAntes + BONUS_DESAFIO;
+    acumuladoRef.current = acumuladoDepois;
+    const { bonus, etapas } = calcularBonusEvolucao(acumuladoAntes, acumuladoDepois, boasVindasRef.current);
+    boasVindasRef.current = true;
+
+    setData(prev => {
+      if (prev.ultimoDesafio === hojeStr()) return prev;
+
+      const hoje = hojeStr();
+      const ehNovoDia = prev.dataHoje !== hoje;
+      const streak = ehNovoDia
+        ? (prev.ultimoDia === ontemStr() ? prev.streak + 1 : 1)
+        : prev.streak;
+      const ultimoDia = ehNovoDia ? hoje : (prev.ultimoDia || hoje);
+      const pontosHojeBase = ehNovoDia ? 0 : prev.pontosHoje;
+
+      const entrada: HistoricoEntrada = {
+        nome: `Bônus do Desafio do Dia (+${BONUS_DESAFIO})`,
+        pontos: BONUS_DESAFIO,
+        data: new Date().toISOString(),
+      };
+
+      const novosPontos = prev.pontos + BONUS_DESAFIO + bonus;
+      const novosAcumulados = (prev.pontosAcumulados ?? prev.pontos) + BONUS_DESAFIO;
+      const novosSelos = SELOS
+        .filter(s => novosAcumulados >= s.minPontos && !prev.selosDesbloqueados.includes(s.id))
+        .map(s => s.id);
+
+      return {
+        ...prev,
+        pontos: novosPontos,
+        pontosAcumulados: novosAcumulados,
+        pontosHoje: pontosHojeBase + BONUS_DESAFIO,
+        dataHoje: hoje,
+        ultimoDia,
+        streak,
+        ultimoDesafio: hojeStr(),
+        historico: [entrada, ...prev.historico].slice(0, 50),
+        selosDesbloqueados: [...prev.selosDesbloqueados, ...novosSelos],
+        bonusBoasVindasRecebido: true,
+      };
+    });
+    showToast(`+${BONUS_DESAFIO} créditos - Bônus do Desafio do Dia`);
+    if (bonus > 0) {
+      showToast(`+${bonus} créditos — bônus de evolução (${etapas.join(', ')})`);
+    }
+  }, [setData, data.ultimoDesafio, data.pontosAcumulados, data.pontos]);
+
+  const registrarImpactoParceiro = useCallback((parceiroId: string, tipo: 'entrega' | 'resgate' | 'acao', creditos: number) => {
+    setData(prev => {
+      const atual = prev.impactoParceiros[parceiroId] ?? { entregas: 0, resgates: 0, creditos: 0, acoes: 0 };
+      const novo = {
+        creditos: atual.creditos + creditos,
+        entregas: atual.entregas + (tipo === 'entrega' ? 1 : 0),
+        resgates: atual.resgates + (tipo === 'resgate' ? 1 : 0),
+        acoes: (atual.acoes ?? 0) + (tipo === 'acao' ? 1 : 0),
+      };
+      return { ...prev, impactoParceiros: { ...prev.impactoParceiros, [parceiroId]: novo } };
+    });
+  }, [setData]);
+
+  const addAmigo = useCallback((codigo: string) => {
+    const alvo = buscarAmigoPorCodigo(codigo);
+    if (!alvo) return false;
+    setData(prev => {
+      if (prev.amigos.includes(alvo.codigo)) return prev;
+      return { ...prev, amigos: [...prev.amigos, alvo.codigo] };
+    });
+    return true;
+  }, [setData]);
+
+  const codigoAmigo = gerarCodigoAmigo(data.nome);
+  const amigos = data.amigos ?? [];
+
+  return (
+    <DataContext.Provider value={{
+      data, setNome, setEmail, adicionarPontos, adicionarBonus, subtrairPontos,
+      addResgate, getNivel, getSelosDesbloqueados, resetar,
+      desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio,
+      registrarImpactoParceiro, addAmigo, codigoAmigo, amigos,
+    }}>
+      {children}
+    </DataContext.Provider>
+  );
+>>>>>>> origin/main
 }
 type DataValue = { data: UserData; desafioDoDia: Missao; desafioBonusDisponivel: boolean; getNivel: () => string; getSelosDesbloqueados: () => string[]; resetar: () => void;
   setNome: (nome: string) => void; setEmail: (email: string) => void; adicionarPontos: (pontos: number, nome: string) => void; adicionarBonus: (pontos: number, motivo: string, semToast?: boolean) => void;

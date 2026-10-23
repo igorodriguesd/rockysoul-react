@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+import { useChemistry } from '../hooks/useChemistry';
+import { BONUS_QUIMICA_N3 } from '../data/cartas';
+>>>>>>> origin/main
 import type { SetCarta } from '../types';
 
 interface Props {
@@ -12,24 +17,30 @@ const MARCOS = [
   { alvo: 4, nivel: 3 },
 ];
 
+<<<<<<< HEAD
 export default function SetProgress({ set, total = 0, obtidas = 0 }: Props) {
   const totalCartas = obtidas; const totalMaximo = Math.max(total, 1);
   const percentual = Math.min(100, obtidas / totalMaximo * 100); const levelAtual = 0;
   const mensagem = `${obtidas}/${total} cartas nesta página`; const setCompleto = false;
+=======
+export default function SetProgress({ set }: Props) {
+  const { quimica, totalCartas = 0, percentual = 0, mensagem = '', setCompleto = false } = useChemistry(set.id);
+>>>>>>> origin/main
 
   return (
     <div>
       <div className="flex items-center justify-between text-xs mb-1.5">
-        <span className="text-white/60 font-medium">{totalCartas}/{totalMaximo} cartas</span>
-        {levelAtual > 0 ? (
-          <span className="font-bold" style={{ color: set.cor || '#20d968' }}>
-            Química Nível {levelAtual}
+        <span className="text-slate-600 font-medium">{totalCartas}/4 cartas</span>
+        {quimica.level > 0 ? (
+          <span className="font-bold" style={{ color: set.cor }}>
+            Química Nível {quimica.level}
           </span>
         ) : (
-          <span className="text-white/40">Sem química</span>
+          <span className="text-slate-500">Sem química</span>
         )}
       </div>
 
+<<<<<<< HEAD
       <div 
         role="progressbar"
         aria-valuenow={percentual}
@@ -50,21 +61,32 @@ export default function SetProgress({ set, total = 0, obtidas = 0 }: Props) {
         </div>
 
         {MARCOS.filter(m => m.alvo <= totalMaximo).map(m => (
+=======
+      <div className="relative h-2.5 rounded-full overflow-hidden" style={{ background: 'var(--t-collection-bg)' }}>
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{
+            width: `${percentual}%`,
+            background: `linear-gradient(90deg, ${set.cor}, var(--t-collection))`,
+          }}
+        />
+        {MARCOS.map(m => (
+>>>>>>> origin/main
           <span
             key={m.alvo}
             className="absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full transition-all z-10"
             style={{
-              left: `calc(${(m.alvo / totalMaximo) * 100}% - 3px)`,
-              background: levelAtual >= m.nivel ? (set.cor || '#20d968') : 'rgba(255,255,255,0.3)',
-              boxShadow: levelAtual >= m.nivel ? `0 0 6px ${set.cor || '#20d968'}` : 'none',
+              left: `calc(${(m.alvo / 4) * 100}% - 3px)`,
+              background: quimica.level >= m.nivel ? set.cor : 'rgba(148,163,184,0.5)',
+              boxShadow: quimica.level >= m.nivel ? `0 0 6px ${set.cor}` : 'none',
             }}
           />
         ))}
       </div>
 
-      <p className="text-[11px] mt-1.5 text-white/50">
+      <p className="text-[11px] mt-1.5 text-slate-600">
         {mensagem}
-        {setCompleto && ' · +150 pts'}
+        {setCompleto && ` · +${BONUS_QUIMICA_N3} créditos`}
       </p>
     </div>
   );
