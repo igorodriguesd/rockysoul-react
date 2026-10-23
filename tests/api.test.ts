@@ -146,3 +146,15 @@ test('capture challenge uses the protected endpoint and sends only the selected 
   assert.equal(calls[0].method, 'POST'); assert.deepEqual(JSON.parse(String(calls[0].body)), { acaoId: 21 });
   assert.equal(new Headers(calls[0].headers).get('Authorization'), 'Bearer session-token');
 });
+
+test('roulette posts only the verification identity and never a client outcome or balance', async () => {
+  const calls: { url: string; init: RequestInit }[] = [];
+  const client = createApiClient('http://localhost:8080', async (url, init) => { calls.push({ url: String(url), init: init! }); return json({ girada: true, ganhou: false }); });
+  client.setToken('session-token'); const service = services(client);
+  await service.roulette('fixed-verification'); await service.spin('fixed-verification'); await service.list('roletas', 2);
+  assert.equal(calls[0].init.method, 'GET');
+  assert.equal(calls[1].url, 'http://localhost:8080/verificacoes/fixed-verification/roleta');
+  assert.equal(calls[1].init.method, 'POST'); assert.equal(calls[1].init.body, undefined);
+  assert.equal(new Headers(calls[1].init.headers).get('Authorization'), 'Bearer session-token');
+  assert.equal(calls[2].url, 'http://localhost:8080/roletas?page=2&size=20');
+});
