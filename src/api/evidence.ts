@@ -17,15 +17,15 @@ export function validateImageHeader(bytes: Uint8Array): void {
       index += length;
     }
   }
-  if (width < 32 || height < 32 || width > 2048 || height > 2048) throw new Error('Use um JPEG/PNG válido com 32–2048 pixels por lado.');
+  if (width < 32 || height < 32 || width > 2048 || height > 2048) throw new Error('Não conseguimos usar essa foto. Tire outra foto e tente novamente.');
 }
 export async function imageBase64(file: File): Promise<string> {
-  if (!['image/jpeg', 'image/png'].includes(file.type) || file.size > 524288 || file.size === 0) throw new Error('Use JPEG ou PNG de até 512 KiB.');
+  if (!['image/jpeg', 'image/png'].includes(file.type) || file.size > 524288 || file.size === 0) throw new Error('Use uma foto JPG ou PNG menor que 512 KB.');
   const bytes = new Uint8Array(await file.arrayBuffer());
   validateImageHeader(bytes); // Bound dimensions before allocating a browser raster.
   const bitmap = await createImageBitmap(file);
   try {
-    if (bitmap.width < 32 || bitmap.height < 32 || bitmap.width > 2048 || bitmap.height > 2048) throw new Error('A imagem deve ter entre 32 e 2048 pixels por lado.');
+    if (bitmap.width < 32 || bitmap.height < 32 || bitmap.width > 2048 || bitmap.height > 2048) throw new Error('O tamanho da foto não é aceito. Tire outra foto e tente novamente.');
   } finally { bitmap.close(); }
   let binary = ''; for (const byte of bytes) binary += String.fromCharCode(byte);
   return btoa(binary);
