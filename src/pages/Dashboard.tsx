@@ -1,3 +1,4 @@
+import { ApiGate } from '../components/ApiUi';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
@@ -117,7 +118,8 @@ function inicioDoDia(data: Date): Date {
   return new Date(data.getFullYear(), data.getMonth(), data.getDate());
 }
 
-export function Dashboard() {
+export function Dashboard() { return <ApiGate acesso="ao dashboard"><DashboardContent /></ApiGate>; }
+function DashboardContent() {
   const { missoes: MISSOES, verificacoes, data, getNivel, desafioDoDia, desafioBonusDisponivel, resgatarBonusDesafio, addAmigo, codigoAmigo, amigos } = useData();
   const { getProgressoTotal } = useColecao();
   const exigirLogin = useLoginGate();
