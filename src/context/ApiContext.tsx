@@ -7,7 +7,7 @@ import { showToast } from '../components/Toast';
 type ApiState = { api: ReturnType<typeof createApiClient>; service: ReturnType<typeof services>; user: Usuario | null; isAdmin: boolean; revision: number; connecting: boolean;
   connect: (token: string) => Promise<void>; login: (email: string, senha: string) => Promise<void>; disconnect: () => void; logout: () => Promise<void>; refresh: () => void; refreshProfile: () => Promise<void> };
 const Context = createContext<ApiState | null>(null);
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://rockysoulup-api.onrender.com';
 export function ApiProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Usuario | null>(null);
   const [isAdmin, setAdmin] = useState(false);
