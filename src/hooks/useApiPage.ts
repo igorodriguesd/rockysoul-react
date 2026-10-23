@@ -3,7 +3,7 @@ import { useApi } from '../context/ApiContext';
 import { errorMessage } from '../api/client';
 import type { Recurso } from '../api/types';
 
-export function useApiPage<T>(resource: Recurso | 'verificacoes', page = 0, enabled = true) {
+export function useApiPage<T>(resource: Recurso | 'verificacoes' | 'roletas', page = 0, enabled = true) {
   const { service, user, revision } = useApi();
   const userId = user?.id;
   const key = `${user?.id ?? 'none'}:${revision}:${resource}:${page}:${enabled}`;
