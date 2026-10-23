@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useLoginGate } from '../hooks/useLoginGate';
-import { RECOMPENSAS } from '../data/constants';
 import { useApi } from '../context/ApiContext';
-import { ApiGate } from '../components/ApiUi';
 import type { RecompensaApi } from '../api/types';
 import type { Recompensa } from '../types';
+import { rewardView } from '../api/viewModels';
 import { errorMessage } from '../api/client';
 import ResgatarModal from '../components/ResgatarModal';
 
@@ -25,7 +24,7 @@ export function RecompensaDetalhe() {
     api.request<RecompensaApi>(`/recompensa/${id}`, { signal: controller.signal }).then(setRecord).catch(failure => { if (!controller.signal.aborted) setError(errorMessage(failure)); });
     return () => controller.abort();
   }, [api, revision, id, user?.id]);
-  const recompensa: Recompensa | null = record ? { id: String(record.id), nome: record.titulo, descricao: record.descricao ?? '', pontos: record.custo, categoria: (record.categoria ?? 'Natureza') as Recompensa['categoria'], icone: RECOMPENSAS.find(item => item.nome === record.titulo)?.icone ?? '/icons/trofeu.svg' } : null;
+  const recompensa: Recompensa | null = record ? rewardView(record) : null;
   const podeResgatar = false;
 
   const titulo = record?.titulo;
@@ -36,16 +35,9 @@ export function RecompensaDetalhe() {
   if (!recompensa) {
     return (
       <div className="max-w-150 mx-auto px-6 py-20 text-center">
-<<<<<<< HEAD
-        <div className="card-secondary rounded-2xl p-8">
-          <h1 className="text-2xl font-bold text-white mb-2">{error ? 'Não foi possível carregar' : user ? 'Carregando recompensa…' : 'Recompensas'}</h1>
-          <p className="text-sm text-white/50 mb-6">{error || (user ? 'Aguarde a consulta ao catálogo.' : 'Entre para consultar o catálogo.')}</p>
-          {!user && <ApiGate><span /></ApiGate>}
-=======
         <div className="bg-card-secondary border border-card-secondary-border rounded-2xl p-8">
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">Recompensa não encontrada</h1>
-          <p className="text-sm text-slate-500 mb-6">O item que você procura não existe ou foi removido.</p>
->>>>>>> origin/main
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">{error ? 'Não foi possível carregar' : user ? 'Carregando recompensa…' : 'Entre para consultar recompensas'}</h1>
+          <p className="text-sm text-slate-500 mb-6">{error || (user ? 'Aguarde a consulta ao catálogo.' : 'Use Entrar no cabeçalho.')}</p>
           <Link
             to="/recompensas"
             className="inline-block px-5 py-2.5 bg-brand text-(--t-onaccent) text-sm font-semibold rounded-xl hover:bg-brand-hover transition-colors"
@@ -111,11 +103,7 @@ export function RecompensaDetalhe() {
               : 'bg-brand-soft text-slate-400 cursor-not-allowed'
             }`}
         >
-<<<<<<< HEAD
-          {podeResgatar ? 'Resgatar recompensa' : 'Resgate em breve'}
-=======
-          {podeResgatar ? 'Resgatar recompensa' : `Faltam ${recompensa.pontos - data.pontos} créditos para resgatar`}
->>>>>>> origin/main
+          {podeResgatar ? 'Resgatar recompensa' : 'Resgate indisponível na API'}
         </button>
       </div>
 
