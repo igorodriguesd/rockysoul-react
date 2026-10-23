@@ -8,7 +8,7 @@ export function useLoginGate() {
 
   return useCallback(() => {
     if (data.nome?.trim()) return true;
-    showToast('Entre com o seu nome para registrar ações');
+    showToast('Entre com sua conta para registrar ações');
     abrirLogin();
     return false;
   }, [data.nome]);
