@@ -187,7 +187,7 @@ function DashboardContent() {
   const poolAmigos = AMIGOS_SIMULADOS.filter(a => !amigos.includes(a.codigo));
 
   function handleAddAmigo() {
-    if (!codigoAmigo) { showToast('Comunidade e códigos de amigos ainda não estão disponíveis na API.'); return; }
+    if (!codigoAmigo) { showToast('A opção de adicionar amigos ainda não está disponível.'); return; }
     const ok = addAmigo(codigoInput);
     if (ok) {
       showToast('Amigo adicionado à sua comunidade');
@@ -198,7 +198,7 @@ function DashboardContent() {
   }
 
   function copiarCodigoAmigo() {
-    if (!codigoAmigo) { showToast('Código de amigo indisponível na API.'); return; }
+    if (!codigoAmigo) { showToast('Seu código de amigo ainda não está disponível.'); return; }
     try {
       navigator.clipboard?.writeText(codigoAmigo);
       showToast('Código de amigo copiado');
@@ -729,7 +729,7 @@ function DashboardContent() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-slate-800 text-sm font-medium leading-snug truncate">{entry.nome}</p>
-                        <p className="text-slate-500 text-[11px] mt-0.5">{entry.estado ? entry.estado.replaceAll('_', ' ') : timeAgo(entry.data)}</p>
+                        <p className="text-slate-500 text-[11px] mt-0.5">{entry.estado ? ({ PENDENTE_REVISAO: 'Aguardando revisão', APROVADA: 'Aprovada', REJEITADA: 'Não aprovada', EM_ANALISE: 'Em análise', ENVIADA: 'Enviada' } as Record<string, string>)[entry.estado] ?? 'Em análise' : timeAgo(entry.data)}</p>
                       </div>
                       <span className={`text-xs font-bold shrink-0 mt-1 ${ganhou ? 'text-brand' : 'text-red-400'}`}>
                         {ganhou ? '+' : '-'}{entry.pontos}
