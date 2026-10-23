@@ -1,3 +1,4 @@
+import { useApi } from '../context/ApiContext';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
@@ -39,6 +40,8 @@ export default function Header() {
   const [oculto, setOculto] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
   const { data, getNivel, resetar } = useData();
+  const { isAdmin } = useApi();
+  const menuSecundario = isAdmin ? [{ to: '/administracao', label: 'Administração' }, ...linksSecundarios] : linksSecundarios;
   const { colecao, resetarColecao } = useColecao();
   const navigate = useNavigate();
   const avatarRef = useRef<HTMLDivElement>(null);
@@ -227,7 +230,7 @@ export default function Header() {
 
               {maisAberto && (
                 <div className="absolute right-0 top-full mt-3 w-48 rounded-2xl bg-(--t-surface) shadow-2xl border border-(--t-header-border) p-2 z-120">
-                  {linksSecundarios.map(link => (
+                  {menuSecundario.map(link => (
                     <NavLink
                       key={link.to}
                       to={link.to}
@@ -353,6 +356,7 @@ className={({ isActive }) =>
                   </div>
 
                   <div className="space-y-1 mt-2 pt-2" style={{ borderTop: '1px solid var(--t-header-border)' }}>
+                    {isAdmin && <NavLink to="/administracao" onClick={() => { setUsuarioAberto(false); setMaisAberto(false); setNotifAberto(false); }} className="block px-3 py-2 rounded-xl text-sm font-medium text-slate-700 hover:bg-surface-hover hover:text-slate-900 transition-colors">Administração</NavLink>}
                     <button onClick={handleSair} className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer">
                       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -456,7 +460,7 @@ className={({ isActive }) =>
                   </NavLink>
                 </li>
               ))}
-              {linksSecundarios.map(link => (
+              {menuSecundario.map(link => (
                 <li key={link.to}>
                   <NavLink
                     to={link.to}
