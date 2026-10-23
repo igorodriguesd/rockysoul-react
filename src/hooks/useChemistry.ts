@@ -1,17 +1,18 @@
 import { useColecao } from '../context/CollectionContext';
-import { CARTAS, BONUS_QUIMICA_N2 } from '../data/cartas';
+import { BONUS_QUIMICA_N2 } from '../data/cartas';
 
 const CARTAS_POR_SET = 4;
 
 export function useChemistry(setId: string) {
-  const { colecao, getQuimica, getTotalCartasDoSet } = useColecao();
+  const { colecao, catalogo: CARTAS, getQuimica, getTotalCartasDoSet } = useColecao();
 
   const quimica = getQuimica(setId);
   const totalCartas = getTotalCartasDoSet(setId);
   const obtidas = CARTAS
     .filter(c => c.setId === setId && colecao.cartasObtidas.includes(c.id))
     .map(c => c.id);
-  const percentual = (totalCartas / CARTAS_POR_SET) * 100;
+  const tamanhoSet = CARTAS.filter(c => c.setId === setId).length || CARTAS_POR_SET;
+  const percentual = Math.min(100, (totalCartas / tamanhoSet) * 100);
   const faltam = CARTAS_POR_SET - totalCartas;
 
   const mensagem = quimica.level === 0
