@@ -112,7 +112,7 @@ test('rejects malformed JSON, unexpected MIME, oversized responses and arbitrary
     const client = createApiClient('http://localhost:8080', async () => response); client.setToken('token'); await assert.rejects(client.request('/acao'));
   }
   const client = createApiClient('http://localhost:8080', async () => { throw new Error('must not fetch'); }); client.setToken('token');
-  for (const path of ['//evil.invalid', 'https://evil.invalid', '/../secret', '/foo\\bar']) await assert.rejects(client.request(path), /Rota inválida/);
+  for (const path of ['//evil.invalid', 'https://evil.invalid', '/../secret', '/foo\\bar']) await assert.rejects(client.request(path), /Não foi possível abrir esta opção/);
   assert.throws(() => createApiClient('http://user:password@localhost:8080'));
 });
 test('token decoding requires current expiry and safe positive identity', () => {
