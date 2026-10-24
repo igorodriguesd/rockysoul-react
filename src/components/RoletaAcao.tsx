@@ -41,7 +41,7 @@ export default function RoletaAcao({ id, onFechar }: { id: string; onFechar: () 
     finally { inFlight.current = false; if (alive.current) setBusy(false); }
   }
   const card = row ? cardView(row.carta) : null;
-  return createPortal(<div className="fixed inset-0 z-9998 flex items-start sm:items-center justify-center px-3 sm:px-6 pt-28 sm:pt-28 pb-3 sm:pb-6 bg-black/60" onClick={() => { if (!busy && !animating) onFechar(); }}>
+  return createPortal(<div className="mobile-modal-backdrop fixed inset-0 z-9998 flex items-start sm:items-center justify-center px-3 sm:px-6 pt-28 sm:pt-28 pb-3 sm:pb-6 bg-black/60" onClick={() => { if (!busy && !animating) onFechar(); }}>
     <div role="dialog" aria-modal="true" aria-label="Roleta de cartas" className="[background:var(--t-glass-strong)] border border-(--t-glass-strong-border) shadow-(--t-glass-strong-shadow) rounded-2xl shadow-2xl w-[90vw] max-w-[620px] p-4 sm:p-5 relative max-h-[calc(100vh-9.5rem)] supports-[height:100dvh]:max-h-[calc(100dvh-9.5rem)] overflow-y-auto" onClick={event => event.stopPropagation()}>
       <button onClick={onFechar} disabled={busy || animating} className="absolute top-3 right-3 text-slate-400 hover:text-slate-600 transition-colors z-10" aria-label="Fechar roleta">✕</button>
       <div className="text-center"><h2 className="text-lg font-bold text-slate-900">Roleta de cartas</h2>
