@@ -313,6 +313,7 @@ export const CARTAS: Carta[] = [
 
 export const MISSION_TO_CARD: Record<string, string> = {
   reciclagem: 'card-reciclagem',
+  'reciclagem-papel': 'card-reciclagem',
   educar: 'card-reutilizacao',
   sacola: 'card-sacola',
   consumo: 'card-consumo',

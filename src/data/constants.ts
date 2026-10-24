@@ -5,6 +5,16 @@ import { CARD_TO_MISSION } from './cartas';
 // fácil (declaração/hábito) < leve (foto) < médio (timer/esforço) < alto (GPS/investimento) < máximo (alto impacto)
 export const MISSOES: Missao[] = [
   {
+    id: 'reciclagem-papel',
+    nome: 'Reciclagem de papel',
+    pontos: 20,
+    icone: '/icons/reciclagem.svg',
+    comprovacao: 'foto',
+    descricao: 'Separe papéis e papelões limpos e secos e encaminhe para a coleta seletiva ou um ponto de reciclagem. Não inclua papel higiênico, guardanapos sujos ou embalagens engorduradas.',
+    comoValidar: 'Fotografe os papéis separados para reciclagem junto do código escrito em papel na mesma cena. Aguarde a aprovação para receber seus pontos.',
+    comprovantes: ['Foto dos papéis ou papelões separados e do código escrito em papel'],
+  },
+  {
     id: 'reciclagem',
     nome: 'Reciclagem',
     pontos: 20,
@@ -294,7 +304,7 @@ export const MISSOES: Missao[] = [
 export const GRUPOS_MISSAO: { id: string; label: string; cor: string; texto: string; ids: string[] }[] = [
   { id: 'energia', label: 'Energia e Consumo', cor: '#f5c451', texto: '#a16207', ids: ['energia', 'solar', 'eolica', 'led', 'consumo', 'sacola', 'educar'] },
   { id: 'agua', label: 'Água e Mobilidade', cor: '#38bdf8', texto: '#0369a1', ids: ['agua', 'captacao', 'banho', 'garrafa', 'transporte', 'bicicleta', 'mobilidade', 'ciclovia'] },
-  { id: 'natureza', label: 'Natureza', cor: '#22c55e', texto: '#15803d', ids: ['plantio', 'horta', 'agrofloresta', 'reciclagem', 'compostagem'] },
+  { id: 'natureza', label: 'Natureza', cor: '#22c55e', texto: '#15803d', ids: ['plantio', 'horta', 'agrofloresta', 'reciclagem', 'reciclagem-papel', 'compostagem'] },
 ];
 
 export function grupoDaMissao(missaoId: string) {

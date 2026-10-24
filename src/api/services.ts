@@ -15,7 +15,7 @@ export function services(api: ApiClient) {
     profile: (id: number, signal?: AbortSignal) => api.request<Usuario>(`/usuario/${id}`, { signal }),
     updateProfile: (user: Usuario, nome: string, email: string) => api.request<Usuario>(`/usuario/${user.id}`, { method: 'PUT', body: { nome, email, versao: user.versao } }),
     logout: () => api.request<void>('/auth/logout', { method: 'POST' }),
-    list: <T,>(resource: Recurso | 'verificacoes' | 'roletas', page = 0, signal?: AbortSignal) => api.request<T[]>(`/${resource}?page=${page}&size=20`, { signal }),
+    list: <T,>(resource: Recurso | 'verificacoes' | 'roletas', page = 0, signal?: AbortSignal, size = 20) => api.request<T[]>(`/${resource}?page=${page}&size=${size}`, { signal }),
     get: <T,>(resource: Recurso, row: Registro) => api.request<T>(resourcePath(resource, row)),
     save: (resource: Recurso, body: Registro, original?: Registro) => api.request<Registro>(original ? resourcePath(resource, original) : `/${resource}`, { method: original ? 'PUT' : 'POST', body }),
     delete: (resource: Recurso, row: Registro) => api.request<void>(`${resourcePath(resource, row)}?versao=${row.versao}`, { method: 'DELETE' }),

@@ -15,6 +15,8 @@ interface Feedback {
   item?: ItemLixo;
 }
 
+type MotivoFim = 'tempo' | 'vidas' | 'concluido';
+
 const LIXEIRAS: { categoria: Categoria; nome: string; cor: string; dica: string }[] = [
   { categoria: 'reciclavel', nome: 'Reciclável', cor: '#00E676', dica: 'Papel, plástico e embalagens limpas.' },
   { categoria: 'organico', nome: 'Orgânico', cor: '#ffc928', dica: 'Restos de comida e cascas viram adubo.' },
@@ -42,9 +44,9 @@ const ITENS: ItemLixo[] = [
 ];
 
 const FASES = [
-  { itens: 5, tempo: 30 },
-  { itens: 7, tempo: 25 },
-  { itens: 9, tempo: 20 },
+  { itens: 5, tempo: 25 },
+  { itens: 7, tempo: 20 },
+  { itens: 9, tempo: 15 },
 ];
 
 const RECORDE_KEY = 'rocky_minijogo_recorde';
@@ -143,6 +145,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [fluxo, setFluxo] = useState<{ id: number; texto: string; cor: string }[]>([]);
   const [selecionado, setSelecionado] = useState<string | null>(null);
+  const [motivoFim, setMotivoFim] = useState<MotivoFim | null>(null);
   const [recordes, setRecordes] = useState<number[]>(() => {
     try {
       const raw = localStorage.getItem(RECORDE_KEY);
@@ -165,6 +168,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
     if (estado === 'jogando' && tempo === 0) {
       if (finalizouRef.current) return;
       finalizouRef.current = true;
+      setMotivoFim(vidas <= 0 ? 'vidas' : 'tempo');
       setEstado('fim');
       setRecordes(prev => {
         const novo = [...prev, pontuacao].sort((a, b) => b - a).slice(0, 5);
@@ -175,7 +179,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
         return novo;
       });
     }
-  }, [tempo, estado, pontuacao]);
+  }, [tempo, estado, vidas, pontuacao]);
 
   function iniciar() {
     if (!exigirLogin()) return;
@@ -192,6 +196,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
     setFeedback(null);
     setFluxo([]);
     setSelecionado(null);
+    setMotivoFim(null);
     setEstado('jogando');
   }
 
@@ -211,16 +216,17 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
     });
   }
 
-  function finalizar() {
+  function finalizar(motivo: MotivoFim) {
     if (finalizouRef.current) return;
     finalizouRef.current = true;
+    setMotivoFim(motivo);
     setEstado('fim');
     salvarRecorde(pontuacao);
   }
 
   function passarFase() {
     if (fase >= 3) {
-      finalizar();
+      finalizar('concluido');
       return;
     }
     const nova = fase + 1;
@@ -255,7 +261,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
       const novaVidas = vidas - 1;
       setVidas(novaVidas);
       setFeedback({ tipo: 'erro', item });
-      if (novaVidas <= 0) setTimeout(finalizar, 700);
+      if (novaVidas <= 0) setTimeout(() => finalizar('vidas'), 700);
       setTimeout(() => setFeedback(null), 1100);
     }
   }
@@ -340,7 +346,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
             ))}
           </div>
           <ul className="text-white/50 text-xs space-y-1 py-1">
-            <li>· 3 fases com dificuldade crescente</li>
+            <li>· 3 fases com tempo decrescente: 25s, 20s e 15s</li>
             <li>· 3 vidas · acertos em sequência dobram os pontos (combo)</li>
             <li>· Errou? mostramos a lixeira certa — você aprende</li>
             <li>· Modo treino: a pontuação não vira recompensa, é só para praticar</li>
@@ -468,8 +474,62 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
         </>
       )}
 
-      {estado === 'fim' && (
-        <div className="text-center py-2">
+      {estado === 'fim' && (motivoFim === 'tempo' || motivoFim === 'vidas' ? (
+        <div className="text-center py-2" role="status" aria-live="polite">
+          <div className="pop-in rounded-2xl px-4 py-4 mb-3" style={{ background: 'rgba(248,113,113,0.16)', border: '1px solid rgba(248,113,113,0.5)' }}>
+            <div className="flex justify-center text-red-400 mb-1">
+              <Icone paths={motivoFim === 'tempo' ? ICONE_RELOGIO : ICONE_CORACAO} className="w-14 h-14" />
+            </div>
+            <p className="text-red-400 text-[11px] font-bold uppercase tracking-[0.22em]">Você perdeu</p>
+            <p className="text-white font-bold font-serif-display text-2xl mt-1">
+              {motivoFim === 'tempo' ? 'Tempo esgotado!' : 'Acabaram as vidas!'}
+            </p>
+            <p className="text-white/60 text-sm mt-1">
+              {motivoFim === 'tempo'
+                ? 'O cronômetro chegou a zero antes de você concluir a fase.'
+                : 'Você errou 3 vezes e o jogo terminou.'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-1.5 mb-3">
+            {[
+              { label: 'Fase', value: `${fase}/3` },
+              { label: 'Acertos', value: String(acertos) },
+              { label: 'Erros', value: String(erros) },
+            ].map(s => (
+              <div key={s.label} className="rounded-xl py-2" style={{ background: 'rgba(255,255,255,0.14)', border: '1px solid rgba(255,255,255,0.25)' }}>
+                <p className="text-white font-bold text-sm leading-none">{s.value}</p>
+                <p className="text-white/40 text-[10px] mt-1 uppercase tracking-widest">{s.label}</p>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-sun font-serif-display text-3xl">{pontuacao} pts</p>
+          {pontuacao === melhor && pontuacao > 0 && (
+            <p className="text-sun text-xs font-bold mt-1 inline-flex items-center gap-1">
+              <Icone paths={ICONE_ESTRELA} className="w-4 h-4" />NOVO RECORDE!
+            </p>
+          )}
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <button
+              onClick={iniciar}
+              className="rounded-full px-6 py-2 text-sm font-bold transition-all active:scale-95 cursor-pointer hover:brightness-105"
+              style={{ background: 'var(--t-grad-arena-btn)', color: 'var(--t-on-arena-btn)', boxShadow: 'var(--t-arena-btn-shadow)' }}
+            >
+              Tentar novamente
+            </button>
+            {compacto && (
+              <button
+                onClick={recolher}
+                className="rounded-full px-4 py-2 text-sm font-semibold text-white border border-white/40 transition-all hover:bg-white/10 active:scale-95 cursor-pointer"
+              >
+                Recolher
+              </button>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="text-center py-2" role="status" aria-live="polite">
           <div className="mb-2 pop-in flex justify-center" style={{ color: medalhaInfo.cor }}>
             <Icone paths={medalhaInfo.icone} className="w-16 h-16" />
           </div>
@@ -515,7 +575,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
             )}
           </div>
         </div>
-      )}
+      ))}
     </div>
   );
 }

@@ -25,6 +25,7 @@ interface AtividadeItem {
 
 const MISSAO_ICONE_MAP: Record<string, string> = {
   reciclagem: '/icons/reciclagem.svg',
+  'reciclagem-papel': '/icons/reciclagem.svg',
   transporte: '/icons/transporte.svg',
   energia: '/icons/energia.svg',
   agua: '/icons/agua.svg',

@@ -5,22 +5,40 @@ import type { SessaoAtual, Usuario } from '../api/types';
 import { showToast } from '../components/Toast';
 
 type ApiState = { api: ReturnType<typeof createApiClient>; service: ReturnType<typeof services>; user: Usuario | null; isAdmin: boolean; revision: number; connecting: boolean;
-  connect: (token: string) => Promise<void>; login: (email: string, senha: string) => Promise<void>; disconnect: () => void; logout: () => Promise<void>; refresh: () => void; refreshProfile: () => Promise<void> };
+  connect: (token: string) => Promise<void>; login: (email: string, senha: string) => Promise<void>; disconnect: () => void; logout: () => Promise<void>; refresh: () => void; refreshProfile: () => Promise<void>; spendCredits: (pontos: number) => boolean };
 const Context = createContext<ApiState | null>(null);
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://rockysoulup-api.onrender.com';
+const TOKEN_KEY = 'rocky_auth_token';
+const LOCAL_SPENT_KEY = 'rocky_local_spent_';
+function loadLocalSpent(userId: number): number {
+  try { const raw = localStorage.getItem(`${LOCAL_SPENT_KEY}${userId}`); const value = raw ? Number(raw) : 0; return Number.isFinite(value) && value > 0 ? value : 0; } catch { return 0; }
+}
+function persistLocalSpent(userId: number, value: number) {
+  try { localStorage.setItem(`${LOCAL_SPENT_KEY}${userId}`, String(value)); } catch { /* storage indisponível */ }
+}
 export function ApiProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Usuario | null>(null);
+  const [localSpent, setLocalSpent] = useState(0);
   const [isAdmin, setAdmin] = useState(false);
   const [revision, setRevision] = useState(0);
   const [connecting, setConnecting] = useState(false);
-  const epoch = useRef(0); const expiry = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const epoch = useRef(0);
   const api = useMemo(() => createApiClient(BASE_URL), []);
   const service = useMemo(() => services(api), [api]);
   const disconnect = useCallback(() => {
-    epoch.current++; api.setToken(null); setUser(null); setAdmin(false); setRevision(n => n + 1);
-    if (expiry.current) clearTimeout(expiry.current);
+    epoch.current++; api.setToken(null); setUser(null); setLocalSpent(0); setAdmin(false); setRevision(n => n + 1);
+    try { localStorage.removeItem(TOKEN_KEY); } catch { /* storage indisponível */ }
   }, [api]);
-  useEffect(() => { api.setUnauthorizedHandler(disconnect); return () => { api.setUnauthorizedHandler(() => {}); if (expiry.current) clearTimeout(expiry.current); api.setToken(null); }; }, [disconnect, api]);
+  useEffect(() => { api.setUnauthorizedHandler(disconnect); return () => { api.setUnauthorizedHandler(() => {}); api.setToken(null); }; }, [disconnect, api]);
+  // Restaura a sessão ao recarregar a página
+  useEffect(() => {
+    let token: string | null = null;
+    try { token = localStorage.getItem(TOKEN_KEY); } catch { token = null; }
+    if (token) {
+      connect(token).catch(() => { /* sessão inválida ou expirada — segue deslogado */ });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const refresh = useCallback(() => setRevision(n => n + 1), []);
   const connect = async (value: string, initial?: SessaoAtual) => {
     disconnect(); const token = value.trim(); const identity = tokenIdentity(token); const attempt = epoch.current;
@@ -33,8 +51,9 @@ export function ApiProvider({ children }: { children: ReactNode }) {
       // Capabilities control the UI only; every operation is authorized again by the backend.
       const admin = session.administrador;
       if (attempt !== epoch.current) return;
-      setUser(profile); setAdmin(admin); refresh();
-      expiry.current = setTimeout(() => { disconnect(); showToast('Sessão expirada. Entre novamente.'); }, Math.min(identity.expires - Date.now(), 2_147_000_000));
+      setUser(profile); setLocalSpent(loadLocalSpent(profile.id)); setAdmin(admin); refresh();
+      try { localStorage.setItem(TOKEN_KEY, token); } catch { /* storage indisponível */ }
+      // Não desloga automaticamente por inatividade — o backend retorna 401 quando o token expirar
     } catch (error) { if (attempt === epoch.current) disconnect(); throw error; }
     finally { setConnecting(false); }
   };
@@ -50,6 +69,16 @@ export function ApiProvider({ children }: { children: ReactNode }) {
     const profile = await service.profile(user.id);
     if (current === epoch.current) setUser(profile);
   };
-  return <Context.Provider value={{ api, service, user, isAdmin, revision, connecting, connect, login, disconnect, logout, refresh, refreshProfile }}>{children}</Context.Provider>;
+  const spendCredits = useCallback((pontos: number) => {
+    if (!user || !Number.isFinite(pontos) || pontos <= 0) return false;
+    const disponivel = Math.max(0, user.pontos - localSpent);
+    if (pontos > disponivel) return false;
+    const next = localSpent + pontos;
+    setLocalSpent(next);
+    persistLocalSpent(user.id, next);
+    return true;
+  }, [user, localSpent]);
+  const visibleUser = useMemo(() => user ? { ...user, pontos: Math.max(0, user.pontos - localSpent) } : null, [user, localSpent]);
+  return <Context.Provider value={{ api, service, user: visibleUser, isAdmin, revision, connecting, connect, login, disconnect, logout, refresh, refreshProfile, spendCredits }}>{children}</Context.Provider>;
 }
 export function useApi() { const value = useContext(Context); if (!value) throw new Error('ApiProvider ausente.'); return value; }
