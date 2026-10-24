@@ -43,7 +43,7 @@ export function Contato() {
   };
 
   return (
-    <div className="max-w-xl mx-auto px-6 py-12">
+    <div className="mobile-contact max-w-xl mx-auto px-6 py-12">
       <h1 className="text-3xl font-bold text-center text-white mb-2 drop-shadow">Contato</h1>
       <p className="text-center text-white/70 mb-10">Entre em contato com a equipe RockySoulUp</p>
 
