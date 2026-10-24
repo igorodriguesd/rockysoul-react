@@ -172,3 +172,15 @@ test('restoring a session is authenticated and uses no consumption or foreign pr
   assert.equal(calls, 0); client.setToken('current-token');
   assert.deepEqual(await services(client).session(), { usuario: profile, administrador: false }); assert.equal(calls, 1);
 });
+
+import { verificationMessage } from '../src/api/verificationFeedback.ts';
+import type { Verificacao } from '../src/api/types.ts';
+
+test('rejected and inconclusive outcomes explain the real server decision without inventing approval', () => {
+  const row = { estado: 'REJEITADA', pontosCreditados: 0, notaCompatibilidade: 0, parecer: 'INCOMPATIVEL', feedback: 'A foto mostra uma mão sem materiais recicláveis.' } as Verificacao;
+  assert.match(verificationMessage(row), /Ação rejeitada/); assert.match(verificationMessage(row), /mão/);
+  assert.doesNotMatch(verificationMessage(row), /aguarda revisão/);
+  assert.match(verificationMessage({ ...row, estado: 'PENDENTE_REVISAO', parecer: 'TIMEOUT_OR_NETWORK', feedback: null }), /Não foi possível concluir a análise automática/);
+  assert.match(verificationMessage({ ...row, estado: 'PENDENTE_REVISAO', parecer: 'DESAFIO_NAO_CONFIRMADO', feedback: null }), /confirmar o código/);
+  assert.match(verificationMessage({ ...row, estado: 'PENDENTE_REVISAO', notaCompatibilidade: 99, parecer: 'INCONCLUSIVO' }), /precisa de revisão/);
+});
