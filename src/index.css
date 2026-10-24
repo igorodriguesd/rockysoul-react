@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./mobile.css";
 
 @property --holo-angle {
   syntax: '<angle>';
