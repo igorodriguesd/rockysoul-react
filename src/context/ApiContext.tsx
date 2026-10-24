@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { ApiError, createApiClient, errorMessage, tokenIdentity } from '../api/client';
 import { services } from '../api/services';
-import type { Usuario } from '../api/types';
+import type { SessaoAtual, Usuario } from '../api/types';
 import { showToast } from '../components/Toast';
 
 type ApiState = { api: ReturnType<typeof createApiClient>; service: ReturnType<typeof services>; user: Usuario | null; isAdmin: boolean; revision: number; connecting: boolean;
@@ -22,18 +22,16 @@ export function ApiProvider({ children }: { children: ReactNode }) {
   }, [api]);
   useEffect(() => { api.setUnauthorizedHandler(disconnect); return () => { api.setUnauthorizedHandler(() => {}); if (expiry.current) clearTimeout(expiry.current); api.setToken(null); }; }, [disconnect, api]);
   const refresh = useCallback(() => setRevision(n => n + 1), []);
-  const connect = async (value: string) => {
+  const connect = async (value: string, initial?: SessaoAtual) => {
     disconnect(); const token = value.trim(); const identity = tokenIdentity(token); const attempt = epoch.current;
     setConnecting(true); api.setToken(token);
     try {
-      const profile = await service.profile(identity.id);
+      const session = initial ?? await service.session();
+      const profile = session.usuario;
       if (attempt !== epoch.current) return;
-      if (profile.id !== identity.id || typeof profile.nome !== 'string' || !Number.isSafeInteger(profile.versao)) throw new Error('Não foi possível carregar sua conta. Tente entrar novamente.');
-      let admin = false;
-      try { await service.usage(); admin = true; } catch (error) {
-        if (error instanceof Error && 'status' in error && error.status === 401) throw error;
-        // Permission is always enforced by the backend; a failed capability check grants nothing.
-      }
+      if (!profile || profile.id !== identity.id || typeof profile.nome !== 'string' || !Number.isSafeInteger(profile.versao) || typeof session.administrador !== 'boolean') throw new Error('Não foi possível carregar sua conta. Tente entrar novamente.');
+      // Capabilities control the UI only; every operation is authorized again by the backend.
+      const admin = session.administrador;
       if (attempt !== epoch.current) return;
       setUser(profile); setAdmin(admin); refresh();
       expiry.current = setTimeout(() => { disconnect(); showToast('Sessão expirada. Entre novamente.'); }, Math.min(identity.expires - Date.now(), 2_147_000_000));
@@ -43,7 +41,7 @@ export function ApiProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, senha: string) => {
     const session = await service.login({ email, senha });
     if (typeof session.accessToken !== 'string' || session.tokenType !== 'Bearer' || !Number.isFinite(session.expiresIn) || session.expiresIn <= 0) throw new ApiError('Não foi possível entrar agora. Tente novamente em instantes.');
-    await connect(session.accessToken);
+    await connect(session.accessToken, session.usuario && typeof session.administrador === 'boolean' ? { usuario: session.usuario, administrador: session.administrador } : undefined);
   };
   const logout = async () => { try { await service.logout(); } catch (error) { showToast(errorMessage(error)); } finally { disconnect(); } };
   const refreshProfile = async () => {
