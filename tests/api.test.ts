@@ -176,11 +176,11 @@ test('restoring a session is authenticated and uses no consumption or foreign pr
 import { verificationMessage } from '../src/api/verificationFeedback.ts';
 import type { Verificacao } from '../src/api/types.ts';
 
-test('rejected and inconclusive outcomes explain the real server decision without inventing approval', () => {
-  const row = { estado: 'REJEITADA', pontosCreditados: 0, notaCompatibilidade: 0, parecer: 'INCOMPATIVEL', feedback: 'A foto mostra uma mão sem materiais recicláveis.' } as Verificacao;
-  assert.match(verificationMessage(row), /Ação rejeitada/); assert.match(verificationMessage(row), /mão/);
-  assert.doesNotMatch(verificationMessage(row), /aguarda revisão/);
-  assert.match(verificationMessage({ ...row, estado: 'PENDENTE_REVISAO', parecer: 'TIMEOUT_OR_NETWORK', feedback: null }), /Não foi possível concluir a análise automática/);
-  assert.match(verificationMessage({ ...row, estado: 'PENDENTE_REVISAO', parecer: 'DESAFIO_NAO_CONFIRMADO', feedback: null }), /confirmar o código/);
-  assert.match(verificationMessage({ ...row, estado: 'PENDENTE_REVISAO', notaCompatibilidade: 99, parecer: 'INCONCLUSIVO' }), /precisa de revisão/);
+test('user messages never reveal the model feedback or a compatibility score', () => {
+  const row = { estado: 'REJEITADA', pontosCreditados: 0, notaCompatibilidade: 17, parecer: 'INCOMPATIVEL', feedback: 'PRIVATE_ADMIN_FEEDBACK' } as Verificacao;
+  const rejection = verificationMessage(row);
+  assert.match(rejection, /Ação rejeitada/); assert.doesNotMatch(rejection, /PRIVATE_ADMIN_FEEDBACK|17|créditos|pontos/);
+  const review = verificationMessage({ ...row, estado: 'PENDENTE_REVISAO', parecer: 'INCONCLUSIVO' });
+  assert.match(review, /revisão/); assert.doesNotMatch(review, /PRIVATE_ADMIN_FEEDBACK|17|créditos|pontos/);
+  assert.match(verificationMessage({ ...row, estado: 'APROVADA', pontosCreditados: 20 }), /20 pontos confirmados/);
 });
