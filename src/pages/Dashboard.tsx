@@ -324,8 +324,8 @@ function DashboardContent() {
   ];
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 lg:py-6 flex flex-col gap-5">
+    <div className="mobile-dashboard min-h-screen">
+      <div className="mobile-dashboard-content max-w-[1400px] mx-auto px-4 sm:px-6 py-4 lg:py-6 flex flex-col gap-5">
 
         <Link
           to="/recompensas"
@@ -347,7 +347,7 @@ function DashboardContent() {
         </Link>
 
         {/* ===================== PROGRESSO (protagonista) ===================== */}
-        <div className="relative overflow-hidden rounded-3xl p-5 sm:p-7 [background:var(--t-grad-strong)] shadow-[0_14px_40px_rgba(0,230,118,0.28)]">
+        <div className="mobile-progress relative overflow-hidden rounded-3xl p-5 sm:p-7 [background:var(--t-grad-strong)] shadow-[0_14px_40px_rgba(0,230,118,0.28)]">
           <div
             className="pointer-events-none absolute -top-16 -right-10 w-64 h-64 rounded-full opacity-20"
             style={{ background: 'radial-gradient(circle, #fff, transparent 70%)' }}
@@ -358,7 +358,7 @@ function DashboardContent() {
           />
 
           <div className="relative flex flex-col gap-5">
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
+            <div className="mobile-greeting flex flex-wrap items-center gap-x-2.5 gap-y-0.5">
               <p className="text-white/60 text-sm">Bom dia,</p>
               <h1 className="text-white font-serif-display" style={{ fontSize: 26 }}>{nomeExibido}</h1>
               <span className="inline-flex items-center gap-1.5 text-white/80 text-sm font-medium mt-0.5">
@@ -436,7 +436,7 @@ function DashboardContent() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="mobile-stats grid grid-cols-2 sm:grid-cols-3 gap-2">
               {chips.map(s => (
                 <div key={s.rotulo} className="rounded-xl px-2.5 sm:px-3 py-3 flex items-center justify-center sm:justify-start gap-2.5 bg-white/12 border border-white/20 backdrop-blur">
                   <img src={s.icone} className="hidden sm:block w-4.5 h-4.5 shrink-0 opacity-90" alt="" />
@@ -482,7 +482,7 @@ function DashboardContent() {
                 <span className="ml-2 text-slate-500 text-xs font-normal tabular-nums">{feitasHoje.size}/{MISSOES.length} feitas</span>
               </h2>
             </div>
-            <div className="flex flex-wrap gap-1.5 mb-4">
+            <div className="mobile-mission-filters flex flex-wrap gap-1.5 mb-4">
               {FILTROS_MISSOES.map(f => (
                 <button
                   key={f.id}
@@ -509,7 +509,7 @@ function DashboardContent() {
                           onClick={() => handleMissao(missao)}
                           title={`${missao.nome} · ${grupo.label} · +${missao.pontos} créditos — ${missao.descricao}`}
                           aria-label={`${checked ? 'Feita hoje · ' : ''}${missao.nome}, ${grupo.label}, +${missao.pontos} créditos. Toque para registrar.`}
-                          className="rounded-xl p-3 h-full flex flex-col gap-1.5 text-left transition-all group active:scale-95 relative overflow-hidden cursor-pointer"
+                          className="mobile-mission rounded-xl p-3 h-full flex flex-col gap-1.5 text-left transition-all group active:scale-95 relative overflow-hidden cursor-pointer"
                           style={{
                             background: checked ? `color-mix(in srgb, ${cor} 12%, transparent)` : 'var(--t-surface-2)',
                             border: checked ? `1px solid color-mix(in srgb, ${cor} 45%, transparent)` : '1px solid var(--t-border-subtle)',
@@ -525,10 +525,10 @@ function DashboardContent() {
                             cor={cor}
                             className="w-8 h-8 group-hover:scale-110 transition-transform"
                           />
-                          <p className="text-[11px] leading-snug text-slate-500 line-clamp-2">{missao.descricao}</p>
+                          <p className="mobile-mission-description text-[11px] leading-snug text-slate-500 line-clamp-2">{missao.descricao}</p>
                           <div className="mt-auto">
                             <p className="text-slate-800 text-sm font-medium leading-snug">{missao.nome}</p>
-                            <div className="flex items-center justify-between gap-1 mt-1.5">
+                            <div className="mobile-mission-actions flex items-center justify-between gap-1 mt-1.5">
                               <p className="font-semibold text-sm tabular-nums" style={{ color: grupo.texto }}>+{missao.pontos} créditos</p>
                               <span
                                 className="text-[10px] font-bold px-2 py-0.5 rounded-full"
@@ -558,7 +558,7 @@ function DashboardContent() {
 
           <div className="flex flex-col gap-4">
             {/* ===== DESAFIO DO DIA (topo da coluna) ===== */}
-            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '10px', minWidth: 0, overflow: 'hidden' }} className="bg-card-primary border border-card-primary-border shadow-card-primary rounded-xl p-3">
+            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '10px', minWidth: 0, overflow: 'hidden' }} className="mobile-challenge bg-card-primary border border-card-primary-border shadow-card-primary rounded-xl p-3">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: '1 1 auto', minWidth: '160px' }} className="min-w-0">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'var(--t-mist)', border: '1px solid var(--t-brand-border)' }}>
                   <BoltIcon />
@@ -572,7 +572,7 @@ function DashboardContent() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }} className="shrink-0">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }} className="mobile-challenge-actions shrink-0">
                 <span className={`text-[11px] font-bold ${desafioBonusDisponivel ? 'text-[#ffc928]' : 'text-slate-400'}`}>
                   +{desafioDoDia.pontos} créditos
                 </span>
@@ -693,7 +693,7 @@ function DashboardContent() {
         {/* ===================== ATIVIDADE + AMIGOS ===================== */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
 
-          <div className="lg:col-span-2 self-start bg-card-tertiary border border-card-secondary-border rounded-2xl p-4">
+          <div className="mobile-activity lg:col-span-2 self-start bg-card-tertiary border border-card-secondary-border rounded-2xl p-4">
             <div className="flex items-center justify-between mb-1">
               <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Atividade recente</p>
               <span className="text-slate-400 text-[11px] font-semibold">Ver histórico →</span>
@@ -742,7 +742,7 @@ function DashboardContent() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <div className="bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col">
+            <div className="mobile-friends bg-card-tertiary border border-card-secondary-border rounded-2xl p-4 flex flex-col">
               <div className="flex items-center justify-between gap-2 mb-3">
                 <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Amigos</p>
                 <button
