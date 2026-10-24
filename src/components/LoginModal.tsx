@@ -50,7 +50,7 @@ function AccountForm({ onFechar, initialMode }: Omit<Props, 'aberto'>) {
     } finally { setSenha(''); setConfirmarSenha(''); setToken(''); inFlight.current = false; setBusy(false); }
   }
   return (
-    <div className="fixed inset-0 z-9998 flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/50" onClick={() => { if (!inFlight.current) onFechar(); }}>
+    <div className="mobile-modal-backdrop fixed inset-0 z-9998 flex items-start sm:items-center justify-center p-3 sm:p-6 pt-24 sm:pt-6 bg-black/50" onClick={() => { if (!inFlight.current) onFechar(); }}>
       <div
         role="dialog"
         aria-modal="true"
