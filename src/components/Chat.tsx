@@ -404,7 +404,7 @@ export default function Chat() {
   return (
     <>
       {!aberto && (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+        <div className="mobile-chat-launcher fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
           <div className="relative">
             <button
               onClick={abrirChat}
@@ -420,7 +420,7 @@ export default function Chat() {
       )}
 
       {aberto && (
-        <div className="fixed bottom-6 right-6 z-50 bg-card-secondary border border-card-secondary-border rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] max-h-[calc(100vh-3rem)] border border-brand/25">
+        <div className="mobile-chat-panel fixed bottom-6 right-6 z-50 bg-card-secondary border border-card-secondary-border rounded-2xl shadow-2xl overflow-hidden flex flex-col w-[min(360px,calc(100vw-2rem))] max-h-[calc(100vh-3rem)] border border-brand/25">
           <div className="text-white p-4 flex items-center gap-3 shrink-0" style={{ background: 'var(--t-grad-strong)' }}>
             <div className="w-10 h-10 rounded-full bg-leaf/25 flex items-center justify-center shrink-0">
               <img src="/imagens/logo.png" alt="" className="h-6 w-auto opacity-90" />
@@ -438,7 +438,7 @@ export default function Chat() {
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto flex flex-col gap-2 p-4 bg-surface-2">
+          <div className="mobile-chat-messages flex-1 overflow-y-auto flex flex-col gap-2 p-4 bg-surface-2">
             {mensagens.map((msg, i) => (
               <div
                 key={i}
@@ -469,7 +469,7 @@ export default function Chat() {
           </div>
 
           {!aguardandoEntrada && (
-            <div className="flex flex-wrap gap-1.5 px-3 pt-2 bg-surface-2 shrink-0">
+            <div className="mobile-chat-shortcuts flex flex-wrap gap-1.5 px-3 pt-2 bg-surface-2 shrink-0">
               {SUGESTOES_RAPIDAS.map(s => (
                 <button
                   key={s.comando}
