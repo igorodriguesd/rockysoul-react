@@ -158,3 +158,17 @@ test('roulette posts only the verification identity and never a client outcome o
   assert.equal(new Headers(calls[1].init.headers).get('Authorization'), 'Bearer session-token');
   assert.equal(calls[2].url, 'http://localhost:8080/roletas?page=2&size=20');
 });
+
+
+test('restoring a session is authenticated and uses no consumption or foreign profile request', async () => {
+  let calls = 0;
+  const profile = { id: 101, nome: 'Pessoa', email: 'pessoa@test.invalid', pontos: 20, resgatados: 0, versao: 0 };
+  const client = createApiClient('http://localhost:8080', async (url, init) => {
+    calls++; assert.equal(String(url), 'http://localhost:8080/auth/sessao');
+    assert.equal(new Headers(init?.headers).get('Authorization'), 'Bearer current-token');
+    return json({ usuario: profile, administrador: false });
+  });
+  await assert.rejects(services(client).session(), (error: ApiError) => error.status === 401);
+  assert.equal(calls, 0); client.setToken('current-token');
+  assert.deepEqual(await services(client).session(), { usuario: profile, administrador: false }); assert.equal(calls, 1);
+});
