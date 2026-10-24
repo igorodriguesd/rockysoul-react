@@ -89,7 +89,7 @@ export default function TrilhaEvolucaoModal({ aberto, onFechar, pontos }: Props)
   const ordem = [...TRILHA_EVOLUCAO].reverse();
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-[2px]" onClick={onFechar}>
+    <div className="mobile-modal-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-[2px]" onClick={onFechar}>
       <div
         className="w-full max-w-sm bg-card-primary border border-card-primary-border shadow-card-primary rounded-2xl max-h-[82vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
