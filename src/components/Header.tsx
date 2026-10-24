@@ -177,7 +177,7 @@ export default function Header() {
 
   return (
     <>
-      <header className={`fixed top-4 left-1/2 -translate-x-1/2 z-100 ${oculto ? '-translate-y-[calc(100%+2rem)] opacity-0 pointer-events-none' : 'translate-y-0 opacity-100 pointer-events-auto'} transition-all duration-300 ease-out w-[calc(100%-2rem)] max-w-275 px-5 sm:px-6 py-4 flex items-center justify-between rounded-3xl bg-(--t-header) backdrop-blur-xl border border-(--t-header-border) shadow-(--t-header-shadow) box-border`}>
+      <header className={`mobile-header fixed top-4 left-1/2 -translate-x-1/2 z-100 ${oculto ? '-translate-y-[calc(100%+2rem)] opacity-0 pointer-events-none' : 'translate-y-0 opacity-100 pointer-events-auto'} transition-all duration-300 ease-out w-[calc(100%-2rem)] max-w-275 px-5 sm:px-6 py-4 flex items-center justify-between rounded-3xl bg-(--t-header) backdrop-blur-xl border border-(--t-header-border) shadow-(--t-header-shadow) box-border`}>
         <NavLink to="/" className="flex items-center gap-2 shrink-0">
           <img src="/imagens/logo.png" alt="RockySoulUp" className="h-7 w-auto opacity-90" />
           <span
@@ -375,7 +375,7 @@ className={({ isActive }) =>
 
       {menuAberto && (
         <div
-          className="fixed inset-0 z-[200] flex flex-col overscroll-contain bg-(--t-header) backdrop-blur-xl border-b border-(--t-header-border) shadow-xl"
+          className="mobile-menu fixed inset-0 z-[200] flex flex-col overscroll-contain bg-(--t-header) backdrop-blur-xl border-b border-(--t-header-border) shadow-xl"
           onClick={() => setMenuAberto(false)}
         >
           <div className="shrink-0 px-6 py-5 flex items-center justify-between border-b border-(--t-header-border)">
