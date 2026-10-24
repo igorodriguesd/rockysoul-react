@@ -11,10 +11,10 @@ export interface HistoricoApi { id: number; usuarioId: number; descricao: string
 export interface UsuarioCartaApi { usuarioId: number; cartaId: number; quantidade: number; versao: number }
 export interface FragmentoApi { usuarioId: number; raridade: Raridade; quantidade: number; versao: number }
 export type EstadoVerificacao = 'ENVIADA' | 'EM_ANALISE' | 'PENDENTE_REVISAO' | 'APROVADA' | 'REJEITADA';
-export interface Verificacao { id: string; usuarioId: number; usuarioEmail?: string; acaoId: number; estado: EstadoVerificacao; versao: number; possivelReuso: boolean; evidenciaDisponivel: boolean; parecer: string | null; modelo: string; regras: string; tentativas: number; pontosCreditados: number }
+export interface Verificacao { id: string; usuarioId: number; usuarioEmail?: string; acaoId: number; estado: EstadoVerificacao; versao: number; possivelReuso: boolean; evidenciaDisponivel: boolean; parecer: string | null; modelo: string; regras: string; tentativas: number; pontosCreditados: number; notaCompatibilidade?: number | null; feedback?: string | null; evidenciaInsuficiente?: boolean | null; suspeitaManipulacao?: boolean | null }
 export interface Desafio { id: string; acaoId: number; codigo: string; expiraEm: string }
 export interface Submissao { acaoId: number; desafioId: string; descricao: string; imagemBase64: string }
-export interface Consumo { habilitado: boolean; suspenso: boolean; consumoOuReservaDiaMicrosUSD: number; limiteDiaMicrosUSD: number; consumoOuReservaMesMicrosUSD: number; limiteMesMicrosUSD: number; reservasIncertas: number }
+export interface Consumo { decisaoAutomatica?: boolean; regras?: string; habilitado: boolean; suspenso: boolean; consumoOuReservaDiaMicrosUSD: number; limiteDiaMicrosUSD: number; consumoOuReservaMesMicrosUSD: number; limiteMesMicrosUSD: number; reservasIncertas: number }
 export type Recurso = 'acao' | 'carta' | 'selo' | 'recompensa' | 'historico' | 'usuario' | 'usuario-carta' | 'usuario-fragmento';
 export type Registro = Record<string, string | number | null>;
 
