@@ -1,5 +1,5 @@
 import type { ApiClient } from './client';
-import type { Roleta, Cadastro, Login, Sessao, Desafio, Consumo, Registro, Recurso, Submissao, Usuario, Verificacao } from './types';
+import type { Roleta, Cadastro, Login, Sessao, SessaoAtual, Desafio, Consumo, Registro, Recurso, Submissao, Usuario, Verificacao } from './types';
 
 export function resourcePath(resource: Recurso, value: Registro): string {
   const encode = (key: string) => encodeURIComponent(String(value[key]));
@@ -11,6 +11,7 @@ export function services(api: ApiClient) {
   return {
     register: ({ nome, email, senha }: Cadastro) => api.request<Usuario>('/auth/cadastro', { method: 'POST', publicAuth: true, body: { nome: nome.trim(), email: email.trim().toLowerCase(), senha } }),
     login: ({ email, senha }: Login) => api.request<Sessao>('/auth/login', { method: 'POST', publicAuth: true, body: { email: email.trim().toLowerCase(), senha } }),
+    session: () => api.request<SessaoAtual>('/auth/sessao'),
     profile: (id: number, signal?: AbortSignal) => api.request<Usuario>(`/usuario/${id}`, { signal }),
     updateProfile: (user: Usuario, nome: string, email: string) => api.request<Usuario>(`/usuario/${user.id}`, { method: 'PUT', body: { nome, email, versao: user.versao } }),
     logout: () => api.request<void>('/auth/logout', { method: 'POST' }),
