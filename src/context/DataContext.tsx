@@ -12,7 +12,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const { rows: historico } = useApiPage<HistoricoApi>('historico');
   const { rows: verificacoes } = useApiPage<Verificacao>('verificacoes');
   const { rows: selos } = useApiPage<SeloApi>('selo');
-  const actions = useApiPage<Acao>('acao');
+  const actions = useApiPage<Acao>('acao', 0, true, 100);
   const acoes = actions.rows;
   const missoes = acoes.map(actionView);
   const ownHistory = historico.filter(row => row.usuarioId === user?.id);
