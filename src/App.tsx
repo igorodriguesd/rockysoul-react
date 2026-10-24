@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { useMobileViewport } from './hooks/useMobileViewport';
 import { DataProvider } from './context/DataContext';
 import { CollectionProvider } from './context/CollectionContext';
 import { ChatProvider } from './context/ChatContext';
@@ -22,6 +23,7 @@ import { Perfil } from './pages/Perfil';
 import { Administracao } from './pages/Administracao';
 
 export default function App() {
+  useMobileViewport();
   const ehModoPrint = new URLSearchParams(window.location.search).has('print');
 
   return (
