@@ -2,7 +2,8 @@ export type Raridade = 'COMUM' | 'INCOMUM' | 'RARA' | 'EPICA' | 'LENDARIA';
 export interface Usuario { id: number; nome: string; email: string; pontos: number; resgatados: number; versao: number }
 export interface Cadastro { nome: string; email: string; senha: string }
 export interface Login { email: string; senha: string }
-export interface Sessao { accessToken: string; tokenType: string; expiresIn: number }
+export interface SessaoAtual { usuario: Usuario; administrador: boolean }
+export interface Sessao { accessToken: string; tokenType: string; expiresIn: number; usuario?: Usuario; administrador?: boolean }
 export interface Acao { id: number; nome: string; pontos: number; versao: number }
 export interface CartaApi { id: number; nome: string; descricao: string | null; conjunto: string; raridade: Raridade; versao: number }
 export interface SeloApi { id: number; nome: string; descricao: string | null; pontosMin: number; versao: number }
