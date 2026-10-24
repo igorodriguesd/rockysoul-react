@@ -273,7 +273,7 @@ export default function MiniJogoSeparacao({ compacto = false }: MiniJogoSeparaca
 
   if (compacto && !expandido) {
     return (
-      <div className="rounded-2xl p-4 w-full relative overflow-hidden" style={{ background: 'var(--t-grad-arena)', boxShadow: 'var(--t-arena-shadow)' }}>
+      <div className="mobile-game-preview rounded-2xl p-4 w-full relative overflow-hidden" style={{ background: 'var(--t-grad-arena)', boxShadow: 'var(--t-arena-shadow)' }}>
         <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full opacity-10 pointer-events-none" style={{ background: 'radial-gradient(#38BDF8, transparent)' }} />
         <div className="relative flex items-center gap-3 flex-wrap sm:flex-nowrap">
           <div className="text-3xl select-none text-sky-300 shrink-0">
