@@ -732,9 +732,9 @@ function DashboardContent() {
                         <p className="text-slate-800 text-sm font-medium leading-snug truncate">{entry.nome}</p>
                         <p className="text-slate-500 text-[11px] mt-0.5">{entry.estado ? ({ PENDENTE_REVISAO: 'Aguardando revisão', APROVADA: 'Aprovada', REJEITADA: 'Não aprovada', EM_ANALISE: 'Em análise', ENVIADA: 'Enviada' } as Record<string, string>)[entry.estado] ?? 'Em análise' : timeAgo(entry.data)}</p>
                       </div>
-                      <span className={`text-xs font-bold shrink-0 mt-1 ${ganhou ? 'text-brand' : 'text-red-400'}`}>
+                      {(!entry.estado || entry.estado === 'APROVADA') && <span className={`text-xs font-bold shrink-0 mt-1 ${ganhou ? 'text-brand' : 'text-red-400'}`}>
                         {ganhou ? '+' : '-'}{entry.pontos}
-                      </span>
+                      </span>}
                     </div>
                   );
                 })}
