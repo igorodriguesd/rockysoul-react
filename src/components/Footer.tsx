@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="relative z-10 py-6 mt-auto">
+    <footer className="mobile-footer relative z-10 py-6 mt-auto">
       <div className="max-w-275 mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <img src="/imagens/logo.png" alt="Logo" className="h-5 w-auto opacity-90" />
